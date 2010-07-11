@@ -327,8 +327,10 @@ rxvt_parse_macros( rxvt_t *r, const char *str, const char *arg,
 	 */
 	if( STRCASESTR( keyname, "ctrl" ) )
 	    modFlags |= MACRO_CTRL;
-	if( STRCASESTR( keyname, "meta" ) || STRCASESTR( keyname, "alt"))
+	if( STRCASESTR( keyname, "meta" ) )
 	    modFlags |= MACRO_META;
+	if( STRCASESTR( keyname, "alt" ) )
+	    modFlags |= MACRO_ALT;
 	if( STRCASESTR( keyname, "shift") )
 	    modFlags |= MACRO_SHIFT;
 	if( STRCASESTR( keyname, "primary"))
@@ -468,9 +470,10 @@ rxvt_add_macro( rxvt_t *r, KeySym keysym, unsigned char modFlags, char *astring,
 	if( replaceIndex == r->nmacros )
 	{
 	    rxvt_msg( DBG_ERROR, DBG_MACROS,
-		    "No previous macro to add to (key %s%s%s%s)",
+		    "No previous macro to add to (key %s%s%s%s%s)",
 		    (modFlags & MACRO_CTRL) ? "Ctrl+" : "",
 		    (modFlags & MACRO_META) ? "Meta+" : "",
+		    (modFlags & MACRO_ALT) ? "Alt+" : "",
 		    (modFlags & MACRO_SHIFT) ? "Shift+" : "",
 		    XKeysymToString( keysym ) );
 	    return 0;	/* Failure */
@@ -480,9 +483,10 @@ rxvt_add_macro( rxvt_t *r, KeySym keysym, unsigned char modFlags, char *astring,
 	{
 	    rxvt_msg( DBG_ERROR, DBG_MACROS,
 		    "Can not add to a macro defined at a different location "
-		    "(key %s%s%s%s)",
+		    "(key %s%s%s%s%s)",
 		    (modFlags & MACRO_CTRL) ? "Ctrl+" : "",
 		    (modFlags & MACRO_META) ? "Meta+" : "",
+		    (modFlags & MACRO_ALT) ? "Alt+" : "",
 		    (modFlags & MACRO_SHIFT) ? "Shift+" : "",
 		    XKeysymToString( keysym ) );
 	    return 0;	/* Failure */
@@ -493,9 +497,10 @@ rxvt_add_macro( rxvt_t *r, KeySym keysym, unsigned char modFlags, char *astring,
 	    /* Do not add to a dummy macro */
 	    rxvt_msg (DBG_ERROR, DBG_MACROS,
 		    "Can not add actions to a Dummy macro"
-		    "(key %s%s%s%s)",
+		    "(key %s%s%s%s%s)",
 		    (modFlags & MACRO_CTRL) ? "Ctrl+" : "",
 		    (modFlags & MACRO_META) ? "Meta+" : "",
+		    (modFlags & MACRO_ALT) ? "Alt+" : "",
 		    (modFlags & MACRO_SHIFT) ? "Shift+" : "",
 		    XKeysymToString( keysym ) );
 	    return 0;	/* Failure */
@@ -746,6 +751,7 @@ rxvt_process_macros( rxvt_t *r, KeySym keysym, XKeyEvent *ev)
     if (ev->state & ShiftMask)		    ck.modFlags |= MACRO_SHIFT;
     if (ev->state & ControlMask)	    ck.modFlags |= MACRO_CTRL;
     if (ev->state & r->h->ModMetaMask)	    ck.modFlags |= MACRO_META;
+    if (ev->state & r->h->ModAltMask)	    ck.modFlags |= MACRO_ALT;
 
     /* Use lowercase version so we can ignore caps lock */
     {

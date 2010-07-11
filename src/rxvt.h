@@ -1215,6 +1215,7 @@ enum {
     Rs_acs_chars,
 #endif
     Rs_modifier,
+    Rs_altPrefix,
     Rs_confFile,
     Rs_answerbackstring,
     Rs_cursorBlinkInterval,
@@ -1598,6 +1599,7 @@ struct rxvt_hidden {
 							   XError */
 
     unsigned int    ModMetaMask,
+		    ModAltMask,
 		    ModNumLockMask;
 #ifndef NO_BRIGHTCOLOR
     unsigned long   colorfgbg;

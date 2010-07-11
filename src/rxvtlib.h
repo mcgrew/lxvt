@@ -789,13 +789,14 @@ typedef struct
 /* Possible values for macros.modFlags */
 #define MACRO_CTRL	(1U << 0)
 #define MACRO_META	(1U << 1)
-#define MACRO_SHIFT	(1U << 2)
-#define MACRO_PRIMARY	(1U << 3)
+#define MACRO_ALT	(1U << 2)
+#define MACRO_SHIFT	(1U << 3)
+#define MACRO_PRIMARY	(1U << 4)
 
 /* Number of bits used by modifiers in modFlags */
-#define MACRO_N_MOD_BITS    (4)
+#define MACRO_N_MOD_BITS    (5)
 #define MACRO_MODMASK	\
-    ( MACRO_CTRL | MACRO_META | MACRO_SHIFT | MACRO_PRIMARY )
+    ( MACRO_CTRL | MACRO_META | MACRO_ALT | MACRO_SHIFT | MACRO_PRIMARY )
 #define MACRO_MAX_CHAINLEN  (0xf)
 
 /* Get / set the macro number from modFlags */

@@ -864,7 +864,7 @@ rxvt_0xffxx_keypress (rxvt_t* r, KeySym keysym,
 void
 rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
 {
-    int		    ctrl, meta, shft, len;
+    int		    ctrl, meta, alt, shft, len;
     KeySym	    keysym;
 #ifdef USE_DEADKEY
     static KeySym   accent = 0;
@@ -888,6 +888,7 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
     shft = (ev->state & ShiftMask);
     ctrl = (ev->state & ControlMask);
     meta = (ev->state & r->h->ModMetaMask);
+    alt = (ev->state & r->h->ModAltMask);
 
 #if 0 /* {{{ Old numlock handling (conflicts with Xterm) */
     /*
@@ -1093,7 +1094,7 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
 	 * much.
 	 */
 #ifndef UNSHIFTED_MACROS
-	if (ctrl || meta || shft)
+	if (ctrl || meta || alt || shft)
 #endif
 	    if( rxvt_process_macros( r, keysym, ev ) )
 		return;
@@ -1210,7 +1211,7 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
 #endif /* XK_dead_grave || XK_dead_horn */
 
 
-	else
+	else if (len)
 	{
 	    if ( meta )
 	    {
@@ -1238,7 +1239,9 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
 		    const unsigned char ch = C0_ESC;
 
 		    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Sending meta for keysym %lx\n", keysym));
-		    rxvt_tt_write(r, ATAB(r), &ch, 1);
+		    memmove(&kbuf[1], kbuf, len);
+		    kbuf[0] = ch;
+		    len ++;
 		}
 	    } /* if(meta) */
 
@@ -1260,6 +1263,15 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
     {
 	rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Returning on unmpapped keysym %lx\n", keysym));
 	return;		/* not mapped */
+    }
+
+    if ( alt && r->h->rs[Rs_altPrefix] )
+    {
+	    unsigned l = STRLEN(r->h->rs[Rs_altPrefix]);
+	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND, "Sending alt prefix for keysym %lx\n", keysym));
+	    memmove(&kbuf[l], kbuf, len);
+	    memcpy(kbuf, r->h->rs[Rs_altPrefix], l);
+	    len += l;
     }
 
     if (ISSET_OPTION(r, Opt_scrollTtyKeypress))

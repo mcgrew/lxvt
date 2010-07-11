@@ -540,6 +540,8 @@ static const struct {
 
     STRG(Rs_modifier, "modifier", "mod", "modifier",
 	"meta modifier = alt|meta|hyper|super|mod1|...|mod5", 0),
+    STRG(Rs_altPrefix, "altPrefix", "ap", "string",
+	"control key prefix for alt (non-meta) modifier", 0),
     INFO("xrm", "string", "X resource"),
 
 #ifdef CUTCHAR_RESOURCE

@@ -1297,6 +1297,12 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
 	rxvt_str_escaped( (char*) rs[Rs_answerbackstring] );
     }
 
+    if (rs[Rs_altPrefix])
+    {
+	rxvt_str_trim( (char*) rs[Rs_altPrefix] );
+	rxvt_str_escaped( (char*) rs[Rs_altPrefix] );
+    }
+
     if( rs[Rs_selectstyle] )
     {
 	if( STRNCASECMP( rs[Rs_selectstyle], "oldword", 7 ) == 0 )
@@ -2453,6 +2459,10 @@ rxvt_get_ourmods( rxvt_t *r )
 
     if (i)
 	r->h->ModMetaMask = modmasks[i - 1];
+    if (realalt && i != realalt)
+	r->h->ModAltMask = modmasks[realalt-1];
+    else if (realmeta && i != realmeta)
+	r->h->ModAltMask = modmasks[realmeta-1];
 }
 
 
