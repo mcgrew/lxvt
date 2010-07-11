@@ -183,6 +183,7 @@ rxvt_utf8towcs (const char* str)
 #endif	/* HAVE_WCHAR_H */
 
 
+#ifdef OUR_STRINGS
 /*----------------------------------------------------------------------*/
 /*
  * a replacement for strcasecmp() to avoid linking an entire library.
@@ -609,5 +610,7 @@ foundneedle:
 ret0:
   return 0;
 }
+
+#endif
 
 /*----------------------- end-of-file (C source) -----------------------*/
