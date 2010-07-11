@@ -1945,8 +1945,10 @@ rxvt_monitor_tab(rxvt_t* r,int i)
     /* ding - ring the system bell */
     rxvt_scr_bell(r,i);
 
+#ifdef HAVE_TABBAR
     /* highlight the tabbar */
     rxvt_tabbar_highlight_tab (r, i, False);
+#endif
 
     /* mark tab as active, if it is not the active tab */
     if (ATAB(r) != i)
@@ -1958,6 +1960,7 @@ rxvt_monitor_tab(rxvt_t* r,int i)
 	PVTS(r, i)->monitor_tab = TAB_MON_OFF;
     }
 
+#ifdef HAVE_TABBAR
 #ifdef BACKGROUND_IMAGE
     if( r->tabBar.hasPixmap  && ISSET_OPTION(r, Opt_tabPixmap))
     {
@@ -1978,6 +1981,7 @@ rxvt_monitor_tab(rxvt_t* r,int i)
     }
 #endif
     rxvt_tabbar_expose (r, NULL);
+#endif
 }
 
 
@@ -2024,6 +2028,7 @@ rxvt_process_children_cmdfd( rxvt_t* r, fd_set* p_readfds )
 	    *PVTS(r, i)->outbuf_end = (char) 0;
 #endif
 
+#ifdef HAVE_TABBAR
 	/* highlight inactive tab if there is some input */
 	if(
 	     NOTSET_OPTION(r, Opt2_hlTabOnBell)	    &&
@@ -2033,6 +2038,7 @@ rxvt_process_children_cmdfd( rxvt_t* r, fd_set* p_readfds )
 	{
 	    rxvt_tabbar_highlight_tab (r, i, False);
 	}
+#endif
     }   /* for loop */
 }
 
@@ -3121,11 +3127,13 @@ rxvt_process_buttonpress(rxvt_t* r, int page, XButtonEvent *ev)
     }
 
 
+#ifdef HAVE_TABBAR
     /*
      * Tabbar window processing of button press
      */
     if (rxvt_is_tabbar_win (r, ev->window))
 	rxvt_tabbar_dispatcher (r, ev);
+#endif
 
 
 #ifdef HAVE_SCROLLBARS
@@ -3205,6 +3213,7 @@ rxvt_process_buttonrelease(rxvt_t* r, int page, XButtonEvent *ev)
 {
     int		 reportmode = 0;
 
+#ifdef HAVE_TABBAR
     if ( r->tabClicked != -1 )
     {
 	if ( rxvt_is_tabbar_win( r, ev->window ) )
@@ -3216,6 +3225,7 @@ rxvt_process_buttonrelease(rxvt_t* r, int page, XButtonEvent *ev)
 	    /* User dropped a tab somewhere other than the tabbar */
 	    r->tabClicked = -1;
     }
+#endif
 
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "ButtonRelease event\n"));
     r->h->csrO = 0;	/* reset csr Offset */
@@ -3507,6 +3517,7 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason)
 	    break;
 #endif	/* HAVE_MENUBAR */
 
+#ifdef HAVE_TABBAR
 	case HIDE_TABBAR:
 	    r->szHint.base_height -= rxvt_tabbar_rheight (r);
 	    r->szHint.min_height  -= rxvt_tabbar_rheight (r);
@@ -3517,6 +3528,7 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason)
 	    r->szHint.min_height  += rxvt_tabbar_rheight (r);
 	    r->szHint.height	  += rxvt_tabbar_rheight (r);
 	    break;
+#endif
 
 #ifdef HAVE_SCROLLBARS
 	case HIDE_SCROLLBAR:
@@ -3543,8 +3555,10 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason)
 	    if( rxvt_menubar_visible(r) )
 		r->szHint.base_height += rxvt_menubar_height (r);
 #endif
+#ifdef HAVE_TABBAR
 	    if( rxvt_tabbar_visible( r ) )
 		r->szHint.base_height += rxvt_tabbar_height (r);
+#endif
 
 	    /* Set the terminal incremental width and height */
 #ifndef NO_FRILLS
@@ -3591,8 +3605,10 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason)
 	    0 : r->szHint.base_width - 2*r->TermWin.int_bwidth;
 
     r->h->window_vt_y = r->szHint.base_height - 2*r->TermWin.int_bwidth;
+#ifdef HAVE_TABBAR
     if (ISSET_OPTION(r, Opt2_bottomTabbar))
 	r->h->window_vt_y -= rxvt_tabbar_height (r);
+#endif
 
     /*
      * Now we can resize the window The resize request might not always succeed.
@@ -3768,7 +3784,9 @@ rxvt_resize_sub_windows (rxvt_t* r)
 #ifdef HAVE_MENUBAR
     rxvt_menubar_resize(r);
 #endif
+#ifdef HAVE_TABBAR
     rxvt_tabbar_resize (r);
+#endif
 
     for (i = 0; i <= LTAB(r); i ++)
     {
@@ -4222,10 +4240,12 @@ rxvt_process_expose (rxvt_t* r, XEvent* ev)
 
 #ifdef DEBUG
 	/* Debug message */
+# ifdef HAVE_TABBAR
 	if (rxvt_is_tabbar_win (r, win))
 	{
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Expose event on tabbar\n"));
 	}
+# endif
 # ifdef HAVE_SCROLLBARS
 	else if (rxvt_is_scrollbar_win (r, win))
 	{
@@ -4240,11 +4260,13 @@ rxvt_process_expose (rxvt_t* r, XEvent* ev)
 # endif
 #endif	/* DEBUG */
 
+#ifdef HAVE_TABBAR
 	if (rxvt_is_tabbar_win(r, win) && rxvt_tabbar_visible (r))
 	{
 	    rxvt_tabbar_expose(r, ev);
 	    return;
 	}
+#endif
 
 	/* fetch all expose events if possible */
 	while(	XCheckTypedWindowEvent(r->Xdisplay, win,
@@ -4789,8 +4811,10 @@ rxvt_process_nonprinting(rxvt_t* r, int page, unsigned char ch)
 
 	case C0_BEL:	/* bell */
 	    rxvt_scr_bell(r, page);
+#ifdef HAVE_TABBAR
 	    if (page != ATAB(r))
 		rxvt_tabbar_highlight_tab(r, page, False);
+#endif
 	    break;
 
 	case C0_BS:	/* backspace */
@@ -6027,8 +6051,10 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	    else
 		STRCPY( PVTS(r, page)->title_format, str );
 
+#ifdef HAVE_TABBAR
 	    /* Redraw the tab title. */
 	    refresh_tabbar_tab( r, page );
+#endif
 
 	    break;
 	}
@@ -6226,12 +6252,14 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	    }
 	    break;
 
+#ifdef HAVE_TABBAR
 	case MRxvt_tabfg:
 	case MRxvt_tabbg:
 	case MRxvt_itabfg:
 	case MRxvt_itabbg:
 	    rxvt_tabbar_change_color (r, op, str);
 	    break;
+#endif
 
 #if defined(TRANSPARENT) || defined(BACKGROUND_IMAGE)
 # ifdef TINTING_SUPPORT

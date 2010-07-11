@@ -122,6 +122,7 @@ support_minimal=no
 support_debug=no
 support_ourstrings=no
 support_frills=yes
+support_tabs=yes
 support_keepscrolling=yes
 support_selectionscrolling=yes
 support_mousewheel=yes
@@ -145,6 +146,7 @@ support_pointer_blank=yes
 support_text_shadow=no
 support_smart_resize=no
 support_menubar=no
+support_tabbar=yes
 support_background_image=yes
 support_transparency=yes
 dnl: support_fading=yes
@@ -178,6 +180,7 @@ if test "x$support_everything" = "xyes"; then
     support_debug=yes
     support_ourstrings=no
     support_frills=yes
+    support_tabs=yes
     support_keepscrolling=yes
     support_selectionscrolling=yes
     support_mousewheel=yes
@@ -201,6 +204,7 @@ if test "x$support_everything" = "xyes"; then
     support_text_shadow=yes
     support_smart_resize=yes
     support_menubar=yes
+    support_tabbar=yes
     support_background_image=yes
     support_transparency=yes
     dnl: support_fading=yes
@@ -233,6 +237,7 @@ if test "x$support_minimal" = "xyes"; then
     support_debug=no
     support_ourstrings=no
     support_frills=no
+    support_tabs=no
     support_keepscrolling=no
     support_selectionscrolling=no
     support_mousewheel=no
@@ -256,6 +261,7 @@ if test "x$support_minimal" = "xyes"; then
     support_text_shadow=no
     support_smart_resize=no
     support_menubar=no
+    support_tabbar=no
     support_background_image=no
     support_transparency=no
     dnl: support_fading=no
@@ -309,6 +315,16 @@ AC_ARG_ENABLE(
 )
 if test "x$support_frills" != "xyes"; then
     AC_DEFINE(NO_FRILLS, [], [enable internal borders / smart resizing])
+fi
+
+
+AC_ARG_ENABLE(
+    tabs,
+    AC_HELP_STRING([--enable-tabs],[enable multiple tabs/profiles [[yes]]]),
+    [support_tabs=$enableval]
+)
+if test "x$support_tabs" = "xyes"; then
+    AC_DEFINE(HAVE_TABS, [], [enable multiple tabs])
 fi
 
 
@@ -555,6 +571,16 @@ AC_ARG_ENABLE(
 )
 if test "x$support_menubar" = "xyes"; then
     AC_DEFINE(HAVE_MENUBAR, [], [set menu bar])
+fi
+
+
+AC_ARG_ENABLE(
+    tabbar,
+    AC_HELP_STRING([--enable-tabbar],[enable displaying tab bar [[yes]]]),
+    [support_tabbar=$enableval]
+)
+if test "x$support_tabs x$support_tabbar" = "xyes xyes"; then
+    AC_DEFINE(HAVE_TABBAR, [], [allow showing tabbar])
 fi
 
 
@@ -1472,6 +1498,7 @@ echo "Maintenance:"
 echo "Debug mode                  : $support_debug"
 echo "Private string functions    : $support_ourstrings"
 echo "Rarely used features        : $support_frills"
+echo "Multiple tabs               : $support_tabs"
 echo 
 echo "Scroll features:"
 echo "Keep scroll                 : $support_keepscrolling"
@@ -1507,6 +1534,9 @@ echo "Blank pointer               : $support_pointer_blank"
 echo "Color text shadow           : $support_text_shadow"
 echo "Smart resize                : $support_smart_resize"
 echo "Menu bar                    : $support_menubar"
+if test "x$support_tabs" = "xyes"; then
+echo "Tab bar                     : $support_tabbar"
+fi
 echo
 echo "Background features:"
 echo "Background image            : $support_background_image"

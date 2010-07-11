@@ -355,6 +355,7 @@ rxvt_free_hidden( rxvt_t* r )
 void
 rxvt_exit_request( rxvt_t *r )
 {
+#ifdef HAVE_TABBAR
     /* Avoid exiting if there are multiple tabs with hidden tabbar */
     if( LTAB(r) > 0 &&  !rxvt_tabbar_visible( r ) )
     {
@@ -362,6 +363,7 @@ rxvt_exit_request( rxvt_t *r )
 	if( rxvt_tabbar_show(r) ) rxvt_resize_on_subwin (r, SHOW_TABBAR);
 	return;
     }
+#endif
 
     /* Avoid exiting if some tab is in the secondary screen */
     if(ISSET_OPTION(r, Opt2_protectSecondary))
@@ -373,8 +375,10 @@ rxvt_exit_request( rxvt_t *r )
 	    if( PVTS(r, i)->current_screen == SECONDARY )
 	    {
 		dontExit = 1;
+#ifdef HAVE_TABBAR
 		if( i != ATAB(r) )
 		    rxvt_tabbar_highlight_tab( r, i, False);
+#endif
 	    }
 	}
 
@@ -483,7 +487,9 @@ rxvt_clean_exit (rxvt_t* r)
     rxvt_menubar_clean_exit (r);
 # endif
 
+#ifdef HAVE_TABBAR
     rxvt_tabbar_clean_exit (r);
+#endif
 
     if (NOT_NULL(r->TermWin.font))
 	XFreeFont (r->Xdisplay, r->TermWin.font);

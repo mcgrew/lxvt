@@ -655,7 +655,9 @@ rxvt_init_vars(rxvt_t *r)
 
     h = r->h = (struct rxvt_hidden *)rxvt_calloc(1, sizeof(struct rxvt_hidden));
 
+#ifdef HAVE_TABS
 	 SET_NULL (r->vts);
+#endif
 
     SET_NULL(r->Xdisplay);
 #ifdef USE_XIM
@@ -821,7 +823,9 @@ rxvt_init_vars(rxvt_t *r)
     }
 #endif/*USE_FIFO*/
 
+#ifdef HAVE_TABBAR
     r->tabClicked = -1; /* No tab has been clicked by user */
+#endif
 
     h->allowedxerror = 0;
     h->xerror_return = Success;
@@ -2274,8 +2278,10 @@ rxvt_init_win_size( rxvt_t *r )
     if (ISSET_OPTION(r, Opt_showMenu))
 	r->szHint.base_height += rxvt_menubar_rheight (r);
 #endif
+#ifdef HAVE_TABBAR
     if (NOTSET_OPTION(r, Opt2_hideTabbar))
 	r->szHint.base_height += rxvt_tabbar_rheight (r);
+#endif
 
     /* Set the terminal minimal width and height */
     r->szHint.min_width = r->szHint.base_width + r->TermWin.fwidth;
@@ -2362,8 +2368,10 @@ rxvt_init_win_size( rxvt_t *r )
     r->h->window_vt_x = (ISSET_OPTION(r, Opt_scrollBar_right)) ? 
 	    0 : r->szHint.base_width - 2*r->TermWin.int_bwidth;
     r->h->window_vt_y = r->szHint.base_height - 2*r->TermWin.int_bwidth;
+#ifdef HAVE_TABBAR
     if (ISSET_OPTION(r, Opt2_bottomTabbar) && NOTSET_OPTION(r, Opt2_hideTabbar))
 	r->h->window_vt_y -= rxvt_tabbar_rheight (r);
+#endif
 }
 
 
@@ -2793,6 +2801,7 @@ rxvt_init_vts( rxvt_t *r, int page, int profile )
 	return 0;
 
     rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "rxvt_init_vts (r, %d)\n", page));
+#ifdef HAVE_TABS
     LTAB(r)++;
     {
 	/*
@@ -2827,9 +2836,16 @@ rxvt_init_vts( rxvt_t *r, int page, int profile )
 
 	r->vts[page] = temp_vts_page;
     }
+#else
+    if (page || r->ntabs)
+    {
+        rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "\tThe terminal has already been allocated.\n"));
+	return 0;
+    }
+#endif
 
+    MEMSET( PVTS(r, page), 0, sizeof(term_t)); //r->vterm[0] ) );
     PVTS(r, page)->vts_idx = page;
-    MEMSET( r->vts[page], 0, sizeof(term_t)); //r->vterm[0] ) );
 
     /* Set the profile number */
     PVTS(r, page)->profileNum	= profile;
@@ -3011,7 +3027,9 @@ rxvt_destroy_termwin( rxvt_t *r, int page )
     }
 #endif
 
+#ifdef HAVE_TABS
     rxvt_free (PVTS(r, page));
+#endif
     rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "\tThe terminal %d has been successfully freed.\n", page));
 }
 
@@ -3041,7 +3059,9 @@ rxvt_create_termwin( rxvt_t *r, int page, int profile,
     putenv (r->h->env_tabtitle);
 #endif
 
+#ifdef HAVE_TABBAR
     PVTS(r, page)->tab_width = rxvt_tab_width (r, PVTS(r, page)->tab_title);
+#endif
 
     /*
      * Now switch fg/bg colors before creating VT because this will use the
@@ -3661,9 +3681,15 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
     }
 # endif
 
+#ifdef HAVE_TABS
+#ifdef HAVE_TABBAR
     rxvt_tabbar_create (r);
     if (NOTSET_OPTION(r, Opt2_hideTabbar))
 	rxvt_tabbar_show (r);
+#else
+    rxvt_tabbar_init (r);
+#endif
+#endif
 
     XMapWindow (r->Xdisplay, r->TermWin.parent);
 
@@ -3791,7 +3817,7 @@ rxvt_run_command(rxvt_t *r, int page, const char **argv)
     rxvt_get_ttymode(&(PVTS(r, page)->tio), er);
 
 
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "argv = 0x%x\n", (unsigned int) argv));
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "argv = 0x%x\n", (unsigned long) argv));
 #ifndef __QNX__
     /*
      * Spin off the command interpreter

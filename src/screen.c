@@ -67,7 +67,7 @@
 */
 #define ZERO_SCROLLBACK(R, P)			    \
     if (NOTSET_OPTION(R, Opt_scrollTtyOutputInhibit))	\
-	(R)->vts[(P)]->view_start = 0
+	PVTS((R),(P))->view_start = 0
 
 #define CLEAR_SELECTION(R)			\
     (R)->selection.beg.row = \
@@ -870,9 +870,11 @@ rxvt_scr_change_screen(rxvt_t* r, int page, int scrn)
 # endif
 #endif
 
+#ifdef HAVE_TABBAR
     /* Need to update tabbar buttons */
     if (ISSET_OPTION(r, Opt2_protectSecondary))
 	rxvt_tabbar_draw_buttons (r);
+#endif
 
     return scrn;
 }

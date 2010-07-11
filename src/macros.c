@@ -98,6 +98,7 @@ rxvt_toggle_subwin( rxvt_t *r, const unsigned char *str)
     if (IS_NULL(str) || (char) 0 == *str ||
 	    STRCHR( str, 't') || STRCHR( str, 'T' ) )
     {
+#ifdef HAVE_TABBAR
 	/*
 	 * Backward compatibility -- If str is NULL or empty, then toggle the
 	 * tabbar visibility.
@@ -120,10 +121,12 @@ rxvt_toggle_subwin( rxvt_t *r, const unsigned char *str)
 	     */
 	    if( rxvt_tabbar_show(r)) rxvt_resize_on_subwin (r, SHOW_TABBAR);
 	}
+#endif
 
 	return;
     }
 
+#ifdef HAVE_TABBAR
     /*
      * The remainder of this function assumes a non-empty string.
      */
@@ -154,6 +157,7 @@ rxvt_toggle_subwin( rxvt_t *r, const unsigned char *str)
 
 	return;
     }
+#endif
 
 
 #ifdef HAVE_SCROLLBARS
@@ -947,6 +951,7 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	    break;
 
 	case MacroFnGoto:
+#ifdef HAVE_TABS
 	{
 	    /* Goto tab in position astr */
 	    int tabno;
@@ -987,8 +992,10 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	    rxvt_activate_page( r, tabno);
 	    break;
 	}
+#endif
 
 	case MacroFnMove:
+#ifdef HAVE_TABBAR
 	    /* Move active tab to position in astr */
 	    if( alen > 0 && *(astr) )
 	    {
@@ -1001,6 +1008,7 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	    }
 
 	    else
+#endif
 		retval = -1;
 	    break;
 

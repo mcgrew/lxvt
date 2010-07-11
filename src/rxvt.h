@@ -1325,9 +1325,9 @@ enum {
 #define PrivMode_mouse_report	(PrivMode_MouseX10|PrivMode_MouseX11)
 #define PrivMode(test,bit,page)			\
     if (test)					\
-	r->vts[page]->PrivateModes |= (bit);	\
+	PVTS(r, page)->PrivateModes |= (bit);	\
     else					\
-	r->vts[page]->PrivateModes &= ~(bit)
+	PVTS(r, page)->PrivateModes &= ~(bit)
 
 #ifdef ALLOW_132_MODE
 # define PrivMode_Default			 \

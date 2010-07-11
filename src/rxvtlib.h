@@ -508,9 +508,12 @@ typedef struct
 #endif	/* HAVE_SCROLLBARS */
 
 
+#ifdef HAVE_TABS
 typedef struct
 {
+#ifdef HAVE_TABBAR
     char	state;	/* tabbar state */
+#endif
 
     short	ltab;	/* last tab */
     short	atab;	/* active tab */
@@ -518,6 +521,7 @@ typedef struct
     short	fvtab;	/* first visible tab */
     short	lvtab;	/* last visible tab */
 
+#ifdef HAVE_TABBAR
     Window	win;
 #ifdef BACKGROUND_IMAGE
     Bool	    hasPixmap;	/* has a background Pixmap */
@@ -538,7 +542,9 @@ typedef struct
     XftColor	    xftfg;  /* foreground */
     XftColor	    xftifg; /* background */
 #endif
+#endif
 } tabBar_t;
+#endif
 
 
 #ifdef BACKGROUND_IMAGE
@@ -644,7 +650,9 @@ typedef struct
     uint16_t	    prev_ncol; /* previous columns */
     uint16_t	    prev_nrow; /* previous rows */
     /* moved from tab_t */
+#ifdef HAVE_TABBAR
     short		tab_width;	/* tab width */
+#endif
     char UNTAINTED *	tab_title;  	/* tab title */
 
     char	    *title_format;	/* Format to be used to display the tab
@@ -908,7 +916,9 @@ typedef struct rxvt_vars
 #ifdef HAVE_MENUBAR
     menuBar_t	    menuBar;
 #endif
+#ifdef HAVE_TABS
     tabBar_t	    tabBar;
+#endif
     Display*	    Xdisplay;
     uint32_t	    Options[MAX_OPTION_ARRAY];
     XSizeHints      szHint;
@@ -957,10 +967,16 @@ typedef struct rxvt_vars
      * displayed term structures.
 	  * 2008-08-08 Jehan: done!
      */
+#ifdef HAVE_TABS
     term_t**	    vts;
+#else
+    term_t          vts;
+#endif
 
+#ifdef HAVE_TABBAR
     short	    tabClicked;		    /* Tab clicked by user. Used for
 					       moving tabs by drag and drop. */
+#endif
 
     unsigned char   BOOLVAR( cleanDeadChilds, 1 ),
 					    /* True if we have marked some
@@ -1065,44 +1081,56 @@ typedef enum
 
 
 
+#ifdef HAVE_TABS
 /* MACROS for tab/page number */
 #define ATAB(R)	    ((R)->tabBar.atab)
 #define LTAB(R)	    ((R)->tabBar.ltab)
 #define FVTAB(R)    ((R)->tabBar.fvtab)
 #define LVTAB(R)    ((R)->tabBar.lvtab)
 #define PTAB(R)	    ((R)->tabBar.ptab)
+#else
+#define ATAB(R)	    0
+#define LTAB(R)	    0
+#define FVTAB(R)    0
+#define LVTAB(R)    0
+#define PTAB(R)	    0
+#endif
 
-#define APAGE(R)    ((R)->tabBar.atab)
-#define LPAGE(R)    ((R)->tabBar.ltab)
-#define FVPAGE(R)   ((R)->tabBar.fvtab)
-#define LVPAGE(R)   ((R)->tabBar.lvtab)
-#define PPAGE(R)    ((R)->tabBar.ptab)
+#define APAGE(R)    ATAB(R)
+#define LPAGE(R)    LTAB(R)
+#define FVPAGE(R)   FVTAB(R)
+#define LVPAGE(R)   LVTAB(R)
+#define PPAGE(R)    PTAB(R)
 
 /* MACROS for vts structure */
-#define AVTS(R)	    ((R)->vts[(R)->tabBar.atab])
-#define LVTS(R)	    ((R)->vts[(R)->tabBar.ltab])
+#ifdef HAVE_TABS
 #define PVTS(R, P)  ((R)->vts[(P)])
+#else
+#define PVTS(R, P)  ((P == 0) ? &(R)->vts : NULL)
+#endif
+#define AVTS(R)	    PVTS(R, ATAB(R))
+#define LVTS(R)	    PVTS(R, LTAB(R))
 
 #define SEL(R)	    ((R)->selection)
 
-#define ASCR(R)	    ((R)->vts[(R)->tabBar.atab]->screen)
-#define PSCR(R, P)  ((R)->vts[(P)]->screen)
+#define ASCR(R)	    (AVTS(R)->screen)
+#define PSCR(R, P)  (PVTS((R), (P))->screen)
 
 
 
 /* macros for private/saved mode of term_t */
 #define ISSET_PMODE(R, P, V)   \
-    ((R)->vts[(P)]->PrivateModes & (V))
+    (PVTS((R), (P))->PrivateModes & (V))
 #define SET_PMODE(R, P, V)  \
-    ((R)->vts[(P)]->PrivateModes |= (V))
+    (PVTS((R), (P))->PrivateModes |= (V))
 #define UNSET_PMODE(R, P, V)  \
-    ((R)->vts[(P)]->PrivateModes &= ~(V))
+    (PVTS((R), (P))->PrivateModes &= ~(V))
 #define ISSET_SMODE(R, P, V)   \
-    ((R)->vts[(P)]->SavedModes & (V))
+    (PVTS((R), (P))->SavedModes & (V))
 #define SET_SMODE(R, P, V)  \
-    ((R)->vts[(P)]->SavedModes |= (V))
+    (PVTS((R), (P))->SavedModes |= (V))
 #define UNSET_SMODE(R, P, V)  \
-    ((R)->vts[(P)]->SavedModes &= ~(V))
+    (PVTS((R), (P))->SavedModes &= ~(V))
 
 
 /* Macro to determine weather we should the i-th tab or not */

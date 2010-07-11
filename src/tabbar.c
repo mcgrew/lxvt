@@ -33,6 +33,7 @@
 #endif
 
 
+#ifdef HAVE_TABBAR
 #ifdef HAVE_LIBXPM
 
 #include "close_term.xpm"
@@ -104,6 +105,7 @@
 
 #define CHOOSE_GC_FG(R, PIXCOL)	\
     XSetForeground ((R)->Xdisplay, (R)->tabBar.gc, (PIXCOL))
+#endif
 
 /******************************************************************************
 *			Begin internal routine prototypes.		      *
@@ -112,6 +114,7 @@
 *			End internal routine prototypes.		      *
 ******************************************************************************/
 
+#ifdef HAVE_TABBAR
 enum {XPM_TERM,XPM_CLOSE,XPM_LEFT,XPM_RIGHT,NB_XPM};
 
 #ifdef HAVE_LIBXPM
@@ -140,10 +143,14 @@ static Pixmap img_emask[NB_XPM]; /* shape mask image */
 static Pixmap img_d[NB_XPM]; /* disable image */
 static Pixmap img_dmask[NB_XPM]; /* shape mask image */
 #endif
+
+#endif
     
 extern char **cmd_argv;
 
 
+#ifdef HAVE_TABS
+#ifdef HAVE_TABBAR
 /*
  * Width between two tabs:
  * From the left of the first tab to the right of the second tab
@@ -1126,16 +1133,19 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
 	    sx+BTN_WIDTH, topoff, sx+BTN_WIDTH, topoff+BTN_HEIGHT);
     }
 }
+#endif
 
 
 /*
  * Initialize global data structure of all tabs
  */
 /* INTPROTO */
-static void
-init_tabbar (rxvt_t* r)
+void
+rxvt_tabbar_init (rxvt_t* r)
 {
+#ifdef HAVE_TABBAR
     r->tabBar.state = 0;    /* not mapped yet */
+#endif
 
     LTAB(r) = -1;   /* the last tab */
     r->tabBar.atab = 0;	/* the active tab */
@@ -1143,6 +1153,7 @@ init_tabbar (rxvt_t* r)
     LVTAB(r) = 0;   /* last visiable tab */
     r->tabBar.ptab = 0;	    /* previous active tab */
 
+#ifdef HAVE_TABBAR
     /* Make sure that font has been initialized */
 #ifdef XFT_SUPPORT
     if (ISSET_OPTION (r, Opt_xft))
@@ -1157,7 +1168,9 @@ init_tabbar (rxvt_t* r)
     r->tabBar.rsbg =
     r->tabBar.rsifg =
     r->tabBar.rsibg = 0;
+#endif
 }
+#endif
 
 
 /* INTPROTO */
@@ -1232,11 +1245,13 @@ rxvt_append_page( rxvt_t* r, int profile,
     if(
 	    cmd_argv	    /* Argument specified via -e option */
 	    && command == NULL /* No command specified (e.g. via NewTab macro) */
+#ifdef HAVE_TABS
 	    && (
 		//LTAB(r) == 0			    /* First tab */
 		LTAB (r) == - 1
 		|| ISSET_OPTION(r, Opt2_cmdAllTabs)  /* -at option */
 	       )
+#endif
       )
 	argv = cmd_argv;
     else
@@ -1274,7 +1289,13 @@ rxvt_append_page( rxvt_t* r, int profile,
 		title = argv[0];
 	}
     }
-    if (!rxvt_create_termwin( r, LTAB(r) + 1, profile, title ))
+    if (!rxvt_create_termwin( r, 
+#ifdef HAVE_TABS
+		LTAB(r) + 1,
+#else
+		0,
+#endif
+		profile, title ))
     {
 	rxvt_dbgmsg ((DBG_ERROR, DBG_TABBAR,
 		    "\tThe initialization of the new tab failed.\n"));
@@ -1424,19 +1445,22 @@ rxvt_append_page( rxvt_t* r, int profile,
 	rxvt_tt_write( r, LTAB(r), (const unsigned char*) "\n", 1 );
     }
 
+#ifdef HAVE_TABS
     /*
      * Now update active page information
      */
     PTAB(r) = ATAB(r); /* set last previous tab */
     ATAB(r) = LTAB(r); /* set the active tab */
+#endif
 
     /* update mapped flag */
     AVTS(r)->mapped = 1;
 
     /* first tab is special since ptab = atab now */
     if (PTAB(r) != ATAB(r))
-	PVTS(r, r->tabBar.ptab)->mapped = 0;
+	PVTS(r, PTAB(r))->mapped = 0;
 
+#ifdef HAVE_TABBAR
     /* Adjust visible tabs */
     rxvt_tabbar_set_visible_tabs (r, True); /* Send expose events to tabbar */
     refresh_tabbar_tab( r, PTAB(r));	    /* PTAB will need to be drawn as
@@ -1451,6 +1475,7 @@ rxvt_append_page( rxvt_t* r, int profile,
 	    && rxvt_tabbar_show( r )
       )
 	rxvt_resize_on_subwin( r, SHOW_TABBAR);
+#endif
 
     /* synchronize terminal title with tab title */
     if (ISSET_OPTION(r, Opt2_syncTabTitle))
@@ -1499,12 +1524,15 @@ rxvt_remove_page (rxvt_t* r, short page)
     /* destroy the virtual terminal window */
     rxvt_destroy_termwin (r, page);
 
+#ifdef HAVE_TABS
     if (LTAB (r) == 0)
     {
 	/* quit the last the terminal, exit the application */
 	rxvt_free (r->vts);
 	SET_NULL (r->vts);
+#endif
 	rxvt_clean_exit (r);
+#ifdef HAVE_TABS
     }
 
     /* update total number of tabs */
@@ -1515,7 +1543,9 @@ rxvt_remove_page (rxvt_t* r, short page)
 	FVTAB(r)--;
     if (LVTAB(r) > page)
     {
+#ifdef HAVE_TABBAR
 	refresh_tabbar_tab (r, LVTAB (r));
+#endif
 	LVTAB(r)--;
     }
     /* Reorganize the tabs array. */
@@ -1524,7 +1554,9 @@ rxvt_remove_page (rxvt_t* r, short page)
     {
 	PVTS(r, i) = PVTS(r, i+1);
 	PVTS(r, i)->vts_idx = i;
+#ifdef HAVE_TABBAR
 	refresh_tabbar_tab( r, i);
+#endif
     }
 
     {
@@ -1580,6 +1612,7 @@ rxvt_remove_page (rxvt_t* r, short page)
     /* Adjust the number of FD's we select() for.  */
     rxvt_adjust_fd_number(r);
 
+#ifdef HAVE_TABBAR
     /* adjust visible tabs */
     rxvt_tabbar_set_visible_tabs (r, True);
     refresh_tabbar_tab( r, ATAB(r));	/* Active tab has changed */
@@ -1594,6 +1627,7 @@ rxvt_remove_page (rxvt_t* r, short page)
 	     */
 	    rxvt_resize_on_subwin (r, HIDE_TABBAR);
     }
+#endif
 
     /* Switch fg/bg colors */
     rxvt_set_vt_colors( r, ATAB(r) );
@@ -1615,6 +1649,7 @@ rxvt_remove_page (rxvt_t* r, short page)
     if (ISSET_OPTION(r, Opt2_syncTabIcon))
 	rxvt_set_icon_name(r,
 		(const unsigned char*) PVTS(r, ATAB(r))->tab_title);
+#endif
 }
 
 
@@ -1640,10 +1675,13 @@ rxvt_tabbar_set_title (rxvt_t* r, short page, const unsigned char TAINTED * str)
 	rxvt_free (PVTS(r, page)->tab_title);
 	PVTS(r, page)->tab_title = n_title;
 
+#ifdef HAVE_TABBAR
 	/* Compute the new width of the tab */
 	PVTS(r, page)->tab_width = rxvt_tab_width (r, n_title);
+#endif
     }
 
+#ifdef HAVE_TABBAR
     /*
      * If visible tab's title is changed, refresh tab bar
      */
@@ -1653,6 +1691,7 @@ rxvt_tabbar_set_title (rxvt_t* r, short page, const unsigned char TAINTED * str)
 	rxvt_tabbar_set_visible_tabs (r, True);
 	refresh_tabbar_tab(r, page);
     }
+#endif
 
     /* synchronize terminal title with active tab title */
     if (ISSET_OPTION(r, Opt2_syncTabTitle) &&
@@ -1674,6 +1713,7 @@ rxvt_tabbar_set_title (rxvt_t* r, short page, const unsigned char TAINTED * str)
 void
 rxvt_activate_page (rxvt_t* r, short index)
 {
+#ifdef HAVE_TABS
     /* shortcut */
     if (/* !r->tabBar.state ||
 	NOT_WIN(r->tabBar.win) || */
@@ -1683,9 +1723,11 @@ rxvt_activate_page (rxvt_t* r, short index)
     AVTS(r)->mapped = 0;
     r->tabBar.ptab = ATAB(r);
     ATAB(r) = index;
+#endif
     AVTS(r)->mapped = 1;
     AVTS(r)->highlight = 0; /* clear highlight flag */
     
+#ifdef HAVE_TABBAR
     /*
      * Now the visible tabs may be changed, recompute the visible
      * tabs before redrawing.
@@ -1697,6 +1739,7 @@ rxvt_activate_page (rxvt_t* r, short index)
     }
     refresh_tabbar_tab( r, ATAB(r));
     refresh_tabbar_tab( r, PTAB(r));
+#endif
 
     /* Switch VT fg/bg colors */
     rxvt_set_vt_colors( r, ATAB(r) );
@@ -1721,6 +1764,7 @@ rxvt_activate_page (rxvt_t* r, short index)
 }
 
 
+#ifdef HAVE_TABBAR
 /*
  * Change the width of the tab bar
  */
@@ -2067,7 +2111,7 @@ rxvt_tabbar_create (rxvt_t* r)
 #endif
 
 
-    init_tabbar (r);
+    rxvt_tabbar_init (r);
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_TABBAR,"Creating tabbar\n"));
 
 
@@ -2663,6 +2707,7 @@ rxvt_tabbar_move_tab (rxvt_t* r, short newPage)
     if( ISSET_OPTION( r, Opt2_syncTabTitle ) )
 	sync_tab_title( r, ATAB(r) );
 }
+#endif
 
 /*
  * Synchronize the window title to the title of the tab "page".
