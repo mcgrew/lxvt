@@ -13,7 +13,7 @@
 #
 # Install this file using "tic mrxvt.terminfo".
 #
-rxvt|mrxvt terminal emulator (X Window System), 
+mrxvt|mrxvt terminal emulator (X Window System), 
 	am, bce, eo, km, mir, msgr, xenl, xon, 
 	colors#256, cols#80, it#8, lines#24, ncv@, pairs#32717, 
 	acsc=``aaffggiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~, 
