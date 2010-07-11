@@ -1042,8 +1042,10 @@ enum colour_list {
     Color_pointer,
     Color_border,
     Color_ufbg,
-#ifndef NO_BOLD_UNDERLINE_REVERSE
+#if !(defined(NO_BRIGHTCOLOR) && defined(NO_BOLD_UNDERLINE_REVERSE))
     Color_BD,
+#endif
+#ifndef NO_BOLD_UNDERLINE_REVERSE
     Color_UL,
     Color_RV,
 #endif

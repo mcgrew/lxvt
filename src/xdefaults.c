@@ -299,8 +299,10 @@ static const struct {
     RSTRG(Rs_color + minBrightCOLOR + 6, "color14", "color", 0),
     RSTRG(Rs_color + minBrightCOLOR + 7, "color15", "color", 0),
 #endif		    /* NO_BRIGHTCOLOR */
-#ifndef NO_BOLD_UNDERLINE_REVERSE
+#if !(defined(NO_BRIGHTCOLOR) && defined(NO_BOLD_UNDERLINE_REVERSE))
     RSTRG(Rs_color + Color_BD, "colorBD", "color", 0),
+#endif
+#ifndef NO_BOLD_UNDERLINE_REVERSE
     RSTRG(Rs_color + Color_UL, "colorUL", "color", 0),
     RSTRG(Rs_color + Color_RV, "colorRV", "color", 0),
 #endif		    /* ! NO_BOLD_UNDERLINE_REVERSE */

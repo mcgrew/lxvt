@@ -560,8 +560,10 @@ const char *const def_colorName[] = {
     NULL,	    /* Color_pointer		    */
     NULL,	    /* Color_border		    */
     NULL,	    /* Color_ufbg		    */
-#ifndef NO_BOLD_UNDERLINE_REVERSE
+#if !(defined(NO_BRIGHTCOLOR) && defined(NO_BOLD_UNDERLINE_REVERSE))
     NULL,	    /* Color_BD			    */
+#endif
+#ifndef NO_BOLD_UNDERLINE_REVERSE
     NULL,	    /* Color_UL			    */
     NULL,	    /* Color_RV			    */
 #endif		    /* ! NO_BOLD_UNDERLINE_REVERSE  */
@@ -1409,8 +1411,10 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
 #endif		    /* NO_CURSORCOLOR */
     rxvt_color_aliases(r, Color_pointer);
     rxvt_color_aliases(r, Color_border);
-#ifndef NO_BOLD_UNDERLINE_REVERSE
+#if !(defined(NO_BRIGHTCOLOR) && defined(NO_BOLD_UNDERLINE_REVERSE))
     rxvt_color_aliases(r, Color_BD);
+#endif
+#ifndef NO_BOLD_UNDERLINE_REVERSE
     rxvt_color_aliases(r, Color_UL);
     rxvt_color_aliases(r, Color_RV);
 #endif		    /* ! NO_BOLD_UNDERLINE_REVERSE */

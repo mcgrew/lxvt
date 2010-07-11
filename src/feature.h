@@ -70,6 +70,11 @@
 /* #define BOLD_BRIGHTENS_256_COLORS */
 
 /*
+ * Make the BLINK attribute brighten colors
+ */
+#define BLINK_BRIGHTCOLOR
+
+/*
  * Make colours match xterm colours instead of `traditional' rxvt colours
  */
 #define XTERM_COLORS
@@ -77,7 +82,7 @@
 /*
  * Disable separate colours for bold, underline and reverse video
  */
-/* #define NO_BOLD_UNDERLINE_REVERSE */
+#define NO_BOLD_UNDERLINE_REVERSE
 
 /*
  * Disable using simulated bold using overstrike.  You can also turn off
@@ -101,7 +106,7 @@
 /*
  * Add support for '-hc colour' for background highlight of selection
  */
-#define OPTION_HC
+// #define OPTION_HC
 
 /*
  * Define maximum possible columns and rows

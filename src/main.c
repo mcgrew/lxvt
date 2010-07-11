@@ -2468,7 +2468,7 @@ rxvt_set_colorfgbg(rxvt_t *r)
     {
 	if (
 		r->pixColorsFocus[Color_fg] == r->pixColorsFocus[i]
-# ifndef NO_BOLD_UNDERLINE_REVERSE
+# if !(defined(NO_BRIGHTCOLOR) && defined(NO_BOLD_UNDERLINE_REVERSE))
 		&& r->pixColorsFocus[Color_fg] == r->pixColorsFocus[Color_BD]
 # endif
 		/* if we wanted boldFont to have precedence */

@@ -5919,10 +5919,12 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	case XTerm_Color_pointer:
 	    rxvt_set_window_color(r, page, Color_pointer, str);
 	    break;
-#ifndef NO_BOLD_UNDERLINE_REVERSE
+#if !(defined(NO_BRIGHTCOLOR) && defined(NO_BOLD_UNDERLINE_REVERSE))
 	case XTerm_Color_BD:
 	    rxvt_set_window_color(r, page, Color_BD, str);
 	    break;
+#endif
+#ifndef NO_BOLD_UNDERLINE_REVERSE
 	case XTerm_Color_UL:
 	    rxvt_set_window_color(r, page, Color_UL, str);
 	    break;
