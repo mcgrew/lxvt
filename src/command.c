@@ -5886,7 +5886,7 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
     {
 	case XTerm_title:   /* Set tab / term title */
 	case XTerm_name:    /* also set icon title */
-#ifdef SET_TAB_TITLE_ON_XTERM_SEQUENCE
+#if defined(HAVE_TABS) && defined(SET_TAB_TITLE_ON_XTERM_SEQUENCE)
 	    rxvt_tabbar_set_title (r, page, (const unsigned char TAINTED*) str);
 #ifndef SET_TAB_TITLE_NOT_WIN_TITLE
 	    /*
