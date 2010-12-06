@@ -176,8 +176,7 @@ void           rxvt_process_enter            (rxvt_t*, XCrossingEvent*);
 void           rxvt_process_leave            (rxvt_t*, XCrossingEvent*);
 #endif
 void	       rxvt_change_colors_on_focus	     (rxvt_t*);
-void           rxvt_process_focusin          (rxvt_t*, XFocusChangeEvent*);
-void           rxvt_process_focusout         (rxvt_t*, XFocusChangeEvent*);
+void           rxvt_process_focus            (rxvt_t*, XFocusChangeEvent*);
 int            rxvt_calc_colrow              (rxvt_t* r, unsigned int width, unsigned int height);
 void           rxvt_resize_sub_windows       (rxvt_t* r);
 void           rxvt_resize_on_configure      (rxvt_t* r, unsigned int width, unsigned int height);
@@ -3444,51 +3443,39 @@ rxvt_change_colors_on_focus( rxvt_t *r )
 
 /* INTPROTO */
 void
-rxvt_process_focusin (rxvt_t* r, XFocusChangeEvent* ev)
+rxvt_process_focus (rxvt_t* r, XFocusChangeEvent* ev)
 {
     if( ev->mode == NotifyGrab || ev->mode == NotifyUngrab )
 	return;
 
     if (ev->window == r->TermWin.parent)
     {
-	rxvt_dbgmsg(( DBG_DEBUG, DBG_COMMAND, "%s( r, ev). ev->mode=%d\n",
-		    __func__, ev->mode ));
+	while ( XCheckTypedWindowEvent( r->Xdisplay, ev->window, FocusIn,  (XEvent *)ev) ||
+		XCheckTypedWindowEvent( r->Xdisplay, ev->window, FocusOut, (XEvent *)ev));
+	Bool focus = ev->type == FocusIn;
 
-	r->TermWin.focus = 1;
-	AVTS(r)->want_refresh = 1; /* Cursor needs to be refreshed */
+	rxvt_dbgmsg(( DBG_DEBUG, DBG_COMMAND, "%s( r, ev) %d. ev->mode=%d\n",
+		    __func__, focus, ev->mode ));
 
-#ifdef USE_XIM
-	if (NOT_NULL(r->h->Input_Context))
-	    XSetICFocus(r->h->Input_Context);
-#endif
+	if (r->TermWin.focus == focus)
+		return;
 
-	rxvt_change_colors_on_focus (r);
-    }
-}
-
-
-/* INTPROTO */
-void
-rxvt_process_focusout (rxvt_t* r, XFocusChangeEvent* ev)
-{
-    if( ev->mode == NotifyGrab || ev->mode == NotifyUngrab )
-	return;
-
-    if (ev->window == r->TermWin.parent)
-    {
-	rxvt_dbgmsg(( DBG_DEBUG, DBG_COMMAND, "%s( r, ev). ev->mode=%d\n",
-		    __func__, ev->mode ));
-
-	r->TermWin.focus = 0;
+	r->TermWin.focus = focus;
 	AVTS(r)->want_refresh = 1; /* Cursor needs to be refreshed */
 
 #ifdef CURSOR_BLINK
-	r->h->hidden_cursor = 0;
+	if (!focus)
+	    r->h->hidden_cursor = 0;
 #endif
 
 #ifdef USE_XIM
 	if (NOT_NULL(r->h->Input_Context))
+	{
+	  if (focus)
+	    XSetICFocus(r->h->Input_Context);
+	  else
 	    XUnsetICFocus(r->h->Input_Context);
+	}
 #endif
 
 	rxvt_change_colors_on_focus (r);
@@ -4600,11 +4587,8 @@ rxvt_process_x_event(rxvt_t* r, XEvent *ev)
 #endif	/* MONITOR_ENTER_LEAVE */
 
 	case FocusIn:
-	    rxvt_process_focusin (r, (XFocusChangeEvent*) ev);
-	    break;
-
 	case FocusOut:
-	    rxvt_process_focusout (r, (XFocusChangeEvent*) ev);
+	    rxvt_process_focus (r, (XFocusChangeEvent*) ev);
 	    break;
 
 	case ConfigureNotify:
