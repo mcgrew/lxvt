@@ -4031,8 +4031,8 @@ rxvt_run_child(rxvt_t* r, int page, const char **argv)
 #endif	/* SRIOCSREDIR */
     }
 
-    /* set window size */
-    rxvt_tt_winsize( STDIN_FILENO, r->TermWin.ncol, r->TermWin.nrow, 0 );
+    /* set window size: this randomly breaks initial sizing */
+    /* rxvt_tt_winsize( STDIN_FILENO, r->TermWin.ncol, r->TermWin.nrow, 0 ); */
 
 #ifndef __QNX__
     /* command interpreter path */

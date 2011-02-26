@@ -656,6 +656,9 @@ rxvt_scr_reset(rxvt_t* r, int page)
 	}
     }
 
+    if (PVTS(r, page)->prev_nrow == nrow && PVTS(r, page)->prev_ncol == ncol)
+	    return;
+
     PVTS(r, page)->prev_nrow = nrow;
     PVTS(r, page)->prev_ncol = ncol;
 
