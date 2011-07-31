@@ -90,9 +90,6 @@ typedef struct
     uint16_t	    int_bwidth; /* internal border width */
     uint16_t	    ext_bwidth; /* external border width */
 
-    uint16_t	    maxTabWidth,    /* max width of tab title to display */
-		    minVisibleTabs; /* Minimum number of tabs to try and keep
-				       visible */
 #ifndef NO_LINESPACE
     uint16_t	    lineSpace;	/* space between rows */
 #endif
@@ -258,15 +255,11 @@ typedef enum
 #define Opt_meta8		    ((1LU<<13) | IS_OPTION1)
 #define Opt_scrollTtyOutputInhibit  ((1LU<<14) | IS_OPTION1)
 #define Opt_scrollTtyKeypress	    ((1LU<<15) | IS_OPTION1)
-#define Opt_transparent		    ((1LU<<16) | IS_OPTION1)
-#define Opt_forceTransparent	    ((1LU<<17) | IS_OPTION1)
 #define Opt_mc_hack		    ((1LU<<18) | IS_OPTION1)
 #define Opt_tripleclickwords	    ((1LU<<19) | IS_OPTION1)
 #define Opt_mouseWheelScrollPage    ((1LU<<20) | IS_OPTION1)
 #define Opt_pointerBlank	    ((1LU<<21) | IS_OPTION1)
 #define Opt_cursorBlink		    ((1LU<<22) | IS_OPTION1)
-#define Opt_transparent_tabbar	    ((1LU<<26) | IS_OPTION1)
-#define Opt_tabPixmap		    ((1LU<<27) | IS_OPTION1)
 #ifdef XFT_SUPPORT
 # define Opt_xft		    ((1LU<<28) | IS_OPTION1)
 #endif
@@ -290,8 +283,6 @@ typedef enum
 #endif
 #define Opt2_syncTabTitle	    ((1LU<<10) | IS_OPTION2)
 #define Opt2_syncTabIcon	    ((1LU<<11) | IS_OPTION2)
-#define Opt2_hideTabbar		    ((1LU<<12) | IS_OPTION2)
-#define Opt2_bottomTabbar	    ((1LU<<13) | IS_OPTION2)
 #define Opt2_borderLess		    ((1LU<<14) | IS_OPTION2)
 #define Opt2_overrideRedirect	    ((1LU<<15) | IS_OPTION2)
 #define Opt2_broadcast		    ((1LU<<16) | IS_OPTION2)
@@ -310,7 +301,6 @@ typedef enum
 #define Opt2_hlTabOnBell	    ((1LU<<25) | IS_OPTION2)
 #define Opt2_smoothResize	    ((1LU<<26) | IS_OPTION2)
 #define Opt2_smartResize	    ((1LU<<27) | IS_OPTION2)
-#define Opt2_autohideTabbar	    ((1LU<<28) | IS_OPTION2)
 #define Opt2_maximized		    ((1LU<<29) | IS_OPTION2)
 #define Opt2_fullscreen		    ((1LU<<30) | IS_OPTION2)
 
@@ -386,35 +376,11 @@ typedef enum
 #ifdef HAVE_TABS
 typedef struct
 {
-#ifdef HAVE_TABBAR
-    char	state;	/* tabbar state */
-#endif
-
     short	ltab;	/* last tab */
     short	atab;	/* active tab */
     short	ptab;	/* previous active tab */
     short	fvtab;	/* first visible tab */
     short	lvtab;	/* last visible tab */
-
-#ifdef HAVE_TABBAR
-    Window	win;
-    GC		gc;	/* tab background/foreground, grey25/black */
-    unsigned long   fg;	    /* foreground, black */
-    unsigned long   bg;	    /* background, grey25 */
-    unsigned long   ifg;    /* inactive tab foreground, black */
-    unsigned long   ibg;    /* inactive tab background, grey */
-    char	    rsfg;   /* fg resource has changed */
-    char	    rsbg;   /* bg resource has changed */
-    char	    rsifg;  /* ifg resource has changed */
-    char	    rsibg;  /* ibg resource has changed */
-    unsigned long   frame;	/* tab frame, white */
-    unsigned long   delimit;	/* delimit, dark grey */
-#ifdef XFT_SUPPORT
-    XftDraw*	    xftwin; /* XFT window */
-    XftColor	    xftfg;  /* foreground */
-    XftColor	    xftifg; /* background */
-#endif
-#endif
 } tabBar_t;
 #endif
 
@@ -485,9 +451,6 @@ typedef struct
     uint16_t	    prev_ncol; /* previous columns */
     uint16_t	    prev_nrow; /* previous rows */
     /* moved from tab_t */
-#ifdef HAVE_TABBAR
-    short		tab_width;	/* tab width */
-#endif
     char UNTAINTED *	tab_title;  	/* tab title */
 
     char	    *title_format;	/* Format to be used to display the tab
@@ -659,13 +622,11 @@ enum
     MacroFnExec,
     MacroFnClose,
     MacroFnGoto,
-    MacroFnMove,
     MacroFnScroll,
     MacroFnCopy,
     MacroFnPaste,
     MacroFnPasteFile,
     MacroFnMonitorTab,
-    MacroFnToggleSubwin,
     MacroFnFont,
     MacroFnToggleVeryBold,
     MacroFnToggleBoldColors,
@@ -745,9 +706,6 @@ typedef struct rxvt_vars
      *   Changes to structure here require library version number change
      */
     TermWin_t	    TermWin;
-#ifdef HAVE_TABS
-    tabBar_t	    tabBar;
-#endif
     Display*	    Xdisplay;
     uint32_t	    Options[MAX_OPTION_ARRAY];
     XSizeHints      szHint;
@@ -801,11 +759,6 @@ typedef struct rxvt_vars
     term_t          vts;
 #endif
 
-#ifdef HAVE_TABBAR
-    short	    tabClicked;		    /* Tab clicked by user. Used for
-					       moving tabs by drag and drop. */
-#endif
-
     unsigned char   BOOLVAR( cleanDeadChilds, 1 ),
 					    /* True if we have marked some
 					       children as dead, but not called
@@ -849,9 +802,7 @@ typedef struct rxvt_vars
 
 typedef enum
 {
-    HIDE_TABBAR = 0,
-    SHOW_TABBAR,
-    RESIZE_FONT,
+    RESIZE_FONT = 0,
     X_CONFIGURE,
 } resize_reason_t;
 

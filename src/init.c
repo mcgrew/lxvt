@@ -783,10 +783,6 @@ rxvt_init_vars(rxvt_t *r)
     }
 #endif/*USE_FIFO*/
 
-#ifdef HAVE_TABBAR
-    r->tabClicked = -1; /* No tab has been clicked by user */
-#endif
-
     h->allowedxerror = 0;
     h->xerror_return = Success;
     return 0;
@@ -1019,32 +1015,6 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
 	if( !rs[Rs_iconName] )
 	    rs[Rs_iconName] = rs[Rs_name];
     }
-
-    if( rs[Rs_maxTabWidth] )
-    {
-	register int	tmp = atoi( rs[ Rs_maxTabWidth]);
-	r->TermWin.maxTabWidth = ( tmp >=1 && tmp <= MAX_DISPLAY_TAB_TXT ) ?
-					tmp : MAX_DISPLAY_TAB_TXT;
-    }
-    else
-	/*
-	 * If we're using Xft, then we will probably also use a PFont. So we
-	 * should set this to the maximum possible.
-	 */
-	r->TermWin.maxTabWidth =
-#ifdef XFT_SUPPORT
-	    ISSET_OPTION(r, Opt_xft) ? MAX_DISPLAY_TAB_TXT :
-#endif
-	    DEFAULT_DISPLAY_TAB_TXT;
-
-
-    if( rs[Rs_minVisibleTabs] )
-    {
-	register int	n = atoi( rs[Rs_minVisibleTabs] );
-	r->TermWin.minVisibleTabs = (n >= 2) ?
-	    n : DEFAULT_MIN_VISIBLE_TABS;
-    }
-    else r->TermWin.minVisibleTabs = DEFAULT_MIN_VISIBLE_TABS;
 
 #ifndef NO_FRILLS
     if (rs[Rs_int_bwidth])
@@ -1302,14 +1272,6 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
     rxvt_color_aliases(r, Color_UL);
     rxvt_color_aliases(r, Color_RV);
 #endif		    /* ! NO_BOLD_UNDERLINE_REVERSE */
-
-    /*
-     * On startup, use autohideTabbar to override hideTabbar. Thus on startup,
-     * using autohideTabbar will only display the tabbar if there are multiple
-     * tabs. The user can hide / show the tabbar using a macro at will.
-     */
-    if(ISSET_OPTION(r, Opt2_autohideTabbar))
-	SET_OPTION(r, Opt2_hideTabbar);
 
     /* Cleanup the macro list */
     rxvt_cleanup_macros( r );
@@ -2060,10 +2022,6 @@ rxvt_init_win_size( rxvt_t *r )
     /* Calculate the base width and height */
     r->szHint.base_width = 2 * r->TermWin.int_bwidth;
     r->szHint.base_height = 2 * r->TermWin.int_bwidth;
-#ifdef HAVE_TABBAR
-    if (NOTSET_OPTION(r, Opt2_hideTabbar))
-	r->szHint.base_height += rxvt_tabbar_rheight (r);
-#endif
 
     /* Set the terminal minimal width and height */
     r->szHint.min_width = r->szHint.base_width + r->TermWin.fwidth;
@@ -2149,10 +2107,6 @@ rxvt_init_win_size( rxvt_t *r )
     /* Set the terminal window starting position */
     r->h->window_vt_x = r->szHint.base_width - 2*r->TermWin.int_bwidth;
     r->h->window_vt_y = r->szHint.base_height - 2*r->TermWin.int_bwidth;
-#ifdef HAVE_TABBAR
-    if (ISSET_OPTION(r, Opt2_bottomTabbar) && NOTSET_OPTION(r, Opt2_hideTabbar))
-	r->h->window_vt_y -= rxvt_tabbar_rheight (r);
-#endif
 }
 
 
@@ -2806,10 +2760,6 @@ rxvt_create_termwin( rxvt_t *r, int page, int profile,
     putenv (r->h->env_tabtitle);
 #endif
 
-#ifdef HAVE_TABBAR
-    PVTS(r, page)->tab_width = rxvt_tab_width (r, PVTS(r, page)->tab_title);
-#endif
-
     /*
      * Now switch fg/bg colors before creating VT because this will use the
      * fg/bg colors
@@ -3318,13 +3268,7 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
 		    gcmask, &gcvalue);
 
 #ifdef HAVE_TABS
-#ifdef HAVE_TABBAR
-    rxvt_tabbar_create (r);
-    if (NOTSET_OPTION(r, Opt2_hideTabbar))
-	rxvt_tabbar_show (r);
-#else
     rxvt_tabbar_init (r);
-#endif
 #endif
 
     XMapWindow (r->Xdisplay, r->TermWin.parent);

@@ -121,27 +121,8 @@ static const struct {
 	    "format of window title (when syncing to tab title)", 1 ),
 
     /* Global options */
-#ifdef HAVE_TABBAR
-    STRG(Rs_maxTabWidth, "maxTabWidth", "mtw", "number", "maximum (char) title width of all tabs", 0),
-    STRG(Rs_minVisibleTabs, "minVisibleTabs", "mvt", "number",
-	    "minimum # of tabs to keep visible (requires xftpfn)", 0),
-    BOOL( "chopEnd", "ce", Opt3_chopEnd,
-	"Chop right end of tab titles. (If false, chop left end)" ),
-    BOOL( "highlightTabOnBell", "htb", Opt2_hlTabOnBell,
-	    "highlighting inactive tabs only when bell sounds" ),
-#endif
     BOOL( "syncTabTitle", "stt", Opt2_syncTabTitle,
 	    "synchronizing terminal title with tab title" ),
-#ifdef HAVE_TABBAR
-    BOOL( "hideTabbar", "ht", Opt2_hideTabbar,
-	    "hiding tabbar on initialization" ),
-    BOOL( "autohideTabbar", "aht", Opt2_autohideTabbar,
-	    "auto hide/show the tabbar depending on number of open tabs" ),
-    BOOL( "bottomTabbar", "bt", Opt2_bottomTabbar,
-	    "showing tabbar at bottom" ),
-    BOOL( "hideButtons", "hb", Opt2_hideButtons,
-	    "hide buttons on tabbar" ),
-#endif
     BOOL( "syncTabIcon", "sti", Opt2_syncTabIcon,
 	    "synchronizing icon name with tab title" ),
     BOOL( "veryBoldFont", "vbf", Opt2_veryBold,
@@ -222,12 +203,6 @@ static const struct {
 	    "triple click word selection" ),
 #endif
     STRG(Rs_color + Color_ufbg, "ufBackground", "ufbg", "color", "unfocused background color", 0),
-#ifdef HAVE_TABBAR
-    STRG(Rs_tabfg, "tabForeground", "tabfg", "color", "tabbar active tab foreground color", 0),
-    STRG(Rs_tabbg, "tabBackground", "tabbg", "color", "tabbar and active tab background color", 0),
-    STRG(Rs_itabfg, "itabForeground", "itabfg", "color", "tabbar inactive tab foreground color", 0),
-    STRG(Rs_itabbg, "itabBackground", "itabbg", "color", "tabbar inactive tab background color", 0),
-#endif
     RSTRG(Rs_color + minCOLOR + 0, "color0", "color", 0),
     RSTRG(Rs_color + minCOLOR + 1, "color1", "color", 0),
     RSTRG(Rs_color + minCOLOR + 2, "color2", "color", 0),

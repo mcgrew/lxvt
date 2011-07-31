@@ -138,7 +138,6 @@ support_256colors=yes
 support_cursor_blink=yes
 support_pointer_blank=yes
 support_smart_resize=no
-support_tabbar=yes
 dnl: support_fading=yes
 support_xrender=yes
 support_xft=no
@@ -181,7 +180,6 @@ if test "x$support_everything" = "xyes"; then
     support_cursor_blink=yes
     support_pointer_blank=yes
     support_smart_resize=yes
-    support_tabbar=yes
     dnl: support_fading=yes
     support_xrender=yes
     support_xft=yes
@@ -223,7 +221,6 @@ if test "x$support_minimal" = "xyes"; then
     support_cursor_blink=no
     support_pointer_blank=no
     support_smart_resize=no
-    support_tabbar=no
     dnl: support_fading=no
     support_xrender=no
     support_xft=no
@@ -421,16 +418,6 @@ dnl#     AC_DEFINE(SMART_RESIZE, [], [set smart resizing support])
 dnl# fi
 
 
-AC_ARG_ENABLE(
-    tabbar,
-    AC_HELP_STRING([--enable-tabbar],[enable displaying tab bar [[yes]]]),
-    [support_tabbar=$enableval]
-)
-if test "x$support_tabs x$support_tabbar" = "xyes xyes"; then
-    AC_DEFINE(HAVE_TABBAR, [], [allow showing tabbar])
-fi
-
-
 dnl: No longer a compile time option, and OFF_FOCUS_FADING is now always
 dnl: enabled. 2006-09-14 gi1242.
 dnl:
@@ -595,23 +582,6 @@ AC_ARG_WITH(
     [max_prof_option=5]
 )
 AC_DEFINE_UNQUOTED(MAX_PROFILES, $max_prof_option, [the max number of profiles])
-
-
-AC_ARG_WITH(
-	atab-extra,
-	AC_HELP_STRING( [--with-atab-extra=%], [The extra height (as a % of the font height) active tabs should have] ),
-	[atab_extra_option=$withval],
-	[atab_extra_option=20]
-)
-AC_DEFINE_UNQUOTED( ATAB_EXTRA_PERCENT, $atab_extra_option, [The extra height (as a % of the font height) active tabs should have])
-
-AC_ARG_WITH(
-	tab-radius,
-	AC_HELP_STRING( [--with-tab-radius=%], [The radius (as a % of the font X offset) of tab corners]),
-	[tab_radius_option=$withval],
-	[tab_radius_option=100],
-)
-AC_DEFINE_UNQUOTED( TAB_RADIUS_PERCENT, $tab_radius_option, [The radius (as a % of the font X offset) of tab corners])
 
 
 withval=""
@@ -1257,9 +1227,6 @@ echo "256 color mode              : $support_256colors"
 echo "Blink cursor                : $support_cursor_blink"
 echo "Blank pointer               : $support_pointer_blank"
 echo "Smart resize                : $support_smart_resize"
-if test "x$support_tabs" = "xyes"; then
-echo "Tab bar                     : $support_tabbar"
-fi
 dnl: echo "Off focus fading            : $support_fading"
 echo
 echo "Multi-language and font features:"
@@ -1284,8 +1251,6 @@ echo
 echo "Options:"
 echo "Terminal name               : $term_name_option"
 echo "Maximal profiles            : $max_prof_option"
-echo "Extra height% of active tab : $atab_extra_option"
-echo "Radius% of tab corners      : $tab_radius_option"
 if test "x$support_linespace" = "xyes"; then
     echo "Line space                  : $line_space_option"
 fi

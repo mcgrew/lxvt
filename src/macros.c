@@ -37,13 +37,11 @@ static const char *const macroNames[] =
     "Exec",		    /* Exec a program asynchronusly */
     "Close",		    /* Close tab(s) */
     "GotoTab",		    /* Switch to tab */
-    "MoveTab",		    /* Move tab */
     "Scroll",		    /* Scroll up/down */
     "Copy",		    /* Copy selection */
     "Paste",		    /* Paste selection */
     "PasteFile",	    /* Paste the content of a file */
     "MonitorTab",	    /* Monitor tab for activity/inactivity */
-    "ToggleSubwin",	    /* Toggle subwindows (scroll / menu / tabbar) */
     "ResizeFont",	    /* Resize terminal font */
     "ToggleVeryBold",	    /* Toggle use of bold font for colored text */
     "ToggleBoldColors",	    /* Toggle option boldColors */
@@ -76,90 +74,6 @@ unsigned char	macro_set_number    ( unsigned char, unsigned char);
  * without causing code bloat. The idea is that defining "macros" can also
  * enable the user to communicate with mrxvt using escape sequences!
  */
-
-/*
- * str = [+-][s|t|m|b]
- *
- *	'+' means show. '-' means hide. Neither means toggle.
- *
- *	s, t, m, b are the scroll tab and menubars respectively. 'b' is tabbar
- *	buttons.
- *
- * 2006-02-23 gi1242 TODO: Permit hiding / showing more than one sub window at
- * one time. Currently calls to resize_on_subwin must be followed by
- * ConfigureNotify event (which we process) to correct the sizeHint (otherwise
- * we end up having the wrong size).
- */
-/* EXTPROTO */
-void
-rxvt_toggle_subwin( rxvt_t *r, const unsigned char *str)
-{
-    if (IS_NULL(str) || (char) 0 == *str ||
-	    STRCHR( str, 't') || STRCHR( str, 'T' ) )
-    {
-#ifdef HAVE_TABBAR
-	/*
-	 * Backward compatibility -- If str is NULL or empty, then toggle the
-	 * tabbar visibility.
-	 */
-	if (rxvt_tabbar_visible (r) &&
-	    (IS_NULL(str) || '+' != *str))
-	{
-	    /*
-	     * If the tabbar is visible, and we are not forced to show it then
-	     * hide it.
-	     */
-	    if( rxvt_tabbar_hide(r) ) rxvt_resize_on_subwin (r, HIDE_TABBAR);
-	}
-	else if (!rxvt_tabbar_visible (r) &&
-	    (IS_NULL(str) || '-' != *str))
-	{
-	    /*
-	     * If the tabbar is hidden, and we are not forced to hide it, then
-	     * show the tabbar.
-	     */
-	    if( rxvt_tabbar_show(r)) rxvt_resize_on_subwin (r, SHOW_TABBAR);
-	}
-#endif
-
-	return;
-    }
-
-#ifdef HAVE_TABBAR
-    /*
-     * The remainder of this function assumes a non-empty string.
-     */
-    if( STRCHR( str, 'b') || STRCHR( str, 'B') )
-    {
-	/* Toggle tabbar buttons */
-	switch( *str )
-	{
-	    case '+':
-		/* Show buttons */
-		UNSET_OPTION(r, Opt2_hideButtons);
-		break;
-
-	    case '-':
-		/* Hide buttons */
-		SET_OPTION(r, Opt2_hideButtons);
-		break;
-
-	    default:
-		/* Toggle buttons */
-		TOGGLE_OPTION(r, Opt2_hideButtons);
-	}
-
-	/* Refresh tabbar */
-	rxvt_tabbar_set_visible_tabs (r, False);
-	if (IS_WIN(r->tabBar.win))
-	    XClearArea( r->Xdisplay, r->tabBar.win, 0, 0, 0, 0, True);
-
-	return;
-    }
-#endif
-
-}
-/* }}} */
 
 /*
  * Functions to parse macros (add them to our list), and exec actions.
@@ -963,24 +877,6 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	}
 #endif
 
-	case MacroFnMove:
-#ifdef HAVE_TABBAR
-	    /* Move active tab to position in astr */
-	    if( alen > 0 && *(astr) )
-	    {
-		short tabno = atoi( (char*) astr );
-
-		if( *(astr) == '+' || *(astr) == '-' )
-		    rxvt_tabbar_move_tab( r, tabno + ATAB(r));
-		else
-		    rxvt_tabbar_move_tab( r, tabno-1 );
-	    }
-
-	    else
-#endif
-		retval = -1;
-	    break;
-
 	case MacroFnScroll:
 	    /* Scroll by an amount specified in astr */
 	    if( alen > 1 )
@@ -1120,10 +1016,6 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	    }
 	    break;
 	}
-
-	case MacroFnToggleSubwin:
-	    rxvt_toggle_subwin( r, (unsigned char*) astr);
-	    break;
 
 	case MacroFnFont:
 	{

@@ -305,29 +305,8 @@ void             rxvt_remove_page               __PROTO((rxvt_t*, short));
 void             rxvt_activate_page             __PROTO((rxvt_t*, short));
 #ifdef HAVE_TABS
 void             rxvt_tabbar_init               __PROTO((rxvt_t*));
-#ifdef HAVE_TABBAR
-void		 rxvt_tabbar_set_visible_tabs   __PROTO((rxvt_t*, Bool));
-void		 refresh_tabbar_tab		__PROTO((rxvt_t*, int));
-void             rxvt_tabbar_resize             __PROTO((rxvt_t*));
-void             rxvt_tabbar_dispatcher         __PROTO((rxvt_t*, XButtonEvent*));
-void		 rxvt_tabbar_button_release     __PROTO((rxvt_t*, XButtonEvent*));
-int              rxvt_tabbar_visible            __PROTO((rxvt_t*));
-void             rxvt_tabbar_expose             __PROTO((rxvt_t*, XEvent*));
-int              rxvt_tabbar_hide               __PROTO((rxvt_t*));
-int              rxvt_tabbar_show               __PROTO((rxvt_t*));
-void             rxvt_tabbar_create             __PROTO((rxvt_t*));
-void             rxvt_tabbar_clean_exit         __PROTO((rxvt_t*));
-unsigned short   rxvt_tabbar_height             __PROTO((rxvt_t*));
-unsigned short   rxvt_tabbar_rheight            __PROTO((rxvt_t*));
-unsigned int     rxvt_tab_width                 __PROTO((rxvt_t*, const char*));
-int              rxvt_is_tabbar_win             __PROTO((rxvt_t*, Window));
-void             rxvt_tabbar_draw_buttons       __PROTO((rxvt_t*));
-void		 rxvt_adjust_fd_number	        __PROTO((rxvt_t* r));
-void             rxvt_tabbar_change_color       __PROTO((rxvt_t*, int, const char*));
-void             rxvt_tabbar_highlight_tab      __PROTO((rxvt_t*, short, Bool));
-void             rxvt_tabbar_move_tab           __PROTO((rxvt_t*, short));
 #endif
-#endif
+void             rxvt_adjust_fd_number          __PROTO((rxvt_t* r));
 void             rxvt_tabbar_set_title          __PROTO((rxvt_t*, short, const unsigned char TAINTED *));
 void		 sync_tab_title		        __PROTO((rxvt_t*, int));
 /* End prototypes of tabbar.c */
