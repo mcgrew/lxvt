@@ -36,7 +36,6 @@ static const char *const macroNames[] =
     "NewTab",		    /* Open a new tab, and exec a program in it. */
     "Exec",		    /* Exec a program asynchronusly */
     "Close",		    /* Close tab(s) */
-    "GotoTab",		    /* Switch to tab */
     "Scroll",		    /* Scroll up/down */
     "Copy",		    /* Copy selection */
     "Paste",		    /* Paste selection */
@@ -832,50 +831,6 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		rxvt_exit_request( r );
 
 	    break;
-
-	case MacroFnGoto:
-#ifdef HAVE_TABS
-	{
-	    /* Goto tab in position astr */
-	    int tabno;
-	    
-	    if (NOT_NULL(astr) && *(astr) )
-	    {
-		tabno = atoi( (char*) astr );
-
-		if( *(astr)  == '+' || *(astr) == '-' )
-		{
-		    /*
-		     * Relative movement of tabs
-		     */
-		    tabno += ATAB(r);
-
-		    /* Wrap around */
-		    tabno = tabno % (LTAB(r) + 1);
-		    if( tabno < 0 ) tabno += LTAB(r) + 1;
-		}
-		else if( tabno == 0 )
-		{
-		    /*
-		     * Previous active tab
-		     */
-		    tabno = PTAB(r);
-		}
-		else if( --tabno > LTAB(r) )
-		{
-		    /*
-		     * Absolute tab number. If we're too far to the right,
-		     * activate the last tab.
-		     */
-		    tabno = LTAB(r);
-		}
-	    }
-	    else tabno = PTAB(r);
-
-	    rxvt_activate_page( r, tabno);
-	    break;
-	}
-#endif
 
 	case MacroFnScroll:
 	    /* Scroll by an amount specified in astr */

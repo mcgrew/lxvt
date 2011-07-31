@@ -373,18 +373,6 @@ typedef enum
 
 /* ------------------------------------------------------------------------- */
 
-#ifdef HAVE_TABS
-typedef struct
-{
-    short	ltab;	/* last tab */
-    short	atab;	/* active tab */
-    short	ptab;	/* previous active tab */
-    short	fvtab;	/* first visible tab */
-    short	lvtab;	/* last visible tab */
-} tabBar_t;
-#endif
-
-
 typedef enum
 {
     TERMENV_XTERM = 0,
@@ -621,7 +609,6 @@ enum
     MacroFnNewTab,
     MacroFnExec,
     MacroFnClose,
-    MacroFnGoto,
     MacroFnScroll,
     MacroFnCopy,
     MacroFnPaste,
@@ -747,17 +734,8 @@ typedef struct rxvt_vars
 
     /*
      * term_t structures and pointers.
-     *
-     * 2006-08-18 gi1242 TODO: This should be an array that grows dynamically in
-     * size. Plus we should only reserve enough memory for a our currently
-     * displayed term structures.
-	  * 2008-08-08 Jehan: done!
      */
-#ifdef HAVE_TABS
-    term_t**	    vts;
-#else
     term_t          vts;
-#endif
 
     unsigned char   BOOLVAR( cleanDeadChilds, 1 ),
 					    /* True if we have marked some
@@ -856,20 +834,11 @@ typedef enum
 
 
 
-#ifdef HAVE_TABS
-/* MACROS for tab/page number */
-#define ATAB(R)	    ((R)->tabBar.atab)
-#define LTAB(R)	    ((R)->tabBar.ltab)
-#define FVTAB(R)    ((R)->tabBar.fvtab)
-#define LVTAB(R)    ((R)->tabBar.lvtab)
-#define PTAB(R)	    ((R)->tabBar.ptab)
-#else
 #define ATAB(R)	    0
 #define LTAB(R)	    0
 #define FVTAB(R)    0
 #define LVTAB(R)    0
 #define PTAB(R)	    0
-#endif
 
 #define APAGE(R)    ATAB(R)
 #define LPAGE(R)    LTAB(R)
@@ -878,11 +847,7 @@ typedef enum
 #define PPAGE(R)    PTAB(R)
 
 /* MACROS for vts structure */
-#ifdef HAVE_TABS
-#define PVTS(R, P)  ((R)->vts[(P)])
-#else
 #define PVTS(R, P)  ((P == 0) ? &(R)->vts : NULL)
-#endif
 #define AVTS(R)	    PVTS(R, ATAB(R))
 #define LVTS(R)	    PVTS(R, LTAB(R))
 

@@ -122,7 +122,6 @@ support_minimal=no
 support_debug=no
 support_ourstrings=no
 support_frills=yes
-support_tabs=yes
 support_selectionscrolling=yes
 support_mousewheel=yes
 support_mouseslipwheel=no
@@ -164,7 +163,6 @@ if test "x$support_everything" = "xyes"; then
     support_debug=yes
     support_ourstrings=no
     support_frills=yes
-    support_tabs=yes
     support_selectionscrolling=yes
     support_mousewheel=yes
     support_mouseslipwheel=yes
@@ -205,7 +203,6 @@ if test "x$support_minimal" = "xyes"; then
     support_debug=no
     support_ourstrings=no
     support_frills=no
-    support_tabs=no
     support_selectionscrolling=no
     support_mousewheel=no
     support_mouseslipwheel=no
@@ -267,16 +264,6 @@ AC_ARG_ENABLE(
 )
 if test "x$support_frills" != "xyes"; then
     AC_DEFINE(NO_FRILLS, [], [enable internal borders / smart resizing])
-fi
-
-
-AC_ARG_ENABLE(
-    tabs,
-    AC_HELP_STRING([--enable-tabs],[enable multiple tabs/profiles [[yes]]]),
-    [support_tabs=$enableval]
-)
-if test "x$support_tabs" = "xyes"; then
-    AC_DEFINE(HAVE_TABS, [], [enable multiple tabs])
 fi
 
 
@@ -1204,7 +1191,6 @@ echo "Maintenance:"
 echo "Debug mode                  : $support_debug"
 echo "Private string functions    : $support_ourstrings"
 echo "Rarely used features        : $support_frills"
-echo "Multiple tabs               : $support_tabs"
 echo 
 echo "Scroll features:"
 echo "Scroll on selection         : $support_selectionscrolling"

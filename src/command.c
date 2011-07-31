@@ -5174,20 +5174,7 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
     {
 	case XTerm_title:   /* Set tab / term title */
 	case XTerm_name:    /* also set icon title */
-#if defined(HAVE_TABS) && defined(SET_TAB_TITLE_ON_XTERM_SEQUENCE)
-	    rxvt_tabbar_set_title (r, page, (const unsigned char TAINTED*) str);
-#ifndef SET_TAB_TITLE_NOT_WIN_TITLE
-	    /*
-	     * Set both the tab title and win title. However if -stt is used,
-	     * then the window title will already be set by
-	     * rxvt_tabbar_set_title(), so we only have to set it here if +stt.
-	     */
-	    if( NOTSET_OPTION(r, Opt2_syncTabTitle ) )
-		rxvt_set_term_title(r, (const unsigned char*) str);
-#endif
-#else
 	    rxvt_set_term_title(r, (const unsigned char*) str);
-#endif
 	    if( op == XTerm_title )
 		break;	/* Don't set the icon name */
 	    /* else FALL THROUGH */

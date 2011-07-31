@@ -303,9 +303,6 @@ void             rxvt_append_page               __PROTO((rxvt_t*, int profile, c
 void             rxvt_kill_page                 __PROTO((rxvt_t*, short));
 void             rxvt_remove_page               __PROTO((rxvt_t*, short));
 void             rxvt_activate_page             __PROTO((rxvt_t*, short));
-#ifdef HAVE_TABS
-void             rxvt_tabbar_init               __PROTO((rxvt_t*));
-#endif
 void             rxvt_adjust_fd_number          __PROTO((rxvt_t* r));
 void             rxvt_tabbar_set_title          __PROTO((rxvt_t*, short, const unsigned char TAINTED *));
 void		 sync_tab_title		        __PROTO((rxvt_t*, int));

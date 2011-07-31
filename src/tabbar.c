@@ -42,25 +42,6 @@
 
 extern char **cmd_argv;
 
-
-#ifdef HAVE_TABS
-
-/*
- * Initialize global data structure of all tabs
- */
-/* INTPROTO */
-void
-rxvt_tabbar_init (rxvt_t* r)
-{
-    LTAB(r) = -1;   /* the last tab */
-    r->tabBar.atab = 0;	/* the active tab */
-    FVTAB(r) = 0;   /* first visiable tab */
-    LVTAB(r) = 0;   /* last visiable tab */
-    r->tabBar.ptab = 0;	    /* previous active tab */
-}
-#endif
-
-
 /* INTPROTO */
 void
 rxvt_kill_page (rxvt_t* r, short page)
@@ -133,13 +114,6 @@ rxvt_append_page( rxvt_t* r, int profile,
     if(
 	    cmd_argv	    /* Argument specified via -e option */
 	    && command == NULL /* No command specified (e.g. via NewTab macro) */
-#ifdef HAVE_TABS
-	    && (
-		//LTAB(r) == 0			    /* First tab */
-		LTAB (r) == - 1
-		|| ISSET_OPTION(r, Opt2_cmdAllTabs)  /* -at option */
-	       )
-#endif
       )
 	argv = cmd_argv;
     else
@@ -176,13 +150,11 @@ rxvt_append_page( rxvt_t* r, int profile,
 	    else if( argv && argv[0] && *argv[0] != '\0' )
 		title = argv[0];
 	}
+	else
+	    argv = NULL;
     }
     if (!rxvt_create_termwin( r, 
-#ifdef HAVE_TABS
-		LTAB(r) + 1,
-#else
 		0,
-#endif
 		profile, title ))
     {
 	rxvt_dbgmsg ((DBG_ERROR, DBG_TABBAR,
@@ -204,7 +176,6 @@ rxvt_append_page( rxvt_t* r, int profile,
 	char	    cwd[PATH_MAX] = "",
 		    child_cwd[PATH_MAX] = "";
 	int	    len = 0;
-
 
 	getcwd (cwd, PATH_MAX);
 
@@ -333,14 +304,6 @@ rxvt_append_page( rxvt_t* r, int profile,
 	rxvt_tt_write( r, LTAB(r), (const unsigned char*) "\n", 1 );
     }
 
-#ifdef HAVE_TABS
-    /*
-     * Now update active page information
-     */
-    PTAB(r) = ATAB(r); /* set last previous tab */
-    ATAB(r) = LTAB(r); /* set the active tab */
-#endif
-
     /* update mapped flag */
     AVTS(r)->mapped = 1;
 
@@ -395,49 +358,7 @@ rxvt_remove_page (rxvt_t* r, short page)
     /* destroy the virtual terminal window */
     rxvt_destroy_termwin (r, page);
 
-#ifdef HAVE_TABS
-    if (LTAB (r) == 0)
-    {
-	/* quit the last the terminal, exit the application */
-	rxvt_free (r->vts);
-	SET_NULL (r->vts);
-#endif
 	rxvt_clean_exit (r);
-#ifdef HAVE_TABS
-    }
-
-    /* update total number of tabs */
-    LTAB(r)--;
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "\tThe last tab is %d.", LTAB(r)));
-
-    if (FVTAB(r) > page)
-	FVTAB(r)--;
-    if (LVTAB(r) > page)
-    {
-	LVTAB(r)--;
-    }
-    /* Reorganize the tabs array. */
-    /* update TermWin and tab_widths */
-    for (i = page; i <= LTAB(r); i++)
-    {
-	PVTS(r, i) = PVTS(r, i+1);
-	PVTS(r, i)->vts_idx = i;
-    }
-
-    {
-	term_t** temp_vts = rxvt_realloc (r->vts, (LTAB (r) + 1) * sizeof (term_t*));
-	if (temp_vts)
-	{
-	    r->vts = temp_vts;
-	    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR,
-			"\tThe tab array has been reallocated to (%d * sizeof (term_t*)).\n", LTAB(r) + 1));
-	}
-	else
-	    rxvt_dbgmsg ((DBG_WARN, DBG_TABBAR,
-			"\tAfter removing a tab, the tab array could not be reallocated. If you see often this message, this can be a problem.\n"));
-	// if the realloc failed, this is not fatale as we can imagine it may be reallocated
-	// at the next change on tabs but display all the same a warning.
-    }
 
     /* update selection */
     if (page == r->selection.vt)
@@ -445,59 +366,6 @@ rxvt_remove_page (rxvt_t* r, short page)
     else if (r->selection.vt > page)
 	r->selection.vt --;
 
-    /*
-     * Now we try to set correct atab, ptab, fvtab, and lvtab
-     * Must be careful here!!!
-     */
-    /* update previous active tab */
-    if (PTAB(r) > page)
-	PTAB(r)--;
-    /* in case PTAB is invalid */
-    if (PTAB(r) > LTAB(r))
-	PTAB(r) = LTAB(r);
-
-    /* update active tab */
-    if( ATAB(r) == page )
-    {
-	/* Fall back to previous active */
-	ATAB(r) = PTAB(r);
-
-	/* Make the previous active tab the previous / next tab if possible. */
-	if( PTAB(r) > 0 )
-	    PTAB(r)--;
-	else if (PTAB(r) < LTAB(r) )
-	    PTAB(r)++;
-    }
-    else if( ATAB(r) > page)
-	ATAB(r)--;
-
-    /* always set mapped flag */
-    AVTS(r)->mapped = 1;
-
-    /* Adjust the number of FD's we select() for.  */
-    rxvt_adjust_fd_number(r);
-
-    /* Switch fg/bg colors */
-    rxvt_set_vt_colors( r, ATAB(r) );
-    XMapRaised( r->Xdisplay, AVTS(r)->vt );
-
-    /*
-     * We don't need to touch the screen here. XMapRaised will generate a
-     * MapNotify and Expose events, which will refresh the screen as needed.
-     * Touching the screen unnecessarily causes a flicker (and is *horrible*
-     * under slow connections).
-     */
-    /* rxvt_scr_touch (r, ATAB(r), True); */
-
-    /* synchronize terminal title with tab title */
-    if (ISSET_OPTION(r, Opt2_syncTabTitle))
-	sync_tab_title( r, ATAB(r) );
-
-    /* synchronize icon name to tab title */
-    if (ISSET_OPTION(r, Opt2_syncTabIcon))
-	rxvt_set_icon_name(r,
-		(const unsigned char*) PVTS(r, ATAB(r))->tab_title);
-#endif
 }
 
 
@@ -545,17 +413,6 @@ rxvt_tabbar_set_title (rxvt_t* r, short page, const unsigned char TAINTED * str)
 void
 rxvt_activate_page (rxvt_t* r, short index)
 {
-#ifdef HAVE_TABS
-    /* shortcut */
-    if (/* !r->tabBar.state ||
-	NOT_WIN(r->tabBar.win) || */
-	index == ATAB(r))
-	return;
-
-    AVTS(r)->mapped = 0;
-    r->tabBar.ptab = ATAB(r);
-    ATAB(r) = index;
-#endif
     AVTS(r)->mapped = 1;
     AVTS(r)->highlight = 0; /* clear highlight flag */
     

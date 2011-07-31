@@ -640,10 +640,6 @@ rxvt_init_vars(rxvt_t *r)
 
     h = r->h = (struct rxvt_hidden *)rxvt_calloc(1, sizeof(struct rxvt_hidden));
 
-#ifdef HAVE_TABS
-	 SET_NULL (r->vts);
-#endif
-
     SET_NULL(r->Xdisplay);
 #ifdef USE_XIM
     SET_NULL(r->TermWin.fontset);
@@ -2534,48 +2530,11 @@ rxvt_init_vts( rxvt_t *r, int page, int profile )
 	return 0;
 
     rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "rxvt_init_vts (r, %d)\n", page));
-#ifdef HAVE_TABS
-    LTAB(r)++;
-    {
-	/*
-	 * I increase vts's size and place the new page at the right place in it.
-	 */
-	term_t** temp_vts;
-	term_t* temp_vts_page;
-
-	if ((temp_vts_page = rxvt_malloc (sizeof (term_t))) == NULL)
-	{
-	    LTAB(r)--;
-	    rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "\tThe terminal allocation failed. Returning. Last tab is %d.\n", LTAB(r)));
-	    return 0;
-	}
-	rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "\tA new terminal has been allocated.\n"));
-
-	if ((temp_vts = rxvt_realloc (r->vts, (LTAB (r) + 1) * sizeof (term_t*))) == NULL)
-	{
-	    rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "\tThe terminal array's reallocation to (%d * sizeof (term_t*)) failed.\n", LTAB(r) + 1));
-	    LTAB(r)--;
-	    rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "\tLast tab is now %d.\n", LTAB(r)));
-	    rxvt_free (temp_vts_page);
-	    rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "\tPreviously allocated terminal freed. Returning.\n"));
-	    return 0;
-	}
-
-	r->vts = temp_vts;
-	rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "\tThe terminal array has been reallocated to (%d * sizeof (term_t*)). The last tab is now %d.\n", LTAB(r) + 1, LTAB(r)));
-
-	if (page != LTAB (r))
-	    MEMMOVE (r->vts[page + 1], r->vts[page], (LTAB(r) - page) * sizeof (term_t*));
-
-	r->vts[page] = temp_vts_page;
-    }
-#else
     if (page || r->ntabs)
     {
         rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "\tThe terminal has already been allocated.\n"));
 	return 0;
     }
-#endif
 
     MEMSET( PVTS(r, page), 0, sizeof(term_t)); //r->vterm[0] ) );
     PVTS(r, page)->vts_idx = page;
@@ -2728,9 +2687,6 @@ rxvt_destroy_termwin( rxvt_t *r, int page )
     XDestroyWindow (r->Xdisplay, PVTS(r, page)->vt);
     UNSET_WIN(PVTS(r, page)->vt);
 
-#ifdef HAVE_TABS
-    rxvt_free (PVTS(r, page));
-#endif
     rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "\tThe terminal %d has been successfully freed.\n", page));
 }
 
@@ -3266,10 +3222,6 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
     gcmask |= GCFont;
     r->TermWin.gc = XCreateGC(r->Xdisplay, r->TermWin.parent,
 		    gcmask, &gcvalue);
-
-#ifdef HAVE_TABS
-    rxvt_tabbar_init (r);
-#endif
 
     XMapWindow (r->Xdisplay, r->TermWin.parent);
 
