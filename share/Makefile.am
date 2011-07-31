@@ -17,7 +17,7 @@
 
 docdir = $(datadir)/doc/$(PACKAGE_NAME)
 
-dist_conf_DATA = default.menu submenus.menu mrxvtrc mrxvtrc.sample
+dist_conf_DATA = mrxvtrc mrxvtrc.sample
 confdir = $(sysconfdir)/$(PACKAGE_NAME)
 
 # Distribute scripts with documentation. Package maintaners can clean them up

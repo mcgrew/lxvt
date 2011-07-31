@@ -490,10 +490,6 @@ typedef char*	    XPointer;
 #include "rxvtlib.h"
 
 
-#ifdef HAVE_MENUBAR
-# include "menubar.h"
-#endif
-
 #include "command.h"
 #include "init.h"
 
@@ -562,7 +558,7 @@ struct rxvt_hidden;
  * If we're using either the rxvt scrollbar or menu bars, keep the
  * scrollColor resource.
  */
-#if defined(RXVT_SCROLLBAR) || defined(PLAIN_SCROLLBAR) || defined(HAVE_MENUBAR)
+#if defined(RXVT_SCROLLBAR) || defined(PLAIN_SCROLLBAR)
 # define KEEP_SCROLLCOLOR 1
 #else
 # undef KEEP_SCROLLCOLOR
@@ -639,9 +635,7 @@ struct mouse_event {
 # define EXIT_FAILURE	    1	/* exit function failure */
 #endif
 
-#define menuBar_esc	    (10)
 #define scrollBar_esc	    (30)
-#define MENUBAR_MARGIN	    (2)	/* margin below text */
 
 /* width of scrollBar, menuBar shadow, must be 1 or 2 */
 #ifdef HALFSHADOW
@@ -984,13 +978,6 @@ enum {
     Rs_title,
     Rs_maxTabWidth,
     Rs_minVisibleTabs,
-#if defined(HAVE_MENUBAR)
-    Rs_path,
-#endif
-
-#ifdef HAVE_MENUBAR
-    Rs_menu,
-#endif
 
 #ifndef NO_BOLDFONT
     Rs_boldFont,
@@ -1156,7 +1143,6 @@ enum {
 #define PrivMode_MouseX10	(1LU<<12)
 #define PrivMode_MouseX11	(1LU<<13)
 #define PrivMode_scrollBar	(1LU<<14)
-#define PrivMode_menuBar	(1LU<<15)
 #define PrivMode_TtyOutputInh	(1LU<<16)
 #define PrivMode_Keypress	(1LU<<17)
 #define PrivMode_smoothScroll	(1LU<<18)
@@ -1433,21 +1419,6 @@ struct rxvt_hidden {
     signed int	    oldcursormulti;
 #endif
     void	    (*multichar_decode)(unsigned char *str, int len);
-#ifdef HAVE_MENUBAR
-    menu_t*	    ActiveMenu;				/* currently active
-							   menu */
-    menu_t*	    BuildMenu;				/* the menu currently
-							   being built */
-    menu_t*	    popupMenu[3];			/* Menus to popup on
-							   ctrl clicks */
-
-    unsigned char   BOOLVAR( showingMenu, 1);		/* The type of menu
-							   currently being
-							   shown */
-
-    bar_t	    MenuBar;
-    int		    Arrows_x;
-#endif
 #ifdef CURSOR_BLINK
     long	    blinkInterval;
     struct timeval  lastcursorchange;

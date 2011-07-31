@@ -279,15 +279,6 @@ static const struct {
     STRG(Rs_color + Color_pointer, "pointerColor", "pr", "color", "pointer color", 0),
     STRG(Rs_color + Color_border, "borderColor", "bd", "color", "border color", 0),
 
-#if defined(HAVE_MENUBAR)
-    RSTRG(Rs_path, "path", "search path", 0),
-#endif		    /* HAVE_MENUBAR */
-#ifdef HAVE_MENUBAR
-    STRG(Rs_menu, "menu", "menu",
-	"filename[;tag]", "menubar definition file", 0),
-    BOOL( "showMenu", "showmenu", Opt_showMenu, "show menubar" ),
-#endif
-
 #ifndef NO_BOLDFONT
     STRG(Rs_boldFont, "boldFont", "fb", "fontname", "bold text font", 0),
 # if MAX_NFONTS > 1
@@ -394,7 +385,7 @@ static const struct {
     STRG(Rs_xftrgb, "xftRGBA", "xftrgb", "style",
 	"freetype font sub-pixel order = rgb|bgr|vrgb|vbgr|none", 0),
     STRG(Rs_xftpfn, "xftPFont", "xftpfn", "fontname",
-	"propotionally spaced freetype font to use for tabbar / menubar", 0),
+	"propotionally spaced freetype font to use for tabbar", 0),
     STRG(Rs_xftpsz, "xftPSize", "xftpsz", "size",
 	"size of propotional freetype font", 0),
 #endif
@@ -536,9 +527,6 @@ static const char optionsstring[] = "Options: "
     "fade,"
 #if defined(UTMP_SUPPORT)
     "utmp,"
-#endif
-#if defined(HAVE_MENUBAR)
-    "menubar,"
 #endif
 #if defined(USE_XIM)
     "XIM,"

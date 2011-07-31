@@ -142,7 +142,6 @@ support_256colors=yes
 support_cursor_blink=yes
 support_pointer_blank=yes
 support_smart_resize=no
-support_menubar=no
 support_tabbar=yes
 dnl: support_fading=yes
 support_xrender=yes
@@ -190,7 +189,6 @@ if test "x$support_everything" = "xyes"; then
     support_cursor_blink=yes
     support_pointer_blank=yes
     support_smart_resize=yes
-    support_menubar=yes
     support_tabbar=yes
     dnl: support_fading=yes
     support_xrender=yes
@@ -237,7 +235,6 @@ if test "x$support_minimal" = "xyes"; then
     support_cursor_blink=no
     support_pointer_blank=no
     support_smart_resize=no
-    support_menubar=no
     support_tabbar=no
     dnl: support_fading=no
     support_xrender=no
@@ -496,16 +493,6 @@ dnl# )
 dnl# if test "x$support_smart_resize" = "xyes"; then
 dnl#     AC_DEFINE(SMART_RESIZE, [], [set smart resizing support])
 dnl# fi
-
-
-AC_ARG_ENABLE(
-    menubar,
-    AC_HELP_STRING([--enable-menubar],[enable menu bar [[no]]]),
-    [support_menubar=$enableval]
-)
-if test "x$support_menubar" = "xyes"; then
-    AC_DEFINE(HAVE_MENUBAR, [], [set menu bar])
-fi
 
 
 AC_ARG_ENABLE(
@@ -1353,7 +1340,6 @@ echo "256 color mode              : $support_256colors"
 echo "Blink cursor                : $support_cursor_blink"
 echo "Blank pointer               : $support_pointer_blank"
 echo "Smart resize                : $support_smart_resize"
-echo "Menu bar                    : $support_menubar"
 if test "x$support_tabs" = "xyes"; then
 echo "Tab bar                     : $support_tabbar"
 fi

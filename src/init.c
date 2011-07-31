@@ -686,20 +686,6 @@ rxvt_init_vars(rxvt_t *r)
     UNSET_ATOM(h->xa[XA_INCR]);
     h->locale = NULL;
 
-# ifdef HAVE_MENUBAR
-    SET_NULL(h->BuildMenu);
-    SET_NULL(h->ActiveMenu);
-    SET_NULL(h->popupMenu[0]);
-    SET_NULL(h->popupMenu[1]);
-    SET_NULL(h->popupMenu[2]);
-    h->showingMenu = 0;
-
-    /* Set the current menubar to empty defaults */
-    SET_NULL(h->MenuBar.head);
-    SET_NULL(h->MenuBar.tail);
-    SET_NULL(h->MenuBar.title);
-# endif
-
 # ifdef USE_XIM
     SET_NULL(h->Input_Context);
 # endif
@@ -2143,10 +2129,6 @@ rxvt_init_win_size( rxvt_t *r )
     if (ISSET_OPTION(r, Opt_scrollBar))
 	r->szHint.base_width += rxvt_scrollbar_rwidth (r);
 #endif
-#ifdef HAVE_MENUBAR
-    if (ISSET_OPTION(r, Opt_showMenu))
-	r->szHint.base_height += rxvt_menubar_rheight (r);
-#endif
 #ifdef HAVE_TABBAR
     if (NOTSET_OPTION(r, Opt2_hideTabbar))
 	r->szHint.base_height += rxvt_tabbar_rheight (r);
@@ -2797,13 +2779,6 @@ rxvt_init_vts( rxvt_t *r, int page, int profile )
 	SET_SMODE(r, page, PrivMode_scrollBar);
     }
 #endif
-#ifdef HAVE_MENUBAR
-    if (rxvt_menubar_visible(r))
-    {
-	SET_PMODE(r, page, PrivMode_menuBar);
-	SET_SMODE(r, page, PrivMode_menuBar);
-    }
-#endif
 
     /* Now set VT fg/bg color */
     PVTS(r, page)->p_fg = VTFG(r, profile);
@@ -3429,34 +3404,6 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
 	rxvt_scrollbar_show (r);
     }
 #endif
-#ifdef HAVE_MENUBAR
-    if (r->h->rs[Rs_menu] && STRCASECMP( r->h->rs[Rs_menu], "none"))
-    {
-	/*
-	 * Only load menubar if arg of -menu option is not none
-	 */
-	rxvt_menubar_load_file (r, (unsigned char*) r->h->rs[Rs_menu]);
-    }
-    else rxvt_menubar_load_file( r, (unsigned char*) "default.menu");
-
-    rxvt_menubar_create (r);
-    if (ISSET_OPTION(r, Opt_showMenu))
-	rxvt_menubar_show (r);
-
-    /*
-     * 2006-05-28 gi1242: If popup menu 1 is not defined, set it to an empty
-     * menu (so that the tab list will be popped up on control clicks and right
-     * clicks on the tabbar).
-     */
-    if (IS_NULL(r->h->popupMenu[0]))
-    {
-	rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "Setting popup menu 1 to a tab list\n"));
-	r->h->popupMenu[0] = (menu_t *) rxvt_calloc( 1, sizeof(menu_t) );
-
-	r->h->popupMenu[0]->len	    = sizeof( "Switch to tab" );
-	r->h->popupMenu[0]->name    = (unsigned char*) STRDUP ("Switch to tab");
-    }
-# endif
 
 #ifdef HAVE_TABS
 #ifdef HAVE_TABBAR

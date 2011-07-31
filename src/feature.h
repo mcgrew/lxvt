@@ -376,32 +376,6 @@
  */
 /* #define SB_BORDER */
 
-/*------------------------------MENU BAR----------------------------{{{1*/
-/*
- * Choose how many of (experimental) menuBars you want to be able to stack at
- * one time.
- *  A value of 1 disables menuBar stacking.
- *  A value of 0 disables menuBar all together.
- *  Note that the amount of memory overhead is the same for any value >= 2.
- */
-/*
- * 2006-02-04 gi1242: The user interface (using escape sequences) for modifying
- * menus has been disabled due to a security hole. Thus stacking menubars is
- * absolutely pointless and a waste of memory. The stacking code has been
- * removed.
- */
-/* #define MENUBAR_MAX 8 */
-
-/*
- * Change the default shadow style
- */
-/* #define MENUBAR_SHADOW_IN */
-
-/*
- * Change the default shadow style
- */
-#define MENU_SHADOW_IN
-
 /*---------------------------MULTILINGUAL---------------------------{{{1*/
 /*
  * Allow run-time selection of Meta (Alt) to set the 8th bit on

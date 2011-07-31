@@ -468,10 +468,6 @@ rxvt_clean_exit (rxvt_t* r)
     rxvt_scrollbar_clean_exit (r);
 # endif
 
-# ifdef HAVE_MENUBAR
-    rxvt_menubar_clean_exit (r);
-# endif
-
 #ifdef HAVE_TABBAR
     rxvt_tabbar_clean_exit (r);
 #endif
@@ -2051,24 +2047,6 @@ rxvt_change_font_x11 (rxvt_t* r, const char *fontname)
 	}
     }
 #endif /* NO_BOLDFONT */
-
-#ifdef HAVE_MENUBAR
-    /*
-     * 2006-01-29 gi1242: We should do something to resize the menubar font.
-     * However just changing it in the appropriate GC from here doesn't seem to
-     * work at all.
-     */
-    /* Resize the menubar font too. Only needed for X11 font. */
-    if(
-#ifdef XFT_SUPPORT
-	NOTSET_OPTION(r, Opt_xft) &&
-#endif
-	IS_WIN(r->menuBar.win))
-    {
-	rxvt_dbgmsg ((DBG_VERBOSE, DBG_MAIN, "Resized menubar font\n"));
-	XSetFont( r->Xdisplay, r->menuBar.gc, r->TermWin.font->fid);
-    }
-#endif
 
 #ifdef MULTICHAR_SET
     /* load font or substitute */

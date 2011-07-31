@@ -26,7 +26,6 @@ mrxvt_SOURCES =	    command.h		\
 	       	    encoding.h		\
 	       	    feature.h		\
 	       	    init.h		\
-	       	    menubar.h		\
 	       	    protos.h		\
 	       	    rxvt.h		\
 	       	    rxvtlib.h		\
@@ -39,7 +38,6 @@ mrxvt_SOURCES +=    command.c		\
 		    init.c		\
 		    macros.c		\
 		    main.c		\
-		    menubar.c		\
 		    misc.c		\
 		    netdisp.c		\
 		    ptytty.c		\
@@ -121,7 +119,6 @@ MRXVT_H =	    ../config.h			\
 		    command.h			\
 		    debug.h			\
 		    feature.h			\
-		    menubar.h			\
 		    protos.h			\
 		    rxvt.h			\
 		    rxvtlib.h
@@ -152,7 +149,6 @@ macros.o:	    $(MRXVT_H)				macros.c
 init.o:		    $(MRXVT_H) $(XFTACS_H) init.h	init.c
 logging.o:	    $(MRXVT_H)				logging.c
 main.o:		    $(MRXVT_H) $(XFTACS_H)		main.c
-menubar.o:	    $(MRXVT_H) 				menubar.c
 misc.o:		    $(MRXVT_H) 				misc.c
 mjpg.o:		    $(MRXVT_H) 				mjpg.c
 mpng.o:		    $(MRXVT_H) 				mpng.c

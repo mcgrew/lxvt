@@ -1709,9 +1709,6 @@ rxvt_tabbar_resize (rxvt_t* r)
 
     sx = 0;
     sy = 0;
-#ifdef HAVE_MENUBAR
-    sy += rxvt_menubar_height (r);
-#endif
     if (ISSET_OPTION(r, Opt2_bottomTabbar))
 	sy += VT_HEIGHT(r);
     XMoveResizeWindow  (r->Xdisplay, r->tabBar.win,
@@ -1747,29 +1744,6 @@ rxvt_tabbar_dispatcher (rxvt_t* r, XButtonEvent* ev)
        Mozilla firefox */
     switch ( ev->button )
     {
-#ifdef HAVE_MENUBAR
-	case Button3:
-	    if( r->h->popupMenu[0] )
-	    {
-		int	x, y;
-		Window	unused_cr;
-
-		r->h->showingMenu |= POPUP_MENU;
-
-		XTranslateCoordinates( r->Xdisplay, ev->window,
-			r->TermWin.parent, ev->x, ev->y, &x, &y, &unused_cr);
-
-		r->h->ActiveMenu = r->h->popupMenu[0];
-
-		r->h->ActiveMenu->x = x;
-		r->h->ActiveMenu->y = y;
-
-		XDefineCursor(r->Xdisplay, AVTS(r)->vt, r->h->bar_pointer);
-		rxvt_menu_show(r);
-		return;
-	    }
-	    break;
-#endif
 	case Button4: /* activate left tab */
 	    if (0 != ATAB(r))
 		rxvt_activate_page (r, ATAB(r)-1);
@@ -2158,9 +2132,6 @@ rxvt_tabbar_create (rxvt_t* r)
 
     sx = 0;
     sy = 0;
-#ifdef HAVE_MENUBAR
-    sy += rxvt_menubar_height (r);
-#endif
     if (ISSET_OPTION(r, Opt2_bottomTabbar))
 	sy += VT_HEIGHT(r);
     /*
@@ -2211,9 +2182,6 @@ rxvt_tabbar_create (rxvt_t* r)
     XDefineCursor (r->Xdisplay, r->tabBar.win, r->h->bar_pointer);
     XSelectInput (r->Xdisplay, r->tabBar.win,
 	    ExposureMask | ButtonPressMask | ButtonReleaseMask
-#ifdef HAVE_MENUBAR
-		| Button3MotionMask
-#endif
 	);
 
 #ifdef XFT_SUPPORT

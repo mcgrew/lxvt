@@ -176,24 +176,6 @@ rxvt_toggle_subwin( rxvt_t *r, const unsigned char *str)
 	return;
     }
 #endif
-
-#ifdef HAVE_MENUBAR
-    if( STRCHR( str, 'm') || STRCHR( str, 'M' ) )
-    {
-	if( rxvt_menubar_visible (r) && *str != '+' )
-	{
-	    if( rxvt_menubar_hide(r) )
-		rxvt_resize_on_subwin (r, HIDE_MENUBAR);
-	}
-	else if( !rxvt_menubar_visible( r ) && *str != '-' )
-	{
-	    if( rxvt_menubar_show(r) )
-		rxvt_resize_on_subwin (r, SHOW_MENUBAR);
-	}
-
-	return;
-    }
-#endif
 }
 /* }}} */
 

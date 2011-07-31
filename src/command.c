@@ -2915,50 +2915,6 @@ rxvt_process_buttonpress(rxvt_t* r, int page, XButtonEvent *ev)
      */
     if (ev->window == PVTS(r, page)->vt)
     {
-#ifdef HAVE_MENUBAR
-	/* Popup menu on Control click on terminal window. */
-	if( (ev->state & ControlMask) && !r->h->ActiveMenu)
-	{
-	    int button;
-
-	    /* In some bizaro world, Button1,2,3 might not be 1,2,3 */
-	    switch( ev->button )
-	    {
-		case Button1:
-		    button = 0; break;
-
-		case Button2:
-		    button = 1; break;
-
-		case Button3:
-		    button = 2; break;
-
-		default:
-		    button = -1;
-	    }
-
-	    if( button >=0 && r->h->popupMenu[button] )
-	    {
-		int	x, y;
-		Window	unused_cr;
-
-		r->h->showingMenu |= POPUP_MENU;
-
-		XTranslateCoordinates( r->Xdisplay, ev->window,
-			r->TermWin.parent, ev->x, ev->y, &x, &y, &unused_cr);
-
-		r->h->ActiveMenu = r->h->popupMenu[button];
-
-		r->h->ActiveMenu->x = x;
-		r->h->ActiveMenu->y = y;
-
-		XDefineCursor(r->Xdisplay, AVTS(r)->vt, r->h->bar_pointer);
-		rxvt_menu_show(r);
-		return;
-	    }
-	}
-#endif
-
 	clickintime = ev->time - h->MEvent.time < MULTICLICK_TIME;
 	if (reportmode)
 	{
@@ -3041,13 +2997,6 @@ rxvt_process_buttonpress(rxvt_t* r, int page, XButtonEvent *ev)
 #endif
 
 
-#ifdef HAVE_MENUBAR
-    /*
-     * Menubar window processing of button press
-     */
-    if (rxvt_is_menubar_win(r, ev->window))
-	rxvt_menubar_control(r, ev);
-#endif
 }
 
 
@@ -3139,17 +3088,6 @@ rxvt_process_buttonrelease(rxvt_t* r, int page, XButtonEvent *ev)
     }
 #endif	/* HAVE_SCROLLBARS */
 
-#ifdef HAVE_MENUBAR
-    if( r->h->showingMenu )
-    {
-	r->h->showingMenu &= ~POPUP_MENU;
-	XDefineCursor( r->Xdisplay, AVTS(r)->vt, r->term_pointer);
-
-	rxvt_menu_select(r, ev);
-	return;
-    }
-#endif
-
 #ifdef SELECTION_SCROLLING
     r->h->pending_scroll_selection=0;
 #endif	/* SELECTION_SCROLLING */
@@ -3212,10 +3150,6 @@ rxvt_process_buttonrelease(rxvt_t* r, int page, XButtonEvent *ev)
 	    }
 	}
     }
-#ifdef HAVE_MENUBAR
-    else if (rxvt_is_menubar_win(r, ev->window))
-	rxvt_menubar_control(r, ev);
-#endif	/* HAVE_MENUBAR */
 }
 
 
@@ -3388,19 +3322,6 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason)
 
     switch (reason)
     {
-#ifdef HAVE_MENUBAR
-	case HIDE_MENUBAR:
-	    r->szHint.base_height -= rxvt_menubar_rheight (r);
-	    r->szHint.min_height  -= rxvt_menubar_rheight (r);
-	    r->szHint.height	  -= rxvt_menubar_rheight (r);
-	    break;
-	case SHOW_MENUBAR:
-	    r->szHint.base_height += rxvt_menubar_rheight (r);
-	    r->szHint.min_height  += rxvt_menubar_rheight (r);
-	    r->szHint.height	  += rxvt_menubar_rheight (r);
-	    break;
-#endif	/* HAVE_MENUBAR */
-
 #ifdef HAVE_TABBAR
 	case HIDE_TABBAR:
 	    r->szHint.base_height -= rxvt_tabbar_rheight (r);
@@ -3434,10 +3355,6 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason)
 #ifdef HAVE_SCROLLBARS
 	    if( rxvt_scrollbar_visible( r) )
 		r->szHint.base_width += rxvt_scrollbar_width (r);
-#endif
-#ifdef HAVE_MENUBAR
-	    if( rxvt_menubar_visible(r) )
-		r->szHint.base_height += rxvt_menubar_height (r);
 #endif
 #ifdef HAVE_TABBAR
 	    if( rxvt_tabbar_visible( r ) )
@@ -3664,9 +3581,6 @@ rxvt_resize_sub_windows (rxvt_t* r)
 
 #ifdef HAVE_SCROLLBARS
     rxvt_scrollbar_resize(r);
-#endif
-#ifdef HAVE_MENUBAR
-    rxvt_menubar_resize(r);
 #endif
 #ifdef HAVE_TABBAR
     rxvt_tabbar_resize (r);
@@ -4021,12 +3935,6 @@ rxvt_process_expose (rxvt_t* r, XEvent* ev)
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Expose event on scrollbar\n"));
 	}
 # endif
-# ifdef HAVE_MENUBAR
-	else if (rxvt_is_menubar_win (r, win))
-	{
-	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Expose event on menubar\n"));
-	}
-# endif
 #endif	/* DEBUG */
 
 #ifdef HAVE_TABBAR
@@ -4052,13 +3960,6 @@ rxvt_process_expose (rxvt_t* r, XEvent* ev)
 	    return;
 	}
 #endif
-#ifdef HAVE_MENUBAR
-	if (rxvt_is_menubar_win(r, win) && rxvt_menubar_visible (r))
-	{
-	    rxvt_menubar_expose(r);
-	    return;
-	}
-#endif
 	/* Not reached */
     }
 }
@@ -4078,19 +3979,6 @@ rxvt_process_motionnotify (rxvt_t* r, XEvent* ev)
 #ifdef POINTER_BLANK
     if (ISSET_OPTION(r, Opt_pointerBlank) && PVTS(r, page)->hidden_pointer)
 	rxvt_pointer_unblank (r, page);
-#endif
-#ifdef HAVE_MENUBAR
-    if (rxvt_is_menubar_win(r, ev->xmotion.window))
-    {
-	rxvt_menubar_control(r, &(ev->xbutton));
-	return;
-    }
-
-    if (r->h->showingMenu )
-    {
-	rxvt_menu_select( r, &(ev->xbutton));
-	return;
-    }
 #endif
 
     if (ISSET_PMODE(r, page, PrivMode_mouse_report) &&
@@ -4269,7 +4157,7 @@ rxvt_process_x_event(rxvt_t* r, XEvent *ev)
 
 #ifdef DEBUG_X
     ltt = localtime(&(tp.tv_sec));
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Event: %-16s %-7s %08lx (%4d-%02d-%02d %02d:%02d:%02d.%.6ld) %s %lu\n", eventnames[ev->type], (ev->xany.window == r->TermWin.parent ? "parent" : (ev->xany.window == PVTS(r, page)->vt ? "vt" : (ev->xany.window == r->scrollBar.win ? "scroll" : (ev->xany.window == r->menuBar.win ? "menubar" : "UNKNOWN")))), (ev->xany.window == r->TermWin.parent ? r->TermWin.parent : (ev->xany.window == PVTS(r, page)->vt ? PVTS(r, page)->vt : (ev->xany.window == r->scrollBar.win ? r->scrollBar.win : (ev->xany.window == r->menuBar.win ? r->menuBar.win : 0)))), ltt->tm_year + 1900, ltt->tm_mon + 1, ltt->tm_mday, ltt->tm_hour, ltt->tm_min, ltt->tm_sec, tp.tv_usec, ev->xany.send_event ? "S" : " ", ev->xany.serial));
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Event: %-16s %-7s %08lx (%4d-%02d-%02d %02d:%02d:%02d.%.6ld) %s %lu\n", eventnames[ev->type], (ev->xany.window == r->TermWin.parent ? "parent" : (ev->xany.window == PVTS(r, page)->vt ? "vt" : (ev->xany.window == r->scrollBar.win ? "scroll" : "UNKNOWN"))), (ev->xany.window == r->TermWin.parent ? r->TermWin.parent : (ev->xany.window == PVTS(r, page)->vt ? PVTS(r, page)->vt : (ev->xany.window == r->scrollBar.win ? r->scrollBar.win : 0))), ltt->tm_year + 1900, ltt->tm_mon + 1, ltt->tm_mday, ltt->tm_hour, ltt->tm_min, ltt->tm_sec, tp.tv_usec, ev->xany.send_event ? "S" : " ", ev->xany.serial));
 #endif
 
     /* X event timeouts */
@@ -5845,13 +5733,6 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	    }
 	    else 
 #endif	/* HAVE_SCROLLBARS */
-#ifdef HAVE_MENUBAR
-	    if ('m' == *str || 'M' == *str)	    /* show/hide menubar */
-	    {
-		rxvt_hotkey_hide_menubar (r, 0);
-	    }
-	    else
-#endif	/* HAVE_MENUBAR */
 	    {
 		rxvt_hotkey_hide_tabbar (r, 0);
 	    }
@@ -6056,9 +5937,6 @@ rxvt_process_terminal_mode(rxvt_t* r, int page, int mode, int priv __attribute__
 	{ 6, PrivMode_relOrigin },
 	{ 7, PrivMode_Autowrap },
 	{ 9, PrivMode_MouseX10 },
-#ifdef menuBar_esc
-	{ menuBar_esc, PrivMode_menuBar },
-#endif
 #ifdef scrollBar_esc
 	{ scrollBar_esc, PrivMode_scrollBar },
 #endif
@@ -6185,22 +6063,6 @@ rxvt_process_terminal_mode(rxvt_t* r, int page, int mode, int priv __attribute__
 		if (state)	/* orthogonal */
 		    UNSET_PMODE(r, page, PrivMode_MouseX11);
 		break;
-#ifdef HAVE_MENUBAR
-# ifdef menuBar_esc
-	    case menuBar_esc:
-		if (state)
-		{
-		    if (rxvt_menubar_show(r))
-			rxvt_resize_on_subwin (r, SHOW_MENUBAR);
-		}
-		else
-		{
-		    if (rxvt_menubar_hide(r))
-			rxvt_resize_on_subwin (r, HIDE_MENUBAR);
-		}
-		break;
-# endif
-#endif
 #ifdef HAVE_SCROLLBARS
 # ifdef scrollBar_esc
 	    case scrollBar_esc:

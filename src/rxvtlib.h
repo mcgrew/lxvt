@@ -271,10 +271,6 @@ typedef enum
 #ifdef HAVE_SCROLLBARS
 # define Opt_transparent_scrollbar  ((1LU<<23) | IS_OPTION1)
 #endif
-#ifdef HAVE_MENUBAR
-# define Opt_transparent_menubar    ((1LU<<24) | IS_OPTION1)
-# define Opt_showMenu		    ((1LU<<25) | IS_OPTION1)
-#endif
 #define Opt_transparent_tabbar	    ((1LU<<26) | IS_OPTION1)
 #define Opt_tabPixmap		    ((1LU<<27) | IS_OPTION1)
 #ifdef XFT_SUPPORT
@@ -393,25 +389,6 @@ typedef enum
 #define USE_BOLD_PFONT		    (2)
 
 /* ------------------------------------------------------------------------- */
-
-#ifdef HAVE_MENUBAR
-typedef struct
-{
-    short           state;
-    Window          win;
-    GC		    gc;
-    unsigned long   fg;
-    unsigned long   bg;
-    unsigned long   topshadow;
-    unsigned long   botshadow;
-
-# ifdef XFT_SUPPORT
-    XftDraw	    *xftDraw;
-    XftColor	    xftFore;
-# endif
-} menuBar_t;
-#endif
-
 
 #ifdef HAVE_SCROLLBARS
 typedef struct
@@ -812,9 +789,6 @@ typedef struct rxvt_vars
 #ifdef HAVE_SCROLLBARS
     scrollBar_t	    scrollBar;
 #endif
-#ifdef HAVE_MENUBAR
-    menuBar_t	    menuBar;
-#endif
 #ifdef HAVE_TABS
     tabBar_t	    tabBar;
 #endif
@@ -920,9 +894,7 @@ typedef struct rxvt_vars
 
 typedef enum
 {
-    HIDE_MENUBAR = 0,
-    SHOW_MENUBAR,
-    HIDE_TABBAR,
+    HIDE_TABBAR = 0,
     SHOW_TABBAR,
     HIDE_SCROLLBAR,
     SHOW_SCROLLBAR,

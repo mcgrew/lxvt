@@ -158,27 +158,6 @@ rxvt_t         * rxvt_get_r                       __PROTO((void));
 /* End prototypes of main.c */
 
 
-/* Begin prototypes of menubar.c */
-#ifdef HAVE_MENUBAR
-void             rxvt_menubar_resize              __PROTO((rxvt_t*));
-void             rxvt_menubar_create              __PROTO((rxvt_t*));
-void             rxvt_menubar_clean_exit          __PROTO((rxvt_t*));
-int              rxvt_menubar_hide                __PROTO((rxvt_t*));
-int              rxvt_menubar_show                __PROTO((rxvt_t*));
-void             rxvt_menubar_expose              __PROTO((rxvt_t*));
-void             rxvt_menubar_dispatcher          __PROTO((rxvt_t*, unsigned char*));
-void             rxvt_menubar_control             __PROTO((rxvt_t*, XButtonEvent*));
-void             rxvt_menubar_load_file           __PROTO((rxvt_t*, const unsigned char*));
-int              rxvt_is_menubar_win              __PROTO((rxvt_t*, Window));
-unsigned short   rxvt_menubar_height              __PROTO((rxvt_t*));
-unsigned short   rxvt_menubar_rheight             __PROTO((rxvt_t*));
-int              rxvt_menubar_visible             __PROTO((rxvt_t*));
-void		 rxvt_menu_show			  __PROTO((rxvt_t*));
-int		 rxvt_menu_select		  __PROTO((rxvt_t*, XButtonEvent*));
-#endif
-/* End prototypes of menubar.c */
-
-
 /* Begin prototypes of misc.c */
 char           * rxvt_r_basename                  __PROTO((const char* str));
 int              rxvt_str_match                   __PROTO((const char* s1, const char* s2));
