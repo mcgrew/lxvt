@@ -1086,10 +1086,6 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
     r->h->blinkInterval *= 1000;
 #endif
 
-#ifdef PRINTPIPE
-    if (!rs[Rs_print_pipe])
-	rs[Rs_print_pipe] = PRINTPIPE;
-#endif
     if (!rs[Rs_cutchars])
 	rs[Rs_cutchars] = CUTCHARS;
 
@@ -1551,17 +1547,6 @@ rxvt_init_command(rxvt_t* r)
      */
     act.sa_handler  = SIG_IGN;
     sigaction( SIGHUP, &act, NULL);
-
-#ifdef PRINTPIPE
-    /*
-     * 2006-04-28 gi1242: If there is an error opening the printer command, then
-     * we'll get SIGPIPE. If not handled, mrxvt will exit.
-     * 
-     * There's nothing we really need to do on broken pipes, so just ignore
-     * SIGPIPE for now.
-     */
-    sigaction( SIGPIPE, &act, NULL);
-#endif
 
     act.sa_handler  = rxvt_Child_signal;
     sigaction (SIGCHLD, &act, NULL);
