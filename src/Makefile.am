@@ -49,20 +49,6 @@ mrxvt_SOURCES +=    command.c		\
 		    transparent.c	\
 		    xdefaults.c
 
-mrxvt_SOURCES +=    close_term.xbm	\
-		    left.xbm		\
-		    right.xbm		\
-		    term.xbm
-
-mrxvt_SOURCES +=    close_term.xpm	\
-		    close_term_d.xpm	\
-		    left.xpm		\
-		    left_d.xpm		\
-		    right.xpm		\
-		    right_d.xpm		\
-		    term.xpm		\
-		    term_d.xpm
-
 #install-exec-hook:
 #   -chown root $(DESTDIR)$(bindir)/mrxvt
 #   -chmod go-r $(DESTDIR)$(bindir)/mrxvt
@@ -101,21 +87,6 @@ MRXVT_H =	    ../config.h			\
 		    rxvt.h			\
 		    rxvtlib.h
 
-MRXVT_PIXMAPS =	    left.xbm			\
-		    right.xbm			\
-		    close_term.xbm		\
-		    term.xbm			\
-		    left.xpm			\
-		    left_d.xpm			\
-		    right.xpm			\
-		    right_d.xpm			\
-		    close_term.xpm		\
-		    close_term_d.xpm		\
-		    term.xpm			\
-		    term_d.xpm
-
-
-
 AUTOMAKE_OPTIONS = no-dependencies
 
 # set dependencies
@@ -128,8 +99,6 @@ init.o:		    $(MRXVT_H) $(XFTACS_H) init.h	init.c
 logging.o:	    $(MRXVT_H)				logging.c
 main.o:		    $(MRXVT_H) $(XFTACS_H)		main.c
 misc.o:		    $(MRXVT_H) 				misc.c
-mjpg.o:		    $(MRXVT_H) 				mjpg.c
-mpng.o:		    $(MRXVT_H) 				mpng.c
 netdisp.o:	    $(MRXVT_H) 				netdisp.c
 ptytty.o:	    $(MRXVT_H) 				ptytty.c
 rxvt.o:		    $(MRXVT_H) 				rxvt.c
@@ -137,7 +106,7 @@ rxvtmem.o:	    $(MRXVT_H) 				rxvtmem.h rxvtmem.c
 screen.o:	    $(MRXVT_H) $(XFTACS_H)		screen.c
 session.o:	    $(MRXVT_H) 				session.c
 strings.o:	    $(MRXVT_H) 				strings.c
-tabbar.o:	    $(MRXVT_H) $(MRXVT_PIXMAPS)		tabbar.c
+tabbar.o:	    $(MRXVT_H) 				tabbar.c
 xdefaults.o:	    $(MRXVT_H) 				xdefaults.c
 transparent.o:	    $(MRXVT_H) 				transparent.c
 xftacs.o:			xftacs.h		xftacs.c
