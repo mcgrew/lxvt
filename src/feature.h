@@ -155,11 +155,6 @@
 /* #define NO_SLOW_LINK_SUPPORT */
 
 /*
- * Printer pipe which will be used for emulation of attached vt100 printer
- */
-#define PRINTPIPE   "lpr"
-
-/*
  * Allow 80/132 mode switching on startup
  */
 /* #define ALLOW_132_MODE */

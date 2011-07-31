@@ -527,10 +527,6 @@ static const struct {
     RSTRG(Rs_selectstyle, "selectStyle",
 	"select style mode = old|oldword", 0),
 
-#ifdef PRINTPIPE
-    RSTRG(Rs_print_pipe, "printPipe", "string", 0),
-#endif
-
     BOOL( "noSysConfig", "nsc", Opt2_noSysConfig,
 	    "reading /etc/mrxvt/mrxvtrc." ),
     BOOL( "disableMacros", "dm", Opt2_disableMacros,

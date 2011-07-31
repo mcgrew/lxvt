@@ -189,9 +189,6 @@ void           rxvt_process_propertynotify   (rxvt_t*, XEvent*);
 void           rxvt_process_expose           (rxvt_t*, XEvent*);
 void           rxvt_process_motionnotify     (rxvt_t*, XEvent*);
 void           rxvt_process_x_event          (rxvt_t*, XEvent*);
-#ifdef PRINTPIPE
-void           rxvt_process_print_pipe       (rxvt_t*, int);
-#endif
 void           rxvt_process_nonprinting      (rxvt_t*, int, unsigned char);
 void           rxvt_process_escape_vt52      (rxvt_t*, int, unsigned char);
 void           rxvt_process_escape_seq       (rxvt_t*, int);
@@ -4636,118 +4633,6 @@ rxvt_process_x_event(rxvt_t* r, XEvent *ev)
 
 /*}}} */
 
-/*{{{ print pipe */
-/*----------------------------------------------------------------------*/
-#ifdef PRINTPIPE
-/* EXTPROTO */
-FILE*
-rxvt_popen_printer( rxvt_t *r, const char *pipeName )
-{
-    FILE*   stream = popen( pipeName ? pipeName : r->h->rs[Rs_print_pipe],
-			    "w" );
-
-
-    assert( pipeName || r->h->rs[Rs_print_pipe] );
-    if (IS_NULL(stream))
-	rxvt_msg (DBG_ERROR, DBG_COMMAND, "Can't open printer pipe %s",
-		r->h->rs[Rs_print_pipe] ? r->h->rs[Rs_print_pipe] : pipeName );
-
-    return stream;
-}
-
-
-/* EXTPROTO */
-int
-rxvt_pclose_printer(FILE *stream)
-{
-    fflush(stream);
-    /* pclose() reported not to work on SunOS 4.1.3.
-     * pclose works provided SIGCHLD handler uses waitpid
-     */
-    return pclose(stream);
-}
-
-
-/*
- * simulate attached vt100 printer
- */
-/* INTPROTO */
-void
-rxvt_process_print_pipe( rxvt_t* r, int page )
-{
-    rxvt_msg (DBG_ERROR, DBG_COMMAND,  "Print pipe not implemented in this version" );
-#if 0 /* {{{ Disabled because failures of rxvt_cmd_getc() can't be handled */
-    int		readpage = page;
-    int		done;
-    FILE*	fd;
-
-
-    if (IS_NULL(fd = rxvt_popen_printer(r, NULL)))
-	return;
-
-    /*
-    ** Send all input to the printer until either ESC[4i or ESC[?4i
-    ** is received.
-    */
-    for (done = 0; !done;)
-    {
-	unsigned char   buf[8];
-	unsigned char   ch;
-	unsigned int	i, len;
-
-	if ((ch = rxvt_cmd_getc(r, &readpage)) != C0_ESC)
-	{
-	    assert (readpage == page);
-	    assert (checksum == PVTS(r, page)->checksum);
-	    if (putc(ch, fd) == EOF)
-		break;	    /* done = 1 */
-	}
-	else
-	{
-	    len = 0;
-	    buf[len++] = ch;
-
-	    if ((buf[len++] = rxvt_cmd_getc(r, &readpage)) == '[')
-	    {
-		assert (page == readpage);
-		assert (checksum == PVTS(r, page)->checksum);
-		if ((ch = rxvt_cmd_getc(r, &readpage)) == '?')
-		{
-		    assert (page == readpage);
-		    assert (checksum == PVTS(r, page)->checksum);
-		    buf[len++] = '?';
-		    ch = rxvt_cmd_getc(r, &readpage);
-		    assert (page == readpage);
-		    assert (checksum == PVTS(r, page)->checksum);
-		}
-		if ((buf[len++] = ch) == '4')
-		{
-		    if ((buf[len++]=rxvt_cmd_getc(r, &readpage))=='i')
-		    {
-			assert (page == readpage);
-			assert (checksum == PVTS(r, page)->checksum);
-			break;	/* done = 1 */
-		    }
-		}
-	    }
-
-	    for (i = 0; i < len; i++)
-	    {
-		if (putc(buf[i], fd) == EOF)
-		{
-		    done = 1;
-		    break;
-		}
-	    }
-	}
-    }
-
-    rxvt_pclose_printer(fd);
-#endif /*}}}*/
-}
-#endif		    /* PRINTPIPE */
-/*}}} */
-
 
 /* *INDENT-OFF* */
 enum {
@@ -5268,20 +5153,6 @@ rxvt_process_csi_seq(rxvt_t* r, int page)
     switch (ch)
     {
 	/* ISO/IEC 6429:1992(E) CSI sequences (defaults in parentheses) */
-#ifdef PRINTPIPE
-	case CSI_MC:	    /* 8.3.83: (0) MEDIA COPY */
-	    switch (arg[0])
-	    {
-		case 0:		/* initiate transfer to primary aux device */
-		    rxvt_scr_printscreen( r, page, 0, 0, 0, NULL );
-		    break;
-		case 5:		/* start relay to primary aux device */
-		    rxvt_process_print_pipe( r, page );
-		    break;
-	    }
-	    break;
-#endif
-
 	case CSI_CUU:	    /* 8.3.22: (1) CURSOR UP */
 	case CSI_VPR:	    /* 8.3.161: (1) LINE POSITION FORWARD */
 	    arg[0] = -arg[0];

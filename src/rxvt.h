@@ -1193,9 +1193,6 @@ enum {
     Rs_delete_key,
 #endif
     Rs_selectstyle,
-#ifdef PRINTPIPE
-    Rs_print_pipe,
-#endif
 #ifdef USE_XIM
     Rs_preeditType,
     Rs_inputMethod,

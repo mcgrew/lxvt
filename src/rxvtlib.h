@@ -842,7 +842,6 @@ enum
     MacroFnRaise,
     MacroFnSetTitle,
     MacroFnUseFifo,
-    MacroFnPrintScreen,
     MacroFnSaveConfig,
     MacroFnToggleMacros,
     NMACRO_FUNCS

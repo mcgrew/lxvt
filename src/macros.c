@@ -55,7 +55,6 @@ static const char *const macroNames[] =
     "Raise",		    /* Raise the terminal window */
     "SetTitle",		    /* Set title of active tab to selection */
     "UseFifo",		    /* Enable / disable using fifo */
-    "PrintScreen",	    /* Dump screen to file / printer */
     "SaveConfig",	    /* Save config to file */
     "ToggleMacros"	    /* Toggle using keyboard macros */
 };
@@ -1349,48 +1348,6 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	    }
 	    break;
 #endif/*USE_FIFO*/
-
-	case MacroFnPrintScreen:
-	{
-	    /*
-	     * Arguments: [-{s,n,p}] command
-	     *	s: Dump whole scroll back buffer.
-	     *	p: Pretty print (i.e. with escape sequences for ANSII color)
-	     *	n: No line continuation
-	     * scroll back buffer. The argument if any is the command to use for
-	     * the printer pipe.
-	     */
-
-	    char    *s		= (char*) astr;
-	    int	    pretty	= 0,
-		    scrollback	= 0,
-		    linecont	= 1;
-
-
-	    if( *s && *s == '-' )
-	    {
-		while( *(++s) && !isspace( *s ) )
-		{
-		    switch( *s )
-		    {
-			case 's': scrollback	= 1; break;
-			case 'p': pretty	= 1; break;
-			case 'n': linecont	= 0; break;
-			default:
-			    rxvt_msg (DBG_ERROR, DBG_MACROS,  "Bad option %c to macro %s",
-				    *s, macroNames[action->type] );
-			    retval = -1;
-		    }
-		}
-
-		while( isspace(*s) ) s++;
-	    }
-
-	    rxvt_scr_printscreen( r, ATAB(r), scrollback, pretty, linecont,
-		    *s ? s : NULL );
-
-	    break;
-	}
 
 	case MacroFnSaveConfig:
 	{
