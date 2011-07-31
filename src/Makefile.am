@@ -120,12 +120,6 @@ else
 UTMP_SRC =
 endif
 
-if GREEK
-GREEK_SRC = grkelot.c grkelot.h
-else
-GREEK_SRC = 
-endif
-
 if SESSION_SUPPORT
 SESSION_SRC = session.c
 else

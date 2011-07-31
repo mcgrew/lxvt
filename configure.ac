@@ -157,7 +157,6 @@ support_jpeg=yes
 support_png=yes
 support_xft=no
 support_xim=no
-support_greek=no
 support_cjk=no
 support_ttygid=yes
 support_backspace_key=yes
@@ -215,7 +214,6 @@ if test "x$support_everything" = "xyes"; then
     support_png=yes
     support_xft=yes
     support_xim=yes
-    support_greek=yes
     support_cjk=yes
     support_ttygid=yes
     support_backspace_key=yes
@@ -272,7 +270,6 @@ if test "x$support_minimal" = "xyes"; then
     support_png=no
     support_xft=no
     support_xim=no
-    support_greek=no
     support_cjk=no
     support_ttygid=yes
     support_backspace_key=yes
@@ -653,17 +650,6 @@ AC_ARG_ENABLE(
     AC_HELP_STRING([--enable-xim],[enable XIM support [[no]]]),
     [support_xim=$enableval]
 )
-
-
-AC_ARG_ENABLE(
-    greek,
-    AC_HELP_STRING([--enable-greek],[enable Greek keyboard support [[no]]]),
-    [support_greek=$enableval]
-)
-if test "x$support_greek" = "xyes"; then
-    AC_DEFINE(GREEK_SUPPORT, [], [set Greek keyboard support])
-fi
-AM_CONDITIONAL(GREEK, test "x$support_greek" = "xyes")
 
 
 AC_ARG_ENABLE(
@@ -1558,7 +1544,6 @@ echo
 echo "Multi-language and font features:"
 echo "Freetype Font               : $support_xft"
 echo "X Input Method              : $support_xim"
-echo "Greek keyboard              : $support_greek"
 echo "CJK multichar language      : $support_cjk"
 if test "x$support_cjk" = "xyes"; then
     echo "Default encoding method     : $encoding_option"

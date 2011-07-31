@@ -1109,24 +1109,6 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
 	 * and define your macros in the system wide config file.
 	 */
 
-#ifdef GREEK_SUPPORT
-	if (keysym == r->h->ks_greekmodeswith)
-	{
-	    r->h->greek_mode = !r->h->greek_mode;
-	    if (r->h->greek_mode)
-	    {
-		rxvt_xterm_seq(r, ATAB(r), XTerm_title,
-		    (greek_getmode() == GREEK_ELOT928 ?
-		    "[Greek: iso]" : "[Greek: ibm]"), CHAR_ST);
-		greek_reset();
-	    }
-	    else
-		rxvt_xterm_seq(r, ATAB(r), XTerm_title,
-		    APL_NAME "-" VERSION, CHAR_ST);
-	    return;
-	}
-#endif	/* GREEK_SUPPORT */
-
 
 	/*
 	 * At this point, all the keystrokes that have special meaning to us
@@ -1244,11 +1226,6 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
 		}
 	    } /* if(meta) */
 
-
-#ifdef GREEK_SUPPORT
-	    if (r->h->greek_mode)
-		len = greek_xlat( (char*) kbuf, len);
-#endif	/* GREEK_SUPPORT */
 	}   /* else */
 
     }

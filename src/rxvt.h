@@ -507,10 +507,6 @@ typedef char*	    XPointer;
 #include "rxvtlib.h"
 
 
-#ifdef GREEK_SUPPORT
-# include "grkelot.h"
-#endif
-
 #ifdef HAVE_MENUBAR
 # include "menubar.h"
 #endif
@@ -1128,10 +1124,6 @@ enum {
     Rs_boldFont,
     _Rs_boldFont = Rs_boldFont + MAX_NFONTS - 1,
 #endif
-#ifdef GREEK_SUPPORT
-    Rs_greek_keyboard,
-    Rs_greektoggle_key,
-#endif
 #ifdef XFT_SUPPORT
     Rs_xftfont,	/* Font name, family */
 # ifdef MULTICHAR_SET
@@ -1542,12 +1534,6 @@ struct rxvt_hidden {
 		    scrollbar_align,
 		    selection_wait,
 		    selection_type;
-
-#ifdef GREEK_SUPPORT
-    short	    greek_mode;				/* Greek keyboard
-							   mode */
-    KeySym	    ks_greekmodeswith;
-#endif
 
     uint16_t	    prev_ncol,
 		    prev_nrow;				/* screen: previous

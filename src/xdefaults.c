@@ -466,12 +466,6 @@ static const struct {
 	"input style = OverTheSpot|OffTheSpot|Root", 0),
 #endif		    /* USE_XIM */
 
-#ifdef GREEK_SUPPORT
-    STRG(Rs_greek_keyboard, "greek_keyboard", "grk", "mode",
-	"greek keyboard mapping mode = iso|ibm", 0),
-    RSTRG(Rs_greektoggle_key, "greektoggle_key", "keysym", 0),
-#endif
-
     STRG(Rs_name, "clientName", "name", "string",
 	"client instance, icon, and title strings", 0),
     STRG(Rs_title, NULL, "T", NULL, NULL, 0),	/* short form */
@@ -660,9 +654,6 @@ static const char optionsstring[] = "Options: "
     ","
 #ifdef XFT_SUPPORT
     "xft,"
-#endif
-#if defined(GREEK_SUPPORT)
-    "Greek,"
 #endif
 #if defined(NO_BACKSPACE_KEY)
     "no_backspace,"
@@ -1100,12 +1091,7 @@ rxvt_get_options(rxvt_t *r, int argc, const char *const *argv)
 		    opt--;
 		    bad_option = 1;
 		}
-		else if (!STRCMP(opt, "7") || !STRCMP(opt, "8")
-#ifdef GREEK_SUPPORT
-		   /* obsolete 12 May 1996 (v2.17) */
-		   || rxvt_str_match(opt, "grk")
-#endif
-		)
+		else if (!STRCMP(opt, "7") || !STRCMP(opt, "8"))
 		    msg = "obsolete";
 		else
 		    bad_option = 1;
@@ -1496,23 +1482,5 @@ rxvt_extract_resources (
     }
 #endif
 
-#ifdef GREEK_SUPPORT
-    /* this could be a function in grkelot.c */
-    /* void set_greek_keyboard (const char * str); */
-    if (r->h->rs[Rs_greek_keyboard])
-    {
-	if (!STRCMP(r->h->rs[Rs_greek_keyboard], "iso"))
-	    greek_setmode(GREEK_ELOT928);   /* former -grk9 */
-	else if (!STRCMP(r->h->rs[Rs_greek_keyboard], "ibm"))
-	    greek_setmode(GREEK_IBM437);    /* former -grk4 */
-    }
-    {
-	KeySym	      sym;
-
-	if (r->h->rs[Rs_greektoggle_key] &&
-	    ((sym = XStringToKeysym(r->h->rs[Rs_greektoggle_key]))!=0))
-	    r->h->ks_greekmodeswith = sym;
-    }
-#endif		    /* GREEK_SUPPORT */
 }
 /*----------------------- end-of-file (C source) -----------------------*/

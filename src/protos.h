@@ -60,17 +60,6 @@ char*            rxvt_encoding_name               __PROTO((rxvt_t *r));
 /* End prototypes of defaultfont.c */
 
 
-/* Begin prototypes of grkelot.c */
-#ifdef GREEK_SUPPORT
-void             greek_init                       __PROTO((void));
-void             greek_end                        __PROTO((void));
-void             greek_reset                      __PROTO((void));
-void             greek_setmode                    __PROTO((int greek_mode));
-int              greek_getmode                    __PROTO((void));
-int              greek_xlat                       __PROTO((char* s, int num_chars));
-#endif
-/* End prototypes of grkelot.c */
-
 /* Begin prototypes of macros.c */
 int		 rxvt_parse_macros		  __PROTO((rxvt_t*, const char *, const char *, macro_priority_t priority));
 void		 rxvt_cleanup_macros		  __PROTO((rxvt_t*));

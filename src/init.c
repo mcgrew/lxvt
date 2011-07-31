@@ -793,9 +793,6 @@ rxvt_init_vars(rxvt_t *r)
 #ifndef NO_BRIGHTCOLOR
     h->colorfgbg = DEFAULT_RSTYLE;
 #endif
-#ifdef GREEK_SUPPORT
-    h->ks_greekmodeswith = GREEK_KEYBOARD_MODESWITCH;
-#endif
     h->refresh_type = SLOW_REFRESH;
     UNSET_REGION(h->refreshRegion);	    /* Will be created when needed */
     h->prev_nrow = h->prev_ncol = 0;
@@ -1686,10 +1683,6 @@ rxvt_init_command(rxvt_t* r)
     r->h->meta_char = (ISSET_OPTION(r, Opt_meta8) ? 0x80 : C0_ESC);
 #endif
     rxvt_get_ourmods(r);
-
-#ifdef GREEK_SUPPORT
-    greek_init();
-#endif
 
     r->Xfd = XConnectionNumber(r->Xdisplay);
 #ifdef USE_FIFO
