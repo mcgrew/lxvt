@@ -1023,11 +1023,6 @@ enum {
 
     Rs_fade,	/* fade percentage */
 
-#ifdef TEXT_SHADOW
-    Rs_textShadow,	/* text shadow color */
-    Rs_textShadowMode,	/* text shadow color mode */
-#endif
-
     Rs_skipPages,	/* Number of pages to skip when jump scrolling */
     Rs_refreshLimit,	/* Number of chars to tolerate when refreshing */
 

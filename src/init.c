@@ -895,57 +895,6 @@ rxvt_xerror_handler(const Display *display __attribute__((unused)), const XError
 }
 
 
-#ifdef TEXT_SHADOW
-/* INTPROTO */
-void
-rxvt_init_shadow_mode (rxvt_t* r, const char* shadow_mode)
-{
-    if (
-	  !shadow_mode || !STRCASECMP ("botright", shadow_mode)
-	  || !STRCASECMP ("default", shadow_mode))
-    {
-	r->TermWin.shadow_mode = SHADOW_BOTRIGHT;
-    }
-    else if (!STRCASECMP ("botleft", shadow_mode))
-    {
-	r->TermWin.shadow_mode = SHADOW_BOTLEFT;
-    }
-    else if (!STRCASECMP ("topright", shadow_mode))
-    {
-	r->TermWin.shadow_mode = SHADOW_TOPRIGHT;
-    }
-    else if (!STRCASECMP ("topleft", shadow_mode))
-    {
-	r->TermWin.shadow_mode = SHADOW_TOPLEFT;
-    }
-    else if (!STRCASECMP ("top", shadow_mode))
-    {
-	r->TermWin.shadow_mode = SHADOW_TOP;
-    }
-    else if (!STRCASECMP ("bottom", shadow_mode))
-    {
-	r->TermWin.shadow_mode = SHADOW_BOTTOM;
-    }
-    else if (!STRCASECMP ("left", shadow_mode))
-    {
-	r->TermWin.shadow_mode = SHADOW_LEFT;
-    }
-    else if (!STRCASECMP ("right", shadow_mode))
-    {
-	r->TermWin.shadow_mode = SHADOW_RIGHT;
-    }
-    else if (!STRCASECMP ("none", shadow_mode))
-    {
-	r->TermWin.shadow_mode = SHADOW_NONE;
-    }
-    else	/* no match == default */
-    {
-	r->TermWin.shadow_mode = SHADOW_NONE;
-    }
-}
-#endif
-
-
 /*----------------------------------------------------------------------*/
 /* EXTPROTO */
 void
@@ -1296,10 +1245,6 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
     rxvt_set_default_font_xft (r);
 #endif	/* XFT_SUPPORT */
 
-
-#ifdef TEXT_SHADOW
-    rxvt_init_shadow_mode (r, rs[Rs_textShadowMode]);
-#endif
 
 #ifdef XTERM_REVERSE_VIDEO
     /* this is how xterm implements reverseVideo */
@@ -2126,27 +2071,6 @@ rxvt_init_colors( rxvt_t *r )
     }
 #endif	/* KEEP_SCROLLCOLOR */
 
-
-#ifdef TEXT_SHADOW
-    if (r->h->rs[Rs_textShadow])
-    {
-	XColor	xcol;
-	if( rxvt_parse_alloc_color( r, &xcol, r->h->rs[Rs_textShadow] ) )
-	{
-	    r->TermWin.shadow = xcol.pixel;
-# ifdef XFT_SUPPORT
-	    rxvt_alloc_xft_color( r, &xcol, &(r->TermWin.xftshadow));
-# endif
-	}
-	else
-	{
-	    r->TermWin.shadow = r->pixColorsFocus[Color_Black];
-# ifdef XFT_SUPPORT
-	    r->TermWin.xftshadow = r->xftColorsFocus[Color_Black];
-# endif
-	}
-    }
-#endif
 }
 
 

@@ -137,24 +137,6 @@ typedef struct
 
     int		    fade;   /* off-focus fading percentage */
 
-#ifdef TEXT_SHADOW
-    enum {
-	SHADOW_NONE = 0,
-	SHADOW_LEFT,
-	SHADOW_RIGHT,
-	SHADOW_TOP,
-	SHADOW_BOTTOM,
-	SHADOW_TOPLEFT,
-	SHADOW_BOTRIGHT,
-	SHADOW_TOPRIGHT,
-	SHADOW_BOTLEFT,
-    } shadow_mode;
-    unsigned long   shadow; /* text shadow color */
-# ifdef XFT_SUPPORT
-    XftColor	    xftshadow;
-# endif
-#endif
-
 #ifdef HAVE_X11_SM_SMLIB_H
     SmcConn	    sm_conn;
     IceConn	    ice_conn;

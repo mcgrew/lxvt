@@ -234,12 +234,6 @@ static const struct {
 	    "triple click word selection" ),
 #endif
     STRG(Rs_color + Color_ufbg, "ufBackground", "ufbg", "color", "unfocused background color", 0),
-#ifdef TEXT_SHADOW
-    STRG(Rs_textShadow, "textShadow", "ts", "color", "text shadow color", 0),
-    STRG(Rs_textShadowMode, "textShadowMode", "tsm", "mode",
-	"shadow mode = "
-	"top|bottom|left|right|topleft|topright|botleft|botright", 0),
-#endif
 #ifdef HAVE_TABBAR
     STRG(Rs_tabfg, "tabForeground", "tabfg", "color", "tabbar active tab foreground color", 0),
     STRG(Rs_tabbg, "tabBackground", "tabbg", "color", "tabbar and active tab background color", 0),
@@ -540,9 +534,6 @@ static uint32_t	pSetOpts[ MAX_OPTION_ARRAY ] = { 0u, 0u, 0u, 0u };
 static const char releasestring[] = "Mrxvt v" VERSION "\n";
 static const char optionsstring[] = "Options: "
     "fade,"
-#if defined(TEXT_SHADOW)
-    "textshadow,"
-#endif
 #if defined(UTMP_SUPPORT)
     "utmp,"
 #endif

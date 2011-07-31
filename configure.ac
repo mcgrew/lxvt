@@ -141,7 +141,6 @@ support_24bits=no
 support_256colors=yes
 support_cursor_blink=yes
 support_pointer_blank=yes
-support_text_shadow=no
 support_smart_resize=no
 support_menubar=no
 support_tabbar=yes
@@ -190,7 +189,6 @@ if test "x$support_everything" = "xyes"; then
     support_256colors=yes
     support_cursor_blink=yes
     support_pointer_blank=yes
-    support_text_shadow=yes
     support_smart_resize=yes
     support_menubar=yes
     support_tabbar=yes
@@ -238,7 +236,6 @@ if test "x$support_minimal" = "xyes"; then
     support_256colors=no
     support_cursor_blink=no
     support_pointer_blank=no
-    support_text_shadow=no
     support_smart_resize=no
     support_menubar=no
     support_tabbar=no
@@ -487,16 +484,6 @@ AC_ARG_ENABLE(
 )
 if test "x$support_pointer_blank" = "xyes"; then
     AC_DEFINE(POINTER_BLANK, [], [set blank pointer support])
-fi
-
-
-AC_ARG_ENABLE(
-    text-shadow,
-    AC_HELP_STRING([--enable-text-shadow],[enable colors shadow for text [[no]]]),
-    [support_text_shadow=$enableval]
-)
-if test "x$support_text_shadow" = "xyes"; then
-    AC_DEFINE(TEXT_SHADOW, [], [set text shadow support])
 fi
 
 
@@ -1365,7 +1352,6 @@ echo "24 bits color mode          : $support_24bits"
 echo "256 color mode              : $support_256colors"
 echo "Blink cursor                : $support_cursor_blink"
 echo "Blank pointer               : $support_pointer_blank"
-echo "Color text shadow           : $support_text_shadow"
 echo "Smart resize                : $support_smart_resize"
 echo "Menu bar                    : $support_menubar"
 if test "x$support_tabs" = "xyes"; then

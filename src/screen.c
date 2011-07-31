@@ -197,15 +197,6 @@ void rxvt_selection_extend_colrow (rxvt_t*, int, int32_t, int32_t, int, int, int
 #ifndef NO_FRILLS
 void rxvt_selection_trim          (rxvt_t*, int);
 #endif
-#ifdef TEXT_SHADOW
-# ifdef XFT_SUPPORT
-void rxvt_set_clipping		  (rxvt_t*, XftDraw*, GC, Region, int, int, unsigned, unsigned, int*, int*);
-void rxvt_free_clipping		  (rxvt_t*, XftDraw*, GC, Region);
-# else
-void rxvt_set_clipping		  (rxvt_t*, __attribute__((unused)) void*, GC, Region, int, int, unsigned, unsigned, int*, int*);
-void rxvt_free_clipping		  (rxvt_t*, __attribute__((unused)) void*, GC, Region);
-# endif
-#endif
 #ifdef XFT_SUPPORT
 #endif	/* XFT_SUPPORT */
 /*--------------------------------------------------------------------*
@@ -2603,144 +2594,6 @@ rxvt_scr_printscreen(rxvt_t* r, int page, int fullhist, int pretty,
 }
 
 
-#ifdef TEXT_SHADOW
-/*
- * If refreshRegion is not None, then we should intersect our clipping with it.
- */
-/* INTPROTO */
-# ifdef XFT_SUPPORT
-void
-rxvt_set_clipping (rxvt_t* r, XftDraw *xftdraw, GC gc, Region refreshRegion,
-	int x, int y, unsigned width, unsigned height,
-	int* offx, int* offy)
-# else
-void
-rxvt_set_clipping (rxvt_t* r, __attribute__((unused)) void *xftdraw,
-	GC gc, Region refreshRegion,
-	int x, int y, unsigned width, unsigned height,
-	int* offx, int* offy)
-# endif
-{
-    /*
-     * mfont is a flag whether the output string is multi-byte. if so, we need
-     * to extend its length twice assuming string is 2-byte string
-     */
-    XRectangle	rect;
-    Region	region;
-
-    /* Sanity check */
-    assert (offx);
-    assert (offy);
-
-    if (SHADOW_NONE == r->TermWin.shadow_mode)
-    {
-	*offx = *offy = 0;
-	return;	/* shortcut */
-    }
-
-    switch (r->TermWin.shadow_mode)
-    {
-	case SHADOW_TOP: 
-	    *offx = 0;
-	    *offy = -1;
-	    break;
-	case SHADOW_BOTTOM: 
-	    *offx = 0;
-	    *offy = 1;
-	    break;
-	case SHADOW_LEFT: 
-	    *offx = -1;
-	    *offy = 0;
-	    break;
-	case SHADOW_RIGHT: 
-	    *offx = 1;
-	    *offy = 0;
-	    break;
-	case SHADOW_TOPLEFT: 
-	    *offx = -1;
-	    *offy = -1;
-	    break;
-	case SHADOW_TOPRIGHT: 
-	    *offx = 1;
-	    *offy = -1;
-	    break;
-	case SHADOW_BOTLEFT: 
-	    *offx = -1;
-	    *offy = 1;
-	    break;
-	case SHADOW_BOTRIGHT: 
-	    *offx = 1;
-	    *offy = 1;
-	    break;
-	default:
-	    assert (0);
-	    break;
-    }
-
-#if 0
-    rect.width	= Width2Pixel(1) * len * (mfont+1);
-    rect.height	= Height2Pixel(1) * 1;
-
-    rect.x += x;
-    rect.y += (y - rect.height);
-#endif
-
-    /*
-     * Left / right dropped pixels are cleaned up by pixel dropping avoidance
-     * under Xft, so we can add that to our offset.
-     */
-    rect.x	=
-#ifdef XFT_SUPPORT
-		    (ISSET_OPTION(r, Opt_xft) && xftdraw) ? x + *offx :
-#endif
-		    x;
-    rect.y	= y;
-    rect.width	= width;
-    rect.height	= height;
-
-    region = XCreateRegion();
-    XUnionRectWithRegion( &rect, region, region);
-    if (IS_REGION(refreshRegion))
-	XIntersectRegion( region, refreshRegion, region);
-
-    XSetRegion( r->Xdisplay, gc, region);
-    /*
-     * XSetClipRectangles (r->Xdisplay, gc, x, y-hy, &rectangle, 1, Unsorted);
-     */
-#ifdef XFT_SUPPORT
-    if( ISSET_OPTION(r, Opt_xft) && xftdraw )
-	XftDrawSetClip( xftdraw, region);
-#endif
-
-    XDestroyRegion( region );
-}
-
-
-/* INTPROTO */
-void
-# ifdef XFT_SUPPORT
-rxvt_free_clipping (rxvt_t* r, XftDraw* xftdraw, GC gc, Region refreshRegion)
-# else
-rxvt_free_clipping (rxvt_t* r, void* xftdraw, GC gc, Region refreshRegion)
-# endif
-{
-
-    if (SHADOW_NONE == r->TermWin.shadow_mode)
-	return;	/* shortcut */
-
-    if (IS_REGION(refreshRegion))
-	XSetRegion( r->Xdisplay, gc, refreshRegion );
-    else
-	XSetClipMask( r->Xdisplay, gc, None);
-
-# ifdef XFT_SUPPORT
-    if( ISSET_OPTION(r, Opt_xft) && xftdraw)
-	XftDrawSetClip( xftdraw, refreshRegion );
-# endif	/* XFT_SUPPORT */
-}
-#endif	/* TEXT_SHADOW */
-
-
 void static inline
 rxvt_clear_area (rxvt_t* r, int page, int x, int y, unsigned int w, unsigned int h)
 {
@@ -2828,52 +2681,6 @@ rxvt_draw_string_xft (rxvt_t* r, Drawable d, GC gc, Region refreshRegion,
 	len = STRLEN( str);
 #endif
 
-# ifdef TEXT_SHADOW
-    if (r->h->rs[Rs_textShadow] && SHADOW_NONE != r->TermWin.shadow_mode)
-    {
-	/*
-	 * Get the bounding box of the rectangle we would draw, and clip to it.
-	 */
-	void	    (*xftTextExtents)() = NULL; /* Suppress compile warning */
-	XGlyphInfo  extents;
-
-	int	sx, sy;	/* Shadow offsets */
-
-	rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "handling text shadow for %s (%d)\n", str, len));
-
-	if( xftdraw_string == XftDrawString8 )
-	    xftTextExtents = XftTextExtents8;
-	else if( xftdraw_string == XftDrawString16)
-	    xftTextExtents = XftTextExtents16;
-	else if( xftdraw_string == XftDrawString32)
-	    xftTextExtents = XftTextExtents32;
-	else if( xftdraw_string == XftDrawStringUtf8)
-	    xftTextExtents = XftTextExtentsUtf8;
-	else
-	    assert(0); /* Shouldn't happen */
-
-	xftTextExtents( r->Xdisplay, font, str, len, &extents);
-
-	/*
-	 * We should ignore extents.height. The height of the drawn text might
-	 * be much smaller than the height of the font (which is really what
-	 * we've reserved space for.
-	 */
-	rxvt_set_clipping( r, win, gc, refreshRegion,
-		x, y - font->ascent, extents.width - extents.x, font->height,
-		&sx, &sy);
-
-	XFTDRAW_STRING (win, &(r->TermWin.xftshadow),
-	    font, x+sx, y+sy, str, len);
-	/*
-	 * We need to free clipping area, otherwise text on screen may be
-	 * clipped unexpectedly. Is there a better way to unset it, say,
-	 * XUnsetClipRectangles?
-	 */
-	rxvt_free_clipping (r, win, gc, refreshRegion);
-    }
-# endif	/* TEXT_SHADOW */
-
     XFTDRAW_STRING (win, fore, font, x, y, str, len);
 }
 #undef XFTDRAW_STRING
@@ -2888,95 +2695,6 @@ void
 rxvt_draw_string_x11 (rxvt_t* r, Window win, GC gc, Region refreshRegion,
 	int x, int y, char* str, int len, int (*draw_string)())
 {
-# ifdef TEXT_SHADOW
-    while (r->h->rs[Rs_textShadow] && SHADOW_NONE != r->TermWin.shadow_mode)
-    {
-	int	sx, sy;
-	XGCValues   gcvalue;
-
-	int	    (*xtextextents)();
-	int	    unused_dir, ascent, descent;
-	XCharStruct charstruct;
-	GContext    gid = XGContextFromGC( gc );
-	XFontStruct *font = XQueryFont( r->Xdisplay, gid);
-
-	if( font == NULL ) break;
-	rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "handling text shadow for %s (%d)\n", str, len));
-
-	/*
-	 * Save the old GC values foreground.
-	 */
-	XGetGCValues (r->Xdisplay, gc,
-		GCForeground | GCBackground | GCFillStyle, &gcvalue);
-
-	/*
-	 * Get the bounding box of the rectangle we would draw, and clip to it.
-	 */
-	if( draw_string == XDrawImageString || draw_string == XDrawString)
-	    xtextextents = XTextExtents;
-	else if ( draw_string == XDrawImageString16 ||
-		draw_string == XDrawString16)
-	    xtextextents = XTextExtents16;
-	else
-	{
-	    xtextextents = NULL; /* Suppress gcc warning */
-	    assert(0); /* Shouldn't happen */
-	}
-
-	xtextextents( font, str, len,
-		&unused_dir, &ascent, &descent, &charstruct);
-
-	/*
-	 * If we're using XDrawImageString, then when we draw the actual text,
-	 * the shadow will be erased. Clear the rectangle ourselves, and change
-	 * to XDrawString.
-	 */
-	if( draw_string == XDrawImageString ||
-		draw_string == XDrawImageString16)
-	{
-	    XSetForeground( r->Xdisplay, gc, gcvalue.background);
-	    XSetFillStyle( r->Xdisplay, gc, FillSolid);
-	    XFillRectangle( r->Xdisplay, win, gc,
-		    x, y - font->ascent,
-		    charstruct.width, font->ascent + font->descent);
-
-	    if( draw_string == XDrawImageString )
-		draw_string = XDrawString;
-	    else draw_string = XDrawString16;
-	}
-
-
-	/*
-	 * Restrict output to the above bounding box.
-	 */
-	rxvt_set_clipping( r, NULL, gc, refreshRegion,
-		x, y - font->ascent,
-		charstruct.width, font->ascent + font->descent,
-		&sx, &sy);
-
-	/*
-	 * Draw the shadow at the appropriate offset.
-	 */
-	XSetForeground (r->Xdisplay, gc, r->TermWin.shadow);
-	draw_string (r->Xdisplay, win, gc, x+sx, y+sy, str, len);
-
-	/*
-	 * Restore old GC values.
-	 */
-	XChangeGC( r->Xdisplay, gc,
-		GCForeground | GCBackground | GCFillStyle,
-		&gcvalue);
-
-	/*
-	 * Unclip drawing for remaining drawing.
-	 */
-	rxvt_free_clipping (r, NULL, gc, refreshRegion);
-
-	XFreeFontInfo( NULL, font, 1);
-	break;
-    }
-# endif	/* TEXT_SHADOW */
-
     rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "output entire string: %s\n", str));
     draw_string (r->Xdisplay, win, gc, x, y, str, len);
 }
@@ -3721,39 +3439,6 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 		    if( col == r->TermWin.ncol - 1 ) clearlast = 1;
 		    else clear_next = 1;
 		}
-# ifdef TEXT_SHADOW
-		/*
-		 * Xft with shadow drops pixels into the next / prev char.
-		 */
-		else if (
-			  h->rs[Rs_textShadow]
-			  && r->TermWin.shadow_mode != SHADOW_NONE
-			)
-		{
-		    switch( r->TermWin.shadow_mode )
-		    {
-			case SHADOW_TOPRIGHT:
-			case SHADOW_RIGHT:
-			case SHADOW_BOTRIGHT:
-			    /* Clear next char */
-			    if( col == r->TermWin.ncol - 1) clearlast = 1;
-			    else clear_next = 1;
-			    break;
-
-			case SHADOW_TOPLEFT:
-			case SHADOW_LEFT:
-			case SHADOW_BOTLEFT:
-			    /* Clear prev char */
-			    if( col == 0 ) clearfirst = 1;
-			    else dtp[col-1] = 0;
-			    break;
-
-			default:
-			    /* Nothing to be done here */
-			    break;
-		    }
-		}
-# endif	/* TEXT_SHADOW */
 	    }
 	    else
 #endif
