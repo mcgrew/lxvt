@@ -158,24 +158,6 @@ rxvt_toggle_subwin( rxvt_t *r, const unsigned char *str)
     }
 #endif
 
-
-#ifdef HAVE_SCROLLBARS
-    if( STRCHR( str, 's') || STRCHR( str, 'S' ) )
-    {
-	if( rxvt_scrollbar_visible (r) && *str != '+' )
-	{
-	    if( rxvt_scrollbar_hide(r) )
-		rxvt_resize_on_subwin (r, HIDE_SCROLLBAR);
-	}
-	else if( !rxvt_scrollbar_visible( r ) && *str != '-' )
-	{
-	    if( rxvt_scrollbar_show(r) )
-		rxvt_resize_on_subwin (r, SHOW_SCROLLBAR);
-	}
-
-	return;
-    }
-#endif
 }
 /* }}} */
 
@@ -1027,9 +1009,6 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 
 		rxvt_scr_page(r, ATAB(r), direction, amount);
 
-#  ifdef HAVE_SCROLLBARS
-		rxvt_scrollbar_update(r, 1);
-#  endif    /* HAVE_SCROLLBARS */
 	    }
 	    break;
 

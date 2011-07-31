@@ -464,10 +464,6 @@ rxvt_clean_exit (rxvt_t* r)
 	UNSET_WIN(r->TermWin.parent);
     }
 
-# ifdef HAVE_SCROLLBARS
-    rxvt_scrollbar_clean_exit (r);
-# endif
-
 #ifdef HAVE_TABBAR
     rxvt_tabbar_clean_exit (r);
 #endif

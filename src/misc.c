@@ -385,38 +385,4 @@ rxvt_splitcommastring(const char *cs)
     return ret;
 }
 
-
-/*----------------------------------------------------------------------*
- * miscellaneous drawing routines
- */
-
-# define CHOOSE_GC_FG(DISP, MYGC, PIXCOL)   \
-    XSetForeground ((DISP), (MYGC), (PIXCOL))
-
-/*
- * Draw top/left and bottom/right border shadows around windows
- */
-#if defined(RXVT_SCROLLBAR)
-/* EXTPROTO */
-void
-rxvt_draw_shadow (Display *Xdisplay, Window win, GC gc, unsigned long topShadow, unsigned long botShadow, int x, int y, int w, int h)
-{
-    int             shadow;
-
-    shadow = (w == 0 || h == 0) ? 1 : SHADOW;
-    w += x - 1;
-    h += y - 1;
-    for (; shadow-- > 0; x++, y++, w--, h--)
-    {
-	CHOOSE_GC_FG(Xdisplay, gc, topShadow);
-	XDrawLine(Xdisplay, win, gc, x, y, w, y);
-	XDrawLine(Xdisplay, win, gc, x, y, x, h);
-
-	CHOOSE_GC_FG(Xdisplay, gc, botShadow);
-	XDrawLine(Xdisplay, win, gc, w, h, w, y + 1);
-	XDrawLine(Xdisplay, win, gc, w, h, x + 1, h);
-    }
-}
-#endif
-
 /*----------------------- end-of-file (C source) -----------------------*/

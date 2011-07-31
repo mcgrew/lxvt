@@ -137,8 +137,6 @@
 /* These colours MUST be defined */
 #define COLOR_FOREGROUND    "Black"
 #define COLOR_BACKGROUND    "White"
-#define COLOR_SCROLLBAR	    "#B2B2B2"	/* scrollColor match Netscape */
-#define COLOR_SCROLLTROUGH  "#969696"
 /*
  * The cursor colours are special.  Be very careful about setting these:
  * foreground/background colours may be modified by command line or resources
@@ -227,12 +225,6 @@
 #endif
 
 /*
- * Disable sending escape sequences (up, down, page up/down)
- * from the scrollbar when XTerm mouse reporting is enabled
- */
-/* #define NO_SCROLLBAR_REPORT */
-
-/*
  * Default separating chars for multiple-click selection
  * Space and tab are separate separating characters and are not settable
  */
@@ -264,12 +256,6 @@
  * if the shift key is down).  Scrolling can be smooth or jump scrolling
  */
 /* #define JUMP_MOUSE_WHEEL */
-
-/*
- * Set delay periods for continuous scrolling with scrollbar buttons
- */
-/* #define SCROLLBAR_INITIAL_DELAY 40 */
-/* #define SCROLLBAR_CONTINUOUS_DELAY 2 */
 
 /*
  * The speed of selection scrolling is proportional to the distance
@@ -350,31 +336,6 @@
 
 /* Default title of new tabs if unspecified */
 #define DEFAULT_TAB_TITLE   "Terminal"
-
-/*-----------------------------SCROLL BAR---------------------------{{{1*/
-/*
- * Choose the rxvt style scrollbar width
- * - should be an even number [default: 10]
- */
-/* #define SB_WIDTH_RXVT 10 */
-
-/*
- * Minimum and maximum widths of the scrollbar (all styles)
- */
-#define SB_WIDTH_MINIMUM    5
-#define SB_WIDTH_MAXIMUM    100
-
-/*
- * When using Rxvt scrollbar, clicking above or below the slider will move
- * 1/4 of the screen height, if possible.  Setting RXVT_SCROLL_FULL will move
- * it one screen height less one line, if possible
- */
-#define RXVT_SCROLL_FULL 1
-
-/*
- * (Hops) draw an internal border line on inside edge of the scrollbar
- */
-/* #define SB_BORDER */
 
 /*---------------------------MULTILINGUAL---------------------------{{{1*/
 /*

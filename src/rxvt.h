@@ -555,17 +555,6 @@ struct rxvt_hidden;
 
 
 /*
- * If we're using either the rxvt scrollbar or menu bars, keep the
- * scrollColor resource.
- */
-#if defined(RXVT_SCROLLBAR) || defined(PLAIN_SCROLLBAR)
-# define KEEP_SCROLLCOLOR 1
-#else
-# undef KEEP_SCROLLCOLOR
-#endif
-
-
-/*
  * the 'essential' information for reporting Mouse Events
  * pared down from XButtonEvent
  */
@@ -616,10 +605,6 @@ struct mouse_event {
 #define TABTITLEENV	"MRXVT_TABTITLE="
 
 
-#if defined (NO_MOUSE_REPORT) && !defined (NO_MOUSE_REPORT_SCROLLBAR)
-# define NO_MOUSE_REPORT_SCROLLBAR
-#endif
-
 #ifdef NO_RESOURCES
 # undef USE_XGETDEFAULT
 #endif
@@ -633,15 +618,6 @@ struct mouse_event {
 #ifndef EXIT_SUCCESS	    /* missing from <stdlib.h> */
 # define EXIT_SUCCESS	    0	/* exit function success */
 # define EXIT_FAILURE	    1	/* exit function failure */
-#endif
-
-#define scrollBar_esc	    (30)
-
-/* width of scrollBar, menuBar shadow, must be 1 or 2 */
-#ifdef HALFSHADOW
-# define SHADOW		    (1)
-#else
-# define SHADOW		    (2)
 #endif
 
 #define R_SB_ALIGN_CENTRE   (0)
@@ -927,18 +903,8 @@ enum colour_list {
 #ifdef OPTION_HC
     Color_HC,
 #endif
-#ifdef KEEP_SCROLLCOLOR
-    Color_scroll,
-    Color_trough,
-#endif
     NRS_COLORS,		/* */
-#ifdef KEEP_SCROLLCOLOR
-    Color_topShadow = NRS_COLORS,
-    Color_bottomShadow,
-    TOTAL_COLORS	/* upto 31 */
-#else
     TOTAL_COLORS = NRS_COLORS	/* */
-#endif
 };
 
 #ifdef TTY_256COLOR
@@ -998,10 +964,6 @@ enum {
     Rs_xftpfn,	/* Propotionally spaced Xft font (for tabbar / menubar) */
     Rs_xftpsz,	/* Size of propotionally spaced Xft font */
 #endif
-#ifdef HAVE_SCROLLBARS
-    Rs_scrollBar_align,
-#endif	/* HAVE_SCROLLBARS */
-    Rs_scrollBar_style,
 
     Rs_tabfg,	/* active tab foreground */
     Rs_tabbg,	/* active tab background */
@@ -1042,7 +1004,6 @@ enum {
     Rs_ext_bwidth,
     Rs_int_bwidth,
 #endif
-    Rs_scrollBar_thickness,
 #ifndef NO_LINESPACE
     Rs_lineSpace,
 #endif
@@ -1142,7 +1103,6 @@ enum {
 #define PrivMode_VisibleCursor	(1LU<<11)
 #define PrivMode_MouseX10	(1LU<<12)
 #define PrivMode_MouseX11	(1LU<<13)
-#define PrivMode_scrollBar	(1LU<<14)
 #define PrivMode_TtyOutputInh	(1LU<<16)
 #define PrivMode_Keypress	(1LU<<17)
 #define PrivMode_smoothScroll	(1LU<<18)
@@ -1247,29 +1207,6 @@ enum {
 #define SET_PIXCOLOR(h, x)	((h)->pixcolor_set[(x) / NPIXCLR_BITS] |= (1 << ((x) % NPIXCLR_BITS)))
 #define ISSET_PIXCOLOR(h, x)	((h)->pixcolor_set[(x) / NPIXCLR_BITS] & (1 << ((x) % NPIXCLR_BITS)))
 
-#define scrollbar_isMotion()	(r->scrollBar.state == 'm')
-#define scrollbar_isUp()	(r->scrollBar.state == 'U')
-#define scrollbar_isDn()	(r->scrollBar.state == 'D')
-#define scrollbar_isUpDn()	isupper ((int) r->scrollBar.state)
-
-#define scrollbar_setIdle()	r->scrollBar.state = (char) 1
-#define scrollbar_setMotion()	r->scrollBar.state = 'm'
-#define scrollbar_setUp()	r->scrollBar.state = 'U'
-#define scrollbar_setDn()	r->scrollBar.state = 'D'
-
-
-#define scrollbarrxvt_upButton(y)   ((y) < r->scrollBar.beg)
-#define scrollbarrxvt_dnButton(y)   ((y) > r->scrollBar.end)
-
-
-#define SCROLL_MINHEIGHT	    (10)
-#define scrollbar_minheight()	(SCROLL_MINHEIGHT)
-#define scrollbar_above_slider(y)   ((y) < r->scrollBar.top)
-#define scrollbar_below_slider(y)   ((y) > r->scrollBar.bot)
-#define scrollbar_position(y)	    ((y) - r->scrollBar.beg)
-#define scrollbar_size()	(r->scrollBar.end - r->scrollBar.beg \
-		     - scrollbar_minheight())
-
 
 #ifndef STRICT_FONT_CHECKING
 # define rxvt_get_fontwidest(font)  ((font)->max_bounds.width)
@@ -1326,7 +1263,6 @@ struct rxvt_hidden {
 #ifdef META8_OPTION
 		    meta_char,				/* Alt-key prefix */
 #endif
-		    scrollbar_align,
 		    selection_wait,
 		    selection_type;
 
@@ -1350,9 +1286,6 @@ struct rxvt_hidden {
 							   thumb/slider to give
 							   proper Scroll
 							   behaviour */
-#ifndef NO_SCROLLBAR_BUTTON_CONTINUAL_SCROLLING
-		    scroll_arrow_delay,
-#endif
 #if defined(MOUSE_WHEEL) && defined(MOUSE_SLIP_WHEELING)
 		    mouse_slip_wheel_delay,
 		    mouse_slip_wheel_speed,

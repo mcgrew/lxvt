@@ -255,51 +255,6 @@ void             rxvt_pixel_position              __PROTO((rxvt_t* r, int *x, in
 /* End prototypes of screen.c */
 
 
-/* Begin prototypes of scrollbar-rxvt.c */
-#ifdef RXVT_SCROLLBAR
-void             rxvt_scrollbar_init_rxvt         __PROTO((rxvt_t *r));
-void             rxvt_scrollbar_exit_rxvt         __PROTO((rxvt_t *r));
-int              rxvt_scrollbar_show_rxvt         __PROTO((rxvt_t* r, int update __attribute__((unused)), int last_top, int last_bot, int scroller_len));
-#endif
-/* End prototypes of scrollbar-rxvt.c */
-
-
-/* Begin prototypes of scrollbar-xterm.c */
-#ifdef XTERM_SCROLLBAR
-void             rxvt_scrollbar_init_xterm        __PROTO((rxvt_t *r));
-void             rxvt_scrollbar_exit_xterm        __PROTO((rxvt_t *r));
-int              rxvt_scrollbar_show_xterm        __PROTO((rxvt_t* r, int update __attribute__((unused)), int last_top, int last_bot, int scroller_len));
-#endif
-/* End prototypes of scrollbar-xterm.c */
-
-
-/* Begin prototypes of scrollbar-plain.c */
-#ifdef PLAIN_SCROLLBAR
-void             rxvt_scrollbar_init_plain        __PROTO((rxvt_t *r));
-void             rxvt_scrollbar_exit_plain        __PROTO((rxvt_t *r));
-int              rxvt_scrollbar_show_plain        __PROTO((rxvt_t* r, int update __attribute__((unused)), int last_top, int last_bot, int scroller_len));
-#endif
-/* End prototypes of scrollbar-plain.c */
-
-
-/* Begin prototypes of scrollbar.c */
-#ifdef HAVE_SCROLLBARS
-int              rxvt_scrollbar_visible           __PROTO((rxvt_t* r));
-void             rxvt_scrollbar_init              __PROTO((rxvt_t* r));
-void             rxvt_scrollbar_create            __PROTO((rxvt_t* r));
-void             rxvt_scrollbar_clean_exit        __PROTO((rxvt_t* r));
-void             rxvt_scrollbar_resize            __PROTO((rxvt_t* r));
-int              rxvt_scrollbar_hide              __PROTO((rxvt_t* r));
-int              rxvt_scrollbar_show              __PROTO((rxvt_t* r));
-int              rxvt_scrollbar_update            __PROTO((rxvt_t* r, int update));
-unsigned short   rxvt_scrollbar_width             __PROTO((rxvt_t* r));
-unsigned short   rxvt_scrollbar_rwidth            __PROTO((rxvt_t* r));
-int              rxvt_is_scrollbar_win            __PROTO((rxvt_t* r, Window w));
-unsigned long	 rxvt_scrollbar_bg		  __PROTO((rxvt_t* r));
-#endif
-/* End prototypes of scrollbar.c */
-
-
 /* Begin prototypes of strings.c */
 #ifdef HAVE_WCHAR_H
 char*            rxvt_wcstombs                    __PROTO((const wchar_t* str, int len));

@@ -123,13 +123,9 @@ support_debug=no
 support_ourstrings=no
 support_frills=yes
 support_tabs=yes
-support_keepscrolling=yes
 support_selectionscrolling=yes
 support_mousewheel=yes
 support_mouseslipwheel=no
-support_scroll_rxvt=yes
-support_scroll_xterm=yes
-support_scroll_plain=yes
 support_half_shadow=yes
 support_utmp=yes
 support_wtmp=yes
@@ -170,13 +166,9 @@ if test "x$support_everything" = "xyes"; then
     support_ourstrings=no
     support_frills=yes
     support_tabs=yes
-    support_keepscrolling=yes
     support_selectionscrolling=yes
     support_mousewheel=yes
     support_mouseslipwheel=yes
-    support_scroll_rxvt=yes
-    support_scroll_xterm=yes
-    support_scroll_plain=yes
     support_half_shadow=yes
     support_utmp=yes
     support_wtmp=yes
@@ -216,13 +208,9 @@ if test "x$support_minimal" = "xyes"; then
     support_ourstrings=no
     support_frills=no
     support_tabs=no
-    support_keepscrolling=no
     support_selectionscrolling=no
     support_mousewheel=no
     support_mouseslipwheel=no
-    support_scroll_rxvt=no
-    support_scroll_xterm=yes
-    support_scroll_plain=no
     support_half_shadow=no
     support_utmp=no
     support_wtmp=no
@@ -296,16 +284,6 @@ fi
 
 
 AC_ARG_ENABLE(
-    keepscrolling,
-    AC_HELP_STRING([--enable-keepscrolling],[enable continual scrolling on scrollbar arrow press [[yes]]]),
-    [support_keepscrolling=$enableval]
-)
-if test "x$support_keepscrolling" != "xyes"; then
-    AC_DEFINE(NO_SCROLLBAR_BUTTON_CONTINUAL_SCROLLING, [], [enable continual scrolling on scrollbar arrow press])
-fi
-
-
-AC_ARG_ENABLE(
     selectionscrolling,
     AC_HELP_STRING([--enable-selectionscrolling],[enable continual scrolling on selection [[yes]]]),
     [support_selectionscrolling=$enableval]
@@ -332,58 +310,6 @@ AC_ARG_ENABLE(
 )
 if test "x$support_mousewheel x$support_mouseslipwheel" = "xyes xyes"; then
     AC_DEFINE(MOUSE_SLIP_WHEELING, [], [enable slip scrolling via mouse wheel])
-fi
-
-
-AC_ARG_ENABLE(
-    rxvt-scroll,
-    AC_HELP_STRING([--enable-rxvt-scroll],[enable rxvt style scrollbar [[yes]]]),
-    [support_scroll_rxvt=$enableval]
-)
-if test "x$support_scroll_rxvt" = "xyes"; then
-    AC_DEFINE(RXVT_SCROLLBAR, [], [set rxvt style scroll bar])
-    AC_DEFINE(HAVE_SCROLLBARS, [], [set scroll bar support])
-    support_scroll="yes"
-fi
-
-
-AC_ARG_ENABLE(
-    xterm-scroll,
-    AC_HELP_STRING([--enable-xterm-scroll],[enable Xterm style scrollbar [[yes]]]),
-    [support_scroll_xterm=$enableval]
-)
-if test "x$support_scroll_xterm" = "xyes"; then
-    AC_DEFINE(XTERM_SCROLLBAR, [], [set xterm style scroll bar])
-    AC_DEFINE(HAVE_SCROLLBARS, [], [set scroll bar support])
-    support_scroll="yes"
-fi
-
-
-AC_ARG_ENABLE(
-    plain-scroll,
-    AC_HELP_STRING([--enable-plain-scroll],[enable plain style scrollbar [[yes]]]),
-    [support_scroll_plain=$enableval]
-)
-if test "x$support_scroll_plain" = "xyes"; then
-    AC_DEFINE(PLAIN_SCROLLBAR, [], [set plain style scroll bar])
-    AC_DEFINE(HAVE_SCROLLBARS, [], [set scroll bar support])
-    support_scroll="yes"
-fi
-
-
-AM_CONDITIONAL(RXVT_SCROLLBAR, test "x$support_scroll_rxvt" = "xyes")
-AM_CONDITIONAL(XTERM_SCROLLBAR, test "x$support_scroll_xterm" = "xyes")
-AM_CONDITIONAL(PLAIN_SCROLLBAR, test "x$support_scroll_plain" = "xyes")
-
-
-
-AC_ARG_ENABLE(
-    half-shadow,
-    AC_HELP_STRING([--enable-half-shadow],[enable half width/height shadow on rxvt scrollbar [[yes]]]),
-    [support_half_shadow=$enableval]
-)
-if test "x$support_scroll_rxvt x$support_half_shadow" = "xyes xyes"; then
-    AC_DEFINE(HALFSHADOW, [], [set half shadow rxvt scrollbar support])
 fi
 
 
@@ -1311,19 +1237,10 @@ echo "Rarely used features        : $support_frills"
 echo "Multiple tabs               : $support_tabs"
 echo 
 echo "Scroll features:"
-echo "Keep scroll                 : $support_keepscrolling"
 echo "Scroll on selection         : $support_selectionscrolling"
 echo "Mouse wheel scroll          : $support_mousewheel"
 if test "x$support_mousewheel" = "xyes"; then
     echo "Slip mouse wheel scroll     : $support_mouseslipwheel"
-fi
-if test "x$support_scroll" = "xyes"; then
-    echo "RXVT style scrollbar        : $support_scroll_rxvt"
-    echo "Xterm style scrollbar       : $support_scroll_xterm"
-    echo "Plain style scrollbar       : $support_scroll_plain"
-	if test "x$support_scroll_rxvt" = "xyes"; then
-        echo "Half shadow scrollbar       : $support_half_shadow"
-	fi
 fi
 echo
 echo "Logging features:"

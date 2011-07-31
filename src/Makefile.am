@@ -44,7 +44,6 @@ mrxvt_SOURCES +=    command.c		\
 		    rxvt.c		\
 		    rxvtmem.c		\
 		    screen.c		\
-		    scrollbar.c		\
 		    strings.c		\
 		    tabbar.c		\
 		    transparent.c	\
@@ -69,24 +68,6 @@ mrxvt_SOURCES +=    close_term.xpm	\
 #   -chmod go-r $(DESTDIR)$(bindir)/mrxvt
 #   -chmod u+s $(DESTDIR)$(bindir)/mrxvt
 
-if PLAIN_SCROLLBAR
-SCROLLBAR_PLAIN_SRC = scrollbar-plain.c
-else
-SCROLLBAR_PLAIN_SRC = 
-endif
-
-if XTERM_SCROLLBAR
-SCROLLBAR_XTERM_SRC = scrollbar-xterm.c
-else
-SCROLLBAR_XTERM_SRC = 
-endif
-
-if RXVT_SCROLLBAR
-SCROLLBAR_RXVT_SRC = scrollbar-rxvt.c
-else
-SCROLLBAR_RXVT_SRC = 
-endif
-
 if UTMP_SUPPORT
 UTMP_SRC = logging.c
 else
@@ -108,10 +89,7 @@ XFTACS_H   =
 endif
 
 
-mrxvt_SOURCES +=    $(SCROLLBAR_PLAIN_SRC)	\
-		    $(SCROLLBAR_XTERM_SRC)	\
-		    $(SCROLLBAR_RXVT_SRC)	\
-		    $(UTMP_SRC)			\
+mrxvt_SOURCES +=    $(UTMP_SRC)			\
 		    $(SESSION_SRC)		\
 		    $(XFTACS_SRC)
 
@@ -157,10 +135,6 @@ ptytty.o:	    $(MRXVT_H) 				ptytty.c
 rxvt.o:		    $(MRXVT_H) 				rxvt.c
 rxvtmem.o:	    $(MRXVT_H) 				rxvtmem.h rxvtmem.c
 screen.o:	    $(MRXVT_H) $(XFTACS_H)		screen.c
-scrollbar-plain.o:  $(MRXVT_H) 				scrollbar-plain.c
-scrollbar-rxvt.o:   $(MRXVT_H) 				scrollbar-rxvt.c
-scrollbar-xterm.o:  $(MRXVT_H) 				scrollbar-xterm.c
-scrollbar.o:	    $(MRXVT_H) 				scrollbar.c
 session.o:	    $(MRXVT_H) 				session.c
 strings.o:	    $(MRXVT_H) 				strings.c
 tabbar.o:	    $(MRXVT_H) $(MRXVT_PIXMAPS)		tabbar.c

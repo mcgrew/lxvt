@@ -175,18 +175,6 @@ static const struct {
 
     STRG(Rs_fade, "fading", "fade", "%", "make colors x% darker when losing focus", 0),
 
-#ifdef HAVE_SCROLLBARS
-    BOOL( "scrollBar", "sb", Opt_scrollBar, "scrollbar" ),
-    BOOL( "scrollbarRight", "sr", Opt_scrollBar_right, "scrollbar right" ),
-    BOOL( "scrollbarFloating", "st", Opt_scrollBar_floating,
-	    "scrollbar without a trough" ),
-    STRG(Rs_scrollBar_thickness, "scrollbarThickness", "sbt", "number",
-	"scrollbar thickness/width in pixels", 0),
-    STRG(Rs_scrollBar_style, "scrollbarStyle", "ss", "mode",
-	"scrollbar style = plain|xterm|rxvt", 0),
-    STRG(Rs_scrollBar_align, "scrollbarAlign", "sa", "mode", 
-	"scrollbar alignment = top|bottom", 0),
-#endif
     BOOL( "scrollTtyOutputInhibit", "si", Opt_scrollTtyOutputInhibit,
 	    "scroll-on-tty-output inhibit" ),
     BOOL( "scrollTtyKeypress", "sk", Opt_scrollTtyKeypress,
@@ -265,10 +253,6 @@ static const struct {
     RSTRG(Rs_color + Color_UL, "colorUL", "color", 0),
     RSTRG(Rs_color + Color_RV, "colorRV", "color", 0),
 #endif		    /* ! NO_BOLD_UNDERLINE_REVERSE */
-#ifdef KEEP_SCROLLCOLOR
-    RSTRG(Rs_color + Color_scroll, "scrollColor", "color", 0),
-    RSTRG(Rs_color + Color_trough, "troughColor", "color", 0),
-#endif		    /* KEEP_SCROLLCOLOR */
 #ifdef OPTION_HC
     RSTRG(Rs_color + Color_HC, "highlightColor",  "color", 0),
 #endif
@@ -534,27 +518,6 @@ static const char optionsstring[] = "Options: "
 #if defined(MULTICHAR_SET)
     "multichar_languages,"
 #endif
-    "scrollbars="
-#if !defined(HAVE_SCROLLBARS)
-    "NONE"
-#else
-# if defined(RXVT_SCROLLBAR)
-    "rxvt"
-#  if defined(XTERM_SCROLLBAR) || defined(PLAIN_SCROLLBAR)
-    "+"
-#  endif
-# endif	/* RXVT_SCROLLBAR */
-# if defined(XTERM_SCROLLBAR)
-    "xterm"
-#  if defined(PLAIN_SCROLLBAR)
-    "+"
-#  endif
-# endif	/* XTERM_SCROLLBAR */
-# if defined(PLAIN_SCROLLBAR)
-    "plain"
-# endif	/* PLAIN_SCROLLBAR */
-#endif	/* HAVE_SCROLLBARS */
-    ","
 #ifdef XFT_SUPPORT
     "xft,"
 #endif

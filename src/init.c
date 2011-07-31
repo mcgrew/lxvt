@@ -570,10 +570,6 @@ const char *const def_colorName[] = {
 #ifdef OPTION_HC
     NULL,	    /* Color_HL			    */
 #endif
-#ifdef KEEP_SCROLLCOLOR
-    COLOR_SCROLLBAR,
-    COLOR_SCROLLTROUGH,
-#endif		    /* KEEP_SCROLLCOLOR */
 };
 
 
@@ -1996,67 +1992,6 @@ rxvt_init_colors( rxvt_t *r )
     if( XDEPTH <= 2 || !ISSET_PIXCOLOR( r->h, Color_border ) )
 	rxvt_copy_color( r, Color_border, Color_fg );
 
-
-    /*
-     * get scrollBar/menuBar shadow colors
-     *
-     * The calculations of topShadow/bottomShadow values are adapted from the
-     * fvwm window manager.
-     */
-#ifdef KEEP_SCROLLCOLOR
-    if (XDEPTH <= 2)	    /* Monochrome */
-    {
-	rxvt_copy_color( r, Color_scroll,	Color_fg );
-	rxvt_copy_color( r, Color_topShadow,	Color_bg );
-	rxvt_copy_color( r, Color_bottomShadow, Color_bg );
-    }
-
-    else
-    {
-	XColor		xcol[3];
-	/*
-	 * xcol[0] == white
-	 * xcol[1] == top shadow
-	 * xcol[2] == bot shadow
-	 */
-
-	xcol[1].pixel = r->pixColorsFocus[Color_scroll];
-# ifdef PREFER_24BIT
-	xcol[0].red = xcol[0].green = xcol[0].blue = 0xffffu;
-	rxvt_alloc_color( r, &(xcol[0]), "White" );
-	XQueryColors(r->Xdisplay, XCMAP, &(xcol[1]), 1);
-# else
-	xcol[0].pixel = WhitePixel(r->Xdisplay, XSCREEN);
-	XQueryColors(r->Xdisplay, XCMAP, xcol, 2);
-# endif
-
-	/* bottomShadowColor */
-	xcol[2].red	= xcol[1].red	/ 2;
-	xcol[2].green	= xcol[1].green / 2;
-	xcol[2].blue	= xcol[1].blue	/ 2;
-	if( !rxvt_alloc_color( r, &(xcol[2]), "Color_bottomShadow" ) )
-	    rxvt_copy_color( r, Color_bottomShadow, Color_Black );
-
-	else
-	    rxvt_set_color( r, Color_bottomShadow, &xcol[2] );
-
-
-	/* topShadowColor */
-	xcol[1].red	= max((xcol[0].red   / 5), xcol[1].red	);
-	xcol[1].green	= max((xcol[0].green / 5), xcol[1].green);
-	xcol[1].blue	= max((xcol[0].blue  / 5), xcol[1].blue	);
-	xcol[1].red	= min(xcol[0].red,   (xcol[1].red   * 7) / 5);
-	xcol[1].green	= min(xcol[0].green, (xcol[1].green * 7) / 5);
-	xcol[1].blue	= min(xcol[0].blue,  (xcol[1].blue  * 7) / 5);
-
-	if( !rxvt_alloc_color(r, &(xcol[1]), "Color_topShadow") )
-	    rxvt_copy_color( r, Color_topShadow, Color_White );
-	else
-	    rxvt_set_color( r, Color_topShadow, &xcol[1] );
-
-    }
-#endif	/* KEEP_SCROLLCOLOR */
-
 }
 
 
@@ -2125,10 +2060,6 @@ rxvt_init_win_size( rxvt_t *r )
     /* Calculate the base width and height */
     r->szHint.base_width = 2 * r->TermWin.int_bwidth;
     r->szHint.base_height = 2 * r->TermWin.int_bwidth;
-#ifdef HAVE_SCROLLBARS
-    if (ISSET_OPTION(r, Opt_scrollBar))
-	r->szHint.base_width += rxvt_scrollbar_rwidth (r);
-#endif
 #ifdef HAVE_TABBAR
     if (NOTSET_OPTION(r, Opt2_hideTabbar))
 	r->szHint.base_height += rxvt_tabbar_rheight (r);
@@ -2216,8 +2147,7 @@ rxvt_init_win_size( rxvt_t *r )
 	    - r->szHint.height - 2 * r->TermWin.ext_bwidth);
 
     /* Set the terminal window starting position */
-    r->h->window_vt_x = (ISSET_OPTION(r, Opt_scrollBar_right)) ? 
-	    0 : r->szHint.base_width - 2*r->TermWin.int_bwidth;
+    r->h->window_vt_x = r->szHint.base_width - 2*r->TermWin.int_bwidth;
     r->h->window_vt_y = r->szHint.base_height - 2*r->TermWin.int_bwidth;
 #ifdef HAVE_TABBAR
     if (ISSET_OPTION(r, Opt2_bottomTabbar) && NOTSET_OPTION(r, Opt2_hideTabbar))
@@ -2772,13 +2702,6 @@ rxvt_init_vts( rxvt_t *r, int page, int profile )
     if (STRCMP(r->h->key_backspace, "DEC") == 0)
 	SET_PMODE(r, page, PrivMode_HaveBackSpace);
 #endif
-#ifdef HAVE_SCROLLBARS
-    if (rxvt_scrollbar_visible(r))
-    {
-	SET_PMODE(r, page, PrivMode_scrollBar);
-	SET_SMODE(r, page, PrivMode_scrollBar);
-    }
-#endif
 
     /* Now set VT fg/bg color */
     PVTS(r, page)->p_fg = VTFG(r, profile);
@@ -3168,9 +3091,6 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
      * must initialize scrollbar before initialize window size and
      * create windows.
      */
-#ifdef HAVE_SCROLLBARS
-    rxvt_scrollbar_init (r);
-#endif
     rxvt_init_win_size (r);
 
     /*
@@ -3396,14 +3316,6 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
     gcmask |= GCFont;
     r->TermWin.gc = XCreateGC(r->Xdisplay, r->TermWin.parent,
 		    gcmask, &gcvalue);
-
-#ifdef HAVE_SCROLLBARS
-    rxvt_scrollbar_create (r);
-    if (ISSET_OPTION(r, Opt_scrollBar))
-    {
-	rxvt_scrollbar_show (r);
-    }
-#endif
 
 #ifdef HAVE_TABS
 #ifdef HAVE_TABBAR

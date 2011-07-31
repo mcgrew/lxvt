@@ -47,7 +47,6 @@ static const char* dbg_mask_name[DBG_IDX_MAX] = {
     "LOGGING",
     "MACROS",
     "TABBAR",
-    "SCROLLBAR",
     "IMAGES",
     "PIXMAP",
     "TRANSPARENT",
@@ -71,7 +70,6 @@ static dbgmask_t dbg_mask_map[DBG_IDX_MAX] = {
     DBG_LOGGING,
     DBG_MACROS,
     DBG_TABBAR,
-    DBG_SCROLLBAR,
     DBG_IMAGES,
     DBG_PIXMAP,
     DBG_TRANSPARENT,
@@ -176,9 +174,6 @@ rxvt_dbg_parse_masks (const char* maskstring)
 	    else if (len == sizeof ("TABBAR") -1 &&
 		0 == STRNCASECMP (dbg_mask_name[DBG_IDX_TABBAR], ptr, len))
 		mask |= DBG_TABBAR;
-	    else if (len == sizeof ("SCROLLBAR") -1 &&
-		0 == STRNCASECMP (dbg_mask_name[DBG_IDX_SCROLLBAR], ptr, len))
-		mask |= DBG_SCROLLBAR;
 	    else if (len == sizeof ("IMAGES") -1 &&
 		0 == STRNCASECMP (dbg_mask_name[DBG_IDX_IMAGES], ptr, len))
 		mask |= DBG_IMAGES;

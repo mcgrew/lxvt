@@ -2056,23 +2056,6 @@ rxvt_check_quick_timeout (rxvt_t* r)
     }
 #endif	/* SELECTION_SCROLLING */
 
-#ifdef HAVE_SCROLLBARS
-# ifndef NO_SCROLLBAR_BUTTON_CONTINUAL_SCROLLING
-    if (scrollbar_isUp() || scrollbar_isDn())
-    {
-	quick_timeout = 1;
-	/* Only work for current active tab */
-	if (!h->scroll_arrow_delay-- &&
-	    rxvt_scr_page(r, ATAB(r), scrollbar_isUp()?UP:DN, 1))
-	{
-	    h->scroll_arrow_delay = SCROLLBAR_CONTINUOUS_DELAY;
-	    h->refresh_type |= SMOOTH_REFRESH;
-	    AVTS(r)->want_refresh = 1;
-	}
-    }
-# endif	/* NO_SCROLLBAR_BUTTON_CONTINUAL_SCROLLING */
-#endif
-
     return quick_timeout;
 }
 
@@ -2196,10 +2179,6 @@ rxvt_refresh_vtscr_if_needed( rxvt_t *r )
 	rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND, "%lu: ATAB(%d) produced %d bytes (%d in buffer)\n", time(NULL), ATAB(r), AVTS(r)->nbytes_last_read, AVTS(r)->outbuf_end - AVTS(r)->outbuf_base ));
 
 	rxvt_scr_refresh(r, ATAB(r), r->h->refresh_type);
-
-#ifdef HAVE_SCROLLBARS
-	rxvt_scrollbar_update(r, 1);
-#endif
 
 #ifdef USE_XIM
 	rxvt_IM_send_spot (r);
@@ -2740,163 +2719,6 @@ rxvt_process_keyrelease(rxvt_t* r, XKeyEvent *ev)
 
 
 
-#ifdef HAVE_SCROLLBARS
-/* INTPROTO */
-void
-rxvt_scrollbar_dispatcher (rxvt_t* r, int page, XButtonEvent* ev)
-{
-    int		reportmode = 0;
-    struct rxvt_hidden*	h = r->h;
-
-
-    if (!h->bypass_keystate)
-	reportmode = !!ISSET_PMODE(r, page, PrivMode_mouse_report);
-
-    scrollbar_setIdle();
-    /*
-     * Rxvt-style scrollbar:
-     * move up if mouse is above slider
-     * move dn if mouse is below slider
-     *
-     * XTerm-style scrollbar:
-     * Move display proportional to pointer location
-     * pointer near top -> scroll one line
-     * pointer near bot -> scroll full page
-     */
-# ifndef NO_SCROLLBAR_REPORT
-    if (reportmode)
-    {
-	/*
-	 * Mouse report disabled scrollbar:
-	 * arrow buttons - send up/down
-	 * click on scrollbar - send pageup/down
-	 */
-	if(
-		  r->scrollBar.style == R_SB_RXVT
-		  && scrollbarrxvt_upButton(ev->y)
-	  )
-	{
-	    rxvt_tt_printf(r, page, "\033[A");
-	}
-	else if (
-		    (r->scrollBar.style == R_SB_RXVT
-				&& scrollbarrxvt_dnButton(ev->y))
-		)
-	{
-	    rxvt_tt_printf(r, page, "\033[B");
-	}
-	else
-	{
-	    switch (ev->button)
-	    {
-		case Button2:
-		    rxvt_tt_printf(r, page, "\014");
-		    break;
-		case Button1:
-		    rxvt_tt_printf(r, page, "\033[6~");
-		    break;
-		case Button3:
-		    rxvt_tt_printf(r, page, "\033[5~");
-		    break;
-	    }
-	}
-    }
-    else
-# endif	/* NO_SCROLLBAR_REPORT */
-    {
-	int	upordown = 0;
-
-	if (r->scrollBar.style == R_SB_RXVT)
-	{
-	    if (scrollbarrxvt_upButton(ev->y))
-		upordown = -1;	/* up */
-	    else if (scrollbarrxvt_dnButton(ev->y))
-		upordown = 1;	/* down */
-	}
-
-	if (upordown)
-	{
-#ifndef NO_SCROLLBAR_BUTTON_CONTINUAL_SCROLLING
-	    h->scroll_arrow_delay = SCROLLBAR_INITIAL_DELAY;
-#endif
-	    if (rxvt_scr_page(r, ATAB(r), upordown < 0?UP:DN,1))
-	    {
-		if (upordown < 0)
-		    scrollbar_setUp();
-		else
-		    scrollbar_setDn();
-	    }
-	}
-	else
-	{
-	    switch (ev->button)
-	    {
-		case Button2:
-		    switch (h->scrollbar_align)
-		    {
-			case R_SB_ALIGN_TOP:
-			    h->csrO = 0;
-			    break;
-			case R_SB_ALIGN_CENTRE:
-			    h->csrO = (r->scrollBar.bot-r->scrollBar.top)/2;
-			    break;
-			case R_SB_ALIGN_BOTTOM:
-			    h->csrO = r->scrollBar.bot - r->scrollBar.top;
-			    break;
-		    }
-
-		    if (
-			    r->scrollBar.style == R_SB_XTERM
-			    || scrollbar_above_slider(ev->y)
-			    || scrollbar_below_slider(ev->y)
-		       )
-		    {
-			rxvt_scr_move_to(r, page,
-			    scrollbar_position(ev->y) - h->csrO,
-			    scrollbar_size());
-		    }
-		    scrollbar_setMotion();
-		break;
-
-	    case Button1:
-		if (h->scrollbar_align == R_SB_ALIGN_CENTRE)
-		    h->csrO = ev->y - r->scrollBar.top;
-		    /* FALLTHROUGH */
-
-	    case Button3:
-		if (r->scrollBar.style != R_SB_XTERM)
-		{
-		    if (scrollbar_above_slider(ev->y))
-# ifdef RXVT_SCROLL_FULL
-			rxvt_scr_page(r, ATAB(r), UP, r->TermWin.nrow-1);
-# else
-			rxvt_scr_page(r, ATAB(r), UP, r->TermWin.nrow/4);
-# endif
-		    else if (scrollbar_below_slider(ev->y))
-# ifdef RXVT_SCROLL_FULL
-			rxvt_scr_page(r, ATAB(r), DN, r->TermWin.nrow - 1);
-# else
-			rxvt_scr_page(r, ATAB(r), DN, r->TermWin.nrow / 4);
-# endif
-		    else
-			scrollbar_setMotion();
-		}
-		else
-		{
-		    rxvt_scr_page(r, ATAB(r),
-			(ev->button == Button1 ? DN : UP),
-			(r->TermWin.nrow * scrollbar_position(ev->y)
-			    / scrollbar_size()));
-		}
-		break;
-	    } /* switch( ev->button ) */
-	} /* else */
-    }
-    return;
-}
-#endif	/* HAVE_SCROLLBARS */
-
-
 /* INTPROTO */
 void
 rxvt_process_buttonpress(rxvt_t* r, int page, XButtonEvent *ev)
@@ -2988,15 +2810,6 @@ rxvt_process_buttonpress(rxvt_t* r, int page, XButtonEvent *ev)
 #endif
 
 
-#ifdef HAVE_SCROLLBARS
-    /*
-     * Scrollbar window processing of button press
-     */
-    if (rxvt_is_scrollbar_win (r, ev->window))
-	rxvt_scrollbar_dispatcher (r, page, ev);
-#endif
-
-
 }
 
 
@@ -3027,11 +2840,6 @@ rxvt_process_wheel_button(rxvt_t* r, int page, XButtonEvent *ev)
 # ifdef JUMP_MOUSE_WHEEL
     rxvt_scr_page(r, ATAB(r), v, i);
 
-#  ifdef HAVE_SCROLLBARS
-    rxvt_scrollbar_update(r, 1);
-#  endif    /* HAVE_SCROLLBARS */
-
-
 # else	/* !JUMP_MOUSE_WHEEL */
     for (; i--;)
     {
@@ -3043,9 +2851,6 @@ rxvt_process_wheel_button(rxvt_t* r, int page, XButtonEvent *ev)
 	if (!(ISSET_OPTION(r, Opt_xft) && ISSET_OPTION(r, Opt2_xftAntialias)))
 #  endif    /* XFT_SUPPORT */
 	    rxvt_scr_refresh(r, page, SMOOTH_REFRESH);
-#  ifdef HAVE_SCROLLBARS
-	rxvt_scrollbar_update(r, 1);
-#  endif    /* HAVE_SCROLLBARS */
     }
 # endif	/* JUMP_MOUSE_WHEEL */
 }
@@ -3076,17 +2881,6 @@ rxvt_process_buttonrelease(rxvt_t* r, int page, XButtonEvent *ev)
     r->h->csrO = 0;	/* reset csr Offset */
     if (!r->h->bypass_keystate)
 	reportmode = !!ISSET_PMODE(r, page, PrivMode_mouse_report);
-
-#ifdef HAVE_SCROLLBARS
-    if (scrollbar_isUpDn())
-    {
-	scrollbar_setIdle();
-	rxvt_scrollbar_update(r, 0);
-# ifndef NO_SCROLLBAR_BUTTON_CONTINUAL_SCROLLING
-	r->h->refresh_type &= ~SMOOTH_REFRESH;
-# endif
-    }
-#endif	/* HAVE_SCROLLBARS */
 
 #ifdef SELECTION_SCROLLING
     r->h->pending_scroll_selection=0;
@@ -3335,27 +3129,10 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason)
 	    break;
 #endif
 
-#ifdef HAVE_SCROLLBARS
-	case HIDE_SCROLLBAR:
-	    r->szHint.base_width -= rxvt_scrollbar_rwidth (r);
-	    r->szHint.min_width  -= rxvt_scrollbar_rwidth (r);
-	    r->szHint.width	 -= rxvt_scrollbar_rwidth (r);
-	    break;
-	case SHOW_SCROLLBAR:
-	    r->szHint.base_width += rxvt_scrollbar_rwidth (r);
-	    r->szHint.min_width  += rxvt_scrollbar_rwidth (r);
-	    r->szHint.width	 += rxvt_scrollbar_rwidth (r);
-	    break;
-#endif	/* HAVE_SCROLLBARS */
-
 	case RESIZE_FONT:
 	    /* Calculate the base width and height */
 	    r->szHint.base_width  = 2 * r->TermWin.int_bwidth;
 	    r->szHint.base_height = 2 * r->TermWin.int_bwidth;
-#ifdef HAVE_SCROLLBARS
-	    if( rxvt_scrollbar_visible( r) )
-		r->szHint.base_width += rxvt_scrollbar_width (r);
-#endif
 #ifdef HAVE_TABBAR
 	    if( rxvt_tabbar_visible( r ) )
 		r->szHint.base_height += rxvt_tabbar_height (r);
@@ -3399,11 +3176,6 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason)
 
     /* Reset WMNormal Hints. We need not worry about r->szHint.flags */
     XSetWMNormalHints (r->Xdisplay, r->TermWin.parent, &(r->szHint));
-
-    /* Set the terminal window starting position */
-    if (NOTSET_OPTION(r, Opt_scrollBar_right))
-	r->h->window_vt_x = ISSET_OPTION(r, Opt_scrollBar_right) ? 
-	    0 : r->szHint.base_width - 2*r->TermWin.int_bwidth;
 
     r->h->window_vt_y = r->szHint.base_height - 2*r->TermWin.int_bwidth;
 #ifdef HAVE_TABBAR
@@ -3579,9 +3351,6 @@ rxvt_resize_sub_windows (rxvt_t* r)
 
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "rxvt_resize_sub_windows\n"));
 
-#ifdef HAVE_SCROLLBARS
-    rxvt_scrollbar_resize(r);
-#endif
 #ifdef HAVE_TABBAR
     rxvt_tabbar_resize (r);
 #endif
@@ -3929,12 +3698,6 @@ rxvt_process_expose (rxvt_t* r, XEvent* ev)
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Expose event on tabbar\n"));
 	}
 # endif
-# ifdef HAVE_SCROLLBARS
-	else if (rxvt_is_scrollbar_win (r, win))
-	{
-	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Expose event on scrollbar\n"));
-	}
-# endif
 #endif	/* DEBUG */
 
 #ifdef HAVE_TABBAR
@@ -3952,14 +3715,6 @@ rxvt_process_expose (rxvt_t* r, XEvent* ev)
 		    GraphicsExpose, &unused_xevent)
 	     );
 
-#ifdef HAVE_SCROLLBARS
-	if ( rxvt_is_scrollbar_win (r, win) && rxvt_scrollbar_visible (r))
-	{
-	    scrollbar_setIdle();
-	    rxvt_scrollbar_update(r, 0);
-	    return;
-	}
-#endif
 	/* Not reached */
     }
 }
@@ -4061,31 +3816,6 @@ rxvt_process_motionnotify (rxvt_t* r, XEvent* ev)
 #endif
 	}
     }
-#ifdef HAVE_SCROLLBARS
-    else if (
-		rxvt_is_scrollbar_win (r, ev->xany.window)
-		&& scrollbar_isMotion()
-	    )
-    {
-	while (
-		XCheckTypedWindowEvent(r->Xdisplay,
-		    r->scrollBar.win, MotionNotify, ev)
-	      )
-	    ;
-
-	XQueryPointer(r->Xdisplay, r->scrollBar.win,
-	    &unused_root, &unused_child,
-	    &unused_root_x, &unused_root_y,
-	    &(ev->xbutton.x), &(ev->xbutton.y),
-	    &unused_mask);
-	rxvt_scr_move_to(r, page,
-	    scrollbar_position(ev->xbutton.y) - r->h->csrO,
-	    scrollbar_size());
-
-	rxvt_scr_refresh(r, page, r->h->refresh_type & ~CLIPPED_REFRESH);
-	rxvt_scrollbar_update(r, 1);
-    }
-#endif
 }
 
 /*{{{ process an X event */
@@ -4157,7 +3887,7 @@ rxvt_process_x_event(rxvt_t* r, XEvent *ev)
 
 #ifdef DEBUG_X
     ltt = localtime(&(tp.tv_sec));
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Event: %-16s %-7s %08lx (%4d-%02d-%02d %02d:%02d:%02d.%.6ld) %s %lu\n", eventnames[ev->type], (ev->xany.window == r->TermWin.parent ? "parent" : (ev->xany.window == PVTS(r, page)->vt ? "vt" : (ev->xany.window == r->scrollBar.win ? "scroll" : "UNKNOWN"))), (ev->xany.window == r->TermWin.parent ? r->TermWin.parent : (ev->xany.window == PVTS(r, page)->vt ? PVTS(r, page)->vt : (ev->xany.window == r->scrollBar.win ? r->scrollBar.win : 0))), ltt->tm_year + 1900, ltt->tm_mon + 1, ltt->tm_mday, ltt->tm_hour, ltt->tm_min, ltt->tm_sec, tp.tv_usec, ev->xany.send_event ? "S" : " ", ev->xany.serial));
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Event: %-16s %-7s %08lx (%4d-%02d-%02d %02d:%02d:%02d.%.6ld) %s %lu\n", eventnames[ev->type], (ev->xany.window == r->TermWin.parent ? "parent" : (ev->xany.window == PVTS(r, page)->vt ? "vt" : "UNKNOWN")), (ev->xany.window == r->TermWin.parent ? r->TermWin.parent : (ev->xany.window == PVTS(r, page)->vt ? PVTS(r, page)->vt : 0)), ltt->tm_year + 1900, ltt->tm_mon + 1, ltt->tm_mday, ltt->tm_hour, ltt->tm_min, ltt->tm_sec, tp.tv_usec, ev->xany.send_event ? "S" : " ", ev->xany.serial));
 #endif
 
     /* X event timeouts */
@@ -4760,9 +4490,6 @@ rxvt_process_escape_seq(rxvt_t* r, int page)
 	/* 8.3.106: RESET TO INITIAL STATE */
 	case 'c':
 	    rxvt_scr_poweron(r, page);
-#ifdef HAVE_SCROLLBARS
-	    rxvt_scrollbar_update(r, 1);
-#endif
 	    break;
 
 	/* 8.3.79: LOCKING-SHIFT TWO (see ISO2022) */
@@ -5726,13 +5453,6 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	 */
 #if 0 /* {{{ DISABLED FOR SECURITY REASONS */
 	case MRxvt_hide:
-#ifdef HAVE_SCROLLBARS
-	    if ('s' == *str || 'S' == *str) 	    /* show/hide scrollbar */
-	    {
-		rxvt_hotkey_hide_scrollbar (r, 0);
-	    }
-	    else 
-#endif	/* HAVE_SCROLLBARS */
 	    {
 		rxvt_hotkey_hide_tabbar (r, 0);
 	    }
@@ -5937,9 +5657,6 @@ rxvt_process_terminal_mode(rxvt_t* r, int page, int mode, int priv __attribute__
 	{ 6, PrivMode_relOrigin },
 	{ 7, PrivMode_Autowrap },
 	{ 9, PrivMode_MouseX10 },
-#ifdef scrollBar_esc
-	{ scrollBar_esc, PrivMode_scrollBar },
-#endif
 	{ 25, PrivMode_VisibleCursor },
 	{ 35, PrivMode_ShiftKeys },
 	{ 40, PrivMode_132OK },
@@ -6063,22 +5780,6 @@ rxvt_process_terminal_mode(rxvt_t* r, int page, int mode, int priv __attribute__
 		if (state)	/* orthogonal */
 		    UNSET_PMODE(r, page, PrivMode_MouseX11);
 		break;
-#ifdef HAVE_SCROLLBARS
-# ifdef scrollBar_esc
-	    case scrollBar_esc:
-		if (state)
-		{
-		    if (rxvt_scrollbar_show (r))
-			rxvt_resize_on_subwin (r, SHOW_SCROLLBAR);
-		}
-		else
-		{
-		    if (rxvt_scrollbar_hide (r))
-			rxvt_resize_on_subwin (r, HIDE_SCROLLBAR);
-		}
-		break;
-# endif
-#endif
 	    case 25:	    /* visible/invisible cursor */
 		rxvt_scr_cursor_visible(r, page, state);
 		break;

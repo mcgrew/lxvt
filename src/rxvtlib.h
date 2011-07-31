@@ -255,9 +255,6 @@ typedef enum
 #define Opt_mapAlert		    ((1LU<<7) | IS_OPTION1)
 #define Opt_reverseVideo	    ((1LU<<8) | IS_OPTION1)
 #define Opt_utmpInhibit		    ((1LU<<9) | IS_OPTION1)
-#define Opt_scrollBar		    ((1LU<<10) | IS_OPTION1)
-#define Opt_scrollBar_right	    ((1LU<<11) | IS_OPTION1)
-#define Opt_scrollBar_floating	    ((1LU<<12) | IS_OPTION1)
 #define Opt_meta8		    ((1LU<<13) | IS_OPTION1)
 #define Opt_scrollTtyOutputInhibit  ((1LU<<14) | IS_OPTION1)
 #define Opt_scrollTtyKeypress	    ((1LU<<15) | IS_OPTION1)
@@ -268,9 +265,6 @@ typedef enum
 #define Opt_mouseWheelScrollPage    ((1LU<<20) | IS_OPTION1)
 #define Opt_pointerBlank	    ((1LU<<21) | IS_OPTION1)
 #define Opt_cursorBlink		    ((1LU<<22) | IS_OPTION1)
-#ifdef HAVE_SCROLLBARS
-# define Opt_transparent_scrollbar  ((1LU<<23) | IS_OPTION1)
-#endif
 #define Opt_transparent_tabbar	    ((1LU<<26) | IS_OPTION1)
 #define Opt_tabPixmap		    ((1LU<<27) | IS_OPTION1)
 #ifdef XFT_SUPPORT
@@ -279,8 +273,7 @@ typedef enum
 #ifdef USE_FIFO
 # define Opt_useFifo		    ((1LU<<29) | IS_OPTION1)
 #endif/*USE_FIFO*/
-#define DEFAULT_OPTIONS	    \
-    (Opt_scrollBar)
+#define DEFAULT_OPTIONS	            0
 
 /* rxvt_vars.Options2 */
 #define Opt2_protectSecondary	    ((1LU<<2) | IS_OPTION2)
@@ -389,40 +382,6 @@ typedef enum
 #define USE_BOLD_PFONT		    (2)
 
 /* ------------------------------------------------------------------------- */
-
-#ifdef HAVE_SCROLLBARS
-typedef struct
-{
-    char            state;  /* scrollbar state */
-    char            init;   /* scrollbar has been initialised */
-    short           beg;    /* slider sub-window begin height */
-    short           end;    /* slider sub-window end height */
-    short           top;    /* slider top position */
-    short           bot;    /* slider bottom position */
-    short           style;  /* style: rxvt, xterm, next */
-    short           width;  /* scrollbar width */
-    Window          win;
-    int             (*update)(struct rxvt_vars *, int, int, int, int);
-
-    GC		    gc;
-# ifdef RXVT_SCROLLBAR
-    unsigned long   rxvt_fg;
-    unsigned long   rxvt_bg;
-    unsigned long   rxvt_topshadow;
-    unsigned long   rxvt_botshadow;
-# endif
-# ifdef XTERM_SCROLLBAR
-    unsigned long   xterm_fg;
-    unsigned long   xterm_bg;
-    unsigned long   xterm_shadow;
-# endif
-# ifdef PLAIN_SCROLLBAR
-    unsigned long   plain_fg;
-    unsigned long   plain_bg;
-# endif
-} scrollBar_t;
-#endif	/* HAVE_SCROLLBARS */
-
 
 #ifdef HAVE_TABS
 typedef struct
@@ -786,9 +745,6 @@ typedef struct rxvt_vars
      *   Changes to structure here require library version number change
      */
     TermWin_t	    TermWin;
-#ifdef HAVE_SCROLLBARS
-    scrollBar_t	    scrollBar;
-#endif
 #ifdef HAVE_TABS
     tabBar_t	    tabBar;
 #endif
@@ -828,7 +784,6 @@ typedef struct rxvt_vars
 
     Cursor	    term_pointer;	    /* cursor for vt window */
     int		    Xdepth;
-    int		    sb_shadow;		    /* scrollbar shadow width */
     int		    Xfd;		    /* file descriptor of the X
 					       connection */
 
@@ -896,8 +851,6 @@ typedef enum
 {
     HIDE_TABBAR = 0,
     SHOW_TABBAR,
-    HIDE_SCROLLBAR,
-    SHOW_SCROLLBAR,
     RESIZE_FONT,
     X_CONFIGURE,
 } resize_reason_t;
