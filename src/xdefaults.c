@@ -98,7 +98,6 @@ static const struct {
     const char	    BOOLVAR( multiple, 1 ); /* multiple values for profiles */
 } optList[] = {
     /* Options for each profile */
-    STRG(Rs_tabtitle, "tabTitle", "tt", "string", "title name for tab", 1),
     STRG(Rs_saveLines, "saveLines", "sl", "number",
 	    "number of scrolled lines to save for tab", 1),
     STRG(Rs_command, "command", "e", "string",
@@ -115,16 +114,8 @@ static const struct {
 	"string", "text to show while holding the terminal", 1),
     STRG(Rs_holdExitTtl, "holdExitTitle", "heT",
 	"string", "Tab title of exited tabs", 1),
-    STRG(Rs_titleFormat, "titleFormat", "tf",
-	"string", "Displayed tab title format", 1),
-    STRG( Rs_winTitleFormat, "winTitleFormat", "wtf", "string",
-	    "format of window title (when syncing to tab title)", 1 ),
 
     /* Global options */
-    BOOL( "syncTabTitle", "stt", Opt2_syncTabTitle,
-	    "synchronizing terminal title with tab title" ),
-    BOOL( "syncTabIcon", "sti", Opt2_syncTabIcon,
-	    "synchronizing icon name with tab title" ),
     BOOL( "veryBoldFont", "vbf", Opt2_veryBold,
 	    "showing color text with bold font" ),
 #ifndef NO_BRIGHTCOLOR
@@ -179,10 +170,6 @@ static const struct {
 	    "Duration (ms) of the visual bell", 0),
     STRG( Rs_bellCommand, "bellCommand", "blc",
 	"string", "command to execute instead of beeping", 0),
-    STRG( Rs_monitorCommand, "monitorCommand", "mcmd",
-	"string", "command to execute if activity/inactivity was detected while monitoring", 0),
-    STRG( Rs_monitorTimeout, "monitorTimeout", "mto", "number",
-	"timeout in milliseconds for tab-monitoring", 0),
 # if ! defined(NO_MAPALERT) && defined(MAPALERT_OPTION)
     BOOL( "mapAlert", NULL, Opt_mapAlert, NULL ),
 # endif
@@ -376,8 +363,6 @@ static const struct {
 	    "override_redirect flag" ),
     STRG(Rs_desktop, "desktop", "desktop",
 	"number", "desktop to place the program", 0),
-    BOOL( "broadcast", "bcst", Opt2_broadcast,
-	    "broadcast input to all terminals" ),
 
 #ifndef NO_FRILLS
     STRG(Rs_ext_bwidth, "externalBorder", "w", "number",
@@ -451,10 +436,8 @@ static const struct {
 #endif	/* HAVE_X11_SM_SMLIB_H */
 
     /* Initial number of terminals */
-    STRG( Rs_init_term_num, "initTermNumber", "tnum", "number",
-	"Initial number of tabs/terminals", 0),
-    STRG( Rs_initProfiles, "initProfileList", "ip", "profile list",
-	"List of profiles to load on startup", 0 ),
+    STRG( Rs_initProfile, "initProfile", "ip", "profile",
+	"Profiles to load on startup", 0 ),
 
     STRG(Rs_debug_masks, "dbgMasks", "dmask", "string", 
 	"List of debug masks separated by coma", 0),

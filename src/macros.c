@@ -40,12 +40,10 @@ static const char *const macroNames[] =
     "Copy",		    /* Copy selection */
     "Paste",		    /* Paste selection */
     "PasteFile",	    /* Paste the content of a file */
-    "MonitorTab",	    /* Monitor tab for activity/inactivity */
     "ResizeFont",	    /* Resize terminal font */
     "ToggleVeryBold",	    /* Toggle use of bold font for colored text */
     "ToggleBoldColors",	    /* Toggle option boldColors */
     "ToggleVeryBright",	    /* Toggle option veryBright */
-    "ToggleBroadcast",	    /* Toggle broadcasting of input */
     "ToggleHold",	    /* Toggle holding of completed tabs */
     "ToggleFullscreen",	    /* Toggle full screen mode */
     "Raise",		    /* Raise the terminal window */
@@ -647,7 +645,7 @@ rxvt_process_macros( rxvt_t *r, KeySym keysym, XKeyEvent *ev)
                * Primary only macro in secondary screen.
                */
               (macro->modFlags & MACRO_PRIMARY)
-              && AVTS(r)->current_screen != PRIMARY
+              && PVTS(r)->current_screen != PRIMARY
             )
          || (
               /*
@@ -698,7 +696,7 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
     {
 	/* % interpolate the action string */
 	astr = expstr;
-	alen = rxvt_percent_interpolate( r, ATAB(r), (char *) action->str,
+	alen = rxvt_percent_interpolate( r, (char *) action->str,
 		action->len, astr, maxLen );
     }
 
@@ -708,7 +706,7 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	case MacroFnEsc:
 	    /* Send action to rxvt */
 	    if( NOT_NULL( astr ) && alen > 1 )
-		rxvt_cmd_write( r, ATAB(r), (unsigned char*) astr, alen - 1);
+		rxvt_cmd_write( r, (unsigned char*) astr, alen - 1);
 	    else
 	    {
 		rxvt_msg (DBG_ERROR, DBG_MACROS,  "Macro %s requires argument.",
@@ -720,7 +718,7 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	case MacroFnStr:
 	    /* Send action to child process */
 	    if( NOT_NULL( astr ) && alen > 1 )
-		rxvt_tt_write( r, ATAB(r), (unsigned char*) astr, alen - 1);
+		rxvt_tt_write( r, (unsigned char*) astr, alen - 1);
 	    else
 	    {
 		rxvt_msg (DBG_ERROR, DBG_MACROS,  "Macro %s requires argument.",
@@ -742,10 +740,7 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		 * running command.
 		 */
 
-		const int   MaxMacroTitle = 80;	/* Longest title we will have */
-		char	    titlestring[MaxMacroTitle];
 		char	    *command = (char *) astr;
-		char	    *title = NULL;
 
 		int	    profile = 0;
 
@@ -756,39 +751,19 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		    profile = strtoul( ++command, &pnum_end, 0 );
 
 		    if( profile < 0 || profile >= MAX_PROFILES )
-			profile = AVTS(r)->profileNum;
+			profile = PVTS(r)->profileNum;
 
 		    /* Skip spaces */
 		    command = pnum_end;
 		    while( isspace( *command ) ) command++;
 		}
 
-		/* See if a title is specified */
-		if( *command == '"' )
-		{
-		    int i;
-
-		    /* Copy everything until first " into title */
-		    for(
-			  i=0, command++;
-			  i < MaxMacroTitle - 2 && *command && *command != '"';
-			  i++, command++
-		       )
-			titlestring[i] = *command;
-		    titlestring[i] = '\0'; /* Null terminate title */
-		    title = titlestring;
-
-		    /* Skip spaces after title */
-		    if( *command ) command++;
-		    while( isspace( *command ) ) command++;
-		}
-
 		/* Add page */
-		rxvt_append_page( r, profile, title,
+		rxvt_append_page( r, profile,
 				    *command ? command : NULL );
 	    }
 	    else
-		rxvt_append_page( r, 0, NULL, NULL );
+		rxvt_append_page( r, 0, NULL );
 
 	    break;
 
@@ -811,17 +786,9 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		/* Close tab specified by str */
 		int tabno = atoi( (char*) astr) - 1;
 
-		if( tabno == -1 ) tabno = ATAB(r);
-
-		if (
-		      tabno >=0 && tabno <=LTAB(r)
-		      && (
-			   NOTSET_OPTION(r, Opt2_protectSecondary)
-			   || PVTS(r, tabno)->current_screen == PRIMARY
-			 )
-		   )
+		if ( tabno == -1 || tabno == 0 )
 		{
-		    rxvt_kill_page (r, tabno);
+		    rxvt_kill_page (r);
 		}
 		else
 		    retval = -1;
@@ -857,7 +824,7 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		     */
 		    amount = amount * r->TermWin.nrow / 100;
 
-		rxvt_scr_page(r, ATAB(r), direction, amount);
+		rxvt_scr_page(r, direction, amount);
 
 	    }
 	    break;
@@ -881,11 +848,11 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		      sel=XA_CLIPBOARD;
 		    else
 		      break;
-		    rxvt_selection_request_by_sel( r, ATAB(r), ev->xkey.time,
+		    rxvt_selection_request_by_sel( r, ev->xkey.time,
 			    0, 0, sel);
 		}
 		else
-		    rxvt_selection_request (r, ATAB(r), ev->xkey.time, 0, 0);
+		    rxvt_selection_request (r, ev->xkey.time, 0, 0);
 	    }
 	    else
 	    {
@@ -899,7 +866,7 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	    if (NOT_NULL(ev))
 	    {
 	        if( NOT_NULL(astr) && *astr )
-		    rxvt_paste_file (r, ATAB(r), ev->xkey.time, 0, 0, astr);
+		    rxvt_paste_file (r, ev->xkey.time, 0, 0, astr);
 	        else
 		    break;
 	    }
@@ -907,68 +874,6 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		retval = -1;
 
 	   break;
-	}
-
-	case MacroFnMonitorTab:
-	{
-	    if (NOT_NULL(ev))
-	    {
-		if( NOT_NULL(astr) && *astr )
-		{
-		    short doit = 0;
-
-		    /* which monitoring type do we need ? */
-		    if(strcmp ("ACTIVITY", astr) == 0)
-		    {
-		      AVTS(r)->monitor_tab = 
-			  (AVTS(r)->monitor_tab == TAB_MON_ACTIVITY ) ? TAB_MON_OFF : TAB_MON_ACTIVITY;
-		      doit = 1;
-		      rxvt_msg (DBG_INFO, DBG_MACROS,  "Macro %s ACTIVITY : activity monitoring request on tab %i.",
-			macroNames[action->type], AVTS(r)->vts_idx );
-		    }
-		    else if (strcmp ("INACTIVITY", astr) == 0)
-		    {
-		      AVTS(r)->monitor_tab = 
-			  (AVTS(r)->monitor_tab == TAB_MON_INACTIVITY) ? TAB_MON_OFF : TAB_MON_INACTIVITY;
-		      doit = 1;
-		      rxvt_msg (DBG_INFO, DBG_MACROS,  "Macro %s INACTIVITY : inactivity monitoring request on tab %i.",
-		 	 macroNames[action->type], AVTS(r)->vts_idx );
-		    }
-		    else if (strcmp ("AUTO", astr) == 0)
-		    {
-		      AVTS(r)->monitor_tab = 
-			  (AVTS(r)->monitor_tab == TAB_MON_AUTO) ? TAB_MON_OFF : TAB_MON_AUTO;
-		      doit = 1;
-		      rxvt_msg (DBG_INFO, DBG_MACROS,  
-			 "Macro %s AUTO : request for automatic (in-)activity monitoring on tab %i.",
-		 	 macroNames[action->type], AVTS(r)->vts_idx );
-		    }
-		    else
-		    {
-		      rxvt_msg (DBG_INFO, DBG_MACROS,  "Macro %s requires argument or invalid argument provided.",
-		 	 macroNames[action->type] );
-		      break;
-		    }
-		    /* activating/deactivating the macro */
-		    if (doit != 0)
-		    {
-		      if (AVTS(r)->monitor_tab == TAB_MON_OFF )
-		      {
-			  rxvt_msg (DBG_INFO, DBG_MACROS,  "Macro %s was already active, deactivating previous macro call.",
-			     macroNames[action->type] );
-		      }else
-		      {
-			  AVTS(r)->monitor_nbytes_read = 0;
-			  gettimeofday( &AVTS(r)->monitor_start , NULL);
-		      }
-		    }
-		}
-	    }
-	    else
-	    {
-		retval = -1;
-	    }
-	    break;
 	}
 
 	case MacroFnFont:
@@ -992,50 +897,19 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	case MacroFnToggleVeryBold:
 	    TOGGLE_OPTION( r, Opt2_veryBold );
 
-	    rxvt_scr_touch (r, ATAB(r), True);
+	    rxvt_scr_touch (r, True);
 	    break;
 
 	case MacroFnToggleBoldColors:
 	    TOGGLE_OPTION( r, Opt2_boldColors );
 
-	    rxvt_scr_touch (r, ATAB(r), True);
+	    rxvt_scr_touch (r, True);
 	    break;
 
 	case MacroFnToggleVeryBright:
 	    TOGGLE_OPTION( r, Opt_veryBright );
 
-	    rxvt_scr_touch (r, ATAB(r), True);
-	    break;
-
-	case MacroFnToggleBcst:
-	    if( NOT_NULL(astr) && *astr )
-	    {
-		long state = strtol( astr, NULL, 0 );
-
-		switch(state)
-		{
-		    case 1:
-			SET_OPTION( r, Opt2_broadcast );
-			break;
-
-		    case 0:
-			UNSET_OPTION( r, Opt2_broadcast );
-			break;
-
-		    case -1:
-			TOGGLE_OPTION( r, Opt2_broadcast );
-			break;
-
-		    default:
-			rxvt_msg( DBG_ERROR, DBG_MACROS,
-				"Badly formed argument '%s' to %s\n",
-				astr, macroNames[action->type] );
-			retval = -1;
-			break;
-		}
-	    }
-	    else
-		TOGGLE_OPTION(r, Opt2_broadcast);
+	    rxvt_scr_touch (r, True);
 	    break;
 
 	case MacroFnToggleHold:
@@ -1049,15 +923,15 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		switch( op )
 		{
 		    case '+':
-			AVTS(r)->holdOption |= holdMask;
+			PVTS(r)->holdOption |= holdMask;
 			break;
 
 		    case '-':
-			AVTS(r)->holdOption &= ~holdMask;
+			PVTS(r)->holdOption &= ~holdMask;
 			break;
 
 		    case '!':
-			AVTS(r)->holdOption ^= holdMask;
+			PVTS(r)->holdOption ^= holdMask;
 			break;
 
 		    default:
@@ -1069,10 +943,10 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 
 		/* Remove the ATAB if it no longer needs to be held */
 		if(
-		     AVTS(r)->dead && AVTS(r)->hold > 1 &&
-		     !SHOULD_HOLD( r, ATAB(r) )
+		     PVTS(r)->dead && PVTS(r)->hold > 1 &&
+		     !SHOULD_HOLD( r )
 		  )
-		    rxvt_remove_page( r, ATAB(r) );
+		    rxvt_remove_page( r );
 	    }
 
 	    else
@@ -1081,11 +955,8 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		 * Behaviour almost compatible with mrxvt-0.5.1: Just get rid of
 		 * all held tabs.
 		 */
-		int k;
-
-		for (k = LTAB(r); k>= 0; k --)
-		    if (PVTS(r, k)->dead && PVTS(r, k)->hold > 1)
-			rxvt_remove_page (r, k);
+		    if (PVTS(r)->dead && PVTS(r)->hold > 1)
+			rxvt_remove_page (r);
 	    }
 
 	    break;
@@ -1107,10 +978,10 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 
 	case MacroFnSetTitle:
 	    if (NOT_NULL(astr))
-		rxvt_tabbar_set_title( r, ATAB(r),
+		rxvt_set_term_title( r,
 			(unsigned char*) astr);
 	    else if (NOT_NULL(r->selection.text))
-		rxvt_tabbar_set_title( r, ATAB(r),
+		rxvt_set_term_title( r,
 			(const unsigned char TAINTED*) r->selection.text);
 	    else
 		retval = -1;

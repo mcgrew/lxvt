@@ -77,17 +77,17 @@ void rxvt_update_lastlog (const char *fname, const char *pty, const char *host);
  */
 /* EXTPROTO */
 void
-rxvt_makeutent(rxvt_t *r, int page, const char *pty, const char *hostname)
+rxvt_makeutent(rxvt_t *r, const char *pty, const char *hostname)
 {
 #ifdef UTEMPTER_SUPPORT
-    utempter_add_record (PVTS(r, page)->cmd_fd, hostname);
+    utempter_add_record (PVTS(r)->cmd_fd, hostname);
 #else	/* UTEMPTER_SUPPORT */
 
 #ifdef HAVE_STRUCT_UTMP
-    struct utmp    *ut = &(PVTS(r, page)->ut);
+    struct utmp    *ut = &(PVTS(r)->ut);
 #endif
 #if defined(HAVE_STRUCT_UTMPX) && !defined(HAVE_STRUCT_UTMP)
-    struct utmpx   *utx = &(PVTS(r, page)->utx);
+    struct utmpx   *utx = &(PVTS(r)->utx);
 #endif
 #ifdef HAVE_UTMP_PID
     int             i;
@@ -117,7 +117,7 @@ rxvt_makeutent(rxvt_t *r, int page, const char *pty, const char *hostname)
     STRNCPY(ut->ut_id, ut_id, sizeof(ut->ut_id));
     ut->ut_type = DEAD_PROCESS;
     getutid(ut);	/* position to entry in utmp file */
-    STRNCPY(PVTS(r, page)->ut_id, ut_id, sizeof(PVTS(r, page)->ut_id));
+    STRNCPY(PVTS(r)->ut_id, ut_id, sizeof(PVTS(r)->ut_id));
 # endif
 #endif
 
@@ -127,7 +127,7 @@ rxvt_makeutent(rxvt_t *r, int page, const char *pty, const char *hostname)
     STRNCPY(utx->ut_id, ut_id, sizeof(utx->ut_id));
     utx->ut_type = DEAD_PROCESS;
     getutxid(utx);	/* position to entry in utmp file */
-    STRNCPY(PVTS(r, page)->ut_id, ut_id, sizeof(PVTS(r, page)->ut_id));
+    STRNCPY(PVTS(r)->ut_id, ut_id, sizeof(PVTS(r)->ut_id));
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
@@ -138,14 +138,14 @@ rxvt_makeutent(rxvt_t *r, int page, const char *pty, const char *hostname)
         sizeof(ut->ut_user));
     STRNCPY(ut->ut_id, ut_id, sizeof(ut->ut_id));
     ut->ut_time = time(NULL);
-    ut->ut_pid = PVTS(r, page)->cmd_pid;
+    ut->ut_pid = PVTS(r)->cmd_pid;
 #  ifdef HAVE_UTMP_HOST
     STRNCPY(ut->ut_host, hostname, sizeof(ut->ut_host));
 #  endif
     ut->ut_type = USER_PROCESS;
     pututline(ut);
     endutent();		/* close the file */
-    PVTS(r, page)->utmp_pos = 0;
+    PVTS(r)->utmp_pos = 0;
 # else
     STRNCPY(ut->ut_name, (pwent && pwent->pw_name) ? pwent->pw_name : "?",
         sizeof(ut->ut_name));
@@ -165,14 +165,14 @@ rxvt_makeutent(rxvt_t *r, int page, const char *pty, const char *hostname)
 # endif
     utx->ut_tv.tv_sec = time(NULL);
     utx->ut_tv.tv_usec = 0;
-    utx->ut_pid = PVTS(r, page)->cmd_pid;
+    utx->ut_pid = PVTS(r)->cmd_pid;
 # ifdef HAVE_UTMPX_HOST
     STRNCPY(utx->ut_host, hostname, sizeof(utx->ut_host));
 # endif
     utx->ut_type = USER_PROCESS;
     pututxline(utx);
     endutxent();	/* close the file */
-    PVTS(r, page)->utmp_pos = 0;
+    PVTS(r)->utmp_pos = 0;
 #endif
 
 #if defined(HAVE_STRUCT_UTMP) && !defined(HAVE_UTMP_PID)
@@ -181,7 +181,7 @@ rxvt_makeutent(rxvt_t *r, int page, const char *pty, const char *hostname)
 # ifdef HAVE_TTYSLOT
 	i = ttyslot();
 	if (rxvt_write_bsd_utmp(i, ut))
-	    PVTS(r, page)->utmp_pos = i;
+	    PVTS(r)->utmp_pos = i;
 # else
 	FILE           *fd0;
 
@@ -195,7 +195,7 @@ rxvt_makeutent(rxvt_t *r, int page, const char *pty, const char *hostname)
 		if (!STRCMP(ut->ut_line, name)) {
 		    if (!rxvt_write_bsd_utmp(i, ut))
 			i = 0;
-		    PVTS(r, page)->utmp_pos = i;
+		    PVTS(r)->utmp_pos = i;
 		    fclose(fd0);
 		    break;
 		}
@@ -244,24 +244,24 @@ rxvt_makeutent(rxvt_t *r, int page, const char *pty, const char *hostname)
  */
 /* EXTPROTO */
 void
-rxvt_cleanutent(rxvt_t *r, int page)
+rxvt_cleanutent(rxvt_t *r)
 {
 #ifdef UTEMPTER_SUPPORT
-    utempter_remove_record (PVTS(r, page)->cmd_fd);
+    utempter_remove_record (PVTS(r)->cmd_fd);
 #else	/* UTEMPTER_SUPPORT */
 
 #ifdef HAVE_STRUCT_UTMP
-    struct utmp    *ut = &(PVTS(r, page)->ut);
+    struct utmp    *ut = &(PVTS(r)->ut);
 #endif
 #if defined(HAVE_STRUCT_UTMPX) && !defined(HAVE_STRUCT_UTMP)
-    struct utmpx   *tmputx, *utx = &(PVTS(r, page)->utx);
+    struct utmpx   *tmputx, *utx = &(PVTS(r)->utx);
 #endif
 
 #ifdef HAVE_STRUCT_UTMP
 # ifdef HAVE_UTMP_PID
     MEMSET(ut, 0, sizeof(struct utmp));
     setutent();
-    STRNCPY(ut->ut_id, PVTS(r, page)->ut_id, sizeof(ut->ut_id));
+    STRNCPY(ut->ut_id, PVTS(r)->ut_id, sizeof(ut->ut_id));
     ut->ut_type = USER_PROCESS;
     {
 	struct utmp    *tmput = getutid(ut);
@@ -282,7 +282,7 @@ rxvt_cleanutent(rxvt_t *r, int page)
 #if defined(HAVE_STRUCT_UTMPX) && !defined(HAVE_STRUCT_UTMP)
     MEMSET(utx, 0, sizeof(struct utmpx));
     setutxent();
-    STRNCPY(utx->ut_id, PVTS(r, page)->ut_id, sizeof(utx->ut_id));
+    STRNCPY(utx->ut_id, PVTS(r)->ut_id, sizeof(utx->ut_id));
     utx->ut_type = USER_PROCESS;
     if ((tmputx = getutxid(utx)))   /* position to entry in utmp file */
 	utx = tmputx;
@@ -324,16 +324,16 @@ rxvt_cleanutent(rxvt_t *r, int page)
      */
 #ifdef HAVE_STRUCT_UTMP
 # ifdef HAVE_UTMP_PID
-    if (ut->ut_pid == PVTS(r, page)->cmd_pid)
+    if (ut->ut_pid == PVTS(r)->cmd_pid)
 	pututline(ut);
     endutent();
 # else
     MEMSET(ut, 0, sizeof(struct utmp));
-    rxvt_write_bsd_utmp(PVTS(r, page)->utmp_pos, ut);
+    rxvt_write_bsd_utmp(PVTS(r)->utmp_pos, ut);
 # endif
 #endif
 #if defined(HAVE_STRUCT_UTMPX) && !defined(HAVE_STRUCT_UTMP)
-    if (utx->ut_pid == PVTS(r, page)->cmd_pid)
+    if (utx->ut_pid == PVTS(r)->cmd_pid)
 	pututxline(utx);
     endutxent();
 #endif

@@ -47,11 +47,8 @@ static const char* dbg_mask_name[DBG_IDX_MAX] = {
     "LOGGING",
     "MACROS",
     "TABBAR",
-    "IMAGES",
-    "PIXMAP",
     "TRANSPARENT",
     "ENCODING",
-    "GKRELOT",
     "MEMORY",
     "SESSION",
     "STRING",
@@ -70,11 +67,8 @@ static dbgmask_t dbg_mask_map[DBG_IDX_MAX] = {
     DBG_LOGGING,
     DBG_MACROS,
     DBG_TABBAR,
-    DBG_IMAGES,
-    DBG_PIXMAP,
     DBG_TRANSPARENT,
     DBG_ENCODING,
-    DBG_GKRELOT,
     DBG_MEMORY,
     DBG_SESSION,
     DBG_STRING,
@@ -174,21 +168,12 @@ rxvt_dbg_parse_masks (const char* maskstring)
 	    else if (len == sizeof ("TABBAR") -1 &&
 		0 == STRNCASECMP (dbg_mask_name[DBG_IDX_TABBAR], ptr, len))
 		mask |= DBG_TABBAR;
-	    else if (len == sizeof ("IMAGES") -1 &&
-		0 == STRNCASECMP (dbg_mask_name[DBG_IDX_IMAGES], ptr, len))
-		mask |= DBG_IMAGES;
-	    else if (len == sizeof ("PIXMAP") -1 &&
-		0 == STRNCASECMP (dbg_mask_name[DBG_IDX_PIXMAP], ptr, len))
-		mask |= DBG_PIXMAP;
 	    else if (len == sizeof ("TRANSPARENT") -1 &&
 		0 == STRNCASECMP (dbg_mask_name[DBG_IDX_TRANSPARENT], ptr, len))
 		mask |= DBG_TRANSPARENT;
 	    else if (len == sizeof ("ENCODING") -1 &&
 		0 == STRNCASECMP (dbg_mask_name[DBG_IDX_ENCODING], ptr, len))
 		mask |= DBG_ENCODING;
-	    else if (len == sizeof ("GKRELOT") -1 &&
-		0 == STRNCASECMP (dbg_mask_name[DBG_IDX_GKRELOT], ptr, len))
-		mask |= DBG_GKRELOT;
 	    else if (len == sizeof ("MEMORY") -1 &&
 		0 == STRNCASECMP (dbg_mask_name[DBG_IDX_MEMORY], ptr, len))
 		mask |= DBG_MEMORY;

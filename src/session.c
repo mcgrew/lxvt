@@ -139,7 +139,7 @@ callback_save_yourself (SmcConn smc_conn, SmPointer client_data, int save_style,
 	struct passwd*	pw = NULL;
 	int		n = 0, i;
 	//char		initprof[(32+1) * MAX_PAGES];
-	char		initprof[(32+1) * (LTAB(r) + 1)];
+	char		initprof[(32+1)];
 	/* TODO Jehan: check the meaning of this initprof save.
 	 * What is the right variable to replace MAX_PAGES?
 	 */
@@ -165,12 +165,7 @@ callback_save_yourself (SmcConn smc_conn, SmPointer client_data, int save_style,
 	vals.priority->length = 1;
 
 	/* generate init profile list */
-	sprintf (initprof, "%d", PVTS(r, 0)->profileNum);
-	for (i = 1; i <= LTAB(r); i ++)	{
-	    char    tmpbuf[64];
-	    sprintf (tmpbuf, ",%d", PVTS(r, i)->profileNum);
-	    STRCAT (initprof, tmpbuf);
-	}
+	sprintf (initprof, "%d", PVTS(r)->profileNum);
 	/* generate desktop number */
 	sprintf (desktop, "%d", (int) rxvt_get_desktop (r));
 	/* generate window geometry */

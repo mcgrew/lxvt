@@ -150,8 +150,6 @@ rxvt_pre_show_init( rxvt_t *r )
 rxvt_t *
 rxvt_init (int argc, const char *const *argv)
 {
-	register int    i;
-	register int    itnum; /* initial terminal number */
 	rxvt_t*	    r;
 
 	rxvt_dbgmsg ((DBG_DEBUG, DBG_MAIN, "rxvt_init (%d, %s)\n", argc, argv));
@@ -187,37 +185,14 @@ rxvt_init (int argc, const char *const *argv)
 	/*
 	 * Initialize the pages.
 	 */
-	if (r->h->rs[Rs_initProfiles])
+	if (r->h->rs[Rs_initProfile])
 	{
-		char *s = (char *) r->h->rs[Rs_initProfiles];
-	
-		do
-		{
-			int profile = atoi( s );
-			rxvt_append_page (r, profile, NULL, NULL);
-			s = STRCHR( s, ',' );
-		}
-		while (NULL != s++);
-	}
-	/* Backward compatibility: Open profiles 0 .. n-1 if tnum=n. */
-	else if( r->h->rs[Rs_init_term_num] )
-	{
-		rxvt_msg (DBG_ERROR, DBG_MAIN,  "Option tnum is obsolete."
-				" Use --initProfileList instead" );
-
-		itnum = atoi( r->h->rs[Rs_init_term_num] );
-		itnum = max( 1, itnum );
-		//itnum = min( itnum, MAX_PAGES );
-
-		for (i = 0; i < itnum; i ++)
-			rxvt_append_page( r, (i < MAX_PROFILES) ? i : 0 , NULL, NULL );
+		int profile = atoi( r->h->rs[Rs_initProfile] );
+		rxvt_append_page (r, profile, NULL);
 	}
 	/* Just open the default tab */
 	else
-		rxvt_append_page( r, 0, NULL, NULL );
-
-	/* Activate the tab */
-	rxvt_activate_page (r, 0);
+		rxvt_append_page( r, 0, NULL );
 
 	/* Initialize xlocale after VT is created */
 	rxvt_init_xlocale(r);
@@ -259,9 +234,6 @@ rxvt_Child_signal(int sig __attribute__((unused)))
 RETSIGTYPE
 rxvt_Exit_signal(int sig)
 {
-#ifdef UTMP_SUPPORT
-    register int    i;
-#endif
     rxvt_t*	    r;
 
     rxvt_msg (DBG_INFO, DBG_MAIN, "Received signal %d\n", (int) sig);
@@ -269,12 +241,9 @@ rxvt_Exit_signal(int sig)
     r = rxvt_get_r();
 
 #ifdef UTMP_SUPPORT
-    for (i = 0; i <= LTAB(r); i ++)
-    {
 	rxvt_privileges( RESTORE );
-	rxvt_cleanutent( r, i );
+	rxvt_cleanutent( r );
 	rxvt_privileges( IGNORE );
-    }
 #endif
 
     /* resend signal to default handler */
@@ -286,20 +255,14 @@ rxvt_Exit_signal(int sig)
 void
 rxvt_alarm_signal( __attribute__((unused)) int sig )
 {
-    int i;
     rxvt_t *r = rxvt_get_r();
 
-    if( LTAB(r) >= 0 )
-    {
-	rxvt_msg (DBG_WARN, DBG_MAIN, APL_NAME ": WARNING Processes ");
-	for( i=0; i <= LTAB(r); i ++ )
-	    rxvt_msg (DBG_WARN, DBG_MAIN, "%d%c", PVTS(r, i)->cmd_pid,
-		    i == LTAB(r) ? ' ' : ',' );
+	rxvt_msg (DBG_WARN, DBG_MAIN, APL_NAME ": WARNING Process ");
+	    rxvt_msg (DBG_WARN, DBG_MAIN, "%d", PVTS(r)->cmd_pid);
 	rxvt_msg (DBG_WARN, DBG_MAIN,
 	    " have not responded to SIGHUP, and are still "
 	    "running. Either 'kill -9' these processes or close the "
 	    APL_NAME " window again within 3 seconds.\n");
-    }
 }
 
 
@@ -343,17 +306,7 @@ rxvt_exit_request( rxvt_t *r )
     /* Avoid exiting if some tab is in the secondary screen */
     if(ISSET_OPTION(r, Opt2_protectSecondary))
     {
-	int i, dontExit = 0;
-
-	for( i=0; i <= LTAB(r); i++)
-	{
-	    if( PVTS(r, i)->current_screen == SECONDARY )
-	    {
-		dontExit = 1;
-	    }
-	}
-
-	if( dontExit )
+	if( PVTS(r)->current_screen == SECONDARY )
 	{
 	    XBell( r->Xdisplay, 0);
 	    return;
@@ -385,19 +338,15 @@ rxvt_close_all_tabs( rxvt_t *r)
 {
     static struct timeval   lastRequest = {0, 0};
     struct timeval	    now;
-    int			    i;
 
-    for( i=LTAB(r); i >=0; i-- )
-    {
-	if( PVTS(r, i)->dead )
-	    rxvt_remove_page( r, i );
+	if( PVTS(r)->dead )
+	    rxvt_remove_page( r );
 
 	else
 	{
-	    PVTS(r, i)->holdOption = 0;
-	    kill( PVTS(r, i)->cmd_pid, SIGHUP );
+	    PVTS(r)->holdOption = 0;
+	    kill( PVTS(r)->cmd_pid, SIGHUP );
 	}
-    }
 
     gettimeofday( &now, NULL );
     if( lastRequest.tv_sec != 0 && now.tv_sec - lastRequest.tv_sec < 5 )
@@ -636,28 +585,28 @@ rxvt_privileges(int mode)
 #ifdef UTMP_SUPPORT
 /* EXTPROTO */
 void
-rxvt_privileged_utmp(rxvt_t* r, int page, char action)
+rxvt_privileged_utmp(rxvt_t* r, char action)
 {
-    rxvt_msg (DBG_INFO, DBG_MAIN, "rxvt_privileged_utmp %d (%c); waiting for: %c (pid: %d)\n", page, action, PVTS(r, page)->next_utmp_action, (int) getpid());
+    rxvt_msg (DBG_INFO, DBG_MAIN, "rxvt_privileged_utmp (%c); waiting for: %c (pid: %d)\n", action, PVTS(r)->next_utmp_action, (int) getpid());
 
-    if (PVTS(r, page)->next_utmp_action != action ||
+    if (PVTS(r)->next_utmp_action != action ||
 	(action != SAVE && action != RESTORE) ||
 	ISSET_OPTION(r, Opt_utmpInhibit) ||
-	IS_NULL(PVTS(r, page)->ttydev) ||
-	(char) 0 == *(PVTS(r, page)->ttydev))
+	IS_NULL(PVTS(r)->ttydev) ||
+	(char) 0 == *(PVTS(r)->ttydev))
 	return;
 
     rxvt_privileges(RESTORE);
     if (action == SAVE)
     {
-	PVTS(r, page)->next_utmp_action = RESTORE;
-	rxvt_makeutent(r, page, PVTS(r, page)->ttydev,
+	PVTS(r)->next_utmp_action = RESTORE;
+	rxvt_makeutent(r, PVTS(r)->ttydev,
 		r->h->rs[Rs_display_name]);
     }
     else		/* action == RESTORE */
     {
-	PVTS(r, page)->next_utmp_action = IGNORE;
-	rxvt_cleanutent(r, page);
+	PVTS(r)->next_utmp_action = IGNORE;
+	rxvt_cleanutent(r);
     }
     rxvt_privileges(IGNORE);
 }
@@ -667,55 +616,55 @@ rxvt_privileged_utmp(rxvt_t* r, int page, char action)
 #ifndef NO_SETOWNER_TTYDEV
 /* EXTPROTO */
 void
-rxvt_privileged_ttydev(rxvt_t* r, int page, char action)
+rxvt_privileged_ttydev(rxvt_t* r, char action)
 {
-    rxvt_msg (DBG_INFO, DBG_MAIN, "rxvt_privileged_ttydev %d (r, %c); waiting for: %c (pid: %d)\n", page, action, PVTS(r, page)->next_tty_action, getpid());
-    if (PVTS(r, page)->next_tty_action != action ||
+    rxvt_msg (DBG_INFO, DBG_MAIN, "rxvt_privileged_ttydev (r, %c); waiting for: %c (pid: %d)\n", action, PVTS(r)->next_tty_action, getpid());
+    if (PVTS(r)->next_tty_action != action ||
 	(action != SAVE && action != RESTORE) ||
-	IS_NULL(PVTS(r, page)->ttydev) ||
-	(char) 0 == *(PVTS(r, page)->ttydev))
+	IS_NULL(PVTS(r)->ttydev) ||
+	(char) 0 == *(PVTS(r)->ttydev))
 	return;
 
     rxvt_privileges(RESTORE);
 
     if (action == SAVE)
     {
-	PVTS(r, page)->next_tty_action = RESTORE;
+	PVTS(r)->next_tty_action = RESTORE;
 # ifndef RESET_TTY_TO_COMMON_DEFAULTS
 	/*
 	 * store original tty status for restoration rxvt_clean_exit() -- rgg
 	 * 04/12/95
 	 */
-	if (lstat(PVTS(r, page)->ttydev, &h->ttyfd_stat) < 0) /* you lose out */
-	    PVTS(r, page)->next_tty_action = IGNORE;
+	if (lstat(PVTS(r)->ttydev, &h->ttyfd_stat) < 0) /* you lose out */
+	    PVTS(r)->next_tty_action = IGNORE;
 	else
 # endif
 	{
 	    /* fail silently */
-	    chown(PVTS(r, page)->ttydev, getuid(), r->h->ttygid);
-	    chmod(PVTS(r, page)->ttydev, PVTS(r, page)->ttymode);
+	    chown(PVTS(r)->ttydev, getuid(), r->h->ttygid);
+	    chmod(PVTS(r)->ttydev, PVTS(r)->ttymode);
 # ifdef HAVE_REVOKE
-	    revoke(PVTS(r, page)->ttydev);
+	    revoke(PVTS(r)->ttydev);
 # endif
 	}
     }
     else		    /* action == RESTORE */
     {
-	PVTS(r, page)->next_tty_action = IGNORE;
+	PVTS(r)->next_tty_action = IGNORE;
 # ifndef RESET_TTY_TO_COMMON_DEFAULTS
-	chmod(PVTS(r, page)->ttydev, PVTS(r, page)->ttyfd_stat.st_mode);
-	chown(PVTS(r, page)->ttydev, PVTS(r, page)->ttyfd_stat.st_uid, PVTS(r, page)->ttyfd_stat.st_gid);
+	chmod(PVTS(r)->ttydev, PVTS(r)->ttyfd_stat.st_mode);
+	chown(PVTS(r)->ttydev, PVTS(r)->ttyfd_stat.st_uid, PVTS(r)->ttyfd_stat.st_gid);
 # else
-	chmod(PVTS(r, page)->ttydev,
+	chmod(PVTS(r)->ttydev,
 	    (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH));
-	chown(PVTS(r, page)->ttydev, 0, 0);
+	chown(PVTS(r)->ttydev, 0, 0);
 # endif
     }
 
     rxvt_privileges(IGNORE);
 
 # ifndef RESET_TTY_TO_COMMON_DEFAULTS
-    rxvt_msg (DBG_INFO, DBG_MAIN, "%s \"%s\": mode %03o, uid %d, gid %d\n", action == RESTORE ? "Restoring" : (action == SAVE ? "Saving" : "UNKNOWN ERROR for"), PVTS(r, page)->ttydev, PVTS(r, page)->ttyfd_stat.st_mode, PVTS(r, page)->ttyfd_stat.st_uid, PVTS(r, page)->ttyfd_stat.st_gid);
+    rxvt_msg (DBG_INFO, DBG_MAIN, "%s \"%s\": mode %03o, uid %d, gid %d\n", action == RESTORE ? "Restoring" : (action == SAVE ? "Saving" : "UNKNOWN ERROR for"), PVTS(r)->ttydev, PVTS(r)->ttyfd_stat.st_mode, PVTS(r)->ttyfd_stat.st_uid, PVTS(r)->ttyfd_stat.st_gid);
 # endif
 }
 #endif
@@ -2198,14 +2147,13 @@ rxvt_set_icon_name (rxvt_t* r, const unsigned char *str)
 #ifdef XTERM_COLOR_CHANGE
 /* EXTPROTO */
 void
-rxvt_set_window_color(rxvt_t* r, int page, int idx, const char *color)
+rxvt_set_window_color(rxvt_t* r, int idx, const char *color)
 {
     XColor	    xcol;
-    int		    color_set;
     register int    i;
 
 
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_MAIN, "%s( r, %d, %d, %s), ATAB=%d\n", __func__, page, idx, color, ATAB(r)));
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_MAIN, "%s( r, %d, %s)\n", __func__, idx, color));
 
     if (IS_NULL(color) || (char) 0 == *color)
 	return;
@@ -2214,9 +2162,7 @@ rxvt_set_window_color(rxvt_t* r, int page, int idx, const char *color)
      * Set the fg/bg colors from this page, just in case the fg/bg is to be
      * changed.
      */
-    rxvt_set_fgbg_colors( r, page );
-
-    color_set = ISSET_PIXCOLOR(r->h, idx);
+    rxvt_set_fgbg_colors( r );
 
     /* handle color aliases */
     if( isdigit((int) *color) )
@@ -2266,48 +2212,38 @@ rxvt_set_window_color(rxvt_t* r, int page, int idx, const char *color)
 Done:
     if( idx == Color_bg )
     {
-	PVTS( r, page )->p_bg	= r->pixColorsFocus[idx];
+	PVTS( r )->p_bg	= r->pixColorsFocus[idx];
 #ifdef XFT_SUPPORT
 	if( ISSET_OPTION( r, Opt_xft ) )
-	    PVTS( r, page )->p_xftbg = r->xftColorsFocus[idx];
+	    PVTS( r )->p_xftbg = r->xftColorsFocus[idx];
 #endif
 
 	if( r->TermWin.fade )
 	{
-	    PVTS( r, page )->p_bgfade	= r->pixColorsUnfocus[idx];
+	    PVTS( r )->p_bgfade	= r->pixColorsUnfocus[idx];
 #ifdef XFT_SUPPORT
 	    if( ISSET_OPTION( r, Opt_xft ) )
-		PVTS( r, page )->p_xftbgfade = r->xftColorsUnfocus[idx];
+		PVTS( r )->p_xftbgfade = r->xftColorsUnfocus[idx];
 #endif
 	}
-
-	/*
-	 * Update the GC / window background if necessary.
-	 */
-	if( page == ATAB(r) )
-	    r->fgbg_tabnum = -1;
     }
 
     else if ( idx == Color_fg )
     {
-	PVTS( r, page )->p_fg	= r->pixColorsFocus[idx];
+	PVTS( r )->p_fg	= r->pixColorsFocus[idx];
 #ifdef XFT_SUPPORT
 	if( ISSET_OPTION( r, Opt_xft ) )
-	    PVTS( r, page )->p_xftfg = r->xftColorsFocus[idx];
+	    PVTS( r )->p_xftfg = r->xftColorsFocus[idx];
 #endif
 
 	if( r->TermWin.fade )
 	{
-	    PVTS( r, page )->p_fgfade	= r->pixColorsUnfocus[idx];
+	    PVTS( r )->p_fgfade	= r->pixColorsUnfocus[idx];
 #ifdef XFT_SUPPORT
 	    if( ISSET_OPTION( r, Opt_xft ) )
-		PVTS( r, page )->p_xftfgfade = r->xftColorsUnfocus[idx];
+		PVTS( r )->p_xftfgfade = r->xftColorsUnfocus[idx];
 #endif
 	}
-
-	if( page == ATAB(r) )
-	    /* Force rxvt_set_vt_colors() to update the GC / background. */
-	    r->fgbg_tabnum = -1;
     }
 
     /* handle Color_BD, scrollbar background, etc. */
@@ -2326,12 +2262,12 @@ Done:
      * instead of rxvt_set_fgbg_colors, so that the GC fgbg & window background
      * will be refreshed if necessary.
      */
-    rxvt_set_vt_colors( r, ATAB(r) );
+    rxvt_set_vt_colors( r );
 
     /*
      *  If our palette has changed, the screen must be refreshed.
      */
-    XClearArea( r->Xdisplay, AVTS(r)->vt, 0, 0, 0, 0, True );
+    XClearArea( r->Xdisplay, PVTS(r)->vt, 0, 0, 0, 0, True );
 }
 
 #else
@@ -2532,7 +2468,7 @@ rxvt_IM_set_size(rxvt_t* r, XRectangle *size)
 {
     XWindowAttributes	xwa;
 
-    XGetWindowAttributes(r->Xdisplay, AVTS(r)->vt, &xwa);
+    XGetWindowAttributes(r->Xdisplay, PVTS(r)->vt, &xwa);
     size->x = xwa.x + r->TermWin.int_bwidth;
     size->y = xwa.y + r->TermWin.int_bwidth;
     size->width = Width2Pixel(r->TermWin.ncol);
@@ -2545,7 +2481,7 @@ rxvt_IM_set_position(rxvt_t* r, XPoint *pos)
 {
     XWindowAttributes	xwa;
 
-    XGetWindowAttributes(r->Xdisplay, AVTS(r)->vt, &xwa);
+    XGetWindowAttributes(r->Xdisplay, PVTS(r)->vt, &xwa);
     pos->x = xwa.x + Col2Pixel(ASCR(r).cur.col);
     pos->y = xwa.y + Row2Pixel(ASCR(r).cur.row) + r->TermWin.font->ascent;
 }
@@ -2706,7 +2642,7 @@ rxvt_IM_set_preedit_area(rxvt_t* r, XRectangle *preedit_rect, XRectangle *status
 {
     XWindowAttributes	xwa;
 
-    XGetWindowAttributes(r->Xdisplay, AVTS(r)->vt, &xwa);
+    XGetWindowAttributes(r->Xdisplay, PVTS(r)->vt, &xwa);
 
     preedit_rect->x = xwa.x + r->TermWin.int_bwidth + needed_rect->width;
     preedit_rect->y = xwa.y + Row2Pixel(r->TermWin.nrow - 1);

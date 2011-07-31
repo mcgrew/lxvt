@@ -28,13 +28,13 @@
 
 
 /* Begin prototypes of command.c */
-void		 rxvt_cmd_write                   __PROTO((rxvt_t* r, int page, const unsigned char* str, unsigned int count));
+void		 rxvt_cmd_write                   __PROTO((rxvt_t* r, const unsigned char* str, unsigned int count));
 FILE*            rxvt_popen_printer               __PROTO((rxvt_t *r, const char *pipeName));
 int              rxvt_pclose_printer              __PROTO((FILE *stream));
-void             rxvt_xterm_seq                   __PROTO((rxvt_t* r, int page, int op, const char* str, unsigned char resp __attribute__((unused))));
-void             rxvt_tt_printf                   __PROTO((rxvt_t* r, int page, const char* fmt,...));
-void             rxvt_tt_write                    __PROTO((rxvt_t* r, int page, const unsigned char* d, int len));
-void             rxvt_pointer_unblank             __PROTO((rxvt_t* r, int page));
+void             rxvt_xterm_seq                   __PROTO((rxvt_t* r, int op, const char* str, unsigned char resp __attribute__((unused))));
+void             rxvt_tt_printf                   __PROTO((rxvt_t* r, const char* fmt,...));
+void             rxvt_tt_write                    __PROTO((rxvt_t* r, const unsigned char* d, int len));
+void             rxvt_pointer_unblank             __PROTO((rxvt_t* r));
 void             rxvt_resize_on_subwin            __PROTO((rxvt_t* r, resize_reason_t reason));
 void           	 rxvt_resize_on_font           	  __PROTO((rxvt_t* r, char* fontname));
 /* End prototypes of command.c */
@@ -81,8 +81,8 @@ void		 rxvt_fade_color                  __PROTO((rxvt_t* r, const XColor *xcol, 
 #else
 void	         rxvt_fade_color                  __PROTO((rxvt_t* r, const XColor *xcol, unsigned long *pix_return, void *xft_return));
 #endif
-int		 rxvt_set_fgbg_colors		  __PROTO((rxvt_t* r, int page));
-int		 rxvt_set_vt_colors		  __PROTO((rxvt_t* r, int page));
+int		 rxvt_set_fgbg_colors		  __PROTO((rxvt_t* r));
+int		 rxvt_set_vt_colors		  __PROTO((rxvt_t* r));
 void		 rxvt_copy_color                  __PROTO((rxvt_t*, int, int));
 void		 rxvt_set_color                   __PROTO((rxvt_t*, int, const XColor*));
 void             rxvt_init_env                    __PROTO((rxvt_t *r));
@@ -91,13 +91,13 @@ void		 rxvt_init_fifo	                  __PROTO((rxvt_t *r));
 void             rxvt_init_command                __PROTO((rxvt_t* r));
 CARD32           rxvt_get_desktop                 __PROTO((rxvt_t* r));
 void             rxvt_create_show_windows         __PROTO((rxvt_t* r, int argc, const char* const *argv));
-void             rxvt_destroy_termwin             __PROTO((rxvt_t* r, int page));
-int             rxvt_create_termwin              __PROTO((rxvt_t* r, int page, int profile,  const char TAINTED * title));
+void             rxvt_destroy_termwin             __PROTO((rxvt_t* r));
+int             rxvt_create_termwin              __PROTO((rxvt_t* r, int profile));
 const char*	 getProfileOption		  __PROTO(( rxvt_t *r, int profile, int resource ));
 Status		 ewmh_message			  __PROTO(( Display *, Window, Window, Atom, long, long, long, long, long));
 int		 rxvt_async_exec		  __PROTO((rxvt_t*, const char *));
-int              rxvt_run_command                 __PROTO((rxvt_t* r, int page, const char** argv));
-void             clean_sigmasks_and_fds           __PROTO((rxvt_t* r, int page));
+int              rxvt_run_command                 __PROTO((rxvt_t* r, const char** argv));
+void             clean_sigmasks_and_fds           __PROTO((rxvt_t* r));
 termenv_t        rxvt_get_termenv                 __PROTO((const char* str));
 char**		 rxvt_string_to_argv    	  __PROTO((const char*, int*));
 /* End prototypes of init.c */
@@ -105,8 +105,8 @@ char**		 rxvt_string_to_argv    	  __PROTO((const char*, int*));
 
 /* Begin prototypes of logging.c */
 #ifdef UTMP_SUPPORT
-void             rxvt_makeutent                   __PROTO((rxvt_t* r, int page, const char* pty, const char* hostname));
-void             rxvt_cleanutent                  __PROTO((rxvt_t* r, int page));
+void             rxvt_makeutent                   __PROTO((rxvt_t* r, const char* pty, const char* hostname));
+void             rxvt_cleanutent                  __PROTO((rxvt_t* r));
 #endif
 /* End prototypes of logging.c */
 
@@ -130,8 +130,8 @@ RETSIGTYPE       rxvt_Exit_signal                 __PROTO((int sig));
 void		 rxvt_exit_request                __PROTO((rxvt_t*));
 void             rxvt_clean_exit                  __PROTO((rxvt_t* r));
 void		 rxvt_close_all_tabs		  __PROTO((rxvt_t* r));
-void             rxvt_privileged_utmp             __PROTO((rxvt_t* r, int page, char action));
-void             rxvt_privileged_ttydev           __PROTO((rxvt_t* r, int page, char action));
+void             rxvt_privileged_utmp             __PROTO((rxvt_t* r, char action));
+void             rxvt_privileged_ttydev           __PROTO((rxvt_t* r, char action));
 void             rxvt_tt_winsize                  __PROTO((int fd, unsigned short col, unsigned short row, pid_t pid));
 void             rxvt_init_font_x11               __PROTO((rxvt_t *r));
 int              rxvt_change_font_x11             __PROTO((rxvt_t* r, const char* fontname));
@@ -142,7 +142,7 @@ int              rxvt_change_font_xft             __PROTO((rxvt_t* r, const char
 void             rxvt_set_win_title               __PROTO((rxvt_t* r, Window win, const char* str));
 void             rxvt_set_term_title              __PROTO((rxvt_t* r, const unsigned char* str));
 void             rxvt_set_icon_name               __PROTO((rxvt_t* r, const unsigned char* str));
-void             rxvt_set_window_color            __PROTO((rxvt_t* r, int page, int idx, const char* color));
+void             rxvt_set_window_color            __PROTO((rxvt_t* r, int idx, const char* color));
 void             rxvt_recolour_cursor             __PROTO((rxvt_t *r));
 #ifdef XFT_SUPPORT
 int              rxvt_alloc_xft_color             __PROTO((rxvt_t *r, const XColor *xcol, XftColor* xftcolor));
@@ -164,7 +164,7 @@ int              rxvt_str_match                   __PROTO((const char* s1, const
 const char*      rxvt_str_skip_space              __PROTO((const char* str));
 char*            rxvt_str_trim                    __PROTO((char* str));
 int              rxvt_str_escaped                 __PROTO((char* str));
-int		 rxvt_percent_interpolate         __PROTO((rxvt_t*, int, const char *, int, char *, int));
+int		 rxvt_percent_interpolate         __PROTO((rxvt_t*, const char *, int, char *, int));
 char**           rxvt_splitcommastring            __PROTO((const char* cs));
 char*            rxvt_File_find                   __PROTO((const char* file, const char* ext, const char* path));
 void             rxvt_draw_shadow                 __PROTO((Display *Xdisplay, Window win, GC gc, unsigned long topShadow, unsigned long botShadow, int x, int y, int w, int h));
@@ -198,59 +198,59 @@ rxvt_draw_string_xft (rxvt_t* r, Drawable d, GC gc, Region refreshRegion,
 	void (*xftdraw_string)());
 #endif
 void             rxvt_init_screen                 __PROTO((rxvt_t* r));
-void             rxvt_scr_reset                   __PROTO((rxvt_t* r, int page));
-void             rxvt_scr_release                 __PROTO((rxvt_t* r, int page));
-void             rxvt_scr_poweron                 __PROTO((rxvt_t* r, int page));
-void             rxvt_scr_cursor                  __PROTO((rxvt_t* r, int page, int mode));
-int              rxvt_scr_change_screen           __PROTO((rxvt_t* r, int page, int scrn));
-void             rxvt_scr_color                   __PROTO((rxvt_t* r, int page, unsigned int color, int fgbg));
-void             rxvt_scr_rendition               __PROTO((rxvt_t* r, int page, int set, int style));
-int              rxvt_scroll_text                 __PROTO((rxvt_t* r, int page, int row1, int row2, int count, int spec));
-void             rxvt_scr_add_lines               __PROTO((rxvt_t* r, int page, const unsigned char* str, int nlines, int len));
-void             rxvt_scr_backspace               __PROTO((rxvt_t* r, int page));
-void             rxvt_scr_tab                     __PROTO((rxvt_t* r, int page, int count));
-void             rxvt_scr_backindex               __PROTO((rxvt_t* r, int page));
-void             rxvt_scr_forwardindex            __PROTO((rxvt_t* r, int page));
-void             rxvt_scr_gotorc                  __PROTO((rxvt_t* r, int page, int row, int col, int relative));
-void             rxvt_scr_index                   __PROTO((rxvt_t* r, int page, enum page_dirn direction));
-void             rxvt_scr_erase_line              __PROTO((rxvt_t* r, int page, int mode));
-void             rxvt_scr_erase_screen            __PROTO((rxvt_t* r, int page, int mode));
-void             rxvt_scr_E                       __PROTO((rxvt_t* r, int page));
-void             rxvt_scr_insdel_lines            __PROTO((rxvt_t* r, int page, int count, int insdel));
-void             rxvt_scr_insdel_chars            __PROTO((rxvt_t* r, int page, int count, int insdel));
-void             rxvt_scr_scroll_region           __PROTO((rxvt_t* r, int page, int top, int bot));
-void             rxvt_scr_cursor_visible          __PROTO((rxvt_t* r, int page, int mode));
-void             rxvt_scr_autowrap                __PROTO((rxvt_t* r, int page, int mode));
-void             rxvt_scr_relative_origin         __PROTO((rxvt_t* r, int page, int mode));
-void             rxvt_scr_insert_mode             __PROTO((rxvt_t* r, int page, int mode));
-void             rxvt_scr_set_tab                 __PROTO((rxvt_t* r, int page, int mode));
-void             rxvt_scr_rvideo_mode             __PROTO((rxvt_t* r, int page, int mode));
-void             rxvt_scr_report_position         __PROTO((rxvt_t* r, int page));
-void             rxvt_scr_charset_choose          __PROTO((rxvt_t* r, int page, int set));
-void             rxvt_scr_charset_set             __PROTO((rxvt_t* r, int page, int set, unsigned int ch));
+void             rxvt_scr_reset                   __PROTO((rxvt_t* r));
+void             rxvt_scr_release                 __PROTO((rxvt_t* r));
+void             rxvt_scr_poweron                 __PROTO((rxvt_t* r));
+void             rxvt_scr_cursor                  __PROTO((rxvt_t* r, int mode));
+int              rxvt_scr_change_screen           __PROTO((rxvt_t* r, int scrn));
+void             rxvt_scr_color                   __PROTO((rxvt_t* r, unsigned int color, int fgbg));
+void             rxvt_scr_rendition               __PROTO((rxvt_t* r, int set, int style));
+int              rxvt_scroll_text                 __PROTO((rxvt_t* r, int row1, int row2, int count, int spec));
+void             rxvt_scr_add_lines               __PROTO((rxvt_t* r, const unsigned char* str, int nlines, int len));
+void             rxvt_scr_backspace               __PROTO((rxvt_t* r));
+void             rxvt_scr_tab                     __PROTO((rxvt_t* r, int count));
+void             rxvt_scr_backindex               __PROTO((rxvt_t* r));
+void             rxvt_scr_forwardindex            __PROTO((rxvt_t* r));
+void             rxvt_scr_gotorc                  __PROTO((rxvt_t* r, int row, int col, int relative));
+void             rxvt_scr_index                   __PROTO((rxvt_t* r, enum page_dirn direction));
+void             rxvt_scr_erase_line              __PROTO((rxvt_t* r, int mode));
+void             rxvt_scr_erase_screen            __PROTO((rxvt_t* r, int mode));
+void             rxvt_scr_E                       __PROTO((rxvt_t* r));
+void             rxvt_scr_insdel_lines            __PROTO((rxvt_t* r, int count, int insdel));
+void             rxvt_scr_insdel_chars            __PROTO((rxvt_t* r, int count, int insdel));
+void             rxvt_scr_scroll_region           __PROTO((rxvt_t* r, int top, int bot));
+void             rxvt_scr_cursor_visible          __PROTO((rxvt_t* r, int mode));
+void             rxvt_scr_autowrap                __PROTO((rxvt_t* r, int mode));
+void             rxvt_scr_relative_origin         __PROTO((rxvt_t* r, int mode));
+void             rxvt_scr_insert_mode             __PROTO((rxvt_t* r, int mode));
+void             rxvt_scr_set_tab                 __PROTO((rxvt_t* r, int mode));
+void             rxvt_scr_rvideo_mode             __PROTO((rxvt_t* r, int mode));
+void             rxvt_scr_report_position         __PROTO((rxvt_t* r));
+void             rxvt_scr_charset_choose          __PROTO((rxvt_t* r, int set));
+void             rxvt_scr_charset_set             __PROTO((rxvt_t* r, int set, unsigned int ch));
 int              rxvt_scr_get_fgcolor             __PROTO((rxvt_t *r));
 int              rxvt_scr_get_bgcolor             __PROTO((rxvt_t *r));
-void             rxvt_scr_expose                  __PROTO((rxvt_t* r, int page, int x, int y, int width, int height, Bool refresh));
-void             rxvt_scr_touch                   __PROTO((rxvt_t* r, int page, Bool refresh));
-int              rxvt_scr_move_to                 __PROTO((rxvt_t* r, int page, int y, int len));
-int              rxvt_scr_page                    __PROTO((rxvt_t* r, int page, enum page_dirn direction, int nlines));
-void             rxvt_scr_bell                    __PROTO((rxvt_t *r, int page));
-void             rxvt_scr_printscreen             __PROTO((rxvt_t* r, int page, int fullhist, int pretty, int linecont, const char *pipeName));
-void             rxvt_scr_refresh                 __PROTO((rxvt_t* r, int page, unsigned char refresh_type));
-void             rxvt_scr_clear                   __PROTO((rxvt_t* r, int page));
-void             rxvt_scr_dump                    __PROTO((rxvt_t* r, int page, int fd));
-void             rxvt_selection_check             __PROTO((rxvt_t* r, int page, int check_more));
+void             rxvt_scr_expose                  __PROTO((rxvt_t* r, int x, int y, int width, int height, Bool refresh));
+void             rxvt_scr_touch                   __PROTO((rxvt_t* r, Bool refresh));
+int              rxvt_scr_move_to                 __PROTO((rxvt_t* r, int y, int len));
+int              rxvt_scr_page                    __PROTO((rxvt_t* r, enum page_dirn direction, int nlines));
+void             rxvt_scr_bell                    __PROTO((rxvt_t *r));
+void             rxvt_scr_printscreen             __PROTO((rxvt_t* r, int fullhist, int pretty, int linecont, const char *pipeName));
+void             rxvt_scr_refresh                 __PROTO((rxvt_t* r, unsigned char refresh_type));
+void             rxvt_scr_clear                   __PROTO((rxvt_t* r));
+void             rxvt_scr_dump                    __PROTO((rxvt_t* r, int fd));
+void             rxvt_selection_check             __PROTO((rxvt_t* r, int check_more));
 int              rxvt_selection_paste             __PROTO((rxvt_t* r, Window win, Atom prop, Bool delete_prop));
 void             rxvt_selection_property          __PROTO((rxvt_t* r, Window win, Atom prop));
-void             rxvt_selection_request           __PROTO((rxvt_t* r, int page, Time tm, int x, int y));
-void             rxvt_selection_request_by_sel    __PROTO((rxvt_t* r, int page, Time tm, int x, int y, int sel));
-void             rxvt_process_selectionclear      __PROTO((rxvt_t* r, int page));
-void             rxvt_selection_make              __PROTO((rxvt_t* r, int page, Time tm));
-void             rxvt_selection_click             __PROTO((rxvt_t* r, int page, int clicks, int x, int y));
-void             rxvt_selection_extend            __PROTO((rxvt_t* r, int page, int x, int y, int flag));
-void             rxvt_selection_rotate            __PROTO((rxvt_t* r, int page, int x, int y));
-void             rxvt_paste_file                  __PROTO((rxvt_t* r, int page, Time tm, int x, int y, char* filename));
-void             rxvt_process_selectionrequest    __PROTO((rxvt_t* r, int page, const XSelectionRequestEvent *rq));
+void             rxvt_selection_request           __PROTO((rxvt_t* r, Time tm, int x, int y));
+void             rxvt_selection_request_by_sel    __PROTO((rxvt_t* r, Time tm, int x, int y, int sel));
+void             rxvt_process_selectionclear      __PROTO((rxvt_t* r));
+void             rxvt_selection_make              __PROTO((rxvt_t* r, Time tm));
+void             rxvt_selection_click             __PROTO((rxvt_t* r, int clicks, int x, int y));
+void             rxvt_selection_extend            __PROTO((rxvt_t* r, int x, int y, int flag));
+void             rxvt_selection_rotate            __PROTO((rxvt_t* r, int x, int y));
+void             rxvt_paste_file                  __PROTO((rxvt_t* r, Time tm, int x, int y, char* filename));
+void             rxvt_process_selectionrequest    __PROTO((rxvt_t* r, const XSelectionRequestEvent *rq));
 void             rxvt_pixel_position              __PROTO((rxvt_t* r, int *x, int *y));
 /* End prototypes of screen.c */
 
@@ -299,13 +299,11 @@ void             rxvt_extract_resources           __PROTO((rxvt_t* r, Display *d
 
 
 /* Begin prototypes of tabbar.c */
-void             rxvt_append_page               __PROTO((rxvt_t*, int profile, const char TAINTED *title, const char *command));
-void             rxvt_kill_page                 __PROTO((rxvt_t*, short));
-void             rxvt_remove_page               __PROTO((rxvt_t*, short));
-void             rxvt_activate_page             __PROTO((rxvt_t*, short));
+void             rxvt_append_page               __PROTO((rxvt_t*, int profile, const char *command));
+void             rxvt_kill_page                 __PROTO((rxvt_t*));
+void             rxvt_remove_page               __PROTO((rxvt_t*));
 void             rxvt_adjust_fd_number          __PROTO((rxvt_t* r));
-void             rxvt_tabbar_set_title          __PROTO((rxvt_t*, short, const unsigned char TAINTED *));
-void		 sync_tab_title		        __PROTO((rxvt_t*, int));
+void		 sync_tab_title		        __PROTO((rxvt_t*));
 /* End prototypes of tabbar.c */
 
 /* Begin prototypes of session.c */

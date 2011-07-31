@@ -225,17 +225,13 @@ rxvt_str_escaped(char *str)
  */
 /* EXTPROTO */
 int
-rxvt_percent_interpolate( rxvt_t *r, int page,
+rxvt_percent_interpolate( rxvt_t *r,
 	const char *src, int len, char *dst, int maxLen )
 {
     int	i=0,	/* Unexpanded string index */
 	j=0;	/* Expanded string index */
 
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_MISC, "rxvt_percent_interpolate( r, %d, %s, %d, %s, %d )\n", page, src, len, "dst", maxLen));
-
-    /* Must only get here for a valid tab */
-    assert( page >=0 && page <= LTAB(r) );
-    assert( NOT_NULL( PVTS( r, page ) ) && PVTS( r, page )->vts_idx != -1 );
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_MISC, "rxvt_percent_interpolate( r, %s, %d, %s, %d )\n", src, len, "dst", maxLen));
 
     while( i < len-1 && j < maxLen-1 )
     {
@@ -248,24 +244,11 @@ rxvt_percent_interpolate( rxvt_t *r, int page,
 		    dst[j++] = src[i++];
 		    break;
 
-		case 'n':
-		    /* Active tab number */
-		    j += snprintf( dst + j, maxLen - j, "%d", page+1 );
-		    i ++;
-		    break;
-
-		case 't':
-		    /* Active tab title */
-		    j += snprintf( dst + j, maxLen -j,
-			    "%s", PVTS(r, page)->tab_title );
-		    i ++;
-		    break;
-
 		case 'S':
 		    /* Exit status of dead processes */
-		    if( PVTS( r, page )->dead )
+		    if( PVTS( r )->dead )
 			j += snprintf( dst + j, maxLen - j, "%d",
-				WEXITSTATUS( PVTS( r, page )->status ) );
+				WEXITSTATUS( PVTS( r )->status ) );
 		    else
 			dst[ j++ ] = src[ i ];
 
@@ -274,9 +257,9 @@ rxvt_percent_interpolate( rxvt_t *r, int page,
 
 		case 'N':
 		    /* Normal / abnormal exit status of dead processes */
-		    if( PVTS( r, page )->dead )
+		    if( PVTS( r )->dead )
 			j += snprintf( dst + j, maxLen - j, "%s",
-				WIFEXITED( PVTS( r, page )->status )
+				WIFEXITED( PVTS( r )->status )
 				    ? "normally" : "abnormally" );
 		    else
 			dst[ j++ ] = src[ i ];
@@ -298,7 +281,7 @@ rxvt_percent_interpolate( rxvt_t *r, int page,
 		case 'p':
 		    /* Pid of process in current tab */
 		    j += snprintf( dst + j, maxLen - j, "%d",
-			    PVTS(r, page)->cmd_pid );
+			    PVTS(r)->cmd_pid );
 		    i++;
 		    break;
 
@@ -306,20 +289,6 @@ rxvt_percent_interpolate( rxvt_t *r, int page,
 		    /* PID of mrxvt */
 		    j += snprintf( dst + j, maxLen - j, "%d", getpid() );
 		    i++;
-		    break;
-
-		case 'G':
-		    /* Global tab number (plus 1) */
-		    j += snprintf( dst + j, maxLen - j, "%d",
-			    PVTS( r, page )->globalTabNum + 1 );
-		    i ++;
-		    break;
-
-		case 'T':
-		    /* # tabs created so far */
-		    j += snprintf( dst + j, maxLen - j, "%d",
-			    r->ntabs + 1 );
-		    i ++;
 		    break;
 
 		default:

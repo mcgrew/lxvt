@@ -207,7 +207,6 @@ typedef struct
 	SELECTION_CONT,	    /* continued selection */
 	SELECTION_DONE	    /* selection put in CUT_BUFFER0 */
     } op;		    /* current operation */
-    short	    vt;	    /* VT that has the selection */
     short           screen; /* screen being used */
     short           clicks; /* number of clicks */
     row_col_t       beg;    /* beginning of selection <= mark */
@@ -281,11 +280,8 @@ typedef enum
 # define Opt2_xftAutoHint	    ((1LU<<8) | IS_OPTION2)
 # define Opt2_xftGlobalAdvance	    ((1LU<<9) | IS_OPTION2)
 #endif
-#define Opt2_syncTabTitle	    ((1LU<<10) | IS_OPTION2)
-#define Opt2_syncTabIcon	    ((1LU<<11) | IS_OPTION2)
 #define Opt2_borderLess		    ((1LU<<14) | IS_OPTION2)
 #define Opt2_overrideRedirect	    ((1LU<<15) | IS_OPTION2)
-#define Opt2_broadcast		    ((1LU<<16) | IS_OPTION2)
 #define Opt2_hideButtons	    ((1LU<<17) | IS_OPTION2)
 #define Opt2_veryBold		    ((1LU<<18) | IS_OPTION2)
 #ifndef NO_BRIGHTCOLOR
@@ -383,26 +379,15 @@ typedef enum
     TERMENV_DUMB,
 } termenv_t;
 
-struct term_t;
 typedef struct
 {
-    /*
-     * Index to vts.
-     * This term_t can be accessed through pointer vts[vts_idx].
-     * It is also the order in the tabbar.
-     */
-    short	    vts_idx;
-
     unsigned char   profileNum;	    /* Profile used to init settings */
-    int		    globalTabNum;   /* Number of tabs created before this tab
-				       during this processes lifetime */
 
     /* moved from TermWin_t */
     uint16_t	    saveLines;	/* number of lines to save */
     uint16_t	    num_scr;	/* number of lines scrolled */
     uint16_t	    nscrolled;	/* number of line actually scrolled */
     uint16_t	    view_start;	/* scrollback view starts here */
-    uint16_t	    mapped;	/* window state mapped? */
 
     /* screen structure initialized? */
     unsigned char   BOOLVAR(init_screen, 1);
@@ -438,13 +423,6 @@ typedef struct
 
     uint16_t	    prev_ncol; /* previous columns */
     uint16_t	    prev_nrow; /* previous rows */
-    /* moved from tab_t */
-    char UNTAINTED *	tab_title;  	/* tab title */
-
-    char	    *title_format;	/* Format to be used to display the tab
-					   title */
-    char	    *winTitleFormat;	/* Format of the window title (used when
-					   syncing the tab title */
 
     /* moved from rxvt_t */
     int             cmd_fd; /* pty file descriptor; connected to command */
@@ -512,8 +490,7 @@ typedef struct
 					       this tab.*/
 		    BOOLVAR(gotEIO,1),	    /* Read on this terminal's fd
 					       got EIO */
-		    BOOLVAR(dead,1),	    /* the terminal is dead or alive? */
-		    BOOLVAR(highlight,1);   /* the terminal is highlighted? */
+		    BOOLVAR(dead,1);	    /* the terminal is dead or alive? */
     int		    status;		    /* Status of child process after it
 					       exits */
 
@@ -524,15 +501,6 @@ typedef struct
 					   data, this is the number of lines
 					   that have scrolled without a refresh
 					   request */
-
-    short	    monitor_tab;	/* monitor tab status value, 
-	                                 * see TAB_MON_* constants for possible values 
-					 */
-
-    int		    monitor_nbytes_read;    /* number of bytes read since 
-                                               monitor-start */
-    struct	    timeval monitor_start;  /* epoch time of monitor starttime
-					       of the tab */
 
     /*
      * Moved from hidden: want_refresh needs to be local to each tab.
@@ -564,12 +532,6 @@ typedef struct
 		    *outbuf_end;	/* End of read child's output */
     unsigned char   outbuf_base[BUFSIZ];
 } term_t;
-
-#define TAB_MON_OFF 0            /* tab monitoring off */
-#define TAB_MON_ACTIVITY 1       /* monitor for activity */
-#define TAB_MON_INACTIVITY 2     /* monitor for inactivity */
-#define TAB_MON_AUTO 3           /* automatic discovery of monitor type */
-#define TAB_MON_NOTIFICATION 4   /* inactivity/activity detected, notification needed */
 
 
 /* Possible values for macros.modFlags */
@@ -613,12 +575,10 @@ enum
     MacroFnCopy,
     MacroFnPaste,
     MacroFnPasteFile,
-    MacroFnMonitorTab,
     MacroFnFont,
     MacroFnToggleVeryBold,
     MacroFnToggleBoldColors,
     MacroFnToggleVeryBright,
-    MacroFnToggleBcst,
     MacroFnToggleHold,
     MacroFnToggleFullscreen,
     MacroFnRaise,
@@ -710,11 +670,6 @@ typedef struct rxvt_vars
 					       Pixel colors to be used when
 					       focused / unfocussed. */
     unsigned long   *pixColors;		    /* Array of size TOTAL_COLORS */
-
-    int		    ntabs;		    /* Number of tabs created so far
-					       during process lifetime */
-    int		    fgbg_tabnum;	    /* (Global) tab number corresponding
-					       to which Color_fg/bg are set */
 
 #ifdef XFT_SUPPORT
     XftColor*	    xftColors;		    /* Array of size TOTAL_COLORS */
@@ -833,58 +788,43 @@ typedef enum
 
 
 
-#define ATAB(R)	    0
-#define LTAB(R)	    0
-#define FVTAB(R)    0
-#define LVTAB(R)    0
-#define PTAB(R)	    0
-
-#define APAGE(R)    ATAB(R)
-#define LPAGE(R)    LTAB(R)
-#define FVPAGE(R)   FVTAB(R)
-#define LVPAGE(R)   LVTAB(R)
-#define PPAGE(R)    PTAB(R)
-
 /* MACROS for vts structure */
-#define PVTS(R, P)  ((P == 0) ? &(R)->vts : NULL)
-#define AVTS(R)	    PVTS(R, ATAB(R))
-#define LVTS(R)	    PVTS(R, LTAB(R))
+#define PVTS(R)     (&(R)->vts)
 
 #define SEL(R)	    ((R)->selection)
 
-#define ASCR(R)	    (AVTS(R)->screen)
-#define PSCR(R, P)  (PVTS((R), (P))->screen)
+#define PSCR(R)     (PVTS(R)->screen)
 
 
 
 /* macros for private/saved mode of term_t */
-#define ISSET_PMODE(R, P, V)   \
-    (PVTS((R), (P))->PrivateModes & (V))
-#define SET_PMODE(R, P, V)  \
-    (PVTS((R), (P))->PrivateModes |= (V))
-#define UNSET_PMODE(R, P, V)  \
-    (PVTS((R), (P))->PrivateModes &= ~(V))
-#define ISSET_SMODE(R, P, V)   \
-    (PVTS((R), (P))->SavedModes & (V))
-#define SET_SMODE(R, P, V)  \
-    (PVTS((R), (P))->SavedModes |= (V))
-#define UNSET_SMODE(R, P, V)  \
-    (PVTS((R), (P))->SavedModes &= ~(V))
+#define ISSET_PMODE(R, V)   \
+    (PVTS((R))->PrivateModes & (V))
+#define SET_PMODE(R, V)  \
+    (PVTS((R))->PrivateModes |= (V))
+#define UNSET_PMODE(R, V)  \
+    (PVTS((R))->PrivateModes &= ~(V))
+#define ISSET_SMODE(R, V)   \
+    (PVTS((R))->SavedModes & (V))
+#define SET_SMODE(R, V)  \
+    (PVTS((R))->SavedModes |= (V))
+#define UNSET_SMODE(R, V)  \
+    (PVTS((R))->SavedModes &= ~(V))
 
 
 /* Macro to determine weather we should the i-th tab or not */
-#define SHOULD_HOLD( r, i )					\
+#define SHOULD_HOLD( r )					\
     (								\
-      ( HOLD_ALWAYSBIT & PVTS((r),(i))->holdOption )		\
+      ( HOLD_ALWAYSBIT & PVTS((r))->holdOption )		\
       ||							\
       (								\
-	( HOLD_NORMALBIT & PVTS((r),(i))->holdOption )		\
-	&& !WIFEXITED( PVTS((r),(i))->status )			\
+	( HOLD_NORMALBIT & PVTS((r))->holdOption )		\
+	&& !WIFEXITED( PVTS((r))->status )			\
       )								\
       ||							\
       (								\
-	( HOLD_STATUSBIT & PVTS((r),(i))->holdOption )		\
-	&& WEXITSTATUS( PVTS((r),(i))->status ) != 0		\
+	( HOLD_STATUSBIT & PVTS((r))->holdOption )		\
+	&& WEXITSTATUS( PVTS((r))->status ) != 0		\
       )								\
     )
 

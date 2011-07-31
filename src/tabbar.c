@@ -44,9 +44,9 @@ extern char **cmd_argv;
 
 /* INTPROTO */
 void
-rxvt_kill_page (rxvt_t* r, short page)
+rxvt_kill_page (rxvt_t* r)
 {
-    kill (PVTS(r, page)->cmd_pid, SIGHUP);
+    kill (PVTS(r)->cmd_pid, SIGHUP);
 }
 
 
@@ -58,11 +58,9 @@ void
 rxvt_adjust_fd_number( rxvt_t* r )
 {
     int	    num_fds = STDERR_FILENO;
-    int	    i;
 
-    for( i=0; i <= LTAB(r); i++ )
-	MAX_IT( num_fds, PVTS(r, i)->cmd_fd );
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "LTAB=%d, stderr_fd=%d, num_fds=%d. ", LTAB(r), STDERR_FILENO, num_fds));
+	MAX_IT( num_fds, PVTS(r)->cmd_fd );
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "stderr_fd=%d, num_fds=%d. ", STDERR_FILENO, num_fds));
 
     MAX_IT( num_fds, r->Xfd );
 #ifdef USE_FIFO
@@ -91,12 +89,12 @@ rxvt_adjust_fd_number( rxvt_t* r )
 /* EXTPROTO */
 void
 rxvt_append_page( rxvt_t* r, int profile,
-	const char TAINTED *title, const char *command )
+	const char *command )
 {
     int	    num_cmd_args = 0; /* Number of args we got from parsing command */
     char**  argv;
 
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "rxvt_append_page( r, %d, %s, %s )\n", profile, title ? title : "(nil)", command ? command : "(nil)" ));
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "rxvt_append_page( r, %d, %s )\n", profile, command ? command : "(nil)" ));
 
     if( profile < 0 || profile >= MAX_PROFILES )
     {
@@ -137,32 +135,13 @@ rxvt_append_page( rxvt_t* r, int profile,
     }
     rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "\tForking command=%s, argv[0]=%s\n", command ? command : "(nil)", ( argv && argv[0] ) ? argv[0] : "(nil)" ));
 
-    /*
-     * Set the tab title.
-     */
-    if( title == NULL || *title == '\0' )
-    {
-	title = getProfileOption( r, profile, Rs_tabtitle );
-	if( title == NULL || *title == '\0' )
-	{
-	    if( command && *command != '\0' )
-		title = command;
-	    else if( argv && argv[0] && *argv[0] != '\0' )
-		title = argv[0];
-	}
-	else
-	    argv = NULL;
-    }
     if (!rxvt_create_termwin( r, 
-		0,
-		profile, title ))
+		profile ))
     {
 	rxvt_dbgmsg ((DBG_ERROR, DBG_TABBAR,
 		    "\tThe initialization of the new tab failed.\n"));
 	return;
     }
-
-    rxvt_dbgmsg ((DBG_VERBOSE, DBG_TABBAR, "Last page is %d.\n", LTAB(r)));
 
     /*
      * Run the child process.
@@ -179,28 +158,10 @@ rxvt_append_page( rxvt_t* r, int profile,
 
 	getcwd (cwd, PATH_MAX);
 
-	if( !STRCMP( cwdOption, "." ) )
-	{
-	    if( ATAB(r) != LTAB(r) )
-	    {
-		/*
-		 * Copy working directory of the current tab into child_cwd.
-		 */
-		char	proc_cwd[32];		/* 16 is enough */
-
-		sprintf( proc_cwd, "/proc/%d/cwd", AVTS(r)->cmd_pid );
-		if( (len = readlink( proc_cwd, child_cwd, PATH_MAX-1) ) > 0 )
-		    /* readlink does not null terminate */
-		    child_cwd[len] = 0;
-	    }
-	}
-
-	else
-	{
 #ifdef HAVE_WORDEXP_H
 	    wordexp_t p;
 	    int wordexp_result = wordexp(cwdOption, &p, 0);
-	    char *filename;
+	    char *filename = NULL;
 
 	    if( wordexp_result == 0 )
 	    {
@@ -227,7 +188,6 @@ rxvt_append_page( rxvt_t* r, int profile,
 			    wordexp_result, filename ));
 	    }
 #endif /* HAVE_WORDEXP_H */
-	}
 
 	if( len > 0 && chdir( child_cwd ) == 0 )
 	{
@@ -236,8 +196,8 @@ rxvt_append_page( rxvt_t* r, int profile,
 			"Running child in directory: %s\n", child_cwd ));
 
 	    /* Run command in this new directory. */
-	    LVTS(r)->cmd_fd =
-		rxvt_run_command( r, LTAB(r), (const char**) argv );
+	    PVTS(r)->cmd_fd =
+		rxvt_run_command( r, (const char**) argv );
 
 	    /* Restore old working directory. */
 	    chdir( cwd );
@@ -249,12 +209,12 @@ rxvt_append_page( rxvt_t* r, int profile,
 	    rxvt_dbgmsg(( DBG_DEBUG, DBG_TABBAR,
 			"Running child in original directory\n"));
 
-	    LVTS(r)->cmd_fd =
-		rxvt_run_command( r, LTAB(r), (const char**) argv );
+	    PVTS(r)->cmd_fd =
+		rxvt_run_command( r, (const char**) argv );
 	}
     }
     else
-	LVTS(r)->cmd_fd = rxvt_run_command (r, LTAB(r), (const char**) argv);
+	PVTS(r)->cmd_fd = rxvt_run_command (r, (const char**) argv);
 
 
     /*
@@ -272,15 +232,15 @@ rxvt_append_page( rxvt_t* r, int profile,
     /*
      * If run command failed, rollback
      */
-    assert( -1 != LVTS(r)->cmd_fd );
-    if (-1 == LVTS(r)->cmd_fd)
+    assert( -1 != PVTS(r)->cmd_fd );
+    if (-1 == PVTS(r)->cmd_fd)
     {
 	rxvt_dbgmsg ((DBG_WARN, DBG_TABBAR,
 		    "\tThe command failed.\n"));
-	rxvt_destroy_termwin (r, LTAB(r));
+	rxvt_destroy_termwin (r);
 	return;
     }
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR,"page %d's cmd_fd is %d\n", LTAB(r), LVTS(r)->cmd_fd));
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR,"cmd_fd is %d\n", PVTS(r)->cmd_fd));
 
 
     /* adjust number of file descriptors to listen */
@@ -289,8 +249,8 @@ rxvt_append_page( rxvt_t* r, int profile,
     /*
      * Initialize the screen data structures
      */
-    rxvt_scr_reset (r, LTAB(r));
-    rxvt_scr_refresh (r, LTAB(r), FAST_REFRESH);
+    rxvt_scr_reset (r);
+    rxvt_scr_refresh (r, FAST_REFRESH);
 
     /*
      * Now we actually execute the command after executing shell, but we need
@@ -299,26 +259,10 @@ rxvt_append_page( rxvt_t* r, int profile,
     if( command != NULL && *command == '!' )
     {
 	command++;  /* Skip leading '!' */
-	rxvt_tt_write( r, LTAB(r), (const unsigned char*) command,
+	rxvt_tt_write( r, (const unsigned char*) command,
 		STRLEN(command) );
-	rxvt_tt_write( r, LTAB(r), (const unsigned char*) "\n", 1 );
+	rxvt_tt_write( r, (const unsigned char*) "\n", 1 );
     }
-
-    /* update mapped flag */
-    AVTS(r)->mapped = 1;
-
-    /* first tab is special since ptab = atab now */
-    if (PTAB(r) != ATAB(r))
-	PVTS(r, PTAB(r))->mapped = 0;
-
-    /* synchronize terminal title with tab title */
-    if (ISSET_OPTION(r, Opt2_syncTabTitle))
-	sync_tab_title( r, ATAB(r) );
-
-    /* synchronize icon name to tab title */
-    if (ISSET_OPTION(r, Opt2_syncTabIcon))
-	rxvt_set_icon_name (r,
-		(const unsigned char*) PVTS(r, ATAB(r))->tab_title);
 }
 
 
@@ -327,138 +271,41 @@ rxvt_append_page( rxvt_t* r, int profile,
  */
 /* EXTPROTO */
 void
-rxvt_remove_page (rxvt_t* r, short page)
+rxvt_remove_page (rxvt_t* r)
 {
-    register int    i;
-
-    rxvt_dbgmsg ((DBG_VERBOSE, DBG_TABBAR,"rxvt_remove_page (r, %d)\n", page));
+    rxvt_dbgmsg ((DBG_VERBOSE, DBG_TABBAR,"rxvt_remove_page (r)\n"));
 
     /* clean utmp/wtmp entry */
 #ifdef UTMP_SUPPORT
     rxvt_privileges (RESTORE);
-    rxvt_cleanutent (r, page); 
+    rxvt_cleanutent (r); 
     rxvt_privileges (IGNORE);
 #endif
 
     /* free virtual terminal related resources */
-    assert (PVTS(r, page)->ttydev);
-    rxvt_free (PVTS(r, page)->ttydev);
-    assert (PVTS(r, page)->cmd_fd >= 0);
-    close (PVTS(r, page)->cmd_fd);
+    assert (PVTS(r)->ttydev);
+    rxvt_free (PVTS(r)->ttydev);
+    assert (PVTS(r)->cmd_fd >= 0);
+    close (PVTS(r)->cmd_fd);
 
-    if (PVTS(r, page)->inbuf_base)
+    if (PVTS(r)->inbuf_base)
     {
-	rxvt_free (PVTS(r, page)->inbuf_base);
-	PVTS(r, page)->inbuf_base = NULL;
+	rxvt_free (PVTS(r)->inbuf_base);
+	PVTS(r)->inbuf_base = NULL;
     }
 
     /* free screen structure */
-    rxvt_scr_release (r, page);
+    rxvt_scr_release (r);
 
     /* destroy the virtual terminal window */
-    rxvt_destroy_termwin (r, page);
+    rxvt_destroy_termwin (r);
 
 	rxvt_clean_exit (r);
 
     /* update selection */
-    if (page == r->selection.vt)
-	rxvt_process_selectionclear (r, page);
-    else if (r->selection.vt > page)
-	r->selection.vt --;
-
+    if (r->selection.op)
+	rxvt_process_selectionclear (r);
 }
 
-
-/*
- * Set new title for a tab
- */
-/* EXTPROTO */
-void
-rxvt_tabbar_set_title (rxvt_t* r, short page, const unsigned char TAINTED * str)
-{
-    char UNTAINTED *	    n_title;
-
-    assert (str);
-    assert (page >= 0 && page <= LTAB(r));
-    assert (PVTS(r, page)->tab_title);
-
-    n_title = STRNDUP (str, MAX_TAB_TXT);
-    /*
-     * If strdup succeeds, set new title
-     */
-    if (NULL != n_title)
-    {
-	rxvt_free (PVTS(r, page)->tab_title);
-	PVTS(r, page)->tab_title = n_title;
-
-    }
-
-    /* synchronize terminal title with active tab title */
-    if (ISSET_OPTION(r, Opt2_syncTabTitle) &&
-	(page == ATAB(r)))
-	sync_tab_title( r, ATAB(r) );
-
-    /* synchronize icon name to tab title */
-    if (ISSET_OPTION(r, Opt2_syncTabIcon) &&
-	(page == ATAB(r)))
-	rxvt_set_icon_name(r,
-		(const unsigned char*) PVTS(r, ATAB(r))->tab_title);
-}
-
-
-/*
- * Activate a page terminal
- */
-/* EXTPROTO */
-void
-rxvt_activate_page (rxvt_t* r, short index)
-{
-    AVTS(r)->mapped = 1;
-    AVTS(r)->highlight = 0; /* clear highlight flag */
-    
-    /* Switch VT fg/bg colors */
-    rxvt_set_vt_colors( r, ATAB(r) );
-    XMapRaised( r->Xdisplay, AVTS(r)->vt );
-    /*
-     * We don't need to touch the screen here. XMapRaised will generate a
-     * MapNotify and Expose events, which will refresh the screen as needed.
-     * Touching the screen unnecessarily causes a flicker (and is *horrible*
-     * under slow connections).
-     */
-    /* rxvt_scr_touch (r, ATAB(r), True); */
-    rxvt_dbgmsg ((DBG_VERBOSE, DBG_TABBAR, "active page is %d\n",ATAB(r)));
-
-    /* synchronize terminal title with tab title */
-    if (ISSET_OPTION(r, Opt2_syncTabTitle))
-	sync_tab_title( r, ATAB(r) );
-
-    /* synchronize icon name to tab title */
-    if (ISSET_OPTION(r, Opt2_syncTabIcon))
-	rxvt_set_icon_name (r,
-		(const unsigned char*) PVTS(r, ATAB(r))->tab_title);
-}
-
-
-/*
- * Synchronize the window title to the title of the tab "page".
- */
-void
-sync_tab_title( rxvt_t *r, int page )
-{
-    char wintitle[MAX_TAB_TXT];
-
-    if(
-	 IS_NULL( PVTS(r,page)->winTitleFormat )	||
-	 rxvt_percent_interpolate( r, page,
-	     PVTS(r,page)->winTitleFormat, STRLEN(PVTS(r,page)->winTitleFormat),
-	     wintitle, MAX_TAB_TXT ) <= 1
-      )
-    {
-	/* % interpolation failed / not possible */
-	rxvt_set_term_title( r, (unsigned char*) PVTS(r, page)->tab_title );
-    }
-    else
-	rxvt_set_term_title( r, (unsigned char*) wintitle );
-}
 
 /*----------------------- end-of-file (C source) -----------------------*/

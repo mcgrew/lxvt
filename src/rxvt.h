@@ -602,9 +602,6 @@ struct mouse_event {
 # define TERMENV	"xterm"
 #endif
 
-#define TABTITLEENV	"MRXVT_TABTITLE="
-
-
 #ifdef NO_RESOURCES
 # undef USE_XGETDEFAULT
 #endif
@@ -817,22 +814,10 @@ enum {
 #define MRxvt_term	    (60) /* Change window title */
 #define MRxvt_tab	    (61) /* change tab title */
 #define MRxvt_tabterm	    (62) /* change tab and terminal title */
-#define MRxvt_wformat	    (63) /* Change window title format */
-#define MRxvt_tformat	    (64) /* Change tab title format */
-/* #define MRxvt_newtab	    (63) ** DISABLED create a new tab with title */
-/* #define MRxvt_prevtab    (64) ** DISABLED switch to previous tab */
-/* #define MRxvt_nexttab    (65) ** DISABLED switch to next tab */
 #define MRxvt_tint	    (66) /* change tinting color */
 #define MRxvt_shade	    (67) /* change shade level */
 #define MRxvt_encode	    (68) /* change encoding */
-/* #define MRxvt_hide	    (69) ** DISABLED hide/show tabbar */
 #define MRxvt_opacity	    (70) /* set opacity level */
-/* #define MRxvt_tabbtn	    (71) ** DISABLED hide/show tabbar buttons */
-#define MRxvt_tabfg	    (72) /* change active tab fg */
-#define MRxvt_tabbg	    (73) /* change tabbar/active tab bg */
-#define MRxvt_itabfg	    (74) /* change inactive tab fg */
-#define MRxvt_itabbg	    (75) /* change inactive tab bg */
-/* #define MRxvt_trans	    (76) ** DISABLED toggle transparency */
 /* #define MRxvt_moveleft   (77) ** DISABLED move active tab to left */
 /* #define MRxvt_moveright  (78) ** DISABLED move active tab to right */
 /* #define MRxvt_verybold   (79) ** DISABLED toggle bold font for color text */
@@ -841,7 +826,6 @@ enum {
 #define MRxvt_bgfade	    (82) /* set bgfade degree (Obsolete) */
 #define MRxvt_termenv	    (83) /* set TERMENV type */
 /* #define MRxvt_closewin   (84) ** DISABLED Close all tabs and exit */
-/* #define MRxvt_switchtab  (85) ** DISABLED Switch to tab N */
 
 
 
@@ -965,11 +949,6 @@ enum {
     Rs_xftpsz,	/* Size of propotionally spaced Xft font */
 #endif
 
-    Rs_tabfg,	/* active tab foreground */
-    Rs_tabbg,	/* active tab background */
-    Rs_itabfg,	/* inactive tab foreground */
-    Rs_itabbg,	/* inactive tab background */
-
     Rs_fade,	/* fade percentage */
 
     Rs_skipPages,	/* Number of pages to skip when jump scrolling */
@@ -981,8 +960,6 @@ enum {
     Rs_bellCommand,
     Rs_vBellDuration,
 #endif
-    Rs_monitorCommand,
-    Rs_monitorTimeout,
     Rs_desktop,
 #ifndef NO_BACKSPACE_KEY
     Rs_backspace_key,
@@ -1015,13 +992,11 @@ enum {
     Rs_cursorBlinkInterval,
     Rs_pointerBlankDelay,
     Rs_smClientID,
-    Rs_initProfiles,
-    Rs_init_term_num,	    /* OBSOLETE */
+    Rs_initProfile,
 
     /*
      * Options for multiple profiles.
      */
-    Rs_tabtitle,	_Rs_tabtitle	= MAX_PROFILES - 1 + Rs_tabtitle,
     Rs_command,		_Rs_command	= MAX_PROFILES - 1 + Rs_command,
     Rs_saveLines,	_Rs_saveLines	= MAX_PROFILES - 1 + Rs_saveLines,
     Rs_foreground,	_Rs_foreground	= MAX_PROFILES - 1 + Rs_foreground,
@@ -1030,8 +1005,6 @@ enum {
     Rs_holdExit,	_Rs_holdExit	= MAX_PROFILES - 1 + Rs_holdExit,
     Rs_holdExitTxt,	_Rs_holdExitTxt = MAX_PROFILES - 1 + Rs_holdExitTxt,
     Rs_holdExitTtl,	_Rs_holdExitTtl = MAX_PROFILES - 1 + Rs_holdExitTtl,
-    Rs_titleFormat,	_Rs_titleFormat = MAX_PROFILES - 1 + Rs_titleFormat,
-    Rs_winTitleFormat,	_Rs_winTitleFormat = MAX_PROFILES - 1 + Rs_winTitleFormat,
 
     NUM_RESOURCES
 } ;
@@ -1108,11 +1081,11 @@ enum {
 /* #define PrivMode_MouseX11Track       (1LU<<18) */
 
 #define PrivMode_mouse_report	(PrivMode_MouseX10|PrivMode_MouseX11)
-#define PrivMode(test,bit,page)			\
+#define PrivMode(test,bit)			\
     if (test)					\
-	PVTS(r, page)->PrivateModes |= (bit);	\
+	PVTS(r)->PrivateModes |= (bit);	\
     else					\
-	PVTS(r, page)->PrivateModes &= ~(bit)
+	PVTS(r)->PrivateModes &= ~(bit)
 
 #ifdef ALLOW_132_MODE
 # define PrivMode_Default			 \
@@ -1368,9 +1341,6 @@ struct rxvt_hidden {
 							   variable DISPLAY */
     char*	    env_term;				/* environmental
 							   variable TERM */
-    char*	    env_tabtitle;			/* environmental
-							   variable
-							   MRXVT_TABTITLE*/
     char*	    env_colorfgbg;
     char*	    buffer;
     char*	    locale;
