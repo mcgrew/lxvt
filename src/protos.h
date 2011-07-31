@@ -276,15 +276,6 @@ void             rxvt_pixel_position              __PROTO((rxvt_t* r, int *x, in
 /* End prototypes of screen.c */
 
 
-/* Begin prototypes of scrollbar-next.c */
-#ifdef NEXT_SCROLLBAR
-void             rxvt_scrollbar_init_next         __PROTO((rxvt_t *r));
-void             rxvt_scrollbar_exit_next         __PROTO((rxvt_t *r));
-int              rxvt_scrollbar_show_next         __PROTO((rxvt_t* r, int update, int last_top, int last_bot, int scroller_len));
-#endif
-/* End prototypes of scrollbar-next.c */
-
-
 /* Begin prototypes of scrollbar-rxvt.c */
 #ifdef RXVT_SCROLLBAR
 void             rxvt_scrollbar_init_rxvt         __PROTO((rxvt_t *r));
@@ -310,15 +301,6 @@ void             rxvt_scrollbar_exit_plain        __PROTO((rxvt_t *r));
 int              rxvt_scrollbar_show_plain        __PROTO((rxvt_t* r, int update __attribute__((unused)), int last_top, int last_bot, int scroller_len));
 #endif
 /* End prototypes of scrollbar-plain.c */
-
-
-/* Begin prototypes of scrollbar-sgi.c */
-#ifdef SGI_SCROLLBAR
-void             rxvt_scrollbar_init_sgi          __PROTO((rxvt_t *r));
-void             rxvt_scrollbar_exit_sgi          __PROTO((rxvt_t *r));
-int              rxvt_scrollbar_show_sgi          __PROTO((rxvt_t* r, int update __attribute__((unused)), int last_top, int last_bot, int scroller_len));
-#endif
-/* End prototypes of scrollbar-sgi.c */
 
 
 /* Begin prototypes of scrollbar.c */

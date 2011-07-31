@@ -39,16 +39,8 @@
 #define R_SCROLLBEG_XTERM   (0)
 #define R_SCROLLEND_XTERM   VT_HEIGHT(r)
 
-#define R_SCROLLBEG_NEXT    (0)
-#define R_SCROLLEND_NEXT    (VT_HEIGHT(r) - (NEXT_SB_TBTN_HEIGHT + \
-			    NEXT_SB_PAD))
-
 #define R_SCROLLBEG_RXVT    (r->scrollBar.width + 1) + r->sb_shadow
 #define R_SCROLLEND_RXVT    (VT_HEIGHT(r) - R_SCROLLBEG_RXVT - \
-			    ((r->sb_shadow)<<1))
-
-#define R_SCROLLBEG_SGI	    (SGI_SB_BUTTON_HEIGHT)
-#define R_SCROLLEND_SGI	    (VT_HEIGHT(r) - R_SCROLLBEG_SGI - \
 			    ((r->sb_shadow)<<1))
 
 /*----------------------------------------------------------------------*/
@@ -78,14 +70,6 @@ rxvt_scrollbar_init(rxvt_t* r)
 	if (0 == STRNCASECMP (scrollstyle, "rxvt", 4))
 	    style = R_SB_RXVT;
 # endif
-# ifdef NEXT_SCROLLBAR
-	if (0 == STRNCASECMP (scrollstyle, "next", 4))
-	    style = R_SB_NEXT;
-# endif
-# ifdef SGI_SCROLLBAR
-	if (0 == STRNCASECMP (scrollstyle, "sgi", 3))
-	    style = R_SB_SGI;
-# endif
     }
 
     /*
@@ -102,13 +86,6 @@ rxvt_scrollbar_init(rxvt_t* r)
 # ifdef RXVT_SCROLLBAR
 	style = R_SB_RXVT;  /* may be overrided below */
 # endif
-# ifdef NEXT_SCROLLBAR
-	style = R_SB_NEXT;
-# endif
-# ifdef SGI_SCROLLBAR
-	if (R_SB_UNKNOWN == style)
-	    style = R_SB_SGI;
-# endif
 	assert (R_SB_UNKNOWN != style);	/* impossible case */
     }
 
@@ -122,20 +99,10 @@ rxvt_scrollbar_init(rxvt_t* r)
     case R_SB_RXVT:
 	width = SB_WIDTH_RXVT;
 	break;
-    case R_SB_NEXT:
-	width = SB_WIDTH_NEXT;
-	break;
-    case R_SB_SGI:
-	width = SB_WIDTH_SGI;
-	break;
     default :
 	assert (0); /* should not reach here */
     }
 
-
-    if (style != R_SB_NEXT) /* dishonour request - for now */
-	if (thickness && (i = atoi(thickness)) >= SB_WIDTH_MINIMUM)
-	    width = min(i, SB_WIDTH_MAXIMUM);
 
 # ifdef RXVT_SCROLLBAR
     if (NOTSET_OPTION(r, Opt_scrollBar_floating) && style == R_SB_RXVT)
@@ -162,17 +129,9 @@ rxvt_scrollbar_init(rxvt_t* r)
     if (r->scrollBar.style == R_SB_XTERM)
 	r->scrollBar.update = rxvt_scrollbar_show_xterm;
 # endif
-# if defined(NEXT_SCROLLBAR)
-    if (r->scrollBar.style == R_SB_NEXT)
-	r->scrollBar.update = rxvt_scrollbar_show_next;
-# endif
 # if defined(RXVT_SCROLLBAR)
     if (r->scrollBar.style == R_SB_RXVT) 
 	r->scrollBar.update = rxvt_scrollbar_show_rxvt;
-# endif
-# if defined(SGI_SCROLLBAR)
-    if (r->scrollBar.style == R_SB_SGI) 
-	r->scrollBar.update = rxvt_scrollbar_show_sgi;
 # endif
 
 
@@ -244,22 +203,10 @@ rxvt_scrollbar_create (rxvt_t* r)
 	r->scrollBar.end = R_SCROLLEND_XTERM;
     }
 # endif
-# ifdef NEXT_SCROLLBAR
-    if (r->scrollBar.style == R_SB_NEXT) {
-	r->scrollBar.beg = R_SCROLLBEG_NEXT;
-	r->scrollBar.end = R_SCROLLEND_NEXT;
-    }
-# endif
 # ifdef RXVT_SCROLLBAR
     if (r->scrollBar.style == R_SB_RXVT) {
 	r->scrollBar.beg = R_SCROLLBEG_RXVT;
 	r->scrollBar.end = R_SCROLLEND_RXVT;
-    }
-# endif
-# ifdef SGI_SCROLLBAR
-    if (r->scrollBar.style == R_SB_SGI) {
-	r->scrollBar.beg = R_SCROLLBEG_SGI;
-	r->scrollBar.end = R_SCROLLEND_SGI;
     }
 # endif
 
@@ -298,14 +245,6 @@ rxvt_scrollbar_create (rxvt_t* r)
     if (r->scrollBar.style == R_SB_RXVT)
 	rxvt_scrollbar_init_rxvt (r);
 # endif
-# ifdef NEXT_SCROLLBAR
-    if (r->scrollBar.style == R_SB_NEXT)
-	rxvt_scrollbar_init_next (r);
-# endif
-# ifdef SGI_SCROLLBAR
-    if (r->scrollBar.style == R_SB_SGI)
-	rxvt_scrollbar_init_sgi (r);
-# endif
 }
 
 
@@ -331,14 +270,6 @@ rxvt_scrollbar_clean_exit (rxvt_t* r)
 # ifdef RXVT_SCROLLBAR
     if (r->scrollBar.style == R_SB_RXVT)
 	rxvt_scrollbar_exit_rxvt (r);
-# endif
-# ifdef NEXT_SCROLLBAR
-    if (r->scrollBar.style == R_SB_NEXT)
-	rxvt_scrollbar_exit_next (r);
-# endif
-# ifdef SGI_SCROLLBAR
-    if (r->scrollBar.style == R_SB_SGI)
-	rxvt_scrollbar_exit_sgi (r);
 # endif
 }
 
@@ -371,22 +302,10 @@ rxvt_scrollbar_resize(rxvt_t *r)
 	r->scrollBar.end = R_SCROLLEND_XTERM;
     }
 # endif
-# ifdef NEXT_SCROLLBAR
-    if (r->scrollBar.style == R_SB_NEXT) {
-	r->scrollBar.beg = R_SCROLLBEG_NEXT;
-	r->scrollBar.end = R_SCROLLEND_NEXT;
-    }
-# endif
 # ifdef RXVT_SCROLLBAR
     if (r->scrollBar.style == R_SB_RXVT) {
 	r->scrollBar.beg = R_SCROLLBEG_RXVT;
 	r->scrollBar.end = R_SCROLLEND_RXVT;
-    }
-# endif
-# ifdef SGI_SCROLLBAR
-    if (r->scrollBar.style == R_SB_SGI) {
-	r->scrollBar.beg = R_SCROLLBEG_SGI;
-	r->scrollBar.end = R_SCROLLEND_SGI;
     }
 # endif
 
@@ -499,12 +418,6 @@ rxvt_scrollbar_bg( rxvt_t *r )
 #  endif
 #  ifdef RXVT_SCROLLBAR
 	case R_SB_RXVT:  return r->scrollBar.rxvt_bg;
-#  endif
-#  ifdef NEXT_SCROLLBAR
-	case R_SB_NEXT:  return r->scrollBar.next_bg;
-#  endif
-#  ifdef SGI_SCROLLBAR
-	case R_SB_SGI:   return r->scrollBar.sgi_bg;
 #  endif
 	default: assert (0); return VTBG( r, 0);
     }	/* switch */

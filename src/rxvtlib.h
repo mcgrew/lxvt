@@ -461,35 +461,6 @@ typedef struct
     unsigned long   plain_fg;
     unsigned long   plain_bg;
 # endif
-# ifdef NEXT_SCROLLBAR
-    unsigned long   next_fg;	/* black */
-    unsigned long   next_bg;	/* gray */
-    unsigned long   next_white;
-    unsigned long   next_dark;
-    GC		    next_stippleGC;
-    Pixmap	    next_dimple, 
-		    next_upArrow,
-		    next_upArrowHi,
-		    next_downArrow,
-		    next_downArrowHi;
-# endif
-# ifdef SGI_SCROLLBAR
-    unsigned long   sgi_fg;	/* medium */
-    unsigned long   sgi_bg;	/* light */
-    unsigned long   sgi_black;
-    unsigned long   sgi_white;
-    unsigned long   sgi_lmedium;
-    unsigned long   sgi_dark;
-    unsigned long   sgi_vdark;
-    GC		    sgi_stippleGC;
-    Pixmap	    sgi_dimple, 
-		    sgi_upArrow,
-		    sgi_upArrowHi,
-		    sgi_upArrowLow,
-		    sgi_downArrow,
-		    sgi_downArrowHi,
-		    sgi_downArrowLow;
-# endif
 } scrollBar_t;
 #endif	/* HAVE_SCROLLBARS */
 

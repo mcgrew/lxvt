@@ -183,7 +183,7 @@ static const struct {
     STRG(Rs_scrollBar_thickness, "scrollbarThickness", "sbt", "number",
 	"scrollbar thickness/width in pixels", 0),
     STRG(Rs_scrollBar_style, "scrollbarStyle", "ss", "mode",
-	"scrollbar style = plain|xterm|rxvt|next|sgi", 0),
+	"scrollbar style = plain|xterm|rxvt", 0),
     STRG(Rs_scrollBar_align, "scrollbarAlign", "sa", "mode", 
 	"scrollbar alignment = top|bottom", 0),
 #endif
@@ -561,28 +561,16 @@ static const char optionsstring[] = "Options: "
 #else
 # if defined(RXVT_SCROLLBAR)
     "rxvt"
-#  if defined(NEXT_SCROLLBAR) || defined(XTERM_SCROLLBAR) || defined(SGI_SCROLLBAR) || defined(PLAIN_SCROLLBAR)
+#  if defined(XTERM_SCROLLBAR) || defined(PLAIN_SCROLLBAR)
     "+"
 #  endif
 # endif	/* RXVT_SCROLLBAR */
-# if defined(NEXT_SCROLLBAR)
-    "NeXT"
-#  if defined(XTERM_SCROLLBAR) || defined(SGI_SCROLLBAR) || defined(PLAIN_SCROLLBAR)
-    "+"
-#  endif
-# endif	/* NEXT_SCROLLBAR */
 # if defined(XTERM_SCROLLBAR)
     "xterm"
-#  if defined(SGI_SCROLLBAR) || defined(PLAIN_SCROLLBAR)
-    "+"
-#  endif
-# endif	/* XTERM_SCROLLBAR */
-# if defined(SGI_SCROLLBAR)
-    "sgi"
 #  if defined(PLAIN_SCROLLBAR)
     "+"
 #  endif
-# endif	/* SGI_SCROLLBAR */
+# endif	/* XTERM_SCROLLBAR */
 # if defined(PLAIN_SCROLLBAR)
     "plain"
 # endif	/* PLAIN_SCROLLBAR */

@@ -83,22 +83,10 @@ else
 SCROLLBAR_XTERM_SRC = 
 endif
 
-if NEXT_SCROLLBAR
-SCROLLBAR_NEXT_SRC = scrollbar-next.c
-else
-SCROLLBAR_NEXT_SRC = 
-endif
-
 if RXVT_SCROLLBAR
 SCROLLBAR_RXVT_SRC = scrollbar-rxvt.c
 else
 SCROLLBAR_RXVT_SRC = 
-endif
-
-if SGI_SCROLLBAR
-SCROLLBAR_SGI_SRC = scrollbar-sgi.c
-else
-SCROLLBAR_SGI_SRC = 
 endif
 
 if UTMP_SUPPORT
@@ -124,13 +112,8 @@ endif
 
 mrxvt_SOURCES +=    $(SCROLLBAR_PLAIN_SRC)	\
 		    $(SCROLLBAR_XTERM_SRC)	\
-		    $(SCROLLBAR_NEXT_SRC)	\
 		    $(SCROLLBAR_RXVT_SRC)	\
-		    $(SCROLLBAR_SGI_SRC)	\
 		    $(UTMP_SRC)			\
-		    $(GREEK_SRC)		\
-		    $(JPEG_SRC)			\
-		    $(PNG_SRC)			\
 		    $(SESSION_SRC)		\
 		    $(XFTACS_SRC)
 
@@ -178,10 +161,8 @@ ptytty.o:	    $(MRXVT_H) 				ptytty.c
 rxvt.o:		    $(MRXVT_H) 				rxvt.c
 rxvtmem.o:	    $(MRXVT_H) 				rxvtmem.h rxvtmem.c
 screen.o:	    $(MRXVT_H) $(XFTACS_H)		screen.c
-scrollbar-next.o:   $(MRXVT_H) 				scrollbar-next.c
 scrollbar-plain.o:  $(MRXVT_H) 				scrollbar-plain.c
 scrollbar-rxvt.o:   $(MRXVT_H) 				scrollbar-rxvt.c
-scrollbar-sgi.o:    $(MRXVT_H) 				scrollbar-sgi.c
 scrollbar-xterm.o:  $(MRXVT_H) 				scrollbar-xterm.c
 scrollbar.o:	    $(MRXVT_H) 				scrollbar.c
 session.o:	    $(MRXVT_H) 				session.c

@@ -656,106 +656,12 @@ struct mouse_event {
 
 #define R_SB_UNKNOWN	    (-1)
 #define R_SB_RXVT	    (0)
-#define R_SB_NEXT	    (1)
 #define R_SB_XTERM	    (2)
-#define R_SB_SGI	    (3)
 #define R_SB_PLAIN	    (4)
 
 #define SB_WIDTH_PLAIN	    (15)
 #define SB_WIDTH_XTERM	    (15)
 #define SB_WIDTH_RXVT	    (10)
-#define SB_WIDTH_NEXT	    (17)
-#define SB_WIDTH_SGI	    (16)
-
-
-#ifdef NEXT_SCROLLBAR
-/*
-** NeXT scrollbar definitions
-*/
-#define NEXT_SB_WIDTH		(SB_WIDTH_NEXT)
-#define NEXT_SB_PAD		(1)
-#define NEXT_SB_BD_WIDTH	(1)
-#define NEXT_BEVEL_ULEFT_WIDTH	(1)
-#define NEXT_BEVEL_LRIGHT_WIDTH	(2)
-#define NEXT_SB_LPAD		(NEXT_SB_PAD + NEXT_SB_BD_WIDTH)
-#define NEXT_SB_MARGIN		(NEXT_SB_PAD<<1)
-#define NEXT_SB_BTN_WIDTH	(NEXT_SB_WIDTH - NEXT_SB_MARGIN - NEXT_SB_BD_WIDTH)
-/* button height */
-#define NEXT_SB_BTN_HEIGHT	(NEXT_SB_BTN_WIDTH)
-/* single button height */
-#define NEXT_SB_SBTN_HEIGHT	(NEXT_SB_BTN_HEIGHT + NEXT_SB_PAD)
-/* double button height */
-#define NEXT_SB_DBTN_HEIGHT	(NEXT_SB_SBTN_HEIGHT<<1)
-/* total button height */
-#define NEXT_SB_TBTN_HEIGHT	(NEXT_SB_DBTN_HEIGHT + NEXT_SB_PAD)
-#define NEXT_BEVEL_X		(NEXT_SB_LPAD)
-#define NEXT_BTN_FACE_X		(NEXT_BEVEL_X + NEXT_BEVEL_ULEFT_WIDTH)
-#define NEXT_SB_MIN_HEIGHT	(NEXT_SB_BTN_WIDTH - (NEXT_SB_PAD<<1))
- /*
-  *    +-------------+
-  *    |             | <---< NEXT_SB_PAD
-  *    | ::::::::::: |
-  *    | ::::::::::: |
-  *   '''''''''''''''''
-  *   ,,,,,,,,,,,,,,,,,
-  *    | ::::::::::: |
-  *    | ::::::::::: |
-  *    |  +---------------< NEXT_BEVEL_ULEFT_WIDTH
-  *    |  | :::::::: |
-  *    |  V :::: vv-------< NEXT_BEVEL_LRIGHT_WIDTH
-  *    | +---------+ |
-  *    | | ......%%| |
-  *    | | ......%%| |
-  *    | | ..()..%%| |
-  *    | | ......%%| |
-  *    | | %%%%%%%%| |
-  *    | +---------+ | <.........................
-  *    |             | <---< NEXT_SB_PAD         :
-  *    | +---------+ | <-+..........            :---< NEXT_SB_TBTN_HEIGHT
-  *    | | ......%%| |   |         :            :
-  *    | | ../\..%%| |   |---< NEXT_SB_BTN_HEIGHT :
-  *    | | %%%%%%%%| |   |         :            :
-  *    | +---------+ | <-+         :            :
-  *    |             |             :            :
-  *    | +---------+ | <-+         :---< NEXT_SB_DBTN_HEIGHT
-  *    | | ......%%| |   |         :            :
-  *    | | ..\/..%%| |   |         :            :
-  *    | | %%%%%%%%| |   |---< NEXT_SB_SBTN_HEIGHT
-  *    | +---------+ |   |         :            :
-  *    |             |   |         :            :
-  *    +-------------+ <-+.........:............:
-  *    ^^|_________| :
-  *    ||     |      :
-  *    ||     +---< NEXT_SB_BTN_WIDTH
-  *    ||            :
-  *    |+------< NEXT_SB_PAD
-  *    |:            :
-  *    +----< NEXT_SB_BD_WIDTH
-  *     :            :
-  *     :............:
-  *           |
-  *           +---< NEXT_SB_WIDTH
-  */
-#endif	/* NEXT_SCROLLBAR */
-
-
-#ifdef SGI_SCROLLBAR
-/*
-** SGI IRIX scrollbar definitions
-*/
-#define SGI_ARROW_SOURCE_WIDTH	(14)
-#define SGI_ARROW_SOURCE_HEIGHT	(14)
-#define SGI_BEVEL_HI_WIDTH	(1)
-#define SGI_BEVEL_LO_WIDTH	(1)
-#define SGI_BEVEL_SIZE		(SGI_BEVEL_HI_WIDTH+SGI_BEVEL_LO_WIDTH)
-
-#define SGI_ARROW_WIDTH		(SB_WIDTH_SGI-(SGI_BEVEL_SIZE<<1))
-#define SGI_ARROW_HEIGHT	(SGI_ARROW_SOURCE_HEIGHT)
-
-#define SGI_SB_BUTTON_HEIGHT	((SGI_BEVEL_SIZE<<1)+SGI_ARROW_WIDTH)
-#define SGI_SB_BUTTONS_HEIGHT	(SGI_SB_BUTTON_HEIGHT<<1)
-#endif
-
 
 
 /*
@@ -1371,34 +1277,12 @@ enum {
 #define scrollbar_setDn()	r->scrollBar.state = 'D'
 
 
-#define scrollbarnext_dnval()	    (r->scrollBar.end + (r->scrollBar.width + 1))
-#define scrollbarnext_upButton(y)   ((y) > r->scrollBar.end \
-		     && (y) <= scrollbarnext_dnval())
-#define scrollbarnext_dnButton(y)   ((y) > scrollbarnext_dnval())
-
 #define scrollbarrxvt_upButton(y)   ((y) < r->scrollBar.beg)
 #define scrollbarrxvt_dnButton(y)   ((y) > r->scrollBar.end)
 
 
-#define scrollbarsgi_dnval()	    (r->scrollBar.end + 1)
-#define scrollbarsgi_upButton(y)    ((y) < r->scrollBar.beg)
-#define scrollbarsgi_dnButton(y)    ((y) > r->scrollBar.end)
-
-#ifdef NEXT_SCROLLBAR
-# define SCROLLNEXT_MINHEIGHT	    (NEXT_SB_MIN_HEIGHT)
-#else
-# define SCROLLNEXT_MINHEIGHT	    (0)
-#endif	/* NEXT_SCROLLBAR */
-#ifdef SGI_SCROLLBAR
-# define SCROLLSGI_MINHEIGHT	    (10)
-#else
-# define SCROLLSGI_MINHEIGHT	    (0)
-#endif	/* SGI_SCROLLBAR */
 #define SCROLL_MINHEIGHT	    (10)
-#define scrollbar_minheight()	(   \
-    (r->scrollBar.style == R_SB_NEXT) ? SCROLLNEXT_MINHEIGHT :	\
-    (r->scrollBar.style == R_SB_SGI) ? SCROLLSGI_MINHEIGHT :	\
-	SCROLL_MINHEIGHT)
+#define scrollbar_minheight()	(SCROLL_MINHEIGHT)
 #define scrollbar_above_slider(y)   ((y) < r->scrollBar.top)
 #define scrollbar_below_slider(y)   ((y) > r->scrollBar.bot)
 #define scrollbar_position(y)	    ((y) - r->scrollBar.beg)

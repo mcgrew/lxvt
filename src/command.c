@@ -2772,25 +2772,15 @@ rxvt_scrollbar_dispatcher (rxvt_t* r, int page, XButtonEvent* ev)
 	 * click on scrollbar - send pageup/down
 	 */
 	if(
-	     (r->scrollBar.style == R_SB_NEXT && scrollbarnext_upButton(ev->y))
-	     || (
 		  r->scrollBar.style == R_SB_RXVT
 		  && scrollbarrxvt_upButton(ev->y)
-		)
-	     || (
-		  r->scrollBar.style == R_SB_SGI
-		  && scrollbarsgi_upButton(ev->y)
-		)
 	  )
 	{
 	    rxvt_tt_printf(r, page, "\033[A");
 	}
 	else if (
-		    (r->scrollBar.style == R_SB_NEXT && scrollbarnext_dnButton(ev->y))
-		    || (r->scrollBar.style == R_SB_RXVT
+		    (r->scrollBar.style == R_SB_RXVT
 				&& scrollbarrxvt_dnButton(ev->y))
-		    || (r->scrollBar.style == R_SB_SGI
-				&& scrollbarsgi_dnButton(ev->y))
 		)
 	{
 	    rxvt_tt_printf(r, page, "\033[B");
@@ -2816,25 +2806,11 @@ rxvt_scrollbar_dispatcher (rxvt_t* r, int page, XButtonEvent* ev)
     {
 	int	upordown = 0;
 
-	if (r->scrollBar.style == R_SB_NEXT)
-	{
-	    if (scrollbarnext_upButton(ev->y))
-		upordown = -1;	/* up */
-	    else if (scrollbarnext_dnButton(ev->y))
-		upordown = 1;	/* down */
-	}
-	else if (r->scrollBar.style == R_SB_RXVT)
+	if (r->scrollBar.style == R_SB_RXVT)
 	{
 	    if (scrollbarrxvt_upButton(ev->y))
 		upordown = -1;	/* up */
 	    else if (scrollbarrxvt_dnButton(ev->y))
-		upordown = 1;	/* down */
-	}
-	else if (r->scrollBar.style == R_SB_SGI)
-	{
-	    if (scrollbarsgi_upButton(ev->y))
-		upordown = -1;	/* up */
-	    else if (scrollbarsgi_dnButton(ev->y))
 		upordown = 1;	/* down */
 	}
 

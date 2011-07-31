@@ -128,10 +128,8 @@ support_selectionscrolling=yes
 support_mousewheel=yes
 support_mouseslipwheel=no
 support_scroll_rxvt=yes
-support_scroll_next=yes
 support_scroll_xterm=yes
 support_scroll_plain=yes
-support_scroll_sgi=yes
 support_half_shadow=yes
 support_utmp=yes
 support_wtmp=yes
@@ -179,8 +177,6 @@ if test "x$support_everything" = "xyes"; then
     support_mousewheel=yes
     support_mouseslipwheel=yes
     support_scroll_rxvt=yes
-    support_scroll_next=yes
-    support_scroll_sgi=yes
     support_scroll_xterm=yes
     support_scroll_plain=yes
     support_half_shadow=yes
@@ -229,8 +225,6 @@ if test "x$support_minimal" = "xyes"; then
     support_mousewheel=no
     support_mouseslipwheel=no
     support_scroll_rxvt=no
-    support_scroll_next=no
-    support_scroll_sgi=no
     support_scroll_xterm=yes
     support_scroll_plain=no
     support_half_shadow=no
@@ -360,18 +354,6 @@ fi
 
 
 AC_ARG_ENABLE(
-    next-scroll,
-    AC_HELP_STRING([--enable-next-scroll],[enable NeXT style scrollbar [[yes]]]),
-    [support_scroll_next=$enableval]
-)
-if test "x$support_scroll_next" = "xyes"; then
-    AC_DEFINE(NEXT_SCROLLBAR, [], [set next style scroll bar])
-    AC_DEFINE(HAVE_SCROLLBARS, [], [set scroll bar support])
-    support_scroll="yes"
-fi
-
-
-AC_ARG_ENABLE(
     xterm-scroll,
     AC_HELP_STRING([--enable-xterm-scroll],[enable Xterm style scrollbar [[yes]]]),
     [support_scroll_xterm=$enableval]
@@ -395,23 +377,9 @@ if test "x$support_scroll_plain" = "xyes"; then
 fi
 
 
-AC_ARG_ENABLE(
-    sgi-scroll,
-    AC_HELP_STRING([--enable-sgi-scroll],[enable SGI IRIX style scrollbar [[yes]]]),
-    [support_scroll_sgi=$enableval]
-)
-if test "x$support_scroll_sgi" = "xyes"; then
-    AC_DEFINE(SGI_SCROLLBAR, [], [set sgi style scroll bar])
-    AC_DEFINE(HAVE_SCROLLBARS, [], [set scroll bar support])
-    support_scroll="yes"
-fi
-
-
 AM_CONDITIONAL(RXVT_SCROLLBAR, test "x$support_scroll_rxvt" = "xyes")
-AM_CONDITIONAL(NEXT_SCROLLBAR, test "x$support_scroll_next" = "xyes")
 AM_CONDITIONAL(XTERM_SCROLLBAR, test "x$support_scroll_xterm" = "xyes")
 AM_CONDITIONAL(PLAIN_SCROLLBAR, test "x$support_scroll_plain" = "xyes")
-AM_CONDITIONAL(SGI_SCROLLBAR, test "x$support_scroll_sgi" = "xyes")
 
 
 
@@ -1377,10 +1345,8 @@ if test "x$support_mousewheel" = "xyes"; then
 fi
 if test "x$support_scroll" = "xyes"; then
     echo "RXVT style scrollbar        : $support_scroll_rxvt"
-    echo "NeXT style scrollbar        : $support_scroll_next"
     echo "Xterm style scrollbar       : $support_scroll_xterm"
     echo "Plain style scrollbar       : $support_scroll_plain"
-    echo "SGI IRIX style scrollbar    : $support_scroll_sgi"
 	if test "x$support_scroll_rxvt" = "xyes"; then
         echo "Half shadow scrollbar       : $support_half_shadow"
 	fi
