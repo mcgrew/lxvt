@@ -196,28 +196,8 @@ rxvt_scrollbar_init_next (rxvt_t *r)
     
     /* Create scrollBar GC */
     gcvalue.foreground = r->scrollBar.next_fg;
-#ifdef TRANSPARENT
-    /* set background color when there's no transparent */
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_scrollbar)
-	))
-#endif
-#ifdef BACKGROUND_IMAGE
-    /* set background color when there's no bg image */
-    if (NOT_PIXMAP(r->scrollBar.pixmap))
-#endif
     gcvalue.background = r->scrollBar.next_bg;
     gcmask = GCForeground;
-#ifdef TRANSPARENT
-    /* set background color when there's no transparent */
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_scrollbar)
-	))
-#endif
-#ifdef BACKGROUND_IMAGE
-    /* set background color when there's no bg image */
-    if (NOT_PIXMAP(r->scrollBar.pixmap))
-#endif
     gcmask |= GCBackground;
     r->scrollBar.gc = XCreateGC (r->Xdisplay, r->scrollBar.win,
 			gcmask, &gcvalue);
@@ -229,30 +209,10 @@ rxvt_scrollbar_init_next (rxvt_t *r)
 		(char *)n_stp_bits, n_stp_width, n_stp_height);
     if (IS_PIXMAP(stipple)) {
 	gcvalue.foreground = r->scrollBar.next_dark;
-#ifdef TRANSPARENT
-	/* set background color when there's no transparent */
-	if (!(ISSET_OPTION(r, Opt_transparent) &&
-	      ISSET_OPTION(r, Opt_transparent_scrollbar)
-	    ))
-#endif
-#ifdef BACKGROUND_IMAGE
-	/* set background color when there's no bg image */
-	if (NOT_PIXMAP(r->scrollBar.pixmap))
-#endif
 	gcvalue.background = r->scrollBar.next_bg;
 	gcvalue.fill_style = FillOpaqueStippled;
 	gcvalue.stipple = stipple;
 	gcmask = GCForeground | GCStipple | GCFillStyle;
-#ifdef TRANSPARENT
-	/* set background color when there's no transparent */
-	if (!(ISSET_OPTION(r, Opt_transparent) &&
-	      ISSET_OPTION(r, Opt_transparent_scrollbar)
-	    ))
-#endif
-#ifdef BACKGROUND_IMAGE
-	/* set background color when there's no bg image */
-	if (NOT_PIXMAP(r->scrollBar.pixmap))
-#endif
 	gcmask |= GCBackground;
 
 	TILEGC = XCreateGC(r->Xdisplay, r->scrollBar.win,
@@ -278,16 +238,6 @@ rxvt_scrollbar_init_next (rxvt_t *r)
 		ARROW_WIDTH, ARROW_HEIGHT);
     assert (IS_PIXMAP(HIDNARROW));
 
-#ifdef TRANSPARENT
-    /* set background color when there's no transparent */
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_scrollbar)
-	))
-#endif
-#ifdef BACKGROUND_IMAGE
-    /* set background color when there's no bg image */
-    if (NOT_PIXMAP(r->scrollBar.pixmap))
-#endif
 	XSetWindowBackground (r->Xdisplay, r->scrollBar.win,
 	    r->scrollBar.next_bg);
 }
@@ -372,16 +322,6 @@ rxvt_scrollbar_show_next(rxvt_t *r, int update, int last_top, int last_bot, int 
 	    0, NEXT_SB_BD_WIDTH, SB_WIDTH_NEXT,
 	    height + NEXT_SB_BD_WIDTH);
 
-# ifdef TRANSPARENT
-	/* set background color when there's no transparent */
-	if (!(ISSET_OPTION(r, Opt_transparent) &&
-	      ISSET_OPTION(r, Opt_transparent_scrollbar)
-	    ))
-# endif
-#ifdef BACKGROUND_IMAGE
-	/* set background color when there's no bg image */
-	if (NOT_PIXMAP(r->scrollBar.pixmap))
-#endif
 	XFillRectangle(r->Xdisplay, r->scrollBar.win, TILEGC,
 	    NEXT_SB_LPAD, 0, NEXT_SB_BTN_WIDTH, height);
     }
@@ -391,25 +331,6 @@ rxvt_scrollbar_show_next(rxvt_t *r, int update, int last_top, int last_bot, int 
 	    /*
 	    ** Area above the scroller
 	    */
-# ifdef TRANSPARENT
-	    /* clear background when there's transparent */
-	    if (ISSET_OPTION(r, Opt_transparent) &&
-		ISSET_OPTION(r, Opt_transparent_scrollbar))
-		XClearArea (r->Xdisplay, r->scrollBar.win,
-		    NEXT_SB_LPAD, NEXT_SB_PAD + last_top,
-		    NEXT_SB_BTN_WIDTH, r->scrollBar.top - last_top,
-		    False);
-	    else
-# endif
-# ifdef BACKGROUND_IMAGE
-	    /* clear background when there's bg image */
-	    if (IS_PIXMAP(r->scrollBar.pixmap))
-		XClearArea (r->Xdisplay, r->scrollBar.win,
-		    NEXT_SB_LPAD, NEXT_SB_PAD + last_top,
-		    NEXT_SB_BTN_WIDTH, r->scrollBar.top - last_top,
-		    False);
-	    else
-# endif
 	    XFillRectangle(r->Xdisplay, r->scrollBar.win, TILEGC,
 		NEXT_SB_LPAD, NEXT_SB_PAD + last_top,
 		NEXT_SB_BTN_WIDTH, r->scrollBar.top - last_top);
@@ -419,25 +340,6 @@ rxvt_scrollbar_show_next(rxvt_t *r, int update, int last_top, int last_bot, int 
 	    /*
 	    ** Area above the buttons but below the scroller
 	    */
-# ifdef TRANSPARENT
-	    /* clear background when there's transparent */
-	    if (ISSET_OPTION(r, Opt_transparent) &&
-		ISSET_OPTION(r, Opt_transparent_scrollbar))
-		XClearArea(r->Xdisplay, r->scrollBar.win,
-		    NEXT_SB_LPAD, r->scrollBar.bot + NEXT_SB_PAD,
-		    NEXT_SB_BTN_WIDTH, (last_bot - r->scrollBar.bot),
-		    False);
-	    else
-# endif
-# ifdef BACKGROUND_IMAGE
-	    /* clear background when there's bg image */
-	    if (IS_PIXMAP(r->scrollBar.pixmap))
-		XClearArea (r->Xdisplay, r->scrollBar.win,
-		    NEXT_SB_LPAD, r->scrollBar.bot + NEXT_SB_PAD,
-		    NEXT_SB_BTN_WIDTH, (last_bot - r->scrollBar.bot),
-		    False);
-	    else
-# endif
 	    XFillRectangle(r->Xdisplay, r->scrollBar.win, TILEGC,
 		NEXT_SB_LPAD, r->scrollBar.bot + NEXT_SB_PAD,
 		NEXT_SB_BTN_WIDTH, (last_bot - r->scrollBar.bot));
@@ -447,25 +349,6 @@ rxvt_scrollbar_show_next(rxvt_t *r, int update, int last_top, int last_bot, int 
 	/*
 	** Area of the scroller
 	*/
-# ifdef TRANSPARENT
-	/* clear background when there's transparent */
-	if (ISSET_OPTION(r, Opt_transparent) &&
-	    ISSET_OPTION(r, Opt_transparent_scrollbar))
-	    XClearArea (r->Xdisplay, r->scrollBar.win,
-		NEXT_SB_LPAD, r->scrollBar.top + NEXT_SB_PAD,
-		NEXT_SB_BTN_WIDTH, scroller_len/*-NEXT_SB_BTN_HEIGHT*/,
-		False);
-	else
-# endif
-# ifdef BACKGROUND_IMAGE
-	/* clear background when there's bg image */
-	if (IS_PIXMAP(r->scrollBar.pixmap))
-	    XClearArea (r->Xdisplay, r->scrollBar.win,
-		NEXT_SB_LPAD, r->scrollBar.top + NEXT_SB_PAD,
-		NEXT_SB_BTN_WIDTH, scroller_len/*-NEXT_SB_BTN_HEIGHT*/,
-		False);
-	else
-# endif
 	{
 	    CHOOSE_GC_FG(r, r->scrollBar.next_bg);
 	    XFillRectangle(r->Xdisplay, r->scrollBar.win,

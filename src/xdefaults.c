@@ -98,10 +98,6 @@ static const struct {
     const char	    BOOLVAR( multiple, 1 ); /* multiple values for profiles */
 } optList[] = {
     /* Options for each profile */
-#ifdef BACKGROUND_IMAGE
-    STRG(Rs_backgroundPixmap, "Pixmap", "pixmap", "file[;geom]",
-	    "background image for a tab", 1),
-#endif
     STRG(Rs_tabtitle, "tabTitle", "tt", "string", "title name for tab", 1),
     STRG(Rs_saveLines, "saveLines", "sl", "number",
 	    "number of scrolled lines to save for tab", 1),
@@ -177,16 +173,6 @@ static const struct {
     RSTRG( Rs_refreshLimit, "refreshLimit", "nchars", 0 ),
     RSTRG( Rs_skipPages, "skipPages", "%d", 0 ),
 
-#ifdef TINTING_SUPPORT
-    STRG(Rs_color + Color_tint, "tintColor", "tint", "color", "tint color", 0),
-    STRG(Rs_shade, "shading", "shade", "%", "shade background by %x when tinting", 0),
-    STRG(Rs_shade, "backgroundFade", "bgfade", "%",
-	"fade background image or transparent background by %x (obsolete)", 0),
-#endif
-#ifdef TRANSPARENT
-    RSTRG(Rs_bgRefreshInterval, "bgRefreshInterval", "ms", 0),
-#endif
-
     STRG(Rs_fade, "fading", "fade", "%", "make colors x% darker when losing focus", 0),
 
 #ifdef HAVE_SCROLLBARS
@@ -200,10 +186,6 @@ static const struct {
 	"scrollbar style = plain|xterm|rxvt|next|sgi", 0),
     STRG(Rs_scrollBar_align, "scrollbarAlign", "sa", "mode", 
 	"scrollbar alignment = top|bottom", 0),
-# ifdef BACKGROUND_IMAGE
-    STRG(Rs_scrollbarPixmap, "scrollbarPixmap", "sbpixmap",
-	"file[;geom]", "scrollbar background image", 0),
-# endif
 #endif
     BOOL( "scrollTtyOutputInhibit", "si", Opt_scrollTtyOutputInhibit,
 	    "scroll-on-tty-output inhibit" ),
@@ -214,29 +196,6 @@ static const struct {
 	"transluscent window (true transparent) opaque degree", 0),
     STRG(Rs_opacityDegree, "opacityDegree", "od", "%",
 	"transluscent window opaque degree interval", 0),
-
-#ifdef TRANSPARENT
-    BOOL( "transparent", "tr", Opt_transparent, "transparent" ),
-    BOOL( "transparentForce", "trf", Opt_forceTransparent,
-	    "forcefully transparent" ),
-# ifdef HAVE_SCROLLBARS
-    BOOL( "transparentScrollbar", "trs", Opt_transparent_scrollbar,
-	    "transparent scrollbar" ),
-# endif
-# ifdef HAVE_MENUBAR
-    BOOL( "transparentMenubar", "trm", Opt_transparent_menubar,
-	    "transparent menubar" ),
-# endif
-    BOOL( "transparentTabbar", "trt", Opt_transparent_tabbar,
-	    "transparent tabbar" ),
-#endif	/* TRANSPARENT */
-
-#ifdef BACKGROUND_IMAGE
-    STRG(Rs_tabbarPixmap, "tabbarPixmap", "tbpixmap", "file[;geom]", "tabbar background image", 0),
-    BOOL( "tabUsePixmap", "tupixmap", Opt_tabPixmap,
-	    "use tabbar background image for tabs" ),
-    STRG(Rs_appIcon, "appIcon", "ic", "file[;geom]", "application icon file", 0),
-#endif	/* BACKGROUND_IMAGE */
 
     BOOL( "utmpInhibit", "ut", Opt_utmpInhibit,
 	    "utmp inhibit - do not log to utmp" ),
@@ -326,17 +285,13 @@ static const struct {
     STRG(Rs_color + Color_pointer, "pointerColor", "pr", "color", "pointer color", 0),
     STRG(Rs_color + Color_border, "borderColor", "bd", "color", "border color", 0),
 
-#if defined (BACKGROUND_IMAGE) || defined(HAVE_MENUBAR)
+#if defined(HAVE_MENUBAR)
     RSTRG(Rs_path, "path", "search path", 0),
-#endif		    /* defined (BACKGROUND_IMAGE) || (HAVE_MENUBAR) */
+#endif		    /* HAVE_MENUBAR */
 #ifdef HAVE_MENUBAR
     STRG(Rs_menu, "menu", "menu",
 	"filename[;tag]", "menubar definition file", 0),
     BOOL( "showMenu", "showmenu", Opt_showMenu, "show menubar" ),
-# ifdef BACKGROUND_IMAGE
-    STRG(Rs_menubarPixmap, "menubarPixmap", "mbpixmap",
-	"file[;geom]", "menubar background image", 0),
-# endif
 #endif
 
 #ifndef NO_BOLDFONT
@@ -584,26 +539,7 @@ static uint32_t	pSetOpts[ MAX_OPTION_ARRAY ] = { 0u, 0u, 0u, 0u };
 
 static const char releasestring[] = "Mrxvt v" VERSION "\n";
 static const char optionsstring[] = "Options: "
-#if defined(BACKGROUND_IMAGE)
-# ifdef HAVE_LIBXPM
-    "XPM,"
-# endif
-# ifdef USE_JPEG
-    "Jpeg,"
-# endif
-# ifdef USE_JPEG
-    "PNG,"
-# endif
-#endif
-#if defined(TRANSPARENT)
-    "transparent,"
-#endif
     "fade,"
-#if defined(BACKGROUND_IMAGE) || defined(TRANSPARENT)
-# if defined(TINTING_SUPPORT)
-    "tint,"
-# endif
-#endif
 #if defined(TEXT_SHADOW)
     "textshadow,"
 #endif

@@ -34,25 +34,11 @@
 
 
 #ifdef HAVE_TABBAR
-#ifdef HAVE_LIBXPM
-
-#include "close_term.xpm"
-#include "term.xpm"
-#include "right.xpm"
-#include "left.xpm"
-#include "close_term_d.xpm"
-#include "term_d.xpm"
-#include "right_d.xpm"
-#include "left_d.xpm"
-
-#else
 
 #include "close_term.xbm"
 #include "term.xbm"
 #include "right.xbm"
 #include "left.xbm"
-
-#endif /* HAVE_LIBXPM */
 
 
 #ifdef XFT_SUPPORT
@@ -117,32 +103,13 @@
 #ifdef HAVE_TABBAR
 enum {XPM_TERM,XPM_CLOSE,XPM_LEFT,XPM_RIGHT,NB_XPM};
 
-#ifdef HAVE_LIBXPM
-static char** xpm_name[] =
-{
-    term_xpm,close_term_xpm,
-    left_xpm,right_xpm
-};
-static char** xpm_d_name[] =
-{
-    term_d_xpm,close_term_d_xpm,
-    left_d_xpm,right_d_xpm
-};
-#else
 static unsigned char *xbm_name[] =
 {
     term_bits,close_term_bits,
     left_bits,right_bits
 };
-#endif
     
 static Pixmap img[NB_XPM];
-#ifdef HAVE_LIBXPM
-static Pixmap img_e[NB_XPM]; /* enable image */
-static Pixmap img_emask[NB_XPM]; /* shape mask image */
-static Pixmap img_d[NB_XPM]; /* disable image */
-static Pixmap img_dmask[NB_XPM]; /* shape mask image */
-#endif
 
 #endif
     
@@ -818,15 +785,6 @@ void rxvt_draw_tabs (rxvt_t* r, Region region)
 		SET_POINT( points[7], TWIN_WIDTH(r), TAB_BOTOFF);
 	    }
 
-#ifdef BACKGROUND_IMAGE
-	    if( r->tabBar.hasPixmap  && ISSET_OPTION(r, Opt_tabPixmap))
-		clear = 1;  /* use background image */
-#endif
-#ifdef TRANSPARENT
-	    if ( ( r->h->am_transparent || r->h->am_pixmap_trans ) &&
-		ISSET_OPTION(r, Opt_transparent_tabbar))
-		clear = 1;  /* transparent override background image */
-#endif
 
 	    if( !clear )
 	    {
@@ -1067,33 +1025,6 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
     CHOOSE_GC_FG (r, r->tabBar.fg);
     for (i = NB_XPM; i >= 1; i--)
     {
-#ifdef HAVE_LIBXPM
-	register int	curimg = NB_XPM - i;
-
-	switch (curimg)
-	{
-	    case XPM_TERM:
-		/*img[XPM_TERM] = (LTAB(r) == MAX_PAGES - 1) ? 
-		    img_d[XPM_TERM] : img_e[XPM_TERM];*/
-			 /* 08-08-20 Jehan: 
-			  * As there is no more maximum tab, there is no disable image here. */
-			 img[XPM_TERM] = img_e[XPM_TERM];
-		break;
-	    case XPM_CLOSE:
-		img[XPM_CLOSE] = (ISSET_OPTION(r, Opt2_protectSecondary) &&
-				PRIMARY != AVTS(r)->current_screen) ?
-			img_d[XPM_CLOSE] : img_e[XPM_CLOSE];
-		break;
-	    case XPM_LEFT:
-		img[XPM_LEFT] = (FVTAB(r) == 0) ? 
-		    img_d[XPM_LEFT] : img_e[XPM_LEFT];
-		break;
-	    case XPM_RIGHT:
-		img[XPM_RIGHT] = (LVTAB(r) == LTAB(r)) ? 
-		    img_d[XPM_RIGHT] : img_e[XPM_RIGHT];
-		break;
-	}
-#endif
 	if (IS_PIXMAP(img[NB_XPM-i]))
 	{
 	    XCopyArea  (r->Xdisplay, img[NB_XPM-i], r->tabBar.win,
@@ -2101,14 +2032,6 @@ rxvt_tabbar_create (rxvt_t* r)
     unsigned long   gcmask;
     register int    i;
     int		    sx, sy;
-#ifdef HAVE_LIBXPM
-    XpmAttributes   xpm_attr;
-    /*
-     * Make sure symbol `background' exists in all .xpm files! This elimate the
-     * background color so that the buttons look transparent.
-     */
-    XpmColorSymbol  xpm_color_sym = {"background", NULL, 0};
-#endif
 
 
     rxvt_tabbar_init (r);
@@ -2262,44 +2185,6 @@ rxvt_tabbar_create (rxvt_t* r)
 #endif
 
 
-#ifdef BACKGROUND_IMAGE
-    r->tabBar.hasPixmap = False;    /* initialize it to None */
-    if (
-#ifdef TRANSPARENT
-	    /* Transparency overrides background */
-	    !(
-		ISSET_OPTION(r, Opt_transparent)
-		&& ISSET_OPTION(r, Opt_transparent_tabbar)
-	     )
-	    &&
-#endif
-	    r->h->rs[Rs_tabbarPixmap]
-       )
-    {
-	long	w = 0, h = 0;
-	Pixmap	pmap;
-
-	pmap = rxvt_load_pixmap (r, r->h->rs[Rs_tabbarPixmap], &w, &h);
-	if (IS_PIXMAP(pmap))
-	{
-	    XSetWindowBackgroundPixmap (r->Xdisplay, r->tabBar.win, pmap);
-	    XFreePixmap( r->Xdisplay, pmap);
-
-	    r->tabBar.hasPixmap = True;
-	}
-	else r->tabBar.hasPixmap = False;
-    }
-#endif
-
-#ifdef TRANSPARENT
-    if (
-	    ISSET_OPTION(r, Opt_transparent)
-	    && ISSET_OPTION(r, Opt_transparent_tabbar)
-       )
-	XSetWindowBackgroundPixmap( r->Xdisplay, r->tabBar.win, ParentRelative);
-#endif
-
-
     /* create the GC for the tab window */
     gcvalue.foreground	= r->tabBar.fg;
     gcvalue.line_width	= 0;
@@ -2313,15 +2198,6 @@ rxvt_tabbar_create (rxvt_t* r)
 		| GCLineStyle | GCCapStyle | GCJoinStyle
 		| GCArcMode | GCFillStyle;
 
-#ifdef TRANSPARENT
-    /* set background color when there's no transparent */
-    if (!(( r->h->am_transparent || r->h->am_pixmap_trans) &&
-	ISSET_OPTION(r, Opt_transparent_tabbar)))
-#endif
-#ifdef BACKGROUND_IMAGE
-	/* set background color when there's no bg image */
-	if ( ! r->tabBar.hasPixmap )
-#endif
 	{
 	    gcvalue.background = r->tabBar.bg;
 	    gcmask |= GCBackground;
@@ -2346,34 +2222,13 @@ rxvt_tabbar_create (rxvt_t* r)
     XSetFont (r->Xdisplay, r->tabBar.gc, r->TermWin.font->fid);
 
 
-#ifdef HAVE_LIBXPM
-    xpm_color_sym.pixel = r->tabBar.bg;
-    xpm_attr.colorsymbols = &xpm_color_sym;
-    xpm_attr.numsymbols = 1;
-    xpm_attr.visual = XVISUAL;
-    xpm_attr.colormap = XCMAP;
-    xpm_attr.depth = XDEPTH;
-    xpm_attr.closeness = 65535;
-    xpm_attr.valuemask = XpmVisual | XpmColormap | XpmDepth |
-	XpmCloseness | XpmReturnPixels | XpmColorSymbols;
-#endif
-
     /* now, create the buttons */
     for (i = 0; i < NB_XPM; i++)
     {
-#ifdef HAVE_LIBXPM
-	XpmCreatePixmapFromData (r->Xdisplay, r->tabBar.win,
-	    xpm_name[i], &img_e[i], &img_emask[i], &xpm_attr);
-	assert (IS_PIXMAP(img_e[i]));
-	XpmCreatePixmapFromData (r->Xdisplay, r->tabBar.win,
-	    xpm_d_name[i], &img_d[i], &img_dmask[i], &xpm_attr);
-	assert (IS_PIXMAP(img_d[i]));
-#else
 	img[i] = XCreatePixmapFromBitmapData (r->Xdisplay,
 	    r->tabBar.win, (char *) xbm_name[i], BTN_WIDTH, BTN_HEIGHT,
 	    r->tabBar.fg, r->tabBar.bg, XDEPTH);
 	assert (IS_PIXMAP(img[i]));
-#endif
     }
 
     rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "TXT_XOFF=%d, TXT_YOFF=%d, ATAB_EXTRA=%d, TAB_RADIUS=%d\n", TXT_XOFF, TXT_YOFF, ATAB_EXTRA, TAB_RADIUS));
@@ -2410,31 +2265,8 @@ rxvt_tabbar_clean_exit (rxvt_t* r)
 
     for (i = 0; i < NB_XPM; i ++)
     {
-#ifdef HAVE_LIBXPM
-	if (IS_PIXMAP(img_e[i]))
-	{
-	    XFreePixmap (r->Xdisplay, img_e[i]);
-	    UNSET_PIXMAP(img_e[i]);
-	}
-	if (IS_PIXMAP(img_emask[i]))
-	{
-	    XFreePixmap (r->Xdisplay, img_emask[i]);
-	    UNSET_PIXMAP(img_emask[i]);
-	}
-	if (IS_PIXMAP(img_d[i]))
-	{
-	    XFreePixmap (r->Xdisplay, img_d[i]);
-	    UNSET_PIXMAP(img_d[i]);
-	}
-	if (IS_PIXMAP(img_dmask[i]))
-	{
-	    XFreePixmap (r->Xdisplay, img_dmask[i]);
-	    UNSET_PIXMAP(img_dmask[i]);
-	}
-#else
 	if (IS_PIXMAP(img[i]))
 	    XFreePixmap (r->Xdisplay, img[i]);
-#endif
 	UNSET_PIXMAP(img[i]);
     }	/* for */
 }
@@ -2597,29 +2429,6 @@ rxvt_tabbar_change_color (rxvt_t* r, int item, const char* str)
     {
 	if (MRxvt_itabbg == item)
 	{
-#if defined(TRANSPARENT) || defined(BACKGROUND_IMAGE)
-	    if (
-# ifdef TRANSPARENT
-		    (
-		     (r->h->am_transparent || r->h->am_pixmap_trans)
-		     && ISSET_OPTION (r, Opt_transparent_tabbar)
-		    )
-# endif
-# if defined(TRANSPARENT) && defined(BACKGROUND_IMAGE)
-		||
-# endif
-# ifdef BACKGROUND_IMAGE
-		( r->tabBar.hasPixmap )
-# endif
-	       )
-	    {
-# ifdef HAVE_LIBXRENDER
-		/* Background image needs to be regrabed */
-		rxvt_refresh_bg_image(r, ATAB(r), False);
-# endif
-	    }
-	    else
-#endif
 	    {
 		XSetWindowBackground (r->Xdisplay, r->tabBar.win,
 			r->tabBar.ibg);

@@ -48,7 +48,6 @@ static const char *const macroNames[] =
     "ToggleVeryBold",	    /* Toggle use of bold font for colored text */
     "ToggleBoldColors",	    /* Toggle option boldColors */
     "ToggleVeryBright",	    /* Toggle option veryBright */
-    "ToggleTransparency",   /* Toggle pseudo transparency */
     "ToggleBroadcast",	    /* Toggle broadcasting of input */
     "ToggleHold",	    /* Toggle holding of completed tabs */
     "ToggleFullscreen",	    /* Toggle full screen mode */
@@ -1199,14 +1198,6 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	    TOGGLE_OPTION( r, Opt_veryBright );
 
 	    rxvt_scr_touch (r, ATAB(r), True);
-	    break;
-
-	case MacroFnToggleTransp:
-#ifdef TRANSPARENT
-	    rxvt_toggle_transparency(r);
-#else
-	    retval = -1;
-#endif
 	    break;
 
 	case MacroFnToggleBcst:

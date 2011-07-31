@@ -2414,51 +2414,6 @@ rxvt_scr_bell(rxvt_t *r, int page)
 	if( APAGE(r) != page  || r->h->refresh_type == NO_REFRESH )
 	    return;
 
-#if defined(TRANSPARENT) || defined(BACKGROUND_IMAGE)
-	/*
-	 * Reverse video bell doesn't look so good with transparency or a
-	 * background pixmap. Flash screen ourselves.
-	 */
-	if (
-# ifdef TRANSPARENT
-	      r->h->am_transparent || r->h->am_pixmap_trans
-#  ifdef BACKGROUND_IMAGE
-	      ||
-#  endif
-# endif
-# ifdef BACKGROUND_IMAGE
-	      IS_PIXMAP(PVTS(r, page)->pixmap)
-# endif
-	   )
-	{
-	    XGCValues values;
-
-	    XGetGCValues( r->Xdisplay, r->TermWin.gc,
-		    GCForeground | GCFillStyle, &values);
-
-	    XSetForeground( r->Xdisplay, r->TermWin.gc,
-		    r->pixColors[Color_fg] );
-	    XSetFillStyle( r->Xdisplay, r->TermWin.gc, FillSolid);
-
-	    XFillRectangle( r->Xdisplay, PVTS(r, page)->vt, r->TermWin.gc,
-		    Row2Pixel(0), Col2Pixel(0),
-		    Width2Pixel( r->TermWin.ncol),
-		    Height2Pixel( r->TermWin.nrow) );
-
-	    XChangeGC( r->Xdisplay, r->TermWin.gc,
-		    GCForeground | GCFillStyle, &values);
-
-	    XSync( r->Xdisplay, False);
-
-#ifdef HAVE_NANOSLEEP
-	    if( r->TermWin.vBellDuration )
-		nanosleep(&rqt, NULL);
-#endif
-
-	    XClearArea( r->Xdisplay, PVTS(r, page)->vt, 0, 0, 0, 0, True);
-	}
-	else
-#endif /* TRANSPARENT || BACKGROUND_IMAGE */
 	{
 	    /* refresh also done */
 	    rxvt_scr_rvideo_mode(r, page, !PVTS(r, page)->rvideo);
@@ -3457,12 +3412,6 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 	clearfirst = clearlast = 1;
 	h->refresh_type &= ~REFRESH_BOUNDS;
     }
-#ifdef BACKGROUND_IMAGE
-    must_clear |= IS_PIXMAP(PVTS(r, page)->bg.pixmap);
-#endif
-#ifdef TRANSPARENT
-    must_clear |= ( h->am_transparent || h->am_pixmap_trans );
-#endif
     /* is there an old outline cursor on screen? */
     ocrow = h->oldcursor.row;
 
@@ -4661,13 +4610,6 @@ rxvt_scr_clear(rxvt_t* r, int page)
 
     r->h->num_scr_allow = 0;
     PVTS(r, page)->want_refresh = 1;
-#ifdef TRANSPARENT
-    if( ISSET_OPTION(r, Opt_transparent) )
-    {
-	if (IS_WIN(r->TermWin.parent))
-	    XClearWindow(r->Xdisplay, r->TermWin.parent);
-    }
-#endif
     XClearWindow(r->Xdisplay, PVTS(r, page)->vt);
 }
 

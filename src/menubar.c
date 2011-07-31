@@ -1776,33 +1776,6 @@ rxvt_menubar_create (rxvt_t* r)
 	      (ExposureMask | ButtonPressMask | ButtonReleaseMask
 	      | Button1MotionMask));
 
-#  ifdef BACKGROUND_IMAGE
-    UNSET_PIXMAP(r->menuBar.pixmap);	/* Initialize it to None */
-#   ifdef TRANSPARENT
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_menubar)
-	))
-#   endif
-    if (r->h->rs[Rs_menubarPixmap])
-    {
-	long	w = 0, h = 0;
-	r->menuBar.pixmap = rxvt_load_pixmap (r,
-				r->h->rs[Rs_menubarPixmap], &w, &h);
-	if (IS_PIXMAP(r->menuBar.pixmap))
-	    XSetWindowBackgroundPixmap (r->Xdisplay, r->menuBar.win,
-		r->menuBar.pixmap);
-    }
-#  endif
-
-#  ifdef TRANSPARENT
-    if (ISSET_OPTION(r, Opt_transparent) &&
-	ISSET_OPTION(r, Opt_transparent_menubar))
-    {
-	XSetWindowBackgroundPixmap (r->Xdisplay, r->menuBar.win,
-	    ParentRelative);
-    }
-#  endif
-
     /*
      * Initialize the colors. TODO: Add a sperate resource for this, instead of
      * mooching of the scroll bar resources.
@@ -1831,25 +1804,9 @@ rxvt_menubar_create (rxvt_t* r)
 
 
     gcvalue.foreground = r->menuBar.fg;
-#  ifdef TRANSPARENT
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_menubar)
-	))
-#  endif
-#  ifdef BACKGROUND_IMAGE
-    if (NOT_PIXMAP(r->menuBar.pixmap))
-#  endif
     gcvalue.background = r->menuBar.bg;
     gcmask = GCForeground;
 
-#  ifdef TRANSPARENT
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_menubar)
-	))
-#  endif
-#  ifdef BACKGROUND_IMAGE
-    if (NOT_PIXMAP(r->menuBar.pixmap))
-#  endif
     gcmask |= GCBackground;
     r->menuBar.gc = XCreateGC (r->Xdisplay, r->menuBar.win,
 			gcmask, &gcvalue);
@@ -1903,13 +1860,6 @@ rxvt_menubar_clean_exit (rxvt_t* r)
 	XFreeGC (r->Xdisplay, r->menuBar.gc);
 	UNSET_GC(r->menuBar.gc);
     }
-#  ifdef BACKGROUND_IMAGE
-    if (IS_PIXMAP(r->menuBar.pixmap))
-    {
-	XFreePixmap (r->Xdisplay, r->menuBar.pixmap);
-	UNSET_PIXMAP(r->menuBar.pixmap);
-    }
-#  endif
 }
 
 

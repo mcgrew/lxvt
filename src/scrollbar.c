@@ -282,30 +282,6 @@ rxvt_scrollbar_create (rxvt_t* r)
 		| Button1MotionMask | Button2MotionMask
 		| Button3MotionMask));
 
-# ifdef BACKGROUND_IMAGE
-    UNSET_PIXMAP(r->scrollBar.pixmap);	/* initialize it to None */
-#  ifdef TRANSPARENT
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_scrollbar)
-	))
-#  endif
-    if (r->h->rs[Rs_scrollbarPixmap])	{
-	long	w = 0, h = 0;
-	r->scrollBar.pixmap = rxvt_load_pixmap (r,
-				r->h->rs[Rs_scrollbarPixmap], &w, &h);
-	if (IS_PIXMAP(r->scrollBar.pixmap))
-	    XSetWindowBackgroundPixmap (r->Xdisplay, r->scrollBar.win,
-		r->scrollBar.pixmap);
-    }
-# endif
-
-# ifdef TRANSPARENT
-    if (ISSET_OPTION(r, Opt_transparent) &&
-	ISSET_OPTION(r, Opt_transparent_scrollbar)) {
-	XSetWindowBackgroundPixmap (r->Xdisplay, r->scrollBar.win,
-	    ParentRelative);
-    }
-# endif
     r->scrollBar.state = 0;
 
 
@@ -343,13 +319,6 @@ rxvt_scrollbar_clean_exit (rxvt_t* r)
 	XFreeGC (r->Xdisplay, r->scrollBar.gc);
 	UNSET_GC(r->scrollBar.gc);
     }
-
-#ifdef BACKGROUND_IMAGE
-    if (IS_PIXMAP(r->scrollBar.pixmap))	{
-	XFreePixmap (r->Xdisplay, r->scrollBar.pixmap);
-	UNSET_PIXMAP(r->scrollBar.pixmap);
-    }
-#endif
 
 # ifdef PLAIN_SCROLLBAR
     if (r->scrollBar.style == R_SB_PLAIN)

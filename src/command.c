@@ -1949,25 +1949,6 @@ rxvt_monitor_tab(rxvt_t* r,int i)
     }
 
 #ifdef HAVE_TABBAR
-#ifdef BACKGROUND_IMAGE
-    if( r->tabBar.hasPixmap  && ISSET_OPTION(r, Opt_tabPixmap))
-    {
-	PVTS(r, i)->monitor_tab = TAB_MON_OFF;
-	rxvt_dbgmsg ((DBG_INFO, DBG_TABBAR,
-		    "Disabling background filling, background image is "
-		    "activated"));
-    }
-#endif
-#ifdef TRANSPARENT
-    if ( ( r->h->am_transparent || r->h->am_pixmap_trans ) &&
-	ISSET_OPTION(r, Opt_transparent_tabbar))
-    {
-	PVTS(r, i)->monitor_tab = TAB_MON_OFF;
-	rxvt_dbgmsg ((DBG_INFO, DBG_TABBAR,
-		    "Disabling background filling, option 'transparentTabbar'"
-		    "is enabled"));
-    }
-#endif
     rxvt_tabbar_expose (r, NULL);
 #endif
 }
@@ -2116,49 +2097,13 @@ rxvt_adjust_quick_timeout (rxvt_t* r, int quick_timeout, struct timeval* value)
     else
     {
 	quick_timeout |= (AVTS(r)->want_refresh || h->want_clip_refresh);
-#ifdef TRANSPARENT
-	quick_timeout |= h->want_full_refresh;
-#endif	/* TRANSPARENT */
     }
 
-#if defined(POINTER_BLANK) || defined(CURSOR_BLINK) || defined(TRANSPARENT)
+#if defined(POINTER_BLANK) || defined(CURSOR_BLINK)
     {
 	int32_t	csdiff, psdiff, bsdiff;
 
 	csdiff = psdiff = bsdiff = 60000000L;   /* or, say, LONG_MAX */
-
-# ifdef TRANSPARENT
-	/* Check if we should refresh our background */
-	if( h->lastCNotify.tv_sec )
-	{
-	    gettimeofday( &tp, NULL);
-	    bsdiff = (tp.tv_sec - h->lastCNotify.tv_sec) * 1000000L
-			+ tp.tv_usec - h->lastCNotify.tv_usec;
-
-	    if( bsdiff > h->bgRefreshInterval)
-	    {
-		bsdiff = 0;
-		h->lastCNotify.tv_sec = 0;
-
-		/* Only refresh bg image if we've moved. */
-		if ((!r->h->bgGrabbed ||
-		     r->h->prevPos.x	  != r->szHint.x ||
-		     r->h->prevPos.y	  != r->szHint.y ||
-		     r->h->prevPos.width  != r->szHint.width ||
-		     r->h->prevPos.height != r->szHint.height) &&
-		    rxvt_check_our_parents( r ))
-		{
-		    h->want_full_refresh = 1;
-		}
-	    }
-	    else
-		bsdiff = h->bgRefreshInterval - bsdiff;
-
-	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND, "Waiting %ld.%06ld seconds longer for bg refresh\n", bsdiff / 1000000L, bsdiff % 1000000L));
-
-	    set_quick_timeout = 1;
-	}
-# endif /* TRANSPARENT */
 
 # if defined(CURSOR_BLINK)
 	/*
@@ -2223,7 +2168,7 @@ rxvt_adjust_quick_timeout (rxvt_t* r, int quick_timeout, struct timeval* value)
 	    quick_timeout = 1;
 	}
     }
-#endif	/* POINTER_BLANK || CURSOR_BLINK || TRANSPARENT */
+#endif	/* POINTER_BLANK || CURSOR_BLINK */
 
     quick_timeout |= r->gotEIO;
     r->gotEIO = 0;
@@ -2237,19 +2182,6 @@ rxvt_adjust_quick_timeout (rxvt_t* r, int quick_timeout, struct timeval* value)
 void
 rxvt_refresh_vtscr_if_needed( rxvt_t *r )
 {
-#ifdef TRANSPARENT
-    if( r->h->want_full_refresh )
-    {
-	rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "full refresh\n"));
-	r->h->want_full_refresh = 0;
-
-	/* only work for active tab */
-	rxvt_scr_clear(r, ATAB(r));
-	rxvt_scr_touch(r, ATAB(r), False);
-	AVTS(r)->want_refresh = 1;
-    }
-#endif	/* TRANSPARENT */
-
     /*
      * If parts of the screen have changed, we should not honor the GC clipping.
      */
@@ -2304,7 +2236,7 @@ rxvt_cmd_getc(rxvt_t *r, int* p_page)
 #ifdef CURSOR_BLINK
     int		    want_keypress_time = 0;
 #endif
-#if defined(POINTER_BLANK) || defined(CURSOR_BLINK) || defined(TRANSPARENT)
+#if defined(POINTER_BLANK) || defined(CURSOR_BLINK)
     struct timeval  tp;
 #endif
     struct timeval  value;
@@ -2322,10 +2254,10 @@ rxvt_cmd_getc(rxvt_t *r, int* p_page)
 	for (i = 0; i <= LTAB(r); i ++)
 	    rxvt_monitor_tab(r,i);
 
-#if defined(POINTER_BLANK) || defined(CURSOR_BLINK) || defined(TRANSPARENT)
+#if defined(POINTER_BLANK) || defined(CURSOR_BLINK)
 	/* presume == 0 implies time not yet retrieved */
 	tp.tv_sec = tp.tv_usec = 0;
-#endif	/* POINTER_BLANK || CURSOR_BLINK || TRANSPARENT*/
+#endif	/* POINTER_BLANK || CURSOR_BLINK */
 #ifdef CURSOR_BLINK
 	want_keypress_time = 0;
 #endif	/* CURSOR_BLINK */
@@ -3815,9 +3747,6 @@ rxvt_resize_on_configure (rxvt_t* r, unsigned int width, unsigned int height)
 	    old_ncol = PVTS(r, i)->prev_ncol;
 
 	    rxvt_scr_clear(r, i);
-#ifdef BACKGROUND_IMAGE
-	    rxvt_resize_pixmap(r, i);
-#endif
 
 	    curr_screen = rxvt_scr_change_screen(r, i, PRIMARY);
 	    /* scr_reset only works on the primary screen */
@@ -3959,61 +3888,13 @@ rxvt_process_configurenotify (rxvt_t* r, XConfigureEvent* ev)
 
 	rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Forcing refresh (from want_resize)\n"));
 
-#if defined(HAVE_LIBXRENDER) && (defined(BACKGROUND_IMAGE) || defined(TRANSPARENT))
-	/*
-	 * Background images tinted with XRender need to be refreshed on hide /
-	 * show of sub windows.
-	 */
-	rxvt_refresh_bg_image( r, ATAB(r), False );
-#else
 	/*
 	 * Otherwise we should refresh the screen. A lazy refresh is enough, as
 	 * we will recieve expose events shortly.
 	 */
 	/* rxvt_src_clear required? */
 	rxvt_scr_touch( r, ATAB(r), False);
-#endif
     }
-
-#ifdef TRANSPARENT
-    /*
-     * Check to see if the previous position we grabbed the background is
-     * different from the current window position. If yes, then update
-     * everything.
-     */
-    if (ISSET_OPTION(r, Opt_transparent))
-    {
-	if(
-		!r->h->bgGrabbed
-		|| r->h->prevPos.x != r->szHint.x
-		|| r->h->prevPos.y != r->szHint.y
-		|| r->h->prevPos.width != width
-		|| r->h->prevPos.height != height
-	  )
-	{
-	    /*
-	     * Rather than refresh our background pixmap now (which is laggy as
-	     * hell), generate a timeout. So if the user is dragging this
-	     * window, we won't refresh our background unless he stops for a
-	     * certain ammount of time.
-	     */
-	    if( !r->h->bgRefreshInterval)
-	    {
-		rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "refreshing parents...\n"));
-		if( rxvt_check_our_parents(r) )
-		{
-		    r->h->want_resize = 0;
-		    r->h->want_full_refresh = 1;
-		}
-	    }
-	    else
-	    {
-		rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND, "Setting timeout for parent refresh.\n"));
-		gettimeofday( &r->h->lastCNotify, NULL);
-	    }
-	}
-    }
-#endif
 }
 
 
@@ -4031,10 +3912,6 @@ rxvt_process_selectionnotify (rxvt_t* r, XSelectionEvent* ev)
 void
 rxvt_process_propertynotify (rxvt_t* r, XEvent* ev)
 {
-#ifdef TRANSPARENT
-    int wantRefresh = 0;    /* Want transparency refresh */
-#endif
-
 #ifdef DEBUG
     char *name;
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Property notify event:"));
@@ -4062,72 +3939,12 @@ rxvt_process_propertynotify (rxvt_t* r, XEvent* ev)
 	    rxvt_selection_property(r, ev->xproperty.window, ev->xproperty.atom);
 	}
 
-#ifdef TRANSPARENT
-	else if (IS_ATOM(r->h->xa[XA_XROOTPMAPID]) &&
-		 IS_ATOM(r->h->xa[XA_XSETROOTID]) &&
-		 (ev->xproperty.atom == r->h->xa[XA_XROOTPMAPID] ||
-		  ev->xproperty.atom == r->h->xa[XA_XSETROOTID]
-		 )
-		)
-	{
-	    /*
-	     * If user used some Esetroot compatible prog to set the root bg,
-	     * use the property to determine the pixmap.  We use it later on.
-	     */
-	    if( !wantRefresh)
-	    {
-		/*
-		 * A few programs (fvwm-root for instance) use the XSETROOTID
-		 * property to indicate changes in transparency (they set it to
-		 * none when the background is a solid color). So we have to
-		 * listen for both properties.
-		 *
-		 * fvwm-root (and some other badly behaved programs) do NOT grab
-		 * the server when setting the above atoms. Thus while our event
-		 * queue might be empty now, we might get a PropertyNotify event
-		 * setting one of the above atoms shortly. Thus we introduce a
-		 * delay here (eliminates flicker). Notice that this will NOT
-		 * introduce a delay when listening for other properties.
-		 */
-		rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "(sleeping ... "));
-#ifdef HAVE_NANOSLEEP
-		struct timespec rqt;
-		rqt.tv_sec = 0;
-		rqt.tv_nsec = 10000000; /* 10 ms */
-		nanosleep(&rqt, NULL);
-#else
-		sleep( 1);
-#endif
-		rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "done) "));
-	    }
-	    wantRefresh = 1;
-	}
-
-#endif /* TRANSPARENT */
       }
     while( XCheckTypedEvent( r->Xdisplay, PropertyNotify, ev) );
 
 #ifdef DEBUG
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND, "\n"));
 #endif
-#ifdef TRANSPARENT
-    if( wantRefresh)
-    {
-	/*
-	 * Refresh bg vars EVEN if we're not transparent. Thus if we toggle
-	 * transparency later on we don't have to worry about it
-	 */
-	refreshRootBGVars( r );
-	if (ISSET_OPTION(r, Opt_transparent))
-	{
-	    /*
-	     * Let rxvt_check_our_parents worry about refreshRootBGVars failing.
-	     */
-	    rxvt_check_our_parents(r);
-	    r->h->want_full_refresh = 1;
-	}
-    }
-#endif	    /* TRANSPARENT */
 }
 
 
@@ -5850,12 +5667,6 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 {
     int		color;
     char	*buf, *name;
-#if defined(TRANSPARENT) || defined(BACKGROUND_IMAGE)
-    int		changed = 0;
-# ifdef TINTING_SUPPORT
-    int		shade;
-# endif
-#endif
 
 
     assert(NOT_NULL(str));
@@ -5939,29 +5750,6 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	     * users should control menus.
 	     */
 	    break;
-
-#ifdef BACKGROUND_IMAGE
-	case XTerm_Pixmap:
-	    if (*str != ';')
-	    {
-		/* reset to default scaling */
-		rxvt_scale_pixmap(r, page, "");
-		/* change pixmap */
-		rxvt_load_bg_pixmap(r, page, str);
-		rxvt_scr_touch(r, page, True);
-	    }
-	    while (NOT_NULL(str = STRCHR(str, ';')))
-	    {
-		str++;
-		changed += rxvt_scale_pixmap(r, page, str);
-	    }
-	    if (changed)
-	    {
-		rxvt_resize_pixmap(r, page);
-		rxvt_scr_touch(r, page, True);
-	    }
-	    break;
-#endif
 
 	case XTerm_restoreFG:
 	    rxvt_set_window_color(r, page, Color_fg, str);
@@ -6168,12 +5956,6 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	    rxvt_toggle_verybold(r);
 	    break;
 
-#ifdef TRANSPARENT
-	case MRxvt_trans:
-	    rxvt_toggle_transparency (r);
-	    break;
-#endif	/* TRANSPARENT */
-
 #endif /* }}} */
 
 #ifdef MULTICHAR_SET
@@ -6233,45 +6015,6 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	    rxvt_tabbar_change_color (r, op, str);
 	    break;
 #endif
-
-#if defined(TRANSPARENT) || defined(BACKGROUND_IMAGE)
-# ifdef TINTING_SUPPORT
-	case MRxvt_tint:
-	    if (ISSET_PIXCOLOR (r->h, Color_tint) &&
-		r->h->rs[Rs_shade])
-		rxvt_set_window_color(r, page, Color_tint, str);
-	    break;
-
-	case MRxvt_bgfade:  /* Make bgfade behave like shade */
-	case MRxvt_shade:
-	    if (!ISSET_PIXCOLOR (r->h, Color_tint) ||
-		!r->h->rs[Rs_shade])
-		break;
-
-	    if( *str == '+' || *str == '-' )
-	    {
-		/* Relative shade level */
-		shade = (100 - r->TermWin.shade) + atoi(str);
-	    }
-	    else
-		/* Absolute shade level */
-		shade = atoi (str);
-
-	    if (shade >=0 && shade <= 100)
-	    {
-		shade = 100 - shade;	/* reverse it */
-		changed = (r->TermWin.shade != shade);
-		r->TermWin.shade = shade;
-	    }
-
-	    if (changed)
-	    {
-		/* shade value is changed, need to refresh terminals */
-		rxvt_refresh_bg_image (r, page, False);
-	    }
-	    break;
-# endif	/* TINTING_SUPPORT */
-#endif	/* TRANSPARENT || BACKGROUND_IMAGE */
 
 	case MRxvt_termenv:
 	    PVTS(r, page)->termenv = rxvt_get_termenv ((const char*) str);

@@ -180,21 +180,6 @@ rxvt_init (int argc, const char *const *argv)
 
 	rxvt_create_show_windows(r, argc, argv);
 
-#ifdef TRANSPARENT
-	if (ISSET_OPTION(r, Opt_transparent))
-	{
-		XSelectInput(r->Xdisplay, XROOT, PropertyChangeMask);
-		/*
-		 * Our "parents" will automatically be checked on the first expose and
-		 * ConfigureNotify event respectively. Forcefully calling it is just a
-		 * waste of time.
-		 */
-# if 0
-		rxvt_check_our_parents(r);
-# endif
-	}
-#endif
-
 	rxvt_init_env(r);
 	rxvt_init_command(r);
 	rxvt_init_screen (r);
@@ -2380,27 +2365,6 @@ Done:
     if( idx == Color_pointer )
 	rxvt_recolour_cursor(r);
 
-#if defined(TRANSPARENT) || defined(BACKGROUND_IMAGE)
-# ifdef TINTING_SUPPORT
-    if (idx == Color_tint)
-    {
-#  ifdef TRANSPARENT
-	if (ISSET_OPTION(r, Opt_transparent))
-	    /* reset background */
-	    rxvt_check_our_parents (r);
-	else
-#  endif
-#  ifdef BACKGROUND_IMAGE
-	{   /* reset background */
-	    for (i = 0; i <= LTAB(r); i ++)
-		rxvt_resize_pixmap (r, i);
-	}
-#  endif
-	{   /* empty body to suppress compile error */	}
-    }
-# endif	/* TINTING_SUPPORT */
-#endif	/* TRANSPARENT || BACKGROUND_IMAGE */
-
     /*
      * Restore the fg/bg colors from the active tab. Call rxvt_set_vt_colors
      * instead of rxvt_set_fgbg_colors, so that the GC fgbg & window background
@@ -2460,9 +2424,6 @@ rxvt_set_colorfgbg(rxvt_t *r)
 	if (r->pixColorsFocus[Color_bg] == r->pixColorsFocus[i])
 	{
 	    sprintf(bstr, "%d", (i - Color_Black));
-#ifdef BACKGROUND_IMAGE
-	    xpmb = "default;";
-#endif
 	    break;
 	}
     sprintf(r->h->env_colorfgbg, "COLORFGBG=%s;%s%s", fstr, xpmb, bstr);

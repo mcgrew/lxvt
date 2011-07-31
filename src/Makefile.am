@@ -42,7 +42,6 @@ mrxvt_SOURCES +=    command.c		\
 		    menubar.c		\
 		    misc.c		\
 		    netdisp.c		\
-		    pixmap.c		\
 		    ptytty.c		\
 		    rxvt.c		\
 		    rxvtmem.c		\
@@ -71,18 +70,6 @@ mrxvt_SOURCES +=    close_term.xpm	\
 #   -chown root $(DESTDIR)$(bindir)/mrxvt
 #   -chmod go-r $(DESTDIR)$(bindir)/mrxvt
 #   -chmod u+s $(DESTDIR)$(bindir)/mrxvt
-
-if USE_JPEG
-JPEG_SRC = mjpg.c
-else
-JPEG_SRC = 
-endif
-
-if USE_PNG
-PNG_SRC = mpng.c
-else
-PNG_SRC = 
-endif
 
 if PLAIN_SCROLLBAR
 SCROLLBAR_PLAIN_SRC = scrollbar-plain.c
@@ -187,7 +174,6 @@ misc.o:		    $(MRXVT_H) 				misc.c
 mjpg.o:		    $(MRXVT_H) 				mjpg.c
 mpng.o:		    $(MRXVT_H) 				mpng.c
 netdisp.o:	    $(MRXVT_H) 				netdisp.c
-pixmap.o:	    $(MRXVT_H) 				pixmap.c
 ptytty.o:	    $(MRXVT_H) 				ptytty.c
 rxvt.o:		    $(MRXVT_H) 				rxvt.c
 rxvtmem.o:	    $(MRXVT_H) 				rxvtmem.h rxvtmem.c

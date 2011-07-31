@@ -147,14 +147,8 @@ support_text_shadow=no
 support_smart_resize=no
 support_menubar=no
 support_tabbar=yes
-support_background_image=yes
-support_transparency=yes
 dnl: support_fading=yes
-support_tinting=yes
 support_xrender=yes
-support_xpm=yes
-support_jpeg=yes
-support_png=yes
 support_xft=no
 support_xim=no
 support_cjk=no
@@ -204,14 +198,8 @@ if test "x$support_everything" = "xyes"; then
     support_smart_resize=yes
     support_menubar=yes
     support_tabbar=yes
-    support_background_image=yes
-    support_transparency=yes
     dnl: support_fading=yes
-    support_tinting=yes
     support_xrender=yes
-    support_xpm=yes
-    support_jpeg=yes
-    support_png=yes
     support_xft=yes
     support_xim=yes
     support_cjk=yes
@@ -260,14 +248,8 @@ if test "x$support_minimal" = "xyes"; then
     support_smart_resize=no
     support_menubar=no
     support_tabbar=no
-    support_background_image=no
-    support_transparency=no
     dnl: support_fading=no
-    support_tinting=no
     support_xrender=no
-    support_xpm=no
-    support_jpeg=no
-    support_png=no
     support_xft=no
     support_xim=no
     support_cjk=no
@@ -581,16 +563,6 @@ if test "x$support_tabs x$support_tabbar" = "xyes xyes"; then
 fi
 
 
-AC_ARG_ENABLE(
-    transparency,
-    AC_HELP_STRING([--enable-transparency],[enable transparent background [[yes]]]),
-    [support_transparency=$enableval]
-)
-if test "x$support_transparency" = "xyes"; then
-    AC_DEFINE(TRANSPARENT, [], [set transparent background])
-fi
-
-
 dnl: No longer a compile time option, and OFF_FOCUS_FADING is now always
 dnl: enabled. 2006-09-14 gi1242.
 dnl:
@@ -605,36 +577,9 @@ dnl: fi
 
 
 AC_ARG_ENABLE(
-    tinting,
-    AC_HELP_STRING([--enable-tinting],[enable colors tinting [[yes]]]),
-    [support_tinting=$enableval]
-)
-
-AC_ARG_ENABLE(
     xrender,
     AC_HELP_STRING([--enable-xrender],[tint using XRender (slower but nicer results) [[yes]]]),
     [support_xrender=$enableval]
-)
-
-
-AC_ARG_ENABLE(
-    xpm,
-    AC_HELP_STRING([--enable-xpm],[enable XPM background pixmaps [[yes]]]),
-    [support_xpm=$enableval],
-)
-
-
-AC_ARG_ENABLE(
-    jpeg,
-    AC_HELP_STRING([--enable-jpeg],[enable JPEG background pixmaps [[yes]]]),
-    [support_jpeg=$enableval],
-)
-
-
-AC_ARG_ENABLE(
-    png,
-    AC_HELP_STRING([--enable-png],[enable PNG background pixmaps [[yes]]]),
-    [support_png=$enableval],
 )
 
 
@@ -930,69 +875,6 @@ if test "x$support_utempter" = "xyes"; then
     AC_DEFINE(UTEMPTER_SUPPORT, [], [set utempter library support])
 fi
 
-
-if test "x$support_xpm" = "xyes"; then
-    AC_CHECK_LIB(
-        Xpm,
-        XpmCreateImageFromXpmImage,
-        [],
-        [support_xpm=no]
-    )
-fi
-
-
-if test "x$support_jpeg" = "xyes"; then
-    AC_CHECK_LIB(
-        jpeg,
-        jpeg_read_header,
-        [],
-        [support_jpeg=no]
-    )
-fi
-if test "x$support_jpeg" = "xyes"; then
-    AC_DEFINE(USE_JPEG, [], [set JPEG background])
-fi
-AM_CONDITIONAL(USE_JPEG, test "x$support_jpeg" = "xyes")
-
-
-if test "x$support_png" = "xyes"; then
-    AC_CHECK_LIB(
-        png,
-        png_check_sig,
-        [],
-        [support_png=no],
-        [-lz -lm]
-    )
-fi
-if test "x$support_png" = "xyes"; then
-    AC_DEFINE(USE_PNG, [], [set PNG background])
-    LIBS="$LIBS -lz -lm"
-fi
-AM_CONDITIONAL(USE_PNG, test "x$support_png" = "xyes")
-
-
-if test "x$support_xpm" != "xyes" -a "x$support_jpeg" != "xyes" -a "x$support_png" != "xyes"; then
-    support_background_image=no
-    if test "x$support_transparency" = "xno"; then
-	dnl Need either background or transparency for tinting.
-	support_tinting=no
-    fi
-fi
-if test "x$support_background_image" = "xyes"; then
-    AC_DEFINE(BACKGROUND_IMAGE, [], [set background image])
-fi
-if test "x$support_tinting" = "xyes"; then
-    AC_DEFINE(TINTING_SUPPORT, [], [set tinting support])
-fi
-
-
-if test "x$support_xrender" = "xyes" -a "x$support_tinting" = "xyes"; then
-    AC_CHECK_LIB(
-	Xrender,
-	XRenderCreatePicture,
-    )
-    dnl AC_DEFINE(HAVE_XRENDER, [], [XRender tinting support])
-fi
 
 if test "x$support_xft" = "xyes"; then
     dnl Backup variables
@@ -1523,23 +1405,7 @@ echo "Menu bar                    : $support_menubar"
 if test "x$support_tabs" = "xyes"; then
 echo "Tab bar                     : $support_tabbar"
 fi
-echo
-echo "Background features:"
-echo "Background image            : $support_background_image"
-echo "XPM background image        : $support_xpm"
-echo "JPEG background image       : $support_jpeg"
-echo "PNG background image        : $support_png"
-echo "Transparent background      : $support_transparency"
 dnl: echo "Off focus fading            : $support_fading"
-if test "x$support_tinting" = "xno"; then
-    echo "Background tinting          : $support_tinting"
-else
-    if test "x$support_xrender" = "xyes"; then
-	echo "Background tinting          : $support_tinting (XRender)"
-    else
-	echo "Background tinting          : $support_tinting (Fast)"
-    fi
-fi
 echo
 echo "Multi-language and font features:"
 echo "Freetype Font               : $support_xft"

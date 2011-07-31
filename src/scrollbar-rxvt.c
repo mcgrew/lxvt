@@ -145,43 +145,13 @@ rxvt_scrollbar_init_rxvt (rxvt_t* r)
 
 
     gcvalue.foreground = r->scrollBar.rxvt_fg;
-# ifdef TRANSPARENT
-    /* set background color when there's no transparent */
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_scrollbar)
-	))
-# endif
-# ifdef BACKGROUND_IMAGE
-    /* set background color when there's no bg image */
-    if (NOT_PIXMAP(r->scrollBar.pixmap))
-# endif
     gcvalue.background = r->scrollBar.rxvt_bg;
     gcmask = GCForeground;
-# ifdef TRANSPARENT
-    /* set background color when there's no transparent */
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_scrollbar)
-	))
-# endif
-# ifdef BACKGROUND_IMAGE
-    /* set background color when there's no bg image */
-    if (NOT_PIXMAP(r->scrollBar.pixmap))
-# endif
     gcmask |= GCBackground;
     r->scrollBar.gc = XCreateGC (r->Xdisplay, r->scrollBar.win,
 			gcmask, &gcvalue);
     assert (IS_GC(r->scrollBar.gc));
 
-# ifdef TRANSPARENT
-    /* set background color when there's no transparent */
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_scrollbar)
-	))
-# endif
-# ifdef BACKGROUND_IMAGE
-    /* set background color when there's no bg image */
-    if (NOT_PIXMAP(r->scrollBar.pixmap))
-# endif
 	XSetWindowBackground (r->Xdisplay, r->scrollBar.win,
 	    r->scrollBar.rxvt_bg);
 }
@@ -216,28 +186,6 @@ rxvt_scrollbar_show_rxvt(rxvt_t *r, int update __attribute__((unused)), int last
 		False);
 
     /* scrollbar slider */
-#ifdef TRANSPARENT
-    /* clear background when there's transparent */
-    if (ISSET_OPTION(r, Opt_transparent) &&
-	ISSET_OPTION(r, Opt_transparent_scrollbar)
-       )
-    {
-	XClearArea (r->Xdisplay, r->scrollBar.win,
-		sbshadow, r->scrollBar.top, sbwidth, scroller_len,
-		False);
-    }
-    else
-#endif
-# ifdef BACKGROUND_IMAGE
-    /* clear background when there's bg image */
-    if (IS_PIXMAP(r->scrollBar.pixmap))
-    {
-	XClearArea (r->Xdisplay, r->scrollBar.win,
-		sbshadow, r->scrollBar.top, sbwidth, scroller_len,
-		False);
-    }
-    else
-# endif
     {
 	CHOOSE_GC_FG (r, r->scrollBar.rxvt_fg);
 	XFillRectangle (r->Xdisplay, r->scrollBar.win, r->scrollBar.gc,
