@@ -268,7 +268,6 @@ typedef enum
 
 /* rxvt_vars.Options2 */
 #define Opt2_protectSecondary	    ((1LU<<2) | IS_OPTION2)
-#define Opt2_cmdAllTabs		    ((1LU<<3) | IS_OPTION2)
 #ifdef XFT_SUPPORT
 # ifdef MULTICHAR_SET
 #  define Opt2_xftNomFont	    ((1LU<<4) | IS_OPTION2)

@@ -332,8 +332,6 @@ static const struct {
 	"size of propotional freetype font", 0),
 #endif
 
-    BOOL( "cmdAllTabs", "at", Opt2_cmdAllTabs,
-	    "running -e command for all tabs" ),
     BOOL( "protectSecondary", "ps", Opt2_protectSecondary,
 	    "protecting tab that uses the secondary screen from being closed" ),
 
