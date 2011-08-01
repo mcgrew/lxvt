@@ -705,9 +705,6 @@ rxvt_init_vars(rxvt_t *r)
     h->want_resize = 0;
     h->ttygid = -1;
     r->Xfd = -1;
-#ifdef USE_FIFO
-    r->fifo_fd = -1;
-#endif
     r->ndead_childs = 0;
 
     r->nAsyncChilds = 0;
@@ -767,16 +764,6 @@ rxvt_init_vars(rxvt_t *r)
     r->TermWin.ice_fd = -1;
     SET_NULL(r->TermWin.sm_client_id);
 #endif
-
-#ifdef USE_FIFO
-    {
-	char fifo_name[FILENAME_MAX];
-
-	sprintf( fifo_name, "/tmp/.mrxvt-%d", getpid() );
-	r->fbuf_ptr = r->fifo_buf;
-	r->fifo_name = STRDUP( fifo_name );
-    }
-#endif/*USE_FIFO*/
 
     h->allowedxerror = 0;
     h->xerror_return = Success;
@@ -1460,29 +1447,6 @@ rxvt_init_xlocale(rxvt_t *r)
 /*----------------------------------------------------------------------*/
 
 /* EXTPROTO */
-#ifdef USE_FIFO
-void
-rxvt_init_fifo( rxvt_t *r )
-{
-    unlink( r->fifo_name );
-    mkfifo( r->fifo_name, 0600 );
-
-    /*
-     * Create the fifo in read write mode. If not, when no clients have the
-     * fifo open, select() will claim our fifo has data pending and return.
-     */
-    r->fifo_fd = open( r->fifo_name, O_RDONLY|O_NDELAY );
-    if( r->fifo_fd == -1 )
-	UNSET_OPTION( r, Opt_useFifo );
-    else
-	MAX_IT( r->num_fds, r->fifo_fd + 1);
-
-    /* Reset the fifo buffer */
-    r->fbuf_ptr = r->fifo_buf;
-}
-#endif
-
-/* EXTPROTO */
 void
 rxvt_init_command(rxvt_t* r)
 {
@@ -1509,12 +1473,6 @@ rxvt_init_command(rxvt_t* r)
     rxvt_get_ourmods(r);
 
     r->Xfd = XConnectionNumber(r->Xdisplay);
-#ifdef USE_FIFO
-    if( ISSET_OPTION( r, Opt_useFifo ) )
-	rxvt_init_fifo( r );
-    else
-	r->fifo_fd = -1;
-#endif
 
 #ifdef CURSOR_BLINK
     if (ISSET_OPTION(r, Opt_cursorBlink))

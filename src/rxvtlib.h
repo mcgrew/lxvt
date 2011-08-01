@@ -63,9 +63,6 @@ typedef unsigned char text_t;
 # define rend_t	    uint16_t
 #endif
 
-/* Size of the FIFO buffer */
-#define FIFO_BUF_SIZE (512)
-
 /*
  * TermWin elements limits
  *  ncol      : 1 <= ncol       <= MAX(int16_t)
@@ -261,9 +258,6 @@ typedef enum
 #ifdef XFT_SUPPORT
 # define Opt_xft		    ((1LU<<28) | IS_OPTION1)
 #endif
-#ifdef USE_FIFO
-# define Opt_useFifo		    ((1LU<<29) | IS_OPTION1)
-#endif/*USE_FIFO*/
 #define DEFAULT_OPTIONS	            0
 
 /* rxvt_vars.Options2 */
@@ -579,7 +573,6 @@ enum
     MacroFnToggleFullscreen,
     MacroFnRaise,
     MacroFnSetTitle,
-    MacroFnUseFifo,
     MacroFnSaveConfig,
     MacroFnToggleMacros,
     NMACRO_FUNCS
@@ -703,16 +696,6 @@ typedef struct rxvt_vars
 					     * rxvt_async_exec */
 
     int		    num_fds;		    /* number of fd to monitor */
-
-
-#ifdef USE_FIFO
-    int		    fifo_fd;			/* fd to read macros from */
-    char	    fifo_buf[FIFO_BUF_SIZE];	/* Buffer size of data read from
-						   fifo_fd */
-    char	    *fbuf_ptr;			/* Pointer where data from
-						   fifo_fd should be read */
-    char	    *fifo_name;			/* Name of the fifo */
-#endif
 
 
     selection_t     selection;

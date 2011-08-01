@@ -2174,11 +2174,6 @@ rxvt_cmd_getc(rxvt_t *r)
 	    FD_SET(r->TermWin.ice_fd, &readfds);
 #endif
 
-#ifdef USE_FIFO
-	if( r->fifo_fd != -1 )
-	    FD_SET( r->fifo_fd, &readfds );
-#endif
-
 	rxvt_dbgmsg(( DBG_DEBUG, DBG_COMMAND,
 		    "Calling select( num_fds=%d, timeout=%06du, &readfds)",
 		    r->num_fds,
@@ -2218,79 +2213,6 @@ rxvt_cmd_getc(rxvt_t *r)
 	      )
 		rxvt_process_ice_msgs (r);
 #endif
-
-#ifdef USE_FIFO /* {{{ Execute macros read from the fifo */
-	    if( -1 != r->fifo_fd  && FD_ISSET(r->fifo_fd, &readfds))
-	    {
-		ssize_t	len;
-		int	nbytes;
-
-		nbytes = sizeof(r->fifo_buf) - (r->fbuf_ptr - r->fifo_buf) - 1;
-		assert( nbytes > 0 );
-		
-		errno = 0;
-		len = read( r->fifo_fd, r->fbuf_ptr, nbytes );
-		
-		if( errno )
-		{
-		    rxvt_msg (DBG_ERROR, DBG_COMMAND, "Error: reading fifo %s", strerror (errno));
-		}
-
-		if( len == 0 )
-		{
-		    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Reopening fifo %s\n", r->fifo_name ));
-		    close( r->fifo_fd );
-		    r->fifo_fd = open( r->fifo_name, O_RDONLY|O_NDELAY );
-		    rxvt_adjust_fd_number( r );
-
-		    /* Flush the fifo buffer */
-		    r->fbuf_ptr = r->fifo_buf;
-		}
-
-		else if( len > 0 )
-		{
-		    char	astr[FIFO_BUF_SIZE];
-		    char	*fptr = r->fifo_buf,
-				*aptr;
-		    action_t    action;
-
-		    SET_NULL( action.str );
-
-		    r->fbuf_ptr += len;	    /* Point to end of fifo_buf */
-
-		    for(;;)
-		    {
-			aptr = astr;
-			while( fptr < r->fbuf_ptr && *fptr && *fptr != '\n' )
-			    *(aptr++) = *(fptr++);
-
-			if( fptr < r->fbuf_ptr && *fptr == '\n' )
-			{
-			    /* Got complete action. Execute it */
-			    *aptr = 0;
-			    if( rxvt_set_action( &action, astr ) )
-				rxvt_dispatch_action( r, &action, NULL );
-
-			    fptr++; /* Advance to next char */
-			}
-
-			else
-			{
-			    /*
-			     * Incomplete action. Copy it to the fifo buffer and
-			     * break out
-			     */
-			    MEMCPY( r->fifo_buf, astr, aptr - astr );
-			    r->fbuf_ptr = r->fifo_buf + (aptr - astr);
-			    break;
-			}
-
-		    }
-
-		    rxvt_free( action.str );
-		}
-	    }
-#endif/*USE_FIFO}}}*/
 
 	    /*
 	     * Now figure out if we have something to return.

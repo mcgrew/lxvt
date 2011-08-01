@@ -438,9 +438,6 @@ static const struct {
     STRG(Rs_debug_level, "dbgLevel", "dlevel", "string", 
 	"Name of number of the debug level", 0),
 
-#ifdef USE_FIFO
-    BOOL( "useFifo", NULL, Opt_useFifo, NULL ),
-#endif/*USE_FIFO*/
     INFO("e", "command arg ...", "command to execute")
 };
 

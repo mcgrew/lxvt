@@ -48,7 +48,6 @@ static const char *const macroNames[] =
     "ToggleFullscreen",	    /* Toggle full screen mode */
     "Raise",		    /* Raise the terminal window */
     "SetTitle",		    /* Set title of active tab to selection */
-    "UseFifo",		    /* Enable / disable using fifo */
     "SaveConfig",	    /* Save config to file */
     "ToggleMacros"	    /* Toggle using keyboard macros */
 };
@@ -986,38 +985,6 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	    else
 		retval = -1;
 	    break;
-
-#ifdef USE_FIFO
-	case MacroFnUseFifo:
-	    if( NOT_NULL( astr ) )
-	    {
-		int state = strtol( astr, NULL, 0 );
-
-		if( state == -1 )
-		    state = ISSET_OPTION( r, Opt_useFifo ) ? 0 : 1;
-
-		if( state == 1 && !ISSET_OPTION( r, Opt_useFifo ) )
-		{
-		    SET_OPTION( r, Opt_useFifo );
-		    rxvt_init_fifo( r );
-		}
-
-		else if( state == 0 && ISSET_OPTION( r, Opt_useFifo ) )
-		{
-		    if( r->fifo_fd != -1 )
-		    {
-			close( r->fifo_fd );
-			if( r->num_fds == r->fifo_fd + 1)
-			    rxvt_adjust_fd_number( r );
-
-			r->fifo_fd = -1;
-			unlink( r->fifo_name );
-		    }
-		    UNSET_OPTION( r, Opt_useFifo );
-		}
-	    }
-	    break;
-#endif/*USE_FIFO*/
 
 	case MacroFnSaveConfig:
 	{
