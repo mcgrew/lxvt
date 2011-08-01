@@ -2380,11 +2380,7 @@ rxvt_scr_bell(rxvt_t *r)
 	XMapWindow(r->Xdisplay, r->TermWin.parent);
 # endif
     if(
-	    ISSET_OPTION(r, Opt_visualBell) ||
-	    (
-	     ISSET_OPTION( r, Opt_currentTabVBell )
-	     && r->TermWin.focus
-	    )
+	    ISSET_OPTION(r, Opt_visualBell)
       )
     {
 	/*
@@ -2406,9 +2402,6 @@ rxvt_scr_bell(rxvt_t *r)
 	    rxvt_scr_rvideo_mode(r, !PVTS(r)->rvideo);
 	}
     }
-
-    else if( r->h->rs[Rs_bellCommand] && *r->h->rs[Rs_bellCommand] )
-	rxvt_async_exec( r, r->h->rs[Rs_bellCommand] );
 
     else
     {

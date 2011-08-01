@@ -164,12 +164,8 @@ static const struct {
 
 #ifndef NO_BELL
     BOOL( "visualBell", "vb", Opt_visualBell, "visual bell" ),
-    BOOL( "currentTabVBell", "ctvb", Opt_currentTabVBell,
-	    "visual bell only for active tab in focused window" ),
     RSTRG( Rs_vBellDuration, "vBellDuration",
 	    "Duration (ms) of the visual bell", 0),
-    STRG( Rs_bellCommand, "bellCommand", "blc",
-	"string", "command to execute instead of beeping", 0),
 # if ! defined(NO_MAPALERT) && defined(MAPALERT_OPTION)
     BOOL( "mapAlert", NULL, Opt_mapAlert, NULL ),
 # endif

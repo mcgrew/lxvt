@@ -247,7 +247,6 @@ typedef enum
 #define Opt_loginShell		    ((1LU<<3) | IS_OPTION1)
 #define Opt_iconic		    ((1LU<<4) | IS_OPTION1)
 #define Opt_visualBell		    ((1LU<<5) | IS_OPTION1)
-#define Opt_currentTabVBell	    ((1LU<<6) | IS_OPTION1)
 #define Opt_mapAlert		    ((1LU<<7) | IS_OPTION1)
 #define Opt_reverseVideo	    ((1LU<<8) | IS_OPTION1)
 #define Opt_utmpInhibit		    ((1LU<<9) | IS_OPTION1)
@@ -282,7 +281,6 @@ typedef enum
 #endif
 #define Opt2_borderLess		    ((1LU<<14) | IS_OPTION2)
 #define Opt2_overrideRedirect	    ((1LU<<15) | IS_OPTION2)
-#define Opt2_hideButtons	    ((1LU<<17) | IS_OPTION2)
 #define Opt2_veryBold		    ((1LU<<18) | IS_OPTION2)
 #ifndef NO_BRIGHTCOLOR
 # define Opt2_boldColors	    ((1LU<<19) | IS_OPTION2)
@@ -294,7 +292,6 @@ typedef enum
 # define Opt2_enableSessionMgt	    ((1LU<<23) | IS_OPTION2)
 #endif
 #define Opt2_linuxHomeEndKey	    ((1LU<<24) | IS_OPTION2)
-#define Opt2_hlTabOnBell	    ((1LU<<25) | IS_OPTION2)
 #define Opt2_smoothResize	    ((1LU<<26) | IS_OPTION2)
 #define Opt2_smartResize	    ((1LU<<27) | IS_OPTION2)
 #define Opt2_maximized		    ((1LU<<29) | IS_OPTION2)
