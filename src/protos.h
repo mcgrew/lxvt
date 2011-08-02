@@ -123,10 +123,6 @@ void             rxvt_cleanutent                  __PROTO((rxvt_t* r, int page))
 
 
 /* Begin prototypes of rxvtmem.c */
-#ifdef OUR_MALLOC
-void             rxvt_mem_init                    __PROTO((void));
-void             rxvt_mem_exit                    __PROTO((void));
-#endif /* OUR_MALLOC */
 void*            rxvt_malloc                      __PROTO((size_t size));
 void*            rxvt_calloc                      __PROTO((size_t number, size_t size));
 void*            rxvt_realloc                     __PROTO((void *ptr, size_t size));
