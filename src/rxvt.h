@@ -1416,13 +1416,13 @@ struct rxvt_hidden {
  * strdup or strndup because we want to free the memory allocated
  * by strdup/strndup using our free function
  */
-# if defined(HAVE_STRDUP) && !defined(OUR_MALLOC)
+# if defined(HAVE_STRDUP)
 #  define STRDUP(x)		strdup((const char *)(x))
 # else
 #  define STRDUP(x)		ma_strdup((const char *)(x))
 # endif
 
-# if defined(HAVE_STRNDUP) && !defined(OUR_MALLOC)
+# if defined(HAVE_STRNDUP)
 #  define STRNDUP(x, z)		strndup((const char TAINTED *)(x), (size_t) (z))
 # else
 #  define STRNDUP(x, z)		ma_strndup((const char TAINTED *)(x), (size_t) (z))

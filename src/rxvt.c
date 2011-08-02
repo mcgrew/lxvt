@@ -53,19 +53,10 @@ main(int argc, const char *const *argv)
      */
     rxvt_parse_dbg_arguments (argc, argv);
 
-#ifdef OUR_MALLOC
-    /* initialize our memory management system */
-    rxvt_mem_init ();
-#endif
-
     if ((rxvt_vars = rxvt_init(argc, argv)) == NULL)
 	return EXIT_FAILURE;
 
     rxvt_main_loop(rxvt_vars);	/* main processing loop */
-
-#ifdef OUR_MALLOC
-    rxvt_mem_exit ();
-#endif
 
     return EXIT_SUCCESS;
 }
