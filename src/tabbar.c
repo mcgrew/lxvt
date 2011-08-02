@@ -85,19 +85,13 @@ rxvt_adjust_fd_number( rxvt_t* r )
  */
 /* EXTPROTO */
 void
-rxvt_append_page( rxvt_t* r, int profile,
+rxvt_append_page( rxvt_t* r,
 	const char *command )
 {
     int	    num_cmd_args = 0; /* Number of args we got from parsing command */
     char**  argv;
 
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "rxvt_append_page( r, %d, %s )\n", profile, command ? command : "(nil)" ));
-
-    if( profile < 0 || profile >= MAX_PROFILES )
-    {
-	rxvt_msg (DBG_WARN, DBG_TABBAR,  "Warning: Profile '%d' out of range; use profile '0' instead.", profile );
-	profile = 0;
-    }
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "rxvt_append_page( r, %s )\n", command ? command : "(nil)" ));
 
     //LTAB(r)++;
 
@@ -115,7 +109,7 @@ rxvt_append_page( rxvt_t* r, int profile,
     {
 	/* load tab command if necessary*/
 	if( command == NULL )
-	    command = getProfileOption( r, profile, Rs_command );
+	    command = getProfileOption( r, Rs_command );
 
 	if( command != NULL && *command != '!' )
 	{
@@ -132,8 +126,7 @@ rxvt_append_page( rxvt_t* r, int profile,
     }
     rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "\tForking command=%s, argv[0]=%s\n", command ? command : "(nil)", ( argv && argv[0] ) ? argv[0] : "(nil)" ));
 
-    if (!rxvt_create_termwin( r, 
-		profile ))
+    if (!rxvt_create_termwin( r ))
     {
 	rxvt_dbgmsg ((DBG_ERROR, DBG_TABBAR,
 		    "\tThe initialization of the new tab failed.\n"));
@@ -146,9 +139,9 @@ rxvt_append_page( rxvt_t* r, int profile,
      * 2006-02-17 gi1242: Bug -- If the child produces some output and exits
      * quickly, then some of that output is sometimes lost.
      */
-    if( getProfileOption( r, profile, Rs_cwd ) != NULL )
+    if( getProfileOption( r, Rs_cwd ) != NULL )
     {
-	const char  *cwdOption	= getProfileOption( r, profile, Rs_cwd );
+	const char  *cwdOption	= getProfileOption( r, Rs_cwd );
 	char	    cwd[PATH_MAX] = "",
 		    child_cwd[PATH_MAX] = "";
 	int	    len = 0;

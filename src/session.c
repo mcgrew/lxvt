@@ -138,11 +138,6 @@ callback_save_yourself (SmcConn smc_conn, SmPointer client_data, int save_style,
 	char		restart_style = SmRestartIfRunning;
 	struct passwd*	pw = NULL;
 	int		n = 0, i;
-	//char		initprof[(32+1) * MAX_PAGES];
-	char		initprof[(32+1)];
-	/* TODO Jehan: check the meaning of this initprof save.
-	 * What is the right variable to replace MAX_PAGES?
-	 */
 	char		desktop[32 + 1];
 	char		geometry[(32+1)*4];
 	int		x, y;
@@ -164,8 +159,6 @@ callback_save_yourself (SmcConn smc_conn, SmPointer client_data, int save_style,
 	vals.priority->value  = &priority;
 	vals.priority->length = 1;
 
-	/* generate init profile list */
-	sprintf (initprof, "%d", PVTS(r)->profileNum);
 	/* generate desktop number */
 	sprintf (desktop, "%d", (int) rxvt_get_desktop (r));
 	/* generate window geometry */
@@ -178,8 +171,6 @@ callback_save_yourself (SmcConn smc_conn, SmPointer client_data, int save_style,
 	STRCAT (geometry, posy);
 
 	vals.restart[n++].value = (r->global_argv)[0];
-	vals.restart[n++].value = "-ip";
-	vals.restart[n++].value = initprof;
 	vals.restart[n++].value = "-desktop";
 	vals.restart[n++].value = desktop;
 	vals.restart[n++].value = "-geometry";

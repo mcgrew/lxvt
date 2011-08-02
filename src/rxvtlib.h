@@ -349,8 +349,6 @@ typedef enum
 
 typedef struct
 {
-    unsigned char   profileNum;	    /* Profile used to init settings */
-
     /* moved from TermWin_t */
     uint16_t	    saveLines;	/* number of lines to save */
     uint16_t	    num_scr;	/* number of lines scrolled */
@@ -536,7 +534,6 @@ enum
     MacroFnDummy=0,
     MacroFnEsc,
     MacroFnStr,
-    MacroFnNewTab,
     MacroFnExec,
     MacroFnClose,
     MacroFnScroll,
@@ -646,7 +643,7 @@ typedef struct rxvt_vars
 # endif
 
 
-    profile_t	    profile[MAX_PROFILES];
+    profile_t	    profile;
 
     Cursor	    term_pointer;	    /* cursor for vt window */
     int		    Xdepth;
@@ -697,51 +694,35 @@ typedef enum
 
 
 /* MACROS for colors of individual terminals */
-#if 0
-#define VTFG(R, P)	\
-    ((R)->pixColors[TOTAL_COLORS + (P)])
-#define VTBG(R, P)	\
-    ((R)->pixColors[TOTAL_COLORS + MAX_PAGES + (P)])
-#ifdef XFT_SUPPORT
-# define VTXFTFG(R, P)	    \
-    ((R)->xftColors[TOTAL_COLORS + (P)])
-# define VTXFTBG(R, P)	    \
-    ((R)->xftColors[TOTAL_COLORS + MAX_PAGES + (P)])
-#endif	/* XFT_SUPPORT */
-#define ISSET_VTFG(R, P)    \
-    (NULL != ((R)->h->rs[Rs_color + TOTAL_COLORS + (P)]))
-#define ISSET_VTBG(R, P)    \
-    (NULL != ((R)->h->rs[Rs_color + TOTAL_COLORS + MAX_PAGES + (P)]))
-#endif
 
-#define VTFG(R, P)	\
-    ((R)->profile[(P)].fg)
-#define VTBG(R, P)	\
-    ((R)->profile[(P)].bg)
+#define VTFG(R)	\
+    ((R)->profile.fg)
+#define VTBG(R)	\
+    ((R)->profile.bg)
 
 #ifdef XFT_SUPPORT
-# define VTXFTFG(R, P)	    \
-    ((R)->profile[(P)].xftfg)
-# define VTXFTBG(R, P)	    \
-    ((R)->profile[(P)].xftbg)
+# define VTXFTFG(R)	    \
+    ((R)->profile.xftfg)
+# define VTXFTBG(R)	    \
+    ((R)->profile.xftbg)
 #endif	/* XFT_SUPPORT */
 
-# define VTFG_FADE(R, P)	    \
-    ((R)->profile[(P)].fg_fade)
-# define VTBG_FADE(R, P)	    \
-    ((R)->profile[(P)].bg_fade)
+# define VTFG_FADE(R)	    \
+    ((R)->profile.fg_fade)
+# define VTBG_FADE(R)	    \
+    ((R)->profile.bg_fade)
 
 # ifdef XFT_SUPPORT
-#  define VTXFTFG_FADE(R, P)	    \
-    ((R)->profile[(P)].xftfg_fade)
-#  define VTXFTBG_FADE(R, P)	    \
-    ((R)->profile[(P)].xftbg_fade)
+#  define VTXFTFG_FADE(R)	    \
+    ((R)->profile.xftfg_fade)
+#  define VTXFTBG_FADE(R)	    \
+    ((R)->profile.xftbg_fade)
 # endif /* XFT_SUPPORT */
 
-#define ISSET_VTFG(R, P)    \
-    (NULL != ((R)->h->rs[Rs_foreground + (P)] ) )
-#define ISSET_VTBG(R, P)    \
-    (NULL != ((R)->h->rs[Rs_background + (P)] ) )
+#define ISSET_VTFG(R)    \
+    (NULL != ((R)->h->rs[Rs_foreground] ) )
+#define ISSET_VTBG(R)    \
+    (NULL != ((R)->h->rs[Rs_background] ) )
 
 
 

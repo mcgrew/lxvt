@@ -33,7 +33,6 @@ static const char *const macroNames[] =
     "Dummy",		    /* Delete macro */
     "Esc",		    /* Escape sequence to send to mrxvt */
     "Str",		    /* String to send to child process */
-    "NewTab",		    /* Open a new tab, and exec a program in it. */
     "Exec",		    /* Exec a program asynchronusly */
     "Close",		    /* Close tab(s) */
     "Scroll",		    /* Scroll up/down */
@@ -724,46 +723,6 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 			macroNames[action->type] );
 		retval = -1;
 	    }
-	    break;
-
-	case MacroFnNewTab:
-	    if (NOT_NULL(astr))
-	    {
-		/*
-		 * If the first word is quoted, use that as the title. Don't be
-		 * fancy and check for nested quotes. That's probably
-		 * unnecessary.
-		 *
-		 * Everything after the first quoted word is the command. If
-		 * command starts with "!", then the shell is exec'ed before
-		 * running command.
-		 */
-
-		char	    *command = (char *) astr;
-
-		int	    profile = 0;
-
-		/* See if a profile is specified */
-		if( *command == '-' )
-		{
-		    char *pnum_end;
-		    profile = strtoul( ++command, &pnum_end, 0 );
-
-		    if( profile < 0 || profile >= MAX_PROFILES )
-			profile = PVTS(r)->profileNum;
-
-		    /* Skip spaces */
-		    command = pnum_end;
-		    while( isspace( *command ) ) command++;
-		}
-
-		/* Add page */
-		rxvt_append_page( r, profile,
-				    *command ? command : NULL );
-	    }
-	    else
-		rxvt_append_page( r, 0, NULL );
-
 	    break;
 
 	case MacroFnExec:

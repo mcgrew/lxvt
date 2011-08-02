@@ -185,14 +185,8 @@ rxvt_init (int argc, const char *const *argv)
 	/*
 	 * Initialize the pages.
 	 */
-	if (r->h->rs[Rs_initProfile])
-	{
-		int profile = atoi( r->h->rs[Rs_initProfile] );
-		rxvt_append_page (r, profile, NULL);
-	}
 	/* Just open the default tab */
-	else
-		rxvt_append_page( r, 0, NULL );
+	rxvt_append_page( r, NULL );
 
 	/* Initialize xlocale after VT is created */
 	rxvt_init_xlocale(r);
@@ -2282,7 +2276,7 @@ rxvt_recolour_cursor(rxvt_t *r)
     XColor	    xcol[2];
 
     xcol[0].pixel = r->pixColorsFocus[Color_pointer];
-    xcol[1].pixel = VTBG(r, 0);
+    xcol[1].pixel = VTBG(r);
     XQueryColors(r->Xdisplay, XCMAP, xcol, 2);
     XRecolorCursor(r->Xdisplay, r->term_pointer, &(xcol[0]), &(xcol[1]));
 

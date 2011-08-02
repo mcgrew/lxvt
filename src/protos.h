@@ -92,8 +92,8 @@ void             rxvt_init_command                __PROTO((rxvt_t* r));
 CARD32           rxvt_get_desktop                 __PROTO((rxvt_t* r));
 void             rxvt_create_show_windows         __PROTO((rxvt_t* r, int argc, const char* const *argv));
 void             rxvt_destroy_termwin             __PROTO((rxvt_t* r));
-int             rxvt_create_termwin              __PROTO((rxvt_t* r, int profile));
-const char*	 getProfileOption		  __PROTO(( rxvt_t *r, int profile, int resource ));
+int             rxvt_create_termwin              __PROTO((rxvt_t* r));
+const char*	 getProfileOption		  __PROTO(( rxvt_t *r, int resource ));
 Status		 ewmh_message			  __PROTO(( Display *, Window, Window, Atom, long, long, long, long, long));
 int		 rxvt_async_exec		  __PROTO((rxvt_t*, const char *));
 int              rxvt_run_command                 __PROTO((rxvt_t* r, const char** argv));
@@ -274,7 +274,7 @@ void             rxvt_extract_resources           __PROTO((rxvt_t* r, Display *d
 
 
 /* Begin prototypes of tabbar.c */
-void             rxvt_append_page               __PROTO((rxvt_t*, int profile, const char *command));
+void             rxvt_append_page               __PROTO((rxvt_t*, const char *command));
 void             rxvt_kill_page                 __PROTO((rxvt_t*));
 void             rxvt_remove_page               __PROTO((rxvt_t*));
 void             rxvt_adjust_fd_number          __PROTO((rxvt_t* r));

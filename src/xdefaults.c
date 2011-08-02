@@ -56,23 +56,23 @@ static const char *const xnames[3] = {
 
 /* INFO() - descriptive information only */
 #define INFO(opt, arg, desc)			\
-    {0, -1, NULL, (opt), (arg), (desc), 0}
+    {0, -1, NULL, (opt), (arg), (desc)}
 
 /* STRG() - command-line option, with/without resource */
-#define STRG(rsp, kw, opt, arg, desc, multiple)		    \
-    {0, (rsp), (kw), (opt), (arg), (desc), (multiple)}
+#define STRG(rsp, kw, opt, arg, desc)		    \
+    {0, (rsp), (kw), (opt), (arg), (desc)}
 
 /* RSTRG() - resource/long-option */
-#define RSTRG(rsp, kw, arg, multiple)			\
-    {0, (rsp), (kw), NULL, (arg), NULL, (multiple)}
+#define RSTRG(rsp, kw, arg)			\
+    {0, (rsp), (kw), NULL, (arg), NULL}
 
 /* BOOL() - regular boolean `-/+' flag */
 #define BOOL(kw, opt, flag, desc)		    \
-    {(flag), -1, (kw), (opt), NULL, (desc), 0}
+    {(flag), -1, (kw), (opt), NULL, (desc)}
 
 /* SWCH() - `-' flag */
 #define SWCH(kw, opt, flag, desc)		    \
-    {(flag), -1, (kw), (opt), NULL, (desc), 0}
+    {(flag), -1, (kw), (opt), NULL, (desc)}
 
 
 /* convenient macros */
@@ -80,8 +80,6 @@ static const char *const xnames[3] = {
     (optList[i].flag ? 0 : (optList[i].arg ? STRLEN(optList[i].arg) : 1))
 #define optList_isBool(i)		    \
     (optList[i].flag)
-#define optList_isMultiple(i)		    \
-    (optList[i].multiple)
 #define optList_size()			    \
     (sizeof(optList) / sizeof(optList[0]))
 
@@ -92,26 +90,24 @@ static const struct {
     const char*	    opt;	/* option */
     const char*	    arg;	/* argument */
     const char*	    desc;	/* description */
-
-    const char	    BOOLVAR( multiple, 1 ); /* multiple values for profiles */
 } optList[] = {
     /* Options for each profile */
     STRG(Rs_saveLines, "saveLines", "sl", "number",
-	    "number of scrolled lines to save for tab", 1),
+	    "number of scrolled lines to save for tab"),
     STRG(Rs_command, "command", "e", "string",
-	    "command to execute for a tab", 1),
+	    "command to execute for a tab"),
     STRG( Rs_foreground, "foreground", "fg", "color",
-	    "foreground color for a tab", 1),
+	    "foreground color for a tab"),
     STRG( Rs_background, "background", "bg", "color",
-	    "background color for a tab", 1),
+	    "background color for a tab"),
     STRG( Rs_cwd, "workingDirectory", "wd", "dir",
-	    "Working directory to open new tabs in", 1 ),
+	    "Working directory to open new tabs in"),
     STRG(Rs_holdExit, "holdExit", "hold", "number",
-	    "Keep tab open after child exits, based on childs exit status", 1 ),
+	    "Keep tab open after child exits, based on childs exit status"),
     STRG(Rs_holdExitTxt, "holdExitText", "het",
-	"string", "text to show while holding the terminal", 1),
+	"string", "text to show while holding the terminal"),
     STRG(Rs_holdExitTtl, "holdExitTitle", "heT",
-	"string", "Tab title of exited tabs", 1),
+	"string", "Tab title of exited tabs"),
 
     /* Global options */
     BOOL( "veryBoldFont", "vbf", Opt2_veryBold,
@@ -126,13 +122,13 @@ static const struct {
 #endif
 
 
-    STRG(Rs_container_window, NULL, "into", "WinID", "Parent window id", 0),
-    STRG(Rs_display_name, NULL, "d", NULL, NULL, 0),
-    STRG(Rs_display_name, NULL, "display", "string", "X server to contact", 0),
-    STRG(Rs_term_name, "termName", "tn", "string", "the TERM environment variable", 0),
-    STRG(Rs_title, "title", "title", "string", "title name for window", 0),
-    STRG(Rs_geometry, NULL, "g", NULL, NULL, 0),
-    STRG(Rs_geometry, "geometry", "geometry", "geometry", "size (in characters) and position", 0),
+    STRG(Rs_container_window, NULL, "into", "WinID", "Parent window id"),
+    STRG(Rs_display_name, NULL, "d", NULL, NULL),
+    STRG(Rs_display_name, NULL, "display", "string", "X server to contact"),
+    STRG(Rs_term_name, "termName", "tn", "string", "the TERM environment variable"),
+    STRG(Rs_title, "title", "title", "string", "title name for window"),
+    STRG(Rs_geometry, NULL, "g", NULL, NULL),
+    STRG(Rs_geometry, "geometry", "geometry", "geometry", "size (in characters) and position"),
     BOOL( "interceptConsole", "C", Opt_console, "intercept console messages" ),
     BOOL( "startIconic", "iconic", Opt_iconic, "start iconic" ),
     BOOL( "maximized", "m", Opt2_maximized, "Start maximized" ),
@@ -140,10 +136,10 @@ static const struct {
     BOOL( "reverseVideo", "rv", Opt_reverseVideo, "reverse video" ),
     BOOL( "loginShell", "ls", Opt_loginShell, "login shell" ),
 
-    RSTRG( Rs_refreshLimit, "refreshLimit", "nchars", 0 ),
-    RSTRG( Rs_skipPages, "skipPages", "%d", 0 ),
+    RSTRG( Rs_refreshLimit, "refreshLimit", "nchars"),
+    RSTRG( Rs_skipPages, "skipPages", "%d"),
 
-    STRG(Rs_fade, "fading", "fade", "%", "make colors x% darker when losing focus", 0),
+    STRG(Rs_fade, "fading", "fade", "%", "make colors x% darker when losing focus"),
 
     BOOL( "scrollTtyOutputInhibit", "si", Opt_scrollTtyOutputInhibit,
 	    "scroll-on-tty-output inhibit" ),
@@ -151,19 +147,19 @@ static const struct {
 	    "scroll-on-keypress" ),
 
     STRG(Rs_opacity, "opacity", "o", "%",
-	"transluscent window (true transparent) opaque degree", 0),
+	"transluscent window (true transparent) opaque degree"),
     STRG(Rs_opacityDegree, "opacityDegree", "od", "%",
-	"transluscent window opaque degree interval", 0),
+	"transluscent window opaque degree interval"),
 
     BOOL( "utmpInhibit", "ut", Opt_utmpInhibit,
 	    "utmp inhibit - do not log to utmp" ),
     STRG(Rs_confFile, NULL, "cf", "file",
-	"Configuration file instead of ~/.drxvtrc", 0),
+	"Configuration file instead of ~/.drxvtrc"),
 
 #ifndef NO_BELL
     BOOL( "visualBell", "vb", Opt_visualBell, "visual bell" ),
     RSTRG( Rs_vBellDuration, "vBellDuration",
-	    "Duration (ms) of the visual bell", 0),
+	    "Duration (ms) of the visual bell"),
 # if ! defined(NO_MAPALERT) && defined(MAPALERT_OPTION)
     BOOL( "mapAlert", NULL, Opt_mapAlert, NULL ),
 # endif
@@ -183,121 +179,121 @@ static const struct {
     BOOL( "tripleclickwords", "tcw", Opt_tripleclickwords,
 	    "triple click word selection" ),
 #endif
-    STRG(Rs_color + Color_ufbg, "ufBackground", "ufbg", "color", "unfocused background color", 0),
-    RSTRG(Rs_color + minCOLOR + 0, "color0", "color", 0),
-    RSTRG(Rs_color + minCOLOR + 1, "color1", "color", 0),
-    RSTRG(Rs_color + minCOLOR + 2, "color2", "color", 0),
-    RSTRG(Rs_color + minCOLOR + 3, "color3", "color", 0),
-    RSTRG(Rs_color + minCOLOR + 4, "color4", "color", 0),
-    RSTRG(Rs_color + minCOLOR + 5, "color5", "color", 0),
-    RSTRG(Rs_color + minCOLOR + 6, "color6", "color", 0),
-    RSTRG(Rs_color + minCOLOR + 7, "color7", "color", 0),
+    STRG(Rs_color + Color_ufbg, "ufBackground", "ufbg", "color", "unfocused background color"),
+    RSTRG(Rs_color + minCOLOR + 0, "color0", "color"),
+    RSTRG(Rs_color + minCOLOR + 1, "color1", "color"),
+    RSTRG(Rs_color + minCOLOR + 2, "color2", "color"),
+    RSTRG(Rs_color + minCOLOR + 3, "color3", "color"),
+    RSTRG(Rs_color + minCOLOR + 4, "color4", "color"),
+    RSTRG(Rs_color + minCOLOR + 5, "color5", "color"),
+    RSTRG(Rs_color + minCOLOR + 6, "color6", "color"),
+    RSTRG(Rs_color + minCOLOR + 7, "color7", "color"),
 #ifndef NO_BRIGHTCOLOR
-    RSTRG(Rs_color + minBrightCOLOR + 0, "color8", "color", 0),
-    RSTRG(Rs_color + minBrightCOLOR + 1, "color9", "color", 0),
-    RSTRG(Rs_color + minBrightCOLOR + 2, "color10", "color", 0),
-    RSTRG(Rs_color + minBrightCOLOR + 3, "color11", "color", 0),
-    RSTRG(Rs_color + minBrightCOLOR + 4, "color12", "color", 0),
-    RSTRG(Rs_color + minBrightCOLOR + 5, "color13", "color", 0),
-    RSTRG(Rs_color + minBrightCOLOR + 6, "color14", "color", 0),
-    RSTRG(Rs_color + minBrightCOLOR + 7, "color15", "color", 0),
+    RSTRG(Rs_color + minBrightCOLOR + 0, "color8", "color"),
+    RSTRG(Rs_color + minBrightCOLOR + 1, "color9", "color"),
+    RSTRG(Rs_color + minBrightCOLOR + 2, "color10", "color"),
+    RSTRG(Rs_color + minBrightCOLOR + 3, "color11", "color"),
+    RSTRG(Rs_color + minBrightCOLOR + 4, "color12", "color"),
+    RSTRG(Rs_color + minBrightCOLOR + 5, "color13", "color"),
+    RSTRG(Rs_color + minBrightCOLOR + 6, "color14", "color"),
+    RSTRG(Rs_color + minBrightCOLOR + 7, "color15", "color"),
 #endif		    /* NO_BRIGHTCOLOR */
 #if !(defined(NO_BRIGHTCOLOR) && defined(NO_BOLD_UNDERLINE_REVERSE))
-    RSTRG(Rs_color + Color_BD, "colorBD", "color", 0),
+    RSTRG(Rs_color + Color_BD, "colorBD", "color"),
 #endif
 #ifndef NO_BOLD_UNDERLINE_REVERSE
-    RSTRG(Rs_color + Color_UL, "colorUL", "color", 0),
-    RSTRG(Rs_color + Color_RV, "colorRV", "color", 0),
+    RSTRG(Rs_color + Color_UL, "colorUL", "color"),
+    RSTRG(Rs_color + Color_RV, "colorRV", "color"),
 #endif		    /* ! NO_BOLD_UNDERLINE_REVERSE */
 #ifdef OPTION_HC
-    RSTRG(Rs_color + Color_HC, "highlightColor",  "color", 0),
+    RSTRG(Rs_color + Color_HC, "highlightColor",  "color"),
 #endif
 #ifndef NO_CURSORCOLOR
-    STRG(Rs_color + Color_cursor, "cursorColor", "cr", "color", "cursor color", 0),
-    RSTRG(Rs_color + Color_cursor2, "cursorColor2", "color", 0),
+    STRG(Rs_color + Color_cursor, "cursorColor", "cr", "color", "cursor color"),
+    RSTRG(Rs_color + Color_cursor2, "cursorColor2", "color"),
 #endif		    /* NO_CURSORCOLOR */
-    STRG(Rs_color + Color_pointer, "pointerColor", "pr", "color", "pointer color", 0),
-    STRG(Rs_color + Color_border, "borderColor", "bd", "color", "border color", 0),
+    STRG(Rs_color + Color_pointer, "pointerColor", "pr", "color", "pointer color"),
+    STRG(Rs_color + Color_border, "borderColor", "bd", "color", "border color"),
 
 #ifndef NO_BOLDFONT
-    STRG(Rs_boldFont, "boldFont", "fb", "fontname", "bold text font", 0),
+    STRG(Rs_boldFont, "boldFont", "fb", "fontname", "bold text font"),
 # if MAX_NFONTS > 1
-    RSTRG(Rs_boldFont + 1, "boldFont1", "fontname", 0),
+    RSTRG(Rs_boldFont + 1, "boldFont1", "fontname"),
 #endif
 # if MAX_NFONTS > 2
-    RSTRG(Rs_boldFont + 2, "boldFont2", "fontname", 0),
+    RSTRG(Rs_boldFont + 2, "boldFont2", "fontname"),
 #endif
 # if MAX_NFONTS > 3
-    RSTRG(Rs_boldFont + 3, "boldFont3", "fontname", 0),
+    RSTRG(Rs_boldFont + 3, "boldFont3", "fontname"),
 #endif
 # if MAX_NFONTS > 4
-    RSTRG(Rs_boldFont + 4, "boldFont4", "fontname", 0),
+    RSTRG(Rs_boldFont + 4, "boldFont4", "fontname"),
 #endif
 # if MAX_NFONTS > 5
-    RSTRG(Rs_boldFont + 5, "boldFont5", "fontname", 0),
+    RSTRG(Rs_boldFont + 5, "boldFont5", "fontname"),
 #endif
 # if MAX_NFONTS > 6
-    RSTRG(Rs_boldFont + 6, "boldFont6", "fontname", 0),
+    RSTRG(Rs_boldFont + 6, "boldFont6", "fontname"),
 #endif
 # if MAX_NFONTS > 7
-    RSTRG(Rs_boldFont + 7, "boldFont7", "fontname", 0),
+    RSTRG(Rs_boldFont + 7, "boldFont7", "fontname"),
 #endif
 #endif
 
-    STRG(Rs_font + 0, "font", "fn", "fontname", "normal text font", 0),
+    STRG(Rs_font + 0, "font", "fn", "fontname", "normal text font"),
 #if MAX_NFONTS > 1
-    RSTRG(Rs_font + 1, "font1", "fontname", 0),
+    RSTRG(Rs_font + 1, "font1", "fontname"),
 #endif
 #if MAX_NFONTS > 2
-    RSTRG(Rs_font + 2, "font2", "fontname", 0),
+    RSTRG(Rs_font + 2, "font2", "fontname"),
 #endif
 #if MAX_NFONTS > 3
-    RSTRG(Rs_font + 3, "font3", "fontname", 0),
+    RSTRG(Rs_font + 3, "font3", "fontname"),
 #endif
 #if MAX_NFONTS > 4
-    RSTRG(Rs_font + 4, "font4", "fontname", 0),
+    RSTRG(Rs_font + 4, "font4", "fontname"),
 #endif
 #if MAX_NFONTS > 5
-    RSTRG(Rs_font + 5, "font5", "fontname", 0),
+    RSTRG(Rs_font + 5, "font5", "fontname"),
 #endif
 #if MAX_NFONTS > 6
-    RSTRG(Rs_font + 6, "font6", "fontname", 0),
+    RSTRG(Rs_font + 6, "font6", "fontname"),
 #endif
 #if MAX_NFONTS > 7
-    RSTRG(Rs_font + 7, "font7", "fontname", 0),
+    RSTRG(Rs_font + 7, "font7", "fontname"),
 #endif
 #ifdef MULTICHAR_SET
-    STRG(Rs_mfont + 0, "mfont", "fm", "fontname", "multichar font", 0),
+    STRG(Rs_mfont + 0, "mfont", "fm", "fontname", "multichar font"),
 # if MAX_NFONTS > 1
-    RSTRG(Rs_mfont + 1, "mfont1", "fontname", 0),
+    RSTRG(Rs_mfont + 1, "mfont1", "fontname"),
 # endif
 # if MAX_NFONTS > 2
-    RSTRG(Rs_mfont + 2, "mfont2", "fontname", 0),
+    RSTRG(Rs_mfont + 2, "mfont2", "fontname"),
 # endif
 # if MAX_NFONTS > 3
-    RSTRG(Rs_mfont + 3, "mfont3", "fontname", 0),
+    RSTRG(Rs_mfont + 3, "mfont3", "fontname"),
 # endif
 # if MAX_NFONTS > 4
-    RSTRG(Rs_mfont + 4, "mfont4", "fontname", 0),
+    RSTRG(Rs_mfont + 4, "mfont4", "fontname"),
 # endif
 # if MAX_NFONTS > 5
-    RSTRG(Rs_mfont + 5, "mfont5", "fontname", 0),
+    RSTRG(Rs_mfont + 5, "mfont5", "fontname"),
 # endif
 # if MAX_NFONTS > 6
-    RSTRG(Rs_mfont + 6, "mfont6", "fontname", 0),
+    RSTRG(Rs_mfont + 6, "mfont6", "fontname"),
 # endif
 # if MAX_NFONTS > 7
-    RSTRG(Rs_mfont + 7, "mfont7", "fontname", 0),
+    RSTRG(Rs_mfont + 7, "mfont7", "fontname"),
 # endif
 #endif		    /* MULTICHAR_SET */
 
 #ifdef XFT_SUPPORT
     BOOL( "xft", "xft", Opt_xft, "use freetype font" ),
-    STRG(Rs_xftfont, "xftFont", "xftfn", "fontname", "freetype font", 0),
+    STRG(Rs_xftfont, "xftFont", "xftfn", "fontname", "freetype font"),
 # ifdef MULTICHAR_SET
-    STRG(Rs_xftmfont, "xftmFont", "xftfm", "fontname", "freetype multichar font", 0),
+    STRG(Rs_xftmfont, "xftmFont", "xftfm", "fontname", "freetype multichar font"),
     STRG(Rs_xftmsz, "xftmSize", "xftmsz", "number",
-	"freetype multichar font size", 0),
+	"freetype multichar font size"),
     BOOL( "xftNomFont", "xftnfm", Opt2_xftNomFont,
 	    "use freetype font as freetype mfont" ),
     BOOL( "xftSlowOutput", "xftslow", Opt2_xftSlowOutput,
@@ -312,22 +308,22 @@ static const struct {
     BOOL( "xftGlobalAdvance", "xftga", Opt2_xftGlobalAdvance,
 	    "global advance of freetype font" ),
     STRG(Rs_xftwt, "xftWeight", "xftwt", "style",
-	"Xft font weight", 0),
+	"Xft font weight"),
     STRG(Rs_xftBwt, "xftBoldWeight", "xftbwt", "style",
-	"Xft bold font weight", 0),
+	"Xft bold font weight"),
     STRG(Rs_xftst, "xftSlant", "xftst", "style",
-	"slant style = roman|italic|oblique", 0),
+	"slant style = roman|italic|oblique"),
     STRG(Rs_xftsz, "xftSize", "xftsz", "number",
-	"freetype font size", 0),
+	"freetype font size"),
     STRG(Rs_xftwd, "xftWidth", "xftwd", "style",
 	"freetype font width = "
-	"ultracondensed|condensed|normal|expanded|ultraexpended", 0),
+	"ultracondensed|condensed|normal|expanded|ultraexpended"),
     STRG(Rs_xftrgb, "xftRGBA", "xftrgb", "style",
-	"freetype font sub-pixel order = rgb|bgr|vrgb|vbgr|none", 0),
+	"freetype font sub-pixel order = rgb|bgr|vrgb|vbgr|none"),
     STRG(Rs_xftpfn, "xftPFont", "xftpfn", "fontname",
-	"propotionally spaced freetype font to use for tabbar", 0),
+	"propotionally spaced freetype font to use for tabbar"),
     STRG(Rs_xftpsz, "xftPSize", "xftpsz", "size",
-	"size of propotional freetype font", 0),
+	"size of propotional freetype font"),
 #endif
 
     BOOL( "protectSecondary", "ps", Opt2_protectSecondary,
@@ -335,34 +331,34 @@ static const struct {
 
 #ifdef MULTICHAR_SET
     STRG(Rs_multichar_encoding, "multichar_encoding", "km", "mode",
-	"multichar encoding mode = eucj|sjis|big5|gb|gbk|kr|noenc", 0),
+	"multichar encoding mode = eucj|sjis|big5|gb|gbk|kr|noenc"),
 #endif		    /* MULTICHAR_SET */
 
 #ifdef USE_XIM
-    STRG(Rs_inputMethod, "inputMethod", "im", "name", "name of input method", 0),
+    STRG(Rs_inputMethod, "inputMethod", "im", "name", "name of input method"),
     STRG(Rs_preeditType, "preeditType", "pt", "style",
-	"input style = OverTheSpot|OffTheSpot|Root", 0),
+	"input style = OverTheSpot|OffTheSpot|Root"),
 #endif		    /* USE_XIM */
 
     STRG(Rs_name, "clientName", "name", "string",
-	"client instance, icon, and title strings", 0),
-    STRG(Rs_title, NULL, "T", NULL, NULL, 0),	/* short form */
+	"client instance, icon, and title strings"),
+    STRG(Rs_title, NULL, "T", NULL, NULL),	/* short form */
     STRG(Rs_iconName, "iconName", "in", "string",
-	"icon name for window", 0),
+	"icon name for window"),
     BOOL( "borderLess", "bl", Opt2_borderLess,
 	    "borderless window" ),
     BOOL( "overrideRedirect", "or", Opt2_overrideRedirect,
 	    "override_redirect flag" ),
     STRG(Rs_desktop, "desktop", "desktop",
-	"number", "desktop to place the program", 0),
+	"number", "desktop to place the program"),
 
 #ifndef NO_FRILLS
     STRG(Rs_ext_bwidth, "externalBorder", "w", "number",
-	"external border in pixels", 0),
-    STRG(Rs_ext_bwidth, NULL, "bw", NULL, NULL, 0),
-    STRG(Rs_ext_bwidth, NULL, "borderwidth", NULL, NULL, 0),
+	"external border in pixels"),
+    STRG(Rs_ext_bwidth, NULL, "bw", NULL, NULL),
+    STRG(Rs_ext_bwidth, NULL, "borderwidth", NULL, NULL),
     STRG(Rs_int_bwidth, "internalBorder", "b", "number",
-	"internal border in pixels", 0),
+	"internal border in pixels"),
 
     /* Reposition window on resize to stay on screen */
     BOOL( "smartResize", NULL, Opt2_smartResize,
@@ -372,30 +368,30 @@ static const struct {
 	    NULL ),
 #endif
 #ifndef NO_LINESPACE
-    STRG(Rs_lineSpace, "lineSpace", "lsp", "number", "number of extra pixels between rows", 0),
+    STRG(Rs_lineSpace, "lineSpace", "lsp", "number", "number of extra pixels between rows"),
 #endif
 
 #ifdef POINTER_BLANK
     BOOL( "pointerBlank", "pb", Opt_pointerBlank,
 	    "blank pointer" ),
-    RSTRG(Rs_pointerBlankDelay, "pointerBlankDelay", "number", 0),
+    RSTRG(Rs_pointerBlankDelay, "pointerBlankDelay", "number"),
 #endif
 #ifdef CURSOR_BLINK
     BOOL( "cursorBlink", "bc", Opt_cursorBlink, "blinking cursor" ),
     STRG(Rs_cursorBlinkInterval, "cursorBlinkInterval", "bci",
-	"number", "cursor blinking interval (ms)", 0),
+	"number", "cursor blinking interval (ms)"),
 #endif
 
 #ifndef NO_BACKSPACE_KEY
-    RSTRG(Rs_backspace_key, "backspaceKey", "string", 0),
+    RSTRG(Rs_backspace_key, "backspaceKey", "string"),
 #endif
 
 #ifndef NO_DELETE_KEY
-    RSTRG(Rs_delete_key, "deleteKey", "string", 0),
+    RSTRG(Rs_delete_key, "deleteKey", "string"),
 #endif
 
     RSTRG(Rs_selectstyle, "selectStyle",
-	"select style mode = old|oldword", 0),
+	"select style mode = old|oldword"),
 
     BOOL( "noSysConfig", "nsc", Opt2_noSysConfig,
 	    "reading /etc/drxvt/drxvtrc." ),
@@ -405,36 +401,32 @@ static const struct {
 	    "enable Linux console Home/End keys" ),
 
     STRG(Rs_modifier, "modifier", "mod", "modifier",
-	"meta modifier = alt|meta|hyper|super|mod1|...|mod5", 0),
+	"meta modifier = alt|meta|hyper|super|mod1|...|mod5"),
     STRG(Rs_altPrefix, "altPrefix", "ap", "string",
-	"control key prefix for alt (non-meta) modifier", 0),
+	"control key prefix for alt (non-meta) modifier"),
     INFO("xrm", "string", "X resource"),
 
 #ifdef CUTCHAR_RESOURCE
-    RSTRG(Rs_cutchars, "cutChars", "string", 0),
+    RSTRG(Rs_cutchars, "cutChars", "string"),
 #endif	/* CUTCHAR_RESOURCE */
 
 #ifdef ACS_ASCII
-    RSTRG(Rs_acs_chars, "acsChars", "string", 0),
+    RSTRG(Rs_acs_chars, "acsChars", "string"),
 #endif	/* ACS_ASCII */
 
-    RSTRG(Rs_answerbackstring, "answerbackString", "string", 0),
+    RSTRG(Rs_answerbackstring, "answerbackString", "string"),
 
 #ifdef HAVE_X11_SM_SMLIB_H
     BOOL( "sessionMgt", "sm", Opt2_enableSessionMgt,
 	    "enabling X session management" ),
     STRG(Rs_smClientID, "smClientID", "sid", "string",
-	"client id of drxvt for X session management", 0),
+	"client id of drxvt for X session management"),
 #endif	/* HAVE_X11_SM_SMLIB_H */
 
-    /* Initial number of terminals */
-    STRG( Rs_initProfile, "initProfile", "ip", "profile",
-	"Profiles to load on startup", 0 ),
-
     STRG(Rs_debug_masks, "dbgMasks", "dmask", "string", 
-	"List of debug masks separated by coma", 0),
+	"List of debug masks separated by coma"),
     STRG(Rs_debug_level, "dbgLevel", "dlevel", "string", 
-	"Name of number of the debug level", 0),
+	"Name of number of the debug level"),
 
     INFO("e", "command arg ...", "command to execute")
 };
@@ -582,12 +574,11 @@ rxvt_usage(int type)
 	     * generate man page.
 	     */
 	    for (i = 0; i < optList_size(); i++)
-		fprintf( stdout, "%3d. %s   %s	%s  %s	%d\n", i,
+		fprintf( stdout, "%3d. %s   %s	%s  %s\n", i,
 			optList[i].kw ? optList[i].kw : "NullKW",
 			optList[i].opt ? optList[i].opt : "NullOpt",
 			!optList_isBool(i) ? optList[i].arg : "boolean",
-			optList[i].desc ? optList[i].desc : "NullDsc",
-			optList[i].multiple);
+			optList[i].desc ? optList[i].desc : "NullDsc");
 
 #else
 	    for (i = 0; i < optList_size(); i++)
@@ -638,21 +629,7 @@ rxvt_save_options (rxvt_t* r, const char* filename)
 	  )
 	    continue;
 
-	if( optList[i].multiple)
-	{
-	    register int    j;
-
-	    for (j = 0; j < MAX_PROFILES; j ++)
-	    {
-		if (r->h->rs[optList[i].doff + j])
-		    fprintf( pf, "%s.profile%d.%s:%.*s%s\n", name,
-			j, optList[i].kw,
-			num_tabs( STRLEN(name) + sizeof(".profile") + 2
-				    + STRLEN( optList[i].kw ) ), tabs,
-			r->h->rs[optList[i].doff +j]);
-	    }
-	}
-	else if (optList_isBool(i))
+	if (optList_isBool(i))
 	{
 	    int	    bval;
 	    char*   OnOff[2] = {"False", "True"};
@@ -697,10 +674,8 @@ rxvt_get_options(rxvt_t *r, int argc, const char *const *argv)
     {
 	unsigned int	entry, longopt = 0;
 	const char	*flag, *opt;
-	int		profileNum;
 
 	opt = argv[i];
-	profileNum = 0;	/* initialize profileNum to 0 by default */
 
 	rxvt_msg (DBG_INFO, DBG_RESOURCE, "argv[%d] = %s: \n", i, opt);
 	if (*opt == '-')
@@ -741,56 +716,7 @@ rxvt_get_options(rxvt_t *r, int argc, const char *const *argv)
 	     * Get the long option name in buflong, or the short option name in
 	     * bufshort.
 	     */
-	    if ( optList[entry].multiple )
-	    {
-		int offset = 0;
-
-		/*
-		 * For backward compatibility, accept vt%d style options.
-		 */
-		offset = rxvt_str_match( opt, "vt" );
-		if( offset == 0 )
-		    offset = rxvt_str_match( opt, "profile" );
-
-		/*
-		 * Copy --profile%d.resource or --vt%d.resource into buflong and
-		 * bufshort.
-		 */
-		if( offset )
-		{
-		    profileNum = atoi( opt + offset );
-		    if( profileNum < 0 || profileNum >= MAX_PROFILES )
-		    {
-			entry = optList_size();
-			break;	/* out of range, jump to bad option */
-		    }
-
-		    snprintf( buflong, sizeof(buflong)-1, "%.*s%d.%s",
-			    offset, opt, profileNum, optList[entry].kw );
-		    buflong[sizeof(buflong)-1] = '\0';
-
-		    snprintf( bufshort, sizeof(bufshort)-1, "%.*s%d.%s",
-			    offset, opt, profileNum, optList[entry].opt );
-		    bufshort[sizeof(bufshort)-1] = '\0';
-
-		    rxvt_dbgmsg ((DBG_DEBUG, DBG_RESOURCE, "Matched profile=%d buflong=%s bufshort=%s\n", profileNum, buflong, bufshort ));
-		}
-
-		/* If no profile number is specified, use 0 by default */
-		else
-		{
-		    STRNCPY( buflong, optList[entry].kw, sizeof(buflong) - 1 );
-		    buflong[ sizeof(buflong)-1 ] = '\0';
-
-		    STRNCPY( bufshort, optList[entry].opt, sizeof(bufshort)-1 );
-		    bufshort[ sizeof(bufshort)-1 ] = '\0';
-
-		    profileNum = 0;
-
-		    rxvt_dbgmsg ((DBG_DEBUG, DBG_RESOURCE, "Matched default buflong=%s bufshort=%s\n", buflong, bufshort ));
-		}
-	    }
-	    else if (optList[entry].kw)
+	    if (optList[entry].kw)
 	    {
 		STRNCPY (buflong, optList[entry].kw, sizeof(buflong)-1);
 		buflong[sizeof(buflong)-1] = '\0';
@@ -834,7 +760,7 @@ rxvt_get_options(rxvt_t *r, int argc, const char *const *argv)
 		if (flag == On && str && (optList[entry].doff != -1))
 		{
 		    rxvt_dbgmsg ((DBG_DEBUG, DBG_RESOURCE, "\"%s\"\n", str));
-		    r->h->rs[optList[entry].doff + profileNum] = str;
+		    r->h->rs[optList[entry].doff] = str;
 		    /*
 		     * special cases are handled in main.c:main() to allow X
 		     * resources to set these values before we settle for
@@ -969,56 +895,11 @@ rxvt_get_xdefaults(rxvt_t *r, FILE *stream, const char *name,
 	    {
 		/* const char*	kw = optList[entry].kw; */
 		char	kw[256];
-		int	profileNum = 0;	/* default is no offset */
 
 		if (IS_NULL(optList[entry].kw))
 		    continue;
 		STRNCPY (kw, optList[entry].kw, sizeof(kw)-1);
 		kw[sizeof(kw)-1] = (char) 0;
-
-		if( optList[entry].multiple )
-		{
-		    int offset = 0;
-
-		    /*
-		     * For backward compatibility, accept vt%d style options.
-		     */
-		    offset = rxvt_str_match( str, "vt" );
-		    if( offset == 0 )
-			offset = rxvt_str_match( str, "profile" );
-
-		    /*
-		     * Copy profile%d.resource into kw.
-		     */
-		    if( offset )
-		    {
-			char	buf[256];
-
-			profileNum = atoi( str + offset );
-			if (profileNum < 0 || profileNum >= MAX_PROFILES)
-			    continue;	/* out of range */
-
-			snprintf( buf, sizeof(buf)-1,
-				"%.*s%d.%s", offset, str, profileNum, kw );
-			buf[sizeof(buf)-1] = '\0';
-
-			STRNCPY (kw, buf, sizeof(kw)-1);
-			kw[sizeof(kw)-1] = '\0';
-
-			rxvt_dbgmsg ((DBG_DEBUG, DBG_RESOURCE, "Matched profile=%d kw=%s\n", profileNum, kw));
-		    }
-
-		    /*
-		     * No profile%d specified. Match resource on it's own, and
-		     * use profile 0.
-		     */
-		    else
-		    {
-			profileNum = 0;
-
-			rxvt_dbgmsg ((DBG_DEBUG, DBG_RESOURCE, "Matched default kw=%s for option %s", kw, str));
-		    }
-		}
 
 		n = STRLEN(kw);
 		if( n < lenstr && str[n] == ':' && rxvt_str_match(str, kw) )
@@ -1063,14 +944,13 @@ rxvt_get_xdefaults(rxvt_t *r, FILE *stream, const char *name,
 			}
 		    }
 
-		    else if( IS_NULL( r->h->rs[ optList[entry].doff
-							    + profileNum ] ) )
+		    else if( IS_NULL( r->h->rs[ optList[entry].doff ] ) )
 		    {
 			/*
 			 * Regular option, that has not previously been set.
 			 * The argument needs to be duplicated and stored.
 			 */
-			r->h->rs[optList[entry].doff+profileNum] =
+			r->h->rs[optList[entry].doff] =
 			    n && !optList_isBool(entry) ?
 				STRDUP( str ) : emptyResource;
 		    }

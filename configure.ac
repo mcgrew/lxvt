@@ -535,15 +535,6 @@ AC_ARG_WITH(
 AC_DEFINE_UNQUOTED(SAVELINES, $save_lines_option, [the lines to save in scroll])
 
 
-AC_ARG_WITH(
-    max-profiles,
-    AC_HELP_STRING([--with-max-profiles=NUM],[set the max number of terminal [[5]]]),
-    [max_prof_option=$withval],
-    [max_prof_option=5]
-)
-AC_DEFINE_UNQUOTED(MAX_PROFILES, $max_prof_option, [the max number of profiles])
-
-
 withval=""
 AC_ARG_WITH(
     terminfo,
@@ -1188,7 +1179,6 @@ echo "Old selection               : $support_old_selection"
 echo
 echo "Options:"
 echo "Terminal name               : $term_name_option"
-echo "Maximal profiles            : $max_prof_option"
 if test "x$support_linespace" = "xyes"; then
     echo "Line space                  : $line_space_option"
 fi

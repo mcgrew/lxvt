@@ -1571,7 +1571,7 @@ rxvt_clean_cmd_page (rxvt_t* r)
 		/*
 		 * print holdExitText on screen if defined.
 		 */
-		msg = getProfileOption( r, PVTS(r)->profileNum,
+		msg = getProfileOption( r,
 				Rs_holdExitTxt );
 		if( NOT_NULL( msg ) && *msg )
 		{
@@ -1592,7 +1592,7 @@ rxvt_clean_cmd_page (rxvt_t* r)
 		/*
 		 * Update title to show tab has finished.
 		 */
-		msg = getProfileOption( r, PVTS(r)->profileNum,
+		msg = getProfileOption( r,
 				Rs_holdExitTtl );
 		if( NOT_NULL( msg ) && *msg )
 		{
