@@ -33,7 +33,7 @@ static const char *const macroNames[] =
     "Dummy",		    /* Delete macro */
     "Esc",		    /* Escape sequence to send to mrxvt */
     "Str",		    /* String to send to child process */
-    "NewTab",		    /* Open a new tab, and exec a program in it. */
+		"NewTab",     /* Open a new tab, and exec a program in it. */
     "Exec",		    /* Exec a program asynchronusly */
     "Close",		    /* Close tab(s) */
     "GotoTab",		    /* Switch to tab */
@@ -879,8 +879,8 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		    char *pnum_end;
 		    profile = strtoul( ++command, &pnum_end, 0 );
 
-		    if( profile < 0 || profile >= MAX_PROFILES )
-			profile = AVTS(r)->profileNum;
+//		    if( profile < 0 || profile >= MAX_PROFILES )
+//			profile = AVTS(r)->profileNum;
 
 		    /* Skip spaces */
 		    command = pnum_end;
@@ -908,11 +908,10 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		}
 
 		/* Add page */
-		rxvt_append_page( r, profile, title,
-				    *command ? command : NULL );
+		rxvt_append_page( r, title, *command ? command : NULL );
 	    }
 	    else
-		rxvt_append_page( r, 0, NULL, NULL );
+		rxvt_append_page( r, NULL, NULL );
 
 	    break;
 

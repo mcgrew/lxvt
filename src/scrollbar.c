@@ -537,7 +537,7 @@ rxvt_scrollbar_bg( rxvt_t *r )
 #  ifdef SGI_SCROLLBAR
 	case R_SB_SGI:   return r->scrollBar.sgi_bg;
 #  endif
-	default: assert (0); return VTBG( r, 0);
+	default: assert (0); return VTBG( r );
     }	/* switch */
 }
 

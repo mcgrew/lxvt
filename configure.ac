@@ -776,15 +776,6 @@ AC_DEFINE_UNQUOTED(SAVELINES, $save_lines_option, [the lines to save in scroll])
 
 
 AC_ARG_WITH(
-    max-profiles,
-    AC_HELP_STRING([--with-max-profiles=NUM],[set the max number of terminal [[5]]]),
-    [max_prof_option=$withval],
-    [max_prof_option=5]
-)
-AC_DEFINE_UNQUOTED(MAX_PROFILES, $max_prof_option, [the max number of profiles])
-
-
-AC_ARG_WITH(
 	atab-extra,
 	AC_HELP_STRING( [--with-atab-extra=%], [The extra height (as a % of the font height) active tabs should have] ),
 	[atab_extra_option=$withval],
@@ -799,7 +790,6 @@ AC_ARG_WITH(
 	[tab_radius_option=100],
 )
 AC_DEFINE_UNQUOTED( TAB_RADIUS_PERCENT, $tab_radius_option, [The radius (as a % of the font X offset) of tab corners])
-
 
 withval=""
 AC_ARG_WITH(

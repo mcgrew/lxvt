@@ -202,34 +202,8 @@ rxvt_init (int argc, const char *const *argv)
 	/*
 	 * Initialize the pages.
 	 */
-	if (r->h->rs[Rs_initProfiles])
-	{
-		char *s = (char *) r->h->rs[Rs_initProfiles];
-	
-		do
-		{
-			int profile = atoi( s );
-			rxvt_append_page (r, profile, NULL, NULL);
-			s = STRCHR( s, ',' );
-		}
-		while (NULL != s++);
-	}
-	/* Backward compatibility: Open profiles 0 .. n-1 if tnum=n. */
-	else if( r->h->rs[Rs_init_term_num] )
-	{
-		rxvt_msg (DBG_ERROR, DBG_MAIN,  "Option tnum is obsolete."
-				" Use --initProfileList instead" );
-
-		itnum = atoi( r->h->rs[Rs_init_term_num] );
-		itnum = max( 1, itnum );
-		//itnum = min( itnum, MAX_PAGES );
-
-		for (i = 0; i < itnum; i ++)
-			rxvt_append_page( r, (i < MAX_PROFILES) ? i : 0 , NULL, NULL );
-	}
 	/* Just open the default tab */
-	else
-		rxvt_append_page( r, 0, NULL, NULL );
+	rxvt_append_page( r, NULL, NULL );
 
 	/* Activate the tab */
 	rxvt_activate_page (r, 0);
@@ -2426,7 +2400,7 @@ rxvt_recolour_cursor(rxvt_t *r)
     XColor	    xcol[2];
 
     xcol[0].pixel = r->pixColorsFocus[Color_pointer];
-    xcol[1].pixel = VTBG(r, 0);
+    xcol[1].pixel = VTBG(r);
     XQueryColors(r->Xdisplay, XCMAP, xcol, 2);
     XRecolorCursor(r->Xdisplay, r->term_pointer, &(xcol[0]), &(xcol[1]));
 

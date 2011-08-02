@@ -1359,23 +1359,17 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
 	if (!rs[Rs_color + Color_bg])
 	    rs[Rs_color + Color_bg] = def_colorName[Color_fg];
 
-	for (i = 0; i < MAX_PROFILES; i++)
-	{
-	    int	    vtfg = Rs_foreground + i;
-	    int	    vtbg = Rs_background + i;
-
-	    char*   fg = (char*) rs[vtfg];
-	    char*   bg = (char*) rs[vtbg];
+	    char*   fg = (char*) rs[Rs_foreground];
+	    char*   bg = (char*) rs[Rs_background];
 
 	    /* foreground color of i terminal */
-	    if (ISSET_VTFG(r, i))
-		rs[vtfg] = ISSET_VTBG(r, i) ? bg :
+	    if (ISSET_VTFG(r))
+		rs[Rs_foreground] = ISSET_VTBG(r) ? bg :
 				def_colorName[Color_bg];
 	    /* background color of i terminal */
-	    if (ISSET_VTBG(r, i))
-		rs[vtbg] = ISSET_VTFG(r, i) ? fg :
+	    if (ISSET_VTBG(r))
+		rs[Rs_background] = ISSET_VTFG(r) ? fg :
 			    def_colorName[Color_fg];
-	}
     }
 #endif
 
@@ -1394,17 +1388,12 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
 
 	SWAP_IT(rs[Rs_color + Color_fg], rs[Rs_color + Color_bg], const char *);
 
-	for (i = 0; i < MAX_PROFILES; i++)
-	{
-	    int	    vtfg = Rs_foreground + i;
-	    int	    vtbg = Rs_background + i;
-	    if (!rs[vtfg])
-		rs[vtfg] = def_colorName[Color_fg];
-	    if (!rs[vtbg])
-		rs[vtbg] = def_colorName[Color_bg];
+	    if (!rs[Rs_foreground])
+		rs[Rs_foreground] = def_colorName[Color_fg];
+	    if (!rs[Rs_background])
+		rs[Rs_background] = def_colorName[Color_bg];
 
-	    SWAP_IT(rs[vtfg], rs[vtbg], const char*);
-	}
+	    SWAP_IT(rs[Rs_foreground], rs[Rs_background], const char*);
     }
 #endif
 
@@ -1440,24 +1429,21 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
     /*
      * Profile settings.
      */
-    for( i=0; i < MAX_PROFILES; i++ )
-    {
 	/* Set saveLines */
-	if( r->h->rs[Rs_saveLines + i] )
+	if( r->h->rs[Rs_saveLines] )
 	{
-	    int tmp = atoi( r->h->rs[Rs_saveLines + i] );
+	    int tmp = atoi( r->h->rs[Rs_saveLines] );
 
-	    r->profile[i].saveLines = ( tmp >= 0 && tmp <= MAX_SAVELINES ) ?
+	    r->profile.saveLines = ( tmp >= 0 && tmp <= MAX_SAVELINES ) ?
 		    tmp : DEFAULT_SAVELINES;
 	}
 	else
-	    r->profile[i].saveLines = ( i > 0 ) ? r->profile[0].saveLines :
-							    DEFAULT_SAVELINES;
+	    r->profile.saveLines = DEFAULT_SAVELINES;
 
 	/* Set holdOption */
-	if( r->h->rs[Rs_holdExit + i] )
+	if( r->h->rs[Rs_holdExit] )
 	{
-	    const char *s = r->h->rs[Rs_holdExit + i];
+	    const char *s = r->h->rs[Rs_holdExit];
 
 	    /* Backward compatibility hack */
 	    if(
@@ -1465,14 +1451,12 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
 		 !STRCASECMP( s, "yes" )	    ||
 		 !STRCASECMP( s, "on" )
 	      )
-		r->profile[i].holdOption = HOLD_ALWAYSBIT;
+		r->profile.holdOption = HOLD_ALWAYSBIT;
 	    else
-		r->profile[i].holdOption = strtoul( s, NULL, 0 );
+		r->profile.holdOption = strtoul( s, NULL, 0 );
 	}
 	else
-	    r->profile[i].holdOption = (i > 0) ? r->profile[0].holdOption :
-					    (HOLD_STATUSBIT|HOLD_NORMALBIT);
-    } /* for(i) */
+	    r->profile.holdOption = (HOLD_STATUSBIT|HOLD_NORMALBIT);
 
     if( !r->h->rs[Rs_holdExitTtl] )
 	r->h->rs[Rs_holdExitTtl] = "(Done) %t";
@@ -1926,102 +1910,77 @@ rxvt_init_colors( rxvt_t *r )
     rxvt_dbgmsg ((DBG_DEBUG, DBG_INIT, "%s()\n", __func__));
 
     /* Initialize fg/bg colors for each profile */
-    for (i = 0; i < MAX_PROFILES; i++)
     {
 	XColor	    xcol;
-	int	    vtfg = Rs_foreground + i;
-	int	    vtbg = Rs_background + i;
 
-	if( !ISSET_VTFG( r, i ) )
-	    r->h->rs[vtfg] =  ISSET_VTFG( r, 0 ) ?
+	if( !ISSET_VTFG( r ) )
+	    r->h->rs[Rs_foreground] =  ISSET_VTFG( r ) ?
 		    r->h->rs[Rs_foreground] : def_colorName[ Color_fg ];
-	if( !ISSET_VTBG( r, i ) )
-	    r->h->rs[vtbg] = ISSET_VTBG( r, 0 ) ?
+	if( !ISSET_VTBG( r ) )
+	    r->h->rs[Rs_background] = ISSET_VTBG( r ) ?
 		    r->h->rs[Rs_background] : def_colorName[ Color_bg ];
 
 	/* foreground color of i terminal */
-	if( rxvt_parse_alloc_color(r, &xcol, r->h->rs[vtfg]) )
+	if( rxvt_parse_alloc_color(r, &xcol, r->h->rs[Rs_foreground]) )
 	{
-	    VTFG(r, i) = xcol.pixel;
+	    VTFG(r) = xcol.pixel;
 
 #ifdef XFT_SUPPORT
-	    rxvt_alloc_xft_color( r, &xcol, &(VTXFTFG(r, i)) );
-	    rxvt_fade_color( r, &xcol, &VTFG_FADE(r, i), &VTXFTFG_FADE(r, i) );
+	    rxvt_alloc_xft_color( r, &xcol, &(VTXFTFG(r)) );
+	    rxvt_fade_color( r, &xcol, &VTFG_FADE(r), &VTXFTFG_FADE(r) );
 #else
-	    rxvt_fade_color( r, &xcol, &VTFG_FADE(r, i), NULL );
+	    rxvt_fade_color( r, &xcol, &VTFG_FADE(r), NULL );
 #endif /* XFT_SUPPORT */
 	}
 
 	else
 	{
-	    rxvt_msg (DBG_ERROR, DBG_INIT,  "Could not alloc foreground color of profile %d",
-		    i );
-	    if( i == 0 )
+	    rxvt_msg (DBG_ERROR, DBG_INIT,  "Could not alloc foreground color");
 		/* Need default fg/bg */
 		exit( EXIT_FAILURE );
-
-	    /* Use foreground from profie 0 */
-	    VTFG( r, i ) = VTFG( r, 0 );
-	    VTFG_FADE( r, i ) = VTFG_FADE( r, 0 );
-
-#ifdef XFT_SUPPORT
-	    VTXFTFG( r, i ) = VTXFTFG( r, 0 );
-	    VTXFTFG_FADE( r, i ) = VTXFTFG_FADE( r, 0 );
-#endif
 	}
 
 	/* background color of i terminal */
-	if( rxvt_parse_alloc_color(r, &xcol, r->h->rs[vtbg]) )
+	if( rxvt_parse_alloc_color(r, &xcol, r->h->rs[Rs_background]) )
 	{
-	    VTBG(r, i) = xcol.pixel;
+	    VTBG(r) = xcol.pixel;
 
 #ifdef XFT_SUPPORT
-	    rxvt_alloc_xft_color( r, &xcol, &(VTXFTBG(r, i)) );
-	    rxvt_fade_color( r, &xcol, &VTBG_FADE(r, i), &VTXFTBG_FADE(r, i) );
+	    rxvt_alloc_xft_color( r, &xcol, &(VTXFTBG(r)) );
+	    rxvt_fade_color( r, &xcol, &VTBG_FADE(r), &VTXFTBG_FADE(r) );
 #else
-	    rxvt_fade_color( r, &xcol, &VTBG_FADE(r, i), NULL );
+	    rxvt_fade_color( r, &xcol, &VTBG_FADE(r), NULL );
 #endif /* XFT_SUPPORT */
 	}
 
 	else
 	{
-	    rxvt_msg (DBG_ERROR, DBG_INIT,  "Could not alloc background color of profile %d",
-		    i );
-	    if( i == 0 )
+	    rxvt_msg (DBG_ERROR, DBG_INIT,  "Could not alloc background color");
 		/* Need default fg/bg */
 		exit( EXIT_FAILURE );
-
-	    /* Use background from profie 0 */
-	    VTBG( r, i ) = VTBG( r, 0 );
-	    VTBG_FADE( r, i ) = VTBG_FADE( r, 0 );
-
-#ifdef XFT_SUPPORT
-	    VTXFTBG( r, i ) = VTXFTBG( r, 0 );
-	    VTXFTBG_FADE( r, i ) = VTXFTBG_FADE( r, 0 );
-#endif
 	}
     }
 
     /* Set foreground / background colors */
-    r->pixColorsFocus[ Color_fg ] = VTFG( r, 0 );
-    r->pixColorsFocus[ Color_bg ] = VTBG( r, 0 );
+    r->pixColorsFocus[ Color_fg ] = VTFG( r );
+    r->pixColorsFocus[ Color_bg ] = VTBG( r );
 
     if( r->TermWin.fade )
     {
-	r->pixColorsUnfocus[ Color_fg ] = VTFG_FADE( r, 0 );
-	r->pixColorsUnfocus[ Color_bg ] = VTBG_FADE( r, 0 );
+	r->pixColorsUnfocus[ Color_fg ] = VTFG_FADE( r );
+	r->pixColorsUnfocus[ Color_bg ] = VTBG_FADE( r );
     }
 
 #ifdef XFT_SUPPORT
     if( ISSET_OPTION( r, Opt_xft ) )
     {
-	r->xftColorsFocus[ Color_fg ] = VTXFTFG( r, 0 );
-	r->xftColorsFocus[ Color_bg ] = VTXFTBG( r, 0 );
+	r->xftColorsFocus[ Color_fg ] = VTXFTFG( r );
+	r->xftColorsFocus[ Color_bg ] = VTXFTBG( r );
 
 	if( r->TermWin.fade )
 	{
-	    r->xftColorsUnfocus[ Color_fg ] = VTXFTFG( r, 0 );
-	    r->xftColorsUnfocus[ Color_bg ] = VTXFTBG( r, 0 );
+	    r->xftColorsUnfocus[ Color_fg ] = VTXFTFG( r );
+	    r->xftColorsUnfocus[ Color_bg ] = VTXFTBG( r );
 	}
     }
 #endif
@@ -2090,15 +2049,15 @@ rxvt_init_colors( rxvt_t *r )
 	 * NOTE: Fading should be disabled for low depths. And the pointer color
 	 * should not be faded.
 	 */
-	r->pixColorsFocus[Color_pointer]    = VTFG(r, 0);
+	r->pixColorsFocus[Color_pointer]    = VTFG(r);
 	if( r->TermWin.fade )
-	    r->pixColorsUnfocus[Color_pointer]  = VTFG(r, 0);
+	    r->pixColorsUnfocus[Color_pointer]  = VTFG(r);
 #ifdef XFT_SUPPORT
 	if( ISSET_OPTION( r, Opt_xft ) )
 	{
-	    r->xftColorsFocus[Color_pointer]	= VTXFTFG(r, 0);
+	    r->xftColorsFocus[Color_pointer]	= VTXFTFG(r);
 	    if( r->TermWin.fade )
-		r->xftColorsUnfocus[Color_pointer]  = VTXFTFG(r, 0);
+		r->xftColorsUnfocus[Color_pointer]  = VTXFTFG(r);
 	}
 #endif
 	SET_PIXCOLOR( r->h, Color_pointer );
@@ -2787,7 +2746,7 @@ rxvt_get_termenv( const char *env )
  *   If it is less than the last page + 1, then all pages >= page are moved up.
  */
 int
-rxvt_init_vts( rxvt_t *r, int page, int profile )
+rxvt_init_vts( rxvt_t *r, int page )
 {
 #ifdef TTY_GID_SUPPORT
     struct group*   gr = getgrnam( "tty" );
@@ -2842,9 +2801,6 @@ rxvt_init_vts( rxvt_t *r, int page, int profile )
     MEMSET( PVTS(r, page), 0, sizeof(term_t)); //r->vterm[0] ) );
     PVTS(r, page)->vts_idx = page;
 
-    /* Set the profile number */
-    PVTS(r, page)->profileNum	= profile;
-
     /* Save the "static" number of this tab */
     PVTS(r, page)->globalTabNum	= r->ntabs++;
 
@@ -2861,7 +2817,7 @@ rxvt_init_vts( rxvt_t *r, int page, int profile )
     }
 
     /* Initialize term_t (vts) structure */
-    PVTS( r, page )->saveLines = r->profile[profile].saveLines;
+    PVTS( r, page )->saveLines = r->profile.saveLines;
 
     /* will be set in rxvt_create_termwin */
     UNSET_WIN(PVTS(r, page)->vt);
@@ -2876,12 +2832,12 @@ rxvt_init_vts( rxvt_t *r, int page, int profile )
      * returns a static string, so duplicate it here
      */
     {
-	const char *stf = getProfileOption( r, profile, Rs_titleFormat );
+	const char *stf = getProfileOption( r, Rs_titleFormat );
 	PVTS(r, page)->title_format = NOT_NULL(stf) ? STRDUP(stf) : NULL;
     }
 
     {
-	const char *wtf = getProfileOption( r, profile, Rs_winTitleFormat );
+	const char *wtf = getProfileOption( r, Rs_winTitleFormat );
 	PVTS(r, page)->winTitleFormat = NOT_NULL(wtf) ? STRDUP(wtf) : NULL;
     }
 
@@ -2899,7 +2855,7 @@ rxvt_init_vts( rxvt_t *r, int page, int profile )
     PVTS(r, page)->next_tty_action = SAVE;
 #endif
 
-    PVTS(r, page)->holdOption = r->profile[profile].holdOption;
+    PVTS(r, page)->holdOption = r->profile.holdOption;
 
     PVTS(r, page)->status = 0;
     PVTS(r, page)->hold = 0;	    /* clear hold flag */
@@ -2939,25 +2895,25 @@ rxvt_init_vts( rxvt_t *r, int page, int profile )
 #endif
 
     /* Now set VT fg/bg color */
-    PVTS(r, page)->p_fg = VTFG(r, profile);
-    PVTS(r, page)->p_bg = VTBG(r, profile);
+    PVTS(r, page)->p_fg = VTFG(r);
+    PVTS(r, page)->p_bg = VTBG(r);
 
     if( r->TermWin.fade )
     {
-	PVTS(r, page)->p_fgfade = VTFG_FADE(r, profile);
-	PVTS(r, page)->p_bgfade = VTBG_FADE(r, profile);
+	PVTS(r, page)->p_fgfade = VTFG_FADE(r);
+	PVTS(r, page)->p_bgfade = VTBG_FADE(r);
     }
 
 #ifdef XFT_SUPPORT
     if( ISSET_OPTION( r, Opt_xft ) )
     {
-	PVTS(r, page)->p_xftfg = VTXFTFG(r, profile);
-	PVTS(r, page)->p_xftbg = VTXFTBG(r, profile);
+	PVTS(r, page)->p_xftfg = VTXFTFG(r);
+	PVTS(r, page)->p_xftbg = VTXFTBG(r);
 
 	if( r->TermWin.fade )
 	{
-	    PVTS(r, page)->p_xftfgfade = VTXFTFG_FADE(r, profile);
-	    PVTS(r, page)->p_xftbgfade = VTXFTBG_FADE(r, profile);
+	    PVTS(r, page)->p_xftfgfade = VTXFTFG_FADE(r);
+	    PVTS(r, page)->p_xftbgfade = VTXFTBG_FADE(r);
 	}
     }
 #endif
@@ -3033,12 +2989,12 @@ rxvt_destroy_termwin( rxvt_t *r, int page )
 /* rxvt_create_termwin() - create a terminal window */
 /* EXTPROTO */
 int
-rxvt_create_termwin( rxvt_t *r, int page, int profile,
+rxvt_create_termwin( rxvt_t *r, int page,
 	const char TAINTED *title )
 {
     long	    vt_emask;
 
-    if (!rxvt_init_vts (r, page, profile))
+    if (!rxvt_init_vts (r, page))
 	return 0;
 
     /*
@@ -3115,7 +3071,7 @@ rxvt_create_termwin( rxvt_t *r, int page, int profile,
     if( NOTSET_OPTION(r,  Opt_transparent) )
 # endif
     {
-	const char *pf = getProfileOption( r, profile, Rs_backgroundPixmap );
+	const char *pf = getProfileOption( r, Rs_backgroundPixmap );
 	if (NOT_NULL(pf))
 	{
 	    /* Load pixmap for each individual tab */
@@ -3145,16 +3101,9 @@ rxvt_create_termwin( rxvt_t *r, int page, int profile,
  */
 /* EXTPROTO */
 const char *
-getProfileOption( rxvt_t *r, int profile, int resource )
+getProfileOption( rxvt_t *r, int resource )
 {
-    assert( profile >= 0 || profile < MAX_PROFILES );
-
-    /*
-     * Profile 0 is default, so if the profile option is unset, fall back to
-     * profile 0.
-     */
-    return NOT_NULL(r->h->rs[resource + profile]) ?
-	r->h->rs[resource + profile] : r->h->rs[resource];
+    return r->h->rs[resource];
 }
 
 /* INTPROTO */

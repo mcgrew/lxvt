@@ -1221,19 +1221,12 @@ rxvt_adjust_fd_number( rxvt_t* r )
  */
 /* EXTPROTO */
 void
-rxvt_append_page( rxvt_t* r, int profile,
-	const char TAINTED *title, const char *command )
+rxvt_append_page( rxvt_t* r, const char TAINTED *title, const char *command )
 {
     int	    num_cmd_args = 0; /* Number of args we got from parsing command */
     char**  argv;
 
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "rxvt_append_page( r, %d, %s, %s )\n", profile, title ? title : "(nil)", command ? command : "(nil)" ));
-
-    if( profile < 0 || profile >= MAX_PROFILES )
-    {
-	rxvt_msg (DBG_WARN, DBG_TABBAR,  "Warning: Profile '%d' out of range; use profile '0' instead.", profile );
-	profile = 0;
-    }
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "rxvt_append_page( r, %d, %s, %s )\n", title ? title : "(nil)", command ? command : "(nil)" ));
 
     //LTAB(r)++;
 
@@ -1258,7 +1251,7 @@ rxvt_append_page( rxvt_t* r, int profile,
     {
 	/* load tab command if necessary*/
 	if( command == NULL )
-	    command = getProfileOption( r, profile, Rs_command );
+	    command = getProfileOption( r, Rs_command );
 
 	if( command != NULL && *command != '!' )
 	{
@@ -1280,7 +1273,7 @@ rxvt_append_page( rxvt_t* r, int profile,
      */
     if( title == NULL || *title == '\0' )
     {
-	title = getProfileOption( r, profile, Rs_tabtitle );
+	title = getProfileOption( r, Rs_tabtitle );
 	if( title == NULL || *title == '\0' )
 	{
 	    if( command && *command != '\0' )
@@ -1295,7 +1288,7 @@ rxvt_append_page( rxvt_t* r, int profile,
 #else
 		0,
 #endif
-		profile, title ))
+		title ))
     {
 	rxvt_dbgmsg ((DBG_ERROR, DBG_TABBAR,
 		    "\tThe initialization of the new tab failed.\n"));
@@ -1310,9 +1303,9 @@ rxvt_append_page( rxvt_t* r, int profile,
      * 2006-02-17 gi1242: Bug -- If the child produces some output and exits
      * quickly, then some of that output is sometimes lost.
      */
-    if( getProfileOption( r, profile, Rs_cwd ) != NULL )
+    if( getProfileOption( r, Rs_cwd ) != NULL )
     {
-	const char  *cwdOption	= getProfileOption( r, profile, Rs_cwd );
+	const char  *cwdOption	= getProfileOption( r, Rs_cwd );
 	char	    cwd[PATH_MAX] = "",
 		    child_cwd[PATH_MAX] = "";
 	int	    len = 0;
@@ -1907,7 +1900,7 @@ rxvt_tabbar_dispatcher (rxvt_t* r, XButtonEvent* ev)
 		break;
 
 	    case 3 : /* create a new vt*/
-		rxvt_append_page (r, 0, NULL, NULL);
+		rxvt_append_page (r, NULL, NULL);
 		break;
 
 	    default :
@@ -2168,7 +2161,7 @@ rxvt_tabbar_create (rxvt_t* r)
 	    if( rxvt_alloc_color (r, &color, "Active_Tab") )
 		r->tabBar.bg = color.pixel;
 	    else
-		r->tabBar.bg = VTBG(r,0);
+		r->tabBar.bg = VTBG(r);
 	}
 
 	/* create the tab frame color */
@@ -2210,7 +2203,7 @@ rxvt_tabbar_create (rxvt_t* r)
 	    if( rxvt_alloc_color( r, &color, "Inactive_Tab_Bg" ) )
 		r->tabBar.ibg = color.pixel;
 	    else
-		r->tabBar.ibg = VTBG(r,0);
+		r->tabBar.ibg = VTBG(r);
 	}
 
 	/* create the delimit color (average of 3*fg & bg) */
@@ -2227,7 +2220,7 @@ rxvt_tabbar_create (rxvt_t* r)
 	if( rxvt_alloc_color( r, &color, "Tab_Delimit" ) )
 	    r->tabBar.delimit = color.pixel;
 	else
-	    r->tabBar.delimit = VTFG(r,0);
+	    r->tabBar.delimit = VTFG(r);
 
 	rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "Delimit color: %hx, %hx, %hx (#%lx)\n", color.red, color.green, color.blue, r->tabBar.delimit));
     }

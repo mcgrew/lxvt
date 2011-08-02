@@ -68,7 +68,7 @@ rxvt_set_opacity (rxvt_t* r)
     /* Override pseudo-transparent in case */
     if (ISSET_OPTION(r, Opt_transparent))
 	UNSET_OPTION(r, Opt_transparent);
-    XSetWindowBackground(r->Xdisplay, r->TermWin.parent, VTBG(r,0) );
+    XSetWindowBackground(r->Xdisplay, r->TermWin.parent, VTBG(r) );
 #endif
 
     opacity = (CARD32) (r->TermWin.opacity * (0xffffffff / 100));
@@ -142,7 +142,7 @@ tempDisableTransparent( rxvt_t *r)
 
 	if( NOTSET_OPTION(r, Opt_forceTransparent) )
 	{
-	    XSetWindowBackground( r->Xdisplay, r->TermWin.parent, VTBG(r,0) );
+	    XSetWindowBackground( r->Xdisplay, r->TermWin.parent, VTBG(r) );
 
 	    expose_transparent_subwin( r );
 	}
@@ -375,7 +375,7 @@ rxvt_toggle_transparency (rxvt_t* r)
 	r->h->am_pixmap_trans = 0;
 	r->h->bgGrabbed = False;
 
-	XSetWindowBackground (r->Xdisplay, r->TermWin.parent, VTBG(r, 0) );
+	XSetWindowBackground (r->Xdisplay, r->TermWin.parent, VTBG(r) );
 
 	for (i = 0; i <= LTAB(r); i ++)
 	{
@@ -739,7 +739,7 @@ rxvt_check_our_parents(rxvt_t *r)
 		have_changed = 1;
 
 		XSetWindowBackground(r->Xdisplay, r->TermWin.parent,
-			VTBG(r, 0) );
+			VTBG(r) );
 
 		expose_transparent_subwin( r );
 	    }
@@ -904,7 +904,7 @@ xrenderShadeParentPixmap( rxvt_t *r, Pixmap pmap,
     /* Shade root background. */
     xrenderShadeIntersect( r, pic,
 	    ISSET_PIXCOLOR( r->h, Color_tint ) ?
-		    r->pixColorsFocus[Color_tint] : VTBG(r, 0),
+		    r->pixColorsFocus[Color_tint] : VTBG(r),
 	    r->TermWin.shade,
 	    nx, ny, nw, nh,
 	    rx, ry, rw, rh);

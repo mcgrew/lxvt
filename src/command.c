@@ -1601,8 +1601,7 @@ rxvt_clean_cmd_page (rxvt_t* r)
 		/*
 		 * print holdExitText on screen if defined.
 		 */
-		msg = getProfileOption( r, PVTS(r,i)->profileNum,
-				Rs_holdExitTxt );
+		msg = getProfileOption( r, Rs_holdExitTxt );
 		if( NOT_NULL( msg ) && *msg )
 		{
 		    unsigned char   buffer[maxLen];
@@ -1622,8 +1621,7 @@ rxvt_clean_cmd_page (rxvt_t* r)
 		/*
 		 * Update title to show tab has finished.
 		 */
-		msg = getProfileOption( r, PVTS(r,i)->profileNum,
-				Rs_holdExitTtl );
+		msg = getProfileOption( r, Rs_holdExitTtl );
 		if( NOT_NULL( msg ) && *msg )
 		{
 		    unsigned char    tabTitle[maxLen];

@@ -1218,7 +1218,6 @@ enum {
     Rs_cursorBlinkInterval,
     Rs_pointerBlankDelay,
     Rs_smClientID,
-    Rs_initProfiles,
     Rs_init_term_num,	    /* OBSOLETE */
 
     /*
@@ -1226,19 +1225,18 @@ enum {
      */
 #ifdef BACKGROUND_IMAGE
     Rs_backgroundPixmap,/* terminal background pixmap for each tab */
-    _Rs_backgroundPixmap = Rs_backgroundPixmap + MAX_PROFILES - 1,
 #endif
-    Rs_tabtitle,	_Rs_tabtitle	= MAX_PROFILES - 1 + Rs_tabtitle,
-    Rs_command,		_Rs_command	= MAX_PROFILES - 1 + Rs_command,
-    Rs_saveLines,	_Rs_saveLines	= MAX_PROFILES - 1 + Rs_saveLines,
-    Rs_foreground,	_Rs_foreground	= MAX_PROFILES - 1 + Rs_foreground,
-    Rs_background,	_Rs_background	= MAX_PROFILES - 1 + Rs_background,
-    Rs_cwd,		_Rs_cwd		= MAX_PROFILES - 1 + Rs_cwd,
-    Rs_holdExit,	_Rs_holdExit	= MAX_PROFILES - 1 + Rs_holdExit,
-    Rs_holdExitTxt,	_Rs_holdExitTxt = MAX_PROFILES - 1 + Rs_holdExitTxt,
-    Rs_holdExitTtl,	_Rs_holdExitTtl = MAX_PROFILES - 1 + Rs_holdExitTtl,
-    Rs_titleFormat,	_Rs_titleFormat = MAX_PROFILES - 1 + Rs_titleFormat,
-    Rs_winTitleFormat,	_Rs_winTitleFormat = MAX_PROFILES - 1 + Rs_winTitleFormat,
+    Rs_tabtitle,
+    Rs_command,
+    Rs_saveLines,
+    Rs_foreground,
+    Rs_background,
+    Rs_cwd,
+    Rs_holdExit,
+    Rs_holdExitTxt,
+    Rs_holdExitTtl,
+		Rs_titleFormat,
+		Rs_winTitleFormat,
 
     NUM_RESOURCES
 } ;
