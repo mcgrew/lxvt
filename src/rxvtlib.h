@@ -227,104 +227,82 @@ typedef enum
 #define Screen_DefaultFlags	(Screen_VisibleCursor|Screen_Autowrap)
 
 
-#define IS_OPTION1		    (0x00000000)
-#define IS_OPTION2		    (0x00000001)
-#define IS_OPTION3		    (0x00000002)
-#define IS_OPTION4		    (0x00000003)
-#define OPTION_MASK		    (0x00000003)
-#define MAX_OPTION_ARRAY	    (4)
-
 /* rxvt_vars.Options */
-/*
- * Bits corresponding to 1<<2 through 1<<30 can be used for option flags. 1<<31
- * is reserved for "reverse" options (which I think is obsolete), and the least
- * two significant bits are used to get the array index of r->Options.
- */
-#define	Opt_console		    ((1LU<<2) | IS_OPTION1)
-#define Opt_loginShell		    ((1LU<<3) | IS_OPTION1)
-#define Opt_iconic		    ((1LU<<4) | IS_OPTION1)
-#define Opt_visualBell		    ((1LU<<5) | IS_OPTION1)
-#define Opt_mapAlert		    ((1LU<<7) | IS_OPTION1)
-#define Opt_reverseVideo	    ((1LU<<8) | IS_OPTION1)
-#define Opt_utmpInhibit		    ((1LU<<9) | IS_OPTION1)
-#define Opt_meta8		    ((1LU<<13) | IS_OPTION1)
-#define Opt_scrollTtyOutputInhibit  ((1LU<<14) | IS_OPTION1)
-#define Opt_scrollTtyKeypress	    ((1LU<<15) | IS_OPTION1)
-#define Opt_mc_hack		    ((1LU<<18) | IS_OPTION1)
-#define Opt_tripleclickwords	    ((1LU<<19) | IS_OPTION1)
-#define Opt_mouseWheelScrollPage    ((1LU<<20) | IS_OPTION1)
-#define Opt_pointerBlank	    ((1LU<<21) | IS_OPTION1)
-#define Opt_cursorBlink		    ((1LU<<22) | IS_OPTION1)
+enum Option {
+	Opt_console		    = 1,
+	Opt_loginShell		    ,
+	Opt_iconic		    ,
+	Opt_visualBell		    ,
+	Opt_mapAlert		    ,
+	Opt_reverseVideo	    ,
+	Opt_utmpInhibit		    ,
+	Opt_meta8		    ,
+	Opt_scrollTtyOutputInhibit  ,
+	Opt_scrollTtyKeypress	    ,
+	Opt_mc_hack		    ,
+	Opt_tripleclickwords	    ,
+	Opt_mouseWheelScrollPage    ,
+	Opt_pointerBlank	    ,
+	Opt_cursorBlink		    ,
 #ifdef XFT_SUPPORT
-# define Opt_xft		    ((1LU<<28) | IS_OPTION1)
+        Opt_xft		    	    ,
 #endif
-#define DEFAULT_OPTIONS	            0
-
-/* rxvt_vars.Options2 */
-#define Opt2_protectSecondary	    ((1LU<<2) | IS_OPTION2)
+        Opt2_protectSecondary	    ,
 #ifdef XFT_SUPPORT
 # ifdef MULTICHAR_SET
-#  define Opt2_xftNomFont	    ((1LU<<4) | IS_OPTION2)
-#  define Opt2_xftSlowOutput	    ((1LU<<5) | IS_OPTION2)
+	Opt2_xftNomFont	    	    ,
+	Opt2_xftSlowOutput	    ,
 # endif
-# define Opt2_xftAntialias	    ((1LU<<6) | IS_OPTION2)
-# define Opt2_xftHinting	    ((1LU<<7) | IS_OPTION2)
-# define Opt2_xftAutoHint	    ((1LU<<8) | IS_OPTION2)
-# define Opt2_xftGlobalAdvance	    ((1LU<<9) | IS_OPTION2)
+	Opt2_xftAntialias	    ,
+	Opt2_xftHinting	    	    ,
+	Opt2_xftAutoHint            ,
+	Opt2_xftGlobalAdvance	    ,
 #endif
-#define Opt2_borderLess		    ((1LU<<14) | IS_OPTION2)
-#define Opt2_overrideRedirect	    ((1LU<<15) | IS_OPTION2)
-#define Opt2_veryBold		    ((1LU<<18) | IS_OPTION2)
+	Opt2_borderLess		    ,
+	Opt2_overrideRedirect	    ,
+	Opt2_veryBold		    ,
 #ifndef NO_BRIGHTCOLOR
-# define Opt2_boldColors	    ((1LU<<19) | IS_OPTION2)
-# define Opt_veryBright		    ((1LU<<20) | IS_OPTION2)
+	Opt2_boldColors	    	    ,
+	Opt_veryBright		    ,
 #endif
-#define Opt2_noSysConfig	    ((1LU<<21) | IS_OPTION2)
-#define Opt2_disableMacros	    ((1LU<<22) | IS_OPTION2)
+	Opt2_noSysConfig    	    ,
+	Opt2_disableMacros	    ,
 #ifdef HAVE_X11_SM_SMLIB_H
-# define Opt2_enableSessionMgt	    ((1LU<<23) | IS_OPTION2)
+	Opt2_enableSessionMgt	    ,
 #endif
-#define Opt2_linuxHomeEndKey	    ((1LU<<24) | IS_OPTION2)
-#define Opt2_smoothResize	    ((1LU<<26) | IS_OPTION2)
-#define Opt2_smartResize	    ((1LU<<27) | IS_OPTION2)
-#define Opt2_maximized		    ((1LU<<29) | IS_OPTION2)
-#define Opt2_fullscreen		    ((1LU<<30) | IS_OPTION2)
+	Opt2_linuxHomeEndKey	    ,
+	Opt2_smoothResize	    ,
+	Opt2_smartResize   	    ,
+	Opt2_maximized		    ,
+	Opt2_fullscreen		    ,
+};
 
+#define OPT(O)	((uint64_t)(1ULL << (O)))
 
 #ifdef XFT_SUPPORT
-# define DEFAULT_OPTIONS2   \
-    (Opt2_veryBold | Opt2_smartResize | Opt2_xftAntialias)
+# define DEFAULT_OPTIONS   \
+    (OPT(Opt2_veryBold) | OPT(Opt2_smartResize) | OPT(Opt2_xftAntialias))
 #else
-# define DEFAULT_OPTIONS2   \
-    (Opt2_veryBold | Opt2_smartResize)
+# define DEFAULT_OPTIONS   \
+    (OPT(Opt2_veryBold) | OPT(Opt2_smartResize))
 #endif
 
-#define Opt3_chopEnd		    ((1LU<<2) | IS_OPTION3)
-
-#define DEFAULT_OPTIONS3    \
-    (Opt3_chopEnd | IS_OPTION3)
-
-#define DEFAULT_OPTIONS4    \
-    (IS_OPTION4)
-
-/* place holder used for parsing command-line options */
-#define Opt_Reverse	    (1LU<<31)
 
 /* Macros to manipulate options (given an option array) */
 #define ISSET_ARRAYOPT( array, option )	    \
-    ( (array)[ (option) & OPTION_MASK ] & ( (option) & ~OPTION_MASK ) )
+    ( (array) & OPT(option) )
 
 #define NOTSET_ARRAYOPT( array, option )    \
     !ISSET_ARRAYOPT( array, option )
 
 #define SET_ARRAYOPT( array, option )	    \
-    ( (array)[ (option) & OPTION_MASK ] |= ( (option) & ~OPTION_MASK ) )
+    ( (array) |= OPT(option) )
 
 #define UNSET_ARRAYOPT( array, option )	    \
-    ( (array)[ (option) & OPTION_MASK ] &= ~( (option) & ~OPTION_MASK ) )
+    ( (array) &= ~OPT(option) )
 
 #define TOGGLE_ARRAYOPT( array, option )	    \
-    ( (array)[ (option) & OPTION_MASK ] ^= ( (option) & ~OPTION_MASK ) )
+    ( (array) ^= OPT(option) )
 
 /* Macros to manipulate standard options */
 #define ISSET_OPTION(R, OPT)	\
@@ -642,7 +620,7 @@ typedef struct rxvt_vars
      */
     TermWin_t	    TermWin;
     Display*	    Xdisplay;
-    uint32_t	    Options[MAX_OPTION_ARRAY];
+    uint64_t	    Options;
     XSizeHints      szHint;
 
     /* macros */

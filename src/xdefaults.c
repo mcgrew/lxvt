@@ -80,15 +80,13 @@ static const char *const xnames[3] = {
     (optList[i].flag ? 0 : (optList[i].arg ? STRLEN(optList[i].arg) : 1))
 #define optList_isBool(i)		    \
     (optList[i].flag)
-#define optList_isReverse(i)		    \
-    (optList[i].flag & Opt_Reverse)
 #define optList_isMultiple(i)		    \
     (optList[i].multiple)
 #define optList_size()			    \
     (sizeof(optList) / sizeof(optList[0]))
 
 static const struct {
-    const uint32_t  flag;	/* Option flag */
+    const enum Option flag;	/* Option flag */
     const int	    doff;	/* data offset */
     const char*	    kw;		/* keyword */
     const char*	    opt;	/* option */
@@ -442,7 +440,7 @@ static const struct {
 };
 
 /* Previously set options */
-static uint32_t	pSetOpts[ MAX_OPTION_ARRAY ] = { 0u, 0u, 0u, 0u };
+static uint64_t	pSetOpts = 0;
 
 #undef INFO
 #undef STRG
@@ -667,8 +665,6 @@ rxvt_save_options (rxvt_t* r, const char* filename)
 
 	    bval = ISSET_OPTION(r, optList[i].flag) ? 1 : 0;
 
-	    if (optList_isReverse(i))
-		bval = !bval;
 	    fprintf( pf, "%s.%s:%.*s%s\n", name,
 		optList[i].kw,
 		num_tabs( STRLEN(name) + 1 + STRLEN(optList[i].kw) + 1 ), tabs,
@@ -834,9 +830,6 @@ rxvt_get_options(rxvt_t *r, int argc, const char *const *argv)
 	/* Found option */
 	if (entry < optList_size())
 	{
-	    if (optList_isReverse(entry))
-		flag = (flag == On) ? Off : On;
-
 	    /* string value */
 	    if( optList_STRLEN(entry) )
 	    {
@@ -1065,8 +1058,6 @@ rxvt_get_xdefaults(rxvt_t *r, FILE *stream, const char *name,
 				STRCASECMP(str, "yes") == 0 ||
 				STRCASECMP(str, "on") == 0 ||
 				STRCASECMP(str, "1") == 0;
-			    if (optList_isReverse(entry))
-				s = !s;
 
 			    if (s)
 				SET_OPTION(r, optList[entry].flag);
@@ -1261,18 +1252,6 @@ rxvt_extract_resources (
 # endif
 
 #endif		    /* NO_RESOURCES */
-
-
-    /*
-     * Clear the boolean and reverse flags from Options and Options2. Otherwise
-     * this will cause trouble when we want to save the options. In that case,
-     * the boolean flag is set for each boolean options. Then if we compare
-     * Options(2) to the flag, we always get TRUE!
-     */
-    UNSET_OPTION(r, ( Opt_Reverse | IS_OPTION1 ) );
-    UNSET_OPTION(r, ( Opt_Reverse | IS_OPTION2 ) );
-    UNSET_OPTION(r, ( Opt_Reverse | IS_OPTION3 ) );
-    UNSET_OPTION(r, ( Opt_Reverse | IS_OPTION4 ) );
 
 
     /*

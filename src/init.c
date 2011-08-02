@@ -692,10 +692,7 @@ rxvt_init_vars(rxvt_t *r)
     /* Back to undocumented code :) */
     h->MEvent.time = CurrentTime;
     h->MEvent.button = AnyButton;
-    r->Options[0] = DEFAULT_OPTIONS;
-    r->Options[1] = DEFAULT_OPTIONS2;
-    r->Options[2] = DEFAULT_OPTIONS3;
-    r->Options[3] = DEFAULT_OPTIONS4;
+    r->Options = DEFAULT_OPTIONS;
     h->want_clip_refresh = 0;
     /*
      * We only want to set want_resize when we call XResizeWindow. In that
