@@ -470,9 +470,6 @@ static const char optionsstring[] = "Options: "
 #if defined(NO_DELETE_KEY)
     "no_delete,"
 #endif
-#ifdef OUR_STRINGS
-    "strings,"
-#endif
 #if !defined(NO_FRILLS)
     "frills,"
 #endif

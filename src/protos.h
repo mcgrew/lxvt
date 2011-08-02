@@ -258,27 +258,6 @@ wchar_t*         rxvt_mbstowcs                    __PROTO((const char* str));
 char*            rxvt_wcstoutf8                   __PROTO((const wchar_t* str));
 wchar_t*         rxvt_utf8towcs                   __PROTO((const char* str));
 #endif	/* HAVE_WCHAR_H */
-int              ma_strcasecmp                    __PROTO((const char* s1, const char* s2));
-int              ma_strncasecmp                   __PROTO((const char* s1, const char* s2, size_t n));
-char*            ma_strcpy                        __PROTO((char* d, const char* s));
-char*            ma_strncpy                       __PROTO((char* d, const char* s, size_t len));
-int              ma_strcmp                        __PROTO((const char* s1, const char* s2));
-int              ma_strncmp                       __PROTO((const char* s1, const char* s2, size_t len));
-char*            ma_strcat                        __PROTO((char* s1, const char* s2));
-char*            ma_strncat                       __PROTO((char* s1, const char* s2, size_t len));
-size_t           ma_strlen                        __PROTO((const char* s));
-char*            ma_strdup                        __PROTO((const char* s));
-char UNTAINTED * ma_strndup                       __PROTO((const char TAINTED * s, size_t sz));
-char*            ma_index                         __PROTO((const char* s, int c));
-char*            ma_strchr                        __PROTO((const char* s, int c));
-char*            ma_rindex                        __PROTO((const char* s, int c));
-char*            ma_strrchr                       __PROTO((const char* s, int c));
-void*            ma_memcpy                        __PROTO((void *s1, const void *s2, size_t len));
-void*            ma_memmove                       __PROTO((void *d, const void *s, size_t len));
-void             ma_bzero                         __PROTO((void *b, size_t len));
-void*            ma_memset                        __PROTO((void *p, int c1, size_t len));
-char*		 ma_strcasestr			  __PROTO((const char* phaystack, const char *pneedle));
-
 /* End prototypes of strings.c */
 
 /* Begin prototypes of transparent.c */
