@@ -48,25 +48,6 @@ or read the help on the GNU autoconf tools.
 --enable-mouseslipwheel
     add support for slip scrolling via mouse wheel or buttons 4 & 5.
 
---enable-rxvt-scroll
-    add support for the original rxvt scrollbar.
-
---enable-next-scroll
-    add support for a NeXT-like scrollbar.
-
---enable-xterm-scroll
-    add support for an Xterm-like scrollbar.
-
---enable-plain-scroll
-    add support for an plain style scrollbar.
-
---enable-sgi-scroll
-    add support for a SGI IRIX-like scrollbar.
-
---enable-half-shadow
-    make shadows on the scrollbar only half the normal width & height. Only
-    applicable to rxvt scrollbars.
-
 --enable-utmp
     write user and tty to utmp file (used by programs like ``w'') at start of
     rxvt execution and delete information when rxvt exits.
@@ -104,37 +85,12 @@ or read the help on the GNU autoconf tools.
 --enable-pointer-blank
     add support to have the pointer disappear when typing or inactive.
 
---enable-text-shadow
-    add support to have the shadow of text.
-
---enable-menubar
-    Enable popup menus and menu bar.
-
---enable-transparency
-    add support for inheriting parent backgrounds thus giving a fake
-    transparency to the term.
-
 --enable-fading
      add support for off focus fading of the window.
-
---enable-tinting
-     add support for color background tinting of the window.
 
 --enable-xrender
      add support for tinting background with XRender. It is slower than default
      tinting behavior, but looks nicer.
-
---enable-xpm
-     add support for XPM background pixmaps. This requires libxpm to be
-     installed.
-
---enable-jpeg
-     add support for JPEG background pixmaps. This requires libjpeg6 to be
-     installed.
-
---enable-png
-     add support for PNG background pixmaps. This requires libpng to be
-     installed.
 
 --enable-xft
      add support of freetype font. This option is not completed yet.
@@ -143,12 +99,6 @@ or read the help on the GNU autoconf tools.
     add support for XIM (X Input Method) protocol.  This allows using
     alternative input methods (e.g. kinput2) and will also correctly set up the
     input for people using dead keys.
-
---enable-greek
-    add support for the greek keyboard.
-
---enable-cjk
-    add support for the Chinese/Japanese/Korean multichar languages.
 
 --enable-ttygid
     change tty device setting to group "tty" - only use this if your system
@@ -188,15 +138,6 @@ or read the help on the GNU autoconf tools.
 
 --with-save-lines=NUM
     change the default lines to save in scroll buffer.
-
---with-max-term=NUM
-    change the maximal number of tabs in a terminal (default 15).
-
---with-atab-extra=%
-    The extra height (as a % of the font height) active tabs should have
-
---with-tab-radius=%
-    The radius (as a % of the font X offset) of tab corners
 
 --with-terminfo=PATH
     change the environmental variable for the path to the terminfo tree to
