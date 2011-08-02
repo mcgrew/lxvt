@@ -1,8 +1,7 @@
 # 2006-02-24 Gautam Iyer <gi1242@users.sourceforge.net>
 #
-# This file has been modified from the rxvt.terminfo file for mrxvt.
+# This file has been modified from the rxvt.terminfo file for drxvt.
 #
-# NOTE: This file defines capabilities for a terminal named "rxvt" (not mrxvt).
 # The differences from the original rxvt's terminal capabilities are listed
 # below:
 #
@@ -11,9 +10,9 @@
 #   2. The terminal has 256 colors by default (The original rxvt terminal
 #      emulator has a compile time option to support 256 colors).
 #
-# Install this file using "tic mrxvt.terminfo".
+# Install this file using "tic drxvt.terminfo".
 #
-mrxvt|mrxvt terminal emulator (X Window System), 
+drxvt|drxvt terminal emulator (X Window System), 
 	am, bce, eo, km, mir, msgr, xenl, xon, 
 	colors#256, cols#80, it#8, lines#24, ncv@, pairs#32717, 
 	acsc=``aaffggiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~, 

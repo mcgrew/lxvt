@@ -17,7 +17,7 @@
 
 docdir = $(datadir)/doc/$(PACKAGE_NAME)
 
-dist_conf_DATA = mrxvtrc mrxvtrc.sample
+dist_conf_DATA = drxvtrc drxvtrc.sample
 confdir = $(sysconfdir)/$(PACKAGE_NAME)
 
 # Distribute scripts with documentation. Package maintaners can clean them up
@@ -39,7 +39,7 @@ pixmapdir = $(datadir)/pixmaps
 # buildsdir = $(pkgdatadir)/builds
 
 dist_etc_DATA  =    etc/XTerm.ad		\
-		    etc/mrxvt.terminfo		\
+		    etc/drxvt.terminfo		\
 		    etc/rxvt.termcap		\
       		    etc/rxvt.terminfo
 etcdir = $(docdir)/etc

@@ -42,7 +42,7 @@ void  rxvt_get_xdefaults (rxvt_t*, FILE*, const char*, macro_priority_t);
 static const char *emptyResource    = "";
 
 static const char *const xnames[3] = {
-    ".mrxvtrc",
+    ".drxvtrc",
     ".Xdefaults",
     ".Xresources",
 };
@@ -158,7 +158,7 @@ static const struct {
     BOOL( "utmpInhibit", "ut", Opt_utmpInhibit,
 	    "utmp inhibit - do not log to utmp" ),
     STRG(Rs_confFile, NULL, "cf", "file",
-	"Configuration file instead of ~/.mrxvtrc", 0),
+	"Configuration file instead of ~/.drxvtrc", 0),
 
 #ifndef NO_BELL
     BOOL( "visualBell", "vb", Opt_visualBell, "visual bell" ),
@@ -398,7 +398,7 @@ static const struct {
 	"select style mode = old|oldword", 0),
 
     BOOL( "noSysConfig", "nsc", Opt2_noSysConfig,
-	    "reading /etc/mrxvt/mrxvtrc." ),
+	    "reading /etc/drxvt/drxvtrc." ),
     BOOL( "disableMacros", "dm", Opt2_disableMacros,
 	    "all keyboard shortcuts (macros)" ),
     BOOL( "linuxHomeEndKey", "lk", Opt2_linuxHomeEndKey,
@@ -424,7 +424,7 @@ static const struct {
     BOOL( "sessionMgt", "sm", Opt2_enableSessionMgt,
 	    "enabling X session management" ),
     STRG(Rs_smClientID, "smClientID", "sid", "string",
-	"client id of mrxvt for X session management", 0),
+	"client id of drxvt for X session management", 0),
 #endif	/* HAVE_X11_SM_SMLIB_H */
 
     /* Initial number of terminals */
@@ -449,7 +449,7 @@ static uint64_t	pSetOpts = 0;
 #undef BOOL
 /*}}} */
 
-static const char releasestring[] = "Mrxvt v" VERSION "\n";
+static const char releasestring[] = PACKAGE_STRING "\n";
 static const char optionsstring[] = "Options: "
     "fade,"
 #if defined(UTMP_SUPPORT)
@@ -1216,7 +1216,7 @@ rxvt_extract_resources (
      * Now read config from system wide config file.
      */
     if (NOTSET_OPTION(r, Opt2_noSysConfig) &&
-        NOT_NULL(fd = fopen( PKG_CONF_DIR "/mrxvtrc", "r")))
+        NOT_NULL(fd = fopen( PKG_CONF_DIR "/drxvtrc", "r")))
     {
 	rxvt_get_xdefaults( r, fd, APL_SUBCLASS, priority++ );
 	fclose(fd);

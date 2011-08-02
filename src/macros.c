@@ -999,7 +999,7 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		if (IS_NULL(home)) return -1; /* Failure */
 
 		snprintf (cfile, PATH_MAX-1, "%s/%s", home,
-			".mrxvtrc.save");
+			".drxvtrc.save");
 	    }
 	    cfile[PATH_MAX-1] = (char) 0;   /* Null terminate */
 

@@ -20,8 +20,8 @@
 
 DEFS = -DPKG_CONF_DIR=\"$(sysconfdir)/$(PACKAGE_NAME)\"
 
-bin_PROGRAMS = mrxvt
-mrxvt_SOURCES =	    command.h		\
+bin_PROGRAMS = drxvt
+drxvt_SOURCES =	    command.h		\
 	       	    debug.h		\
 	       	    encoding.h		\
 	       	    feature.h		\
@@ -32,7 +32,7 @@ mrxvt_SOURCES =	    command.h		\
 		    rxvtmem.h
 
 
-mrxvt_SOURCES +=    command.c		\
+drxvt_SOURCES +=    command.c		\
 		    debug.c		\
 		    encoding.c		\
 		    init.c		\
@@ -50,9 +50,9 @@ mrxvt_SOURCES +=    command.c		\
 		    xdefaults.c
 
 #install-exec-hook:
-#   -chown root $(DESTDIR)$(bindir)/mrxvt
-#   -chmod go-r $(DESTDIR)$(bindir)/mrxvt
-#   -chmod u+s $(DESTDIR)$(bindir)/mrxvt
+#   -chown root $(DESTDIR)$(bindir)/drxvt
+#   -chmod go-r $(DESTDIR)$(bindir)/drxvt
+#   -chmod u+s $(DESTDIR)$(bindir)/drxvt
 
 if UTMP_SUPPORT
 UTMP_SRC = logging.c
@@ -75,11 +75,11 @@ XFTACS_H   =
 endif
 
 
-mrxvt_SOURCES +=    $(UTMP_SRC)			\
+drxvt_SOURCES +=    $(UTMP_SRC)			\
 		    $(SESSION_SRC)		\
 		    $(XFTACS_SRC)
 
-MRXVT_H =	    ../config.h			\
+RXVT_H =	    ../config.h			\
 		    command.h			\
 		    debug.h			\
 		    feature.h			\
@@ -91,22 +91,22 @@ AUTOMAKE_OPTIONS = no-dependencies
 
 # set dependencies
 $(bin_PROGRAMS) : 
-command.o:	    $(MRXVT_H)				command.c
-encoding.o:	    $(MRXVT_H) encoding.h		encoding.c
-grkelot.o:	    $(MRXVT_H) grkelot.h		grkelot.c
-macros.o:	    $(MRXVT_H)				macros.c
-init.o:		    $(MRXVT_H) $(XFTACS_H) init.h	init.c
-logging.o:	    $(MRXVT_H)				logging.c
-main.o:		    $(MRXVT_H) $(XFTACS_H)		main.c
-misc.o:		    $(MRXVT_H) 				misc.c
-netdisp.o:	    $(MRXVT_H) 				netdisp.c
-ptytty.o:	    $(MRXVT_H) 				ptytty.c
-rxvt.o:		    $(MRXVT_H) 				rxvt.c
-rxvtmem.o:	    $(MRXVT_H) 				rxvtmem.h rxvtmem.c
-screen.o:	    $(MRXVT_H) $(XFTACS_H)		screen.c
-session.o:	    $(MRXVT_H) 				session.c
-strings.o:	    $(MRXVT_H) 				strings.c
-tabbar.o:	    $(MRXVT_H) 				tabbar.c
-xdefaults.o:	    $(MRXVT_H) 				xdefaults.c
-transparent.o:	    $(MRXVT_H) 				transparent.c
+command.o:	    $(RXVT_H)				command.c
+encoding.o:	    $(RXVT_H) encoding.h		encoding.c
+grkelot.o:	    $(RXVT_H) grkelot.h		grkelot.c
+macros.o:	    $(RXVT_H)				macros.c
+init.o:		    $(RXVT_H) $(XFTACS_H) init.h	init.c
+logging.o:	    $(RXVT_H)				logging.c
+main.o:		    $(RXVT_H) $(XFTACS_H)		main.c
+misc.o:		    $(RXVT_H) 				misc.c
+netdisp.o:	    $(RXVT_H) 				netdisp.c
+ptytty.o:	    $(RXVT_H) 				ptytty.c
+rxvt.o:		    $(RXVT_H) 				rxvt.c
+rxvtmem.o:	    $(RXVT_H) 				rxvtmem.h rxvtmem.c
+screen.o:	    $(RXVT_H) $(XFTACS_H)		screen.c
+session.o:	    $(RXVT_H) 				session.c
+strings.o:	    $(RXVT_H) 				strings.c
+tabbar.o:	    $(RXVT_H) 				tabbar.c
+xdefaults.o:	    $(RXVT_H) 				xdefaults.c
+transparent.o:	    $(RXVT_H) 				transparent.c
 xftacs.o:			xftacs.h		xftacs.c
