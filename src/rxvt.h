@@ -1728,26 +1728,6 @@ struct rxvt_hidden {
 #define __PROTO(p)  p
 #include "protos.h"
 
-#ifdef OUR_STRINGS
-# define MEMSET(x, y, z)	ma_memset((x), (y), (size_t)(z))
-# define MEMCPY(x, y, z)	ma_memcpy((void *)(x), (const void *)(y), (z))
-# define MEMMOVE(x, y, z)	ma_memmove((void *)(x), (const void *)(y), (z))
-# define STRCASECMP(x, y)	ma_strcasecmp((x), (y))
-# define STRNCASECMP(x, y, z)	ma_strncasecmp((x), (y), (z))
-# define STRCPY(x, y)		ma_strcpy((char *)(x), (const char *)(y))
-# define STRNCPY(x, y, z)	ma_strncpy((char *)(x), (const char *)(y), (z))
-# define STRCMP(x, y)		ma_strcmp((const char *)(x), (const char *)(y))
-# define STRNCMP(x, y, z)	ma_strncmp((const char *)(x), (const char *)(y), (z))
-# define STRCAT(x, y)		ma_strcat((char *)(x), (const char *)(y))
-# define STRNCAT(x, y, z)	ma_strncat((char *)(x), (const char *)(y), (z))
-# define STRDUP(x)		ma_strdup((const char *)(x))
-# define STRNDUP(x, z)		ma_strndup((const char TAINTED *)(x), (size_t) (z))
-# define STRLEN(x)		ma_strlen((const char *)(x))
-# define STRCHR(x, y)		ma_strchr((const char *)(x), (int)(y))
-# define STRRCHR(x, y)		ma_strrchr((const char *)(x), (int)(y))
-
-#else /* OUR_STRINGS */
-
 # define MEMSET(x, y, z)	memset((x), (y), (size_t)(z))
 # define MEMCPY(x, y, z)	memcpy((void *)(x), (const void *)(y), (z))
 # define MEMMOVE(x, y, z)	memmove((void *)(x), (const void *)(y), (z))
@@ -1765,41 +1745,17 @@ struct rxvt_hidden {
  * strdup or strndup because we want to free the memory allocated
  * by strdup/strndup using our free function
  */
-# if defined(HAVE_STRDUP)
 #  define STRDUP(x)		strdup((const char *)(x))
-# else
-#  define STRDUP(x)		ma_strdup((const char *)(x))
-# endif
-
-# if defined(HAVE_STRNDUP)
 #  define STRNDUP(x, z)		strndup((const char TAINTED *)(x), (size_t) (z))
-# else
-#  define STRNDUP(x, z)		ma_strndup((const char TAINTED *)(x), (size_t) (z))
-# endif
-
-# ifdef HAVE_STRCHR
 #  define STRCHR(x, y)		strchr((const char *)(x), (int)(y))
-# else
-#  define STRCHR(x, y)		ma_strchr((const char *)(x), (int)(y))
-# endif
-
-# ifdef HAVE_STRRCHR
 #  define STRRCHR(x, y)		strrchr((const char *)(x), (int)(y))
-# else
-#  define STRRCHR(x, y)		ma_strrchr((const char *)(x), (int)(y))
-# endif
-#endif	/* OUR_STRINGS */
 
 # define STRSTR(x, y)		strstr((const char *)(x), (const char*)(y))
 /*
  * strcasestr is not provided by Cygwin's libraries, so we have to check for it
  * here. Thanks to Teun Burgers for pointing this out.
  */
-# ifdef HAVE_STRCASESTR
 #  define STRCASESTR( x, y)	strcasestr( (x), (y) )
-# else
-#  define STRCASESTR( x, y)	ma_strcasestr( (x), (y))
-# endif
 
 
 #define TWIN_WIDTH(R)	((R)->szHint.width)

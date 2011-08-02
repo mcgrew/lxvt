@@ -120,7 +120,6 @@ dnl Configuration options
 support_everything=no
 support_minimal=no
 support_debug=no
-support_ourstrings=no
 support_frills=yes
 support_tabs=yes
 support_keepscrolling=yes
@@ -178,7 +177,6 @@ AC_ARG_ENABLE(
 )
 if test "x$support_everything" = "xyes"; then
     support_debug=yes
-    support_ourstrings=no
     support_frills=yes
     support_tabs=yes
     support_keepscrolling=yes
@@ -235,7 +233,6 @@ AC_ARG_ENABLE(
 )
 if test "x$support_minimal" = "xyes"; then
     support_debug=no
-    support_ourstrings=no
     support_frills=no
     support_tabs=no
     support_keepscrolling=no
@@ -295,16 +292,6 @@ if test "x$support_debug" = "xyes"; then
     CFLAGS="$CFLAGS -g"
 else
     AC_DEFINE(NDEBUG, [], [unset DEBUG mode])
-fi
-
-
-AC_ARG_ENABLE(
-    ourstrings,
-    AC_HELP_STRING([--enable-ourstrings],[enable our strings functions [[no]]]),
-    [support_ourstrings=$enableval]
-)
-if test "x$support_ourstrings" = "xyes"; then
-    AC_DEFINE(OUR_STRINGS, [], [use our own string functions])
 fi
 
 
@@ -1496,7 +1483,6 @@ echo
 echo
 echo "Maintenance:"
 echo "Debug mode                  : $support_debug"
-echo "Private string functions    : $support_ourstrings"
 echo "Rarely used features        : $support_frills"
 echo "Multiple tabs               : $support_tabs"
 echo 
