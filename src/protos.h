@@ -35,7 +35,7 @@ void             rxvt_xterm_seq                   __PROTO((rxvt_t* r, int op, co
 void             rxvt_tt_printf                   __PROTO((rxvt_t* r, const char* fmt,...));
 void             rxvt_tt_write                    __PROTO((rxvt_t* r, const unsigned char* d, int len));
 void             rxvt_pointer_unblank             __PROTO((rxvt_t* r));
-void             rxvt_resize_on_subwin            __PROTO((rxvt_t* r, resize_reason_t reason));
+void             rxvt_resize_on_subwin            __PROTO((rxvt_t* r));
 void           	 rxvt_resize_on_font           	  __PROTO((rxvt_t* r, char* fontname));
 /* End prototypes of command.c */
 

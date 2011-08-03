@@ -686,13 +686,6 @@ typedef struct rxvt_vars
 } rxvt_t;
 
 
-typedef enum
-{
-    RESIZE_FONT = 0,
-    X_CONFIGURE,
-} resize_reason_t;
-
-
 /* MACROS for colors of individual terminals */
 
 #define VTFG(R)	\

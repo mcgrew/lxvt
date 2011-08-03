@@ -2749,7 +2749,7 @@ rxvt_process_focus (rxvt_t* r, XFocusChangeEvent* ev)
  */
 /* INTPROTO */
 void
-rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason)
+rxvt_resize_on_subwin (rxvt_t* r)
 {
     /*
      * Store the old width and height
@@ -2757,9 +2757,6 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason)
     unsigned oldWidth  = r->szHint.width;
     unsigned oldHeight = r->szHint.height;
 
-    switch (reason)
-    {
-	case RESIZE_FONT:
 	    /* Calculate the base width and height */
 	    r->szHint.base_width  = 2 * r->TermWin.int_bwidth;
 	    r->szHint.base_height = 2 * r->TermWin.int_bwidth;
@@ -2793,17 +2790,9 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason)
 	     * to refresh the screen.
 	     */
 	    r->h->want_resize |= FORCE_REFRESH;
-	    break;
-
-	default:
-	    assert (0);	/* should not reach here */
-	    return ;
-    }
 
     /* Reset WMNormal Hints. We need not worry about r->szHint.flags */
     XSetWMNormalHints (r->Xdisplay, r->TermWin.parent, &(r->szHint));
-
-    r->h->window_vt_y = r->szHint.base_height - 2*r->TermWin.int_bwidth;
 
     /*
      * Now we can resize the window The resize request might not always succeed.
@@ -2917,7 +2906,7 @@ rxvt_resize_on_font (rxvt_t* r, char* fontname)
     if (!rxvt_change_font_x11 (r, fontname))
 	return ;
 
-    rxvt_resize_on_subwin (r, RESIZE_FONT);
+    rxvt_resize_on_subwin (r);
 }
 
 
@@ -2958,6 +2947,9 @@ rxvt_calc_colrow (rxvt_t* r, unsigned int width, unsigned int height)
      */
     r->szHint.width = width;
     r->szHint.height = height;
+
+    r->h->window_vt_x = (width - Width2Pixel(ncol))/2 - r->TermWin.int_bwidth;
+    r->h->window_vt_y = (height - Height2Pixel(nrow) + 1)/2 - r->TermWin.int_bwidth;
 
     return ((r->h->prev_ncol != r->TermWin.ncol) ||
 	    (r->h->prev_nrow != r->TermWin.nrow));
