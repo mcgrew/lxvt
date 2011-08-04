@@ -5079,7 +5079,7 @@ rxvt_process_sgr_mode(rxvt_t* r, unsigned int nargs, const int *arg)
 {
     unsigned int    i;
     short	    rendset;
-    int		    rendstyle = 0;
+    rend_t	    rendstyle = 0;
 
     if (nargs == 0)
     {
@@ -5138,16 +5138,28 @@ rxvt_process_sgr_mode(rxvt_t* r, unsigned int nargs, const int *arg)
 		rxvt_scr_color(r,
 		    (unsigned int)(minCOLOR+(arg[i]-30)), Color_fg);
 		break;
-#ifdef TTY_256COLOR
 	    case 38:
+#ifdef TTY_256COLOR
 		if (nargs > i + 2 && arg[i + 1] == 5)
 		{
 		    rxvt_scr_color(r,
 			(unsigned int)(minCOLOR+arg[i+2]), Color_fg);
 		    i += 2;
 		}
-		break;
 #endif
+#ifdef TTY_RGBCOLOR
+		if (r->rgbColors && nargs > i + 4 && arg[i+1] == 2)
+		{
+		    rxvt_scr_color(r, 
+			    RS_fgMaskRGB |
+			    ((arg[i+2] & 0xff) << 16) | 
+			    ((arg[i+3] & 0xff) << 8) |
+			    (arg[i+4] & 0xff),
+			    Color_fg);
+		    i += 4;
+		}
+#endif
+		break;
 	    case 39:	    /* default fg */
 		rxvt_scr_color(r, Color_fg, Color_fg);
 		break;
@@ -5163,16 +5175,28 @@ rxvt_process_sgr_mode(rxvt_t* r, unsigned int nargs, const int *arg)
 		rxvt_scr_color(r,
 		    (unsigned int)(minCOLOR+(arg[i]-40)), Color_bg);
 		break;
-#ifdef TTY_256COLOR
 	    case 48:
+#ifdef TTY_256COLOR
 		if (nargs > i + 2 && arg[i + 1] == 5)
 		{
 		    rxvt_scr_color(r,
 			(unsigned int)(minCOLOR+arg[i+2]), Color_bg);
 		    i += 2;
 		}
-		break;
 #endif
+#ifdef TTY_RGBCOLOR
+		if (r->rgbColors && nargs > i + 4 && arg[i+1] == 2)
+		{
+		    rxvt_scr_color(r, 
+			    RS_fgMaskRGB |
+			    ((arg[i+2] & 0xff) << 16) | 
+			    ((arg[i+3] & 0xff) << 8) |
+			    (arg[i+4] & 0xff),
+			    Color_bg);
+		    i += 4;
+		}
+#endif
+		break;
 	    case 49:	    /* default bg */
 		rxvt_scr_color(r, Color_bg, Color_bg);
 		break;

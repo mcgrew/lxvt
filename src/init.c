@@ -2727,42 +2727,51 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
 
     Window		    parent;	/* WinID to use for parent window */
 
+    r->Xvisual = DefaultVisual(r->Xdisplay, XSCREEN);
+    r->Xdepth = DefaultDepth(r->Xdisplay, XSCREEN);
+    r->Xcmap = DefaultColormap(r->Xdisplay, XSCREEN);
+
+#if defined(PREFER_24BIT) || defined(TTY_RGBCOLOR)
+    {
+	XVisualInfo *vinfo, vinfotpl = { 
+	    .visualid = XVisualIDFromVisual(r->Xvisual),
+	    .screen = XSCREEN,
+	    .depth = 24,
+	    .class = TrueColor,
+	    .red_mask = 0xff0000,
+	    .green_mask = 0xff00,
+	    .blue_mask = 0x000ff
+	};
+	long mask = VisualClassMask 
 #ifdef PREFER_24BIT
-    XSetWindowAttributes    attributes;
-    XWindowAttributes	    gattr;
+	    | VisualDepthMask
+#endif
+#ifdef TTY_RGBCOLOR
+	    | VisualRedMaskMask | VisualGreenMaskMask | VisualBlueMaskMask
+#endif
+	    ;
+	int n;
 
-
-    XCMAP = DefaultColormap(r->Xdisplay, XSCREEN);
-    XVISUAL = DefaultVisual(r->Xdisplay, XSCREEN);
-
-    if (ISSET_OPTION(r, Opt_transparent))
-    {
-	XGetWindowAttributes(r->Xdisplay,
-	    RootWindow(r->Xdisplay, XSCREEN), &gattr);
-	XDEPTH = gattr.depth;
-    }
-    else
-    {
-	XDEPTH = DefaultDepth(r->Xdisplay, XSCREEN);
-	/*
-	 * If depth is not 24, look for a 24bit visual.
-	 */
-	if (XDEPTH != 24)
+	if ((vinfo = XGetVisualInfo(r->Xdisplay, VisualIDMask     | mask, &vinfotpl, &n)) || 
+	    (vinfo = XGetVisualInfo(r->Xdisplay, VisualScreenMask | mask, &vinfotpl, &n)))
 	{
-	    XVisualInfo	 vinfo;
+	    r->Xvisual = vinfo->visual;
+	    r->Xdepth = vinfo->depth;
+#ifdef TTY_RGBCOLOR
+	    r->rgbColors = 1;
+#endif
+	    XFree(vinfo);
 
-	    if (XMatchVisualInfo(r->Xdisplay, XSCREEN, 24, TrueColor, &vinfo))
-	    {
-		XDEPTH = 24;
-		XVISUAL = vinfo.visual;
-		XCMAP = XCreateColormap(r->Xdisplay,
-			    RootWindow(r->Xdisplay, XSCREEN),
-			    XVISUAL, AllocNone);
-	    }
+	    r->Xcmap = XCreateColormap(r->Xdisplay, XROOT, r->Xvisual, AllocNone);
 	}
+#ifdef TTY_RGBCOLOR
+	else
+	{
+	    rxvt_msg (DBG_WARN, DBG_INIT, "Appropriate visual not found: RGB colors disabled\n");
+	}
+#endif
     }
 #endif
-
 
     /* grab colors before netscape does */
     rxvt_init_colors (r);
@@ -2832,7 +2841,8 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
      * placement & size in rxvt_resize_subwindows()
      */
 
-#ifdef PREFER_24BIT
+#if defined(PREFER_24BIT) || defined(TTY_RGBCOLOR)
+    XSetWindowAttributes    attributes;
     attributes.background_pixel = r->pixColorsFocus[Color_bg];
     attributes.border_pixel = r->pixColorsFocus[Color_border];
     attributes.colormap = XCMAP;

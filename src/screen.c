@@ -869,7 +869,7 @@ rxvt_scr_color(rxvt_t* r, unsigned int color, int fgbg)
  */
 /* EXTPROTO */
 void
-rxvt_scr_rendition(rxvt_t* r, int set, int style)
+rxvt_scr_rendition(rxvt_t* r, int set, rend_t style)
 {
     if (set)
 	PVTS(r)->rstyle |= style;
@@ -2833,12 +2833,14 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 
 
     signed char	morecur = 0;/* */
-#ifdef TTY_256COLOR
-    uint16_t	fore, back; /* desired foreground/background */
+#ifdef TTY_RGBCOLOR
+    uint32_t
+#elif defined(TTY_256COLOR)
+    uint16_t
 #else
     unsigned char
-		fore, back; /* desired foreground/background */
 #endif
+		fore, back; /* desired foreground/background */
     int16_t	col, row,   /* column/row we're processing */
 		ocrow,	    /* old cursor row */
 		len, wlen;  /* text length screen/buffer */
@@ -3545,8 +3547,8 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 		{
 		    if (
 			  XDEPTH > 2 && ISSET_PIXCOLOR(r, Color_BD)
-			  && r->pixColors[fore] != r->pixColors[Color_BD]
-			  && r->pixColors[back] != r->pixColors[Color_BD]
+			  && PIXCOLOR(r, fore) != r->pixColors[Color_BD]
+			  && PIXCOLOR(r, back) != r->pixColors[Color_BD]
 		       )
 		    {
 
@@ -3566,8 +3568,8 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 		{
 		    if (
 			  XDEPTH > 2 && ISSET_PIXCOLOR(r, Color_UL)
-			  && r->pixColors[fore] != r->pixColors[Color_UL]
-			  && r->pixColors[back] != r->pixColors[Color_UL]
+			  && PIXCOLOR(r, fore) != r->pixColors[Color_UL]
+			  && PIXCOLOR(r, back) != r->pixColors[Color_UL]
 		       )
 		    {
 			fore = Color_UL;
@@ -3587,8 +3589,8 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 	    {
 		if (
 		      XDEPTH > 2 && ISSET_PIXCOLOR(r, Color_HC)
-		      && r->pixColors[fore] != r->pixColors[Color_HC]
-		      && r->pixColors[back] != r->pixColors[Color_HC]
+		      && PIXCOLOR(r, fore) != r->pixColors[Color_HC]
+		      && PIXCOLOR(r, back) != r->pixColors[Color_HC]
 # ifndef NO_CURSORCOLOR
 			/* Don't do this for the cursor */
 		      && (
@@ -3617,8 +3619,8 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 #ifndef NO_BOLD_UNDERLINE_REVERSE
 		if (
 		      XDEPTH > 2 && ISSET_PIXCOLOR(r, Color_RV)
-		      && r->pixColors[fore] != r->pixColors[Color_RV]
-		      && r->pixColors[back] != r->pixColors[Color_RV]
+		      && PIXCOLOR(r, fore) != r->pixColors[Color_RV]
+		      && PIXCOLOR(r, back) != r->pixColors[Color_RV]
 # ifndef NO_CURSORCOLOR
 		      /* Don't do this for the cursor */
 		      && (
@@ -3638,7 +3640,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 
 #ifndef NO_BRIGHTCOLOR
 	    /* Use bright colors for bold primary colors */
-	    if( ((rend & RS_Bold) && (NOTSET_OPTION( r, Opt2_boldColors ) || r->pixColors[fore] == r->pixColors[back]))
+	    if( ((rend & RS_Bold) && (NOTSET_OPTION( r, Opt2_boldColors ) || PIXCOLOR(r, fore) == PIXCOLOR(r, back)))
 #ifdef BLINK_BRIGHTCOLOR
 			    || (rend & RS_Blink)
 #endif
@@ -3708,12 +3710,12 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 	    gcmask = 0;
 	    if (back != Color_bg)
 	    {
-		gcvalue.background = r->pixColors[back];
+		gcvalue.background = PIXCOLOR(r, back);
 		gcmask = GCBackground;
 	    }
 	    if (fore != Color_fg)
 	    {
-		gcvalue.foreground = r->pixColors[fore];
+		gcvalue.foreground = PIXCOLOR(r, fore);
 		gcmask |= GCForeground;
 	    }
 #ifndef NO_BOLD_UNDERLINE_REVERSE

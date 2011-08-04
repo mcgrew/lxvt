@@ -166,7 +166,7 @@ void             rxvt_scr_poweron                 __PROTO((rxvt_t* r));
 void             rxvt_scr_cursor                  __PROTO((rxvt_t* r, int mode));
 int              rxvt_scr_change_screen           __PROTO((rxvt_t* r, int scrn));
 void             rxvt_scr_color                   __PROTO((rxvt_t* r, unsigned int color, int fgbg));
-void             rxvt_scr_rendition               __PROTO((rxvt_t* r, int set, int style));
+void             rxvt_scr_rendition               __PROTO((rxvt_t* r, int set, rend_t style));
 int              rxvt_scroll_text                 __PROTO((rxvt_t* r, int row1, int row2, int count, int spec));
 void             rxvt_scr_add_lines               __PROTO((rxvt_t* r, const unsigned char* str, int nlines, int len));
 void             rxvt_scr_backspace               __PROTO((rxvt_t* r));
