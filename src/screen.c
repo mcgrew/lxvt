@@ -805,7 +805,7 @@ rxvt_scr_change_screen(rxvt_t* r, int scrn)
 
     rxvt_selection_check(r, 2);	/* check for boundary cross */
 
-    SWAP_IT(PVTS(r)->current_screen, scrn, int);
+    SWAP_IT(scrn, PVTS(r)->current_screen);
 
 #if NSCREENS
     PVTS(r)->num_scr = 0;
@@ -814,14 +814,14 @@ rxvt_scr_change_screen(rxvt_t* r, int scrn)
     for (i = PVTS(r)->prev_nrow; i--;)
     {
 	SWAP_IT(PSCR(r).text[i + offset],
-	    PVTS(r)->swap.text[i], text_t *);
+	    PVTS(r)->swap.text[i]);
 	SWAP_IT(PSCR(r).tlen[i + offset],
-	    PVTS(r)->swap.tlen[i], int16_t);
+	    PVTS(r)->swap.tlen[i]);
 	SWAP_IT(PSCR(r).rend[i + offset],
-	    PVTS(r)->swap.rend[i], rend_t *);
+	    PVTS(r)->swap.rend[i]);
     }
-    SWAP_IT(CURROW, PVTS(r)->swap.cur.row, int16_t);
-    SWAP_IT(CURCOL, PVTS(r)->swap.cur.col, int16_t);
+    SWAP_IT(CURROW, PVTS(r)->swap.cur.row);
+    SWAP_IT(CURCOL, PVTS(r)->swap.cur.col);
     assert (CURROW >= 0);
     assert (CURROW < PVTS(r)->prev_nrow);
     assert (CURCOL >= 0);
@@ -831,9 +831,8 @@ rxvt_scr_change_screen(rxvt_t* r, int scrn)
     MAX_IT(CURCOL, 0);
     MIN_IT(CURCOL, (int32_t)PVTS(r)->prev_ncol - 1);
 
-    SWAP_IT(PSCR(r).charset, PVTS(r)->swap.charset,
-	int16_t);
-    SWAP_IT(PSCR(r).flags, PVTS(r)->swap.flags, int);
+    SWAP_IT(PSCR(r).charset, PVTS(r)->swap.charset);
+    SWAP_IT(PSCR(r).flags, PVTS(r)->swap.flags);
     PSCR(r).flags |= Screen_VisibleCursor;
     PVTS(r)->swap.flags |= Screen_VisibleCursor;
 
@@ -1702,7 +1701,7 @@ rxvt_scr_erase_screen(rxvt_t* r, int mode)
 	    return;
     }
 
-    r->h->refresh_type |= REFRESH_BOUNDS;
+    r->h.refresh_type |= REFRESH_BOUNDS;
     if(
 	 SEL(r).op &&
 	 PVTS(r)->current_screen == SEL(r).screen &&
@@ -1765,7 +1764,7 @@ rxvt_scr_E(rxvt_t* r)
     rend_t	 *r1, fs;
 
     PVTS(r)->want_refresh = 1;
-    r->h->num_scr_allow = 0;
+    r->h.num_scr_allow = 0;
     ZERO_SCROLLBACK(r);
     RESET_CHSTAT(r);
     rxvt_selection_check(r, 3);
@@ -2063,19 +2062,17 @@ rxvt_scr_rvideo_mode(rxvt_t* r, int mode)
     {
 	PVTS(r)->rvideo = mode;
 
-	SWAP_IT( PVTS(r)->p_fg, PVTS(r)->p_bg, unsigned long );
+	SWAP_IT( PVTS(r)->p_fg, PVTS(r)->p_bg );
 #ifdef XFT_SUPPORT
 	if( ISSET_OPTION( r, Opt_xft ) )
-	    SWAP_IT( PVTS(r)->p_xftfg, PVTS(r)->p_xftbg, XftColor );
+	    SWAP_IT( PVTS(r)->p_xftfg, PVTS(r)->p_xftbg );
 #endif
 	if( r->TermWin.fade )
 	{
-	    SWAP_IT( PVTS(r)->p_fgfade, PVTS(r)->p_bgfade,
-		    unsigned long );
+	    SWAP_IT( PVTS(r)->p_fgfade, PVTS(r)->p_bgfade );
 #ifdef XFT_SUPPORT
 	    if( ISSET_OPTION( r, Opt_xft ) )
-		SWAP_IT( PVTS(r)->p_xftfgfade, PVTS(r)->p_xftbgfade,
-			XftColor );
+		SWAP_IT( PVTS(r)->p_xftfgfade, PVTS(r)->p_xftbgfade );
 #endif
 	}
 
@@ -2368,7 +2365,7 @@ rxvt_scr_bell(rxvt_t *r)
 	/*
 	 * Visual bells don't need to be rung on windows which are not visible.
 	 */
-	if( r->h->refresh_type == NO_REFRESH )
+	if( r->h.refresh_type == NO_REFRESH )
 	    return;
 
 	{
@@ -2376,7 +2373,7 @@ rxvt_scr_bell(rxvt_t *r)
 	    rxvt_scr_rvideo_mode(r, !PVTS(r)->rvideo);
 
 #ifdef HAVE_NANOSLEEP
-	    rxvt_scr_refresh( r,  r->h->refresh_type );
+	    rxvt_scr_refresh( r,  r->h.refresh_type );
 	    XSync( r->Xdisplay, False );
 	    if( r->TermWin.vBellDuration )
 		nanosleep(&rqt, NULL);
@@ -2861,13 +2858,12 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
     rend_t*	srp;	    /* screen-rend-pointer */
     text_t*	dtp;	    /* drawn-text pointer */
     text_t*	stp;	    /* screen-text-pointer */
-    char*	buffer;	    /* local copy of r->h->buffer */
+    char*	buffer;	    /* local copy of r->h.buffer */
     /*
     int		(*drawfunc) () = XDrawString;
     int		(*image_drawfunc) () = XDrawImageString;
     */
     int		drawfunc, image_drawfunc;
-    struct rxvt_hidden *h = r->h;
 
     if( !(refresh_type & CLIPPED_REFRESH) )
 	PVTS( r)->scrolled_lines = 0;
@@ -2916,12 +2912,12 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 	loadedBoldFt = 0;
 #endif /* NO_BOLDFONT */
 
-    if (h->currmaxcol < r->TermWin.ncol)
+    if (r->h.currmaxcol < r->TermWin.ncol)
     {
-	h->currmaxcol = r->TermWin.ncol;
-	h->buffer = rxvt_realloc(h->buffer, sizeof(char) * (h->currmaxcol + 1));
+	r->h.currmaxcol = r->TermWin.ncol;
+	r->h.buffer = rxvt_realloc(r->h.buffer, sizeof(char) * (r->h.currmaxcol + 1));
     }
-    buffer = h->buffer;
+    buffer = r->h.buffer;
 
     row_offset = SVLINES - VSTART;
 #ifdef XFT_SUPPORT
@@ -2936,10 +2932,10 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
     if ((refresh_type & REFRESH_BOUNDS))
     {
 	clearfirst = clearlast = 1;
-	h->refresh_type &= ~REFRESH_BOUNDS;
+	r->h.refresh_type &= ~REFRESH_BOUNDS;
     }
     /* is there an old outline cursor on screen? */
-    ocrow = h->oldcursor.row;
+    ocrow = r->h.oldcursor.row;
 
     /*
      * set base colours to avoid check in "single glyph writing" below
@@ -2952,18 +2948,18 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
      * time drawing pixels outside this clipping. (This probably happened
      * because of an expose event).
      */
-    if( (refresh_type & CLIPPED_REFRESH) && IS_REGION(h->refreshRegion))
+    if( (refresh_type & CLIPPED_REFRESH) && IS_REGION(r->h.refreshRegion))
     {
-	rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "Doing clipped refresh (Region %p)\n", h->refreshRegion));
+	rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "Doing clipped refresh (Region %p)\n", r->h.refreshRegion));
 
 	/*
 	 * We must wait till refresh is complete before destroying the
 	 * region because the clipping is reset when text shadow is used.
 	 */
-	XSetRegion( r->Xdisplay, r->TermWin.gc, h->refreshRegion);
+	XSetRegion( r->Xdisplay, r->TermWin.gc, r->h.refreshRegion);
 #ifdef XFT_SUPPORT
 	if( ISSET_OPTION(r, Opt_xft) && PVTS(r)->xftvt )
-	    XftDrawSetClip( PVTS(r)->xftvt, h->refreshRegion);
+	    XftDrawSetClip( PVTS(r)->xftvt, r->h.refreshRegion);
 #endif
 	/* Remember we don't need to call XClearArea on exposed regions */
 	if( must_clear ) already_cleared = 1;
@@ -2985,7 +2981,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 
 	showcursor = (PSCR(r).flags & Screen_VisibleCursor);
 #ifdef CURSOR_BLINK
-	if (h->hidden_cursor)
+	if (r->h.hidden_cursor)
 	    showcursor = 0;
 #endif
 	if (showcursor && r->TermWin.focus)
@@ -2999,7 +2995,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 
 #ifndef NO_CURSORCOLOR
 	    cc1 = *srp & (RS_fgMask | RS_bgMask);
-	    if (XDEPTH > 2 && ISSET_PIXCOLOR(h, Color_cursor))
+	    if (XDEPTH > 2 && ISSET_PIXCOLOR(r, Color_cursor))
 		ccol1 = Color_cursor;
 	    else
 #ifdef CURSOR_COLOR_IS_RENDITION_COLOR
@@ -3013,8 +3009,8 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 #endif
 	    if(
 		 XDEPTH > 2
-		 && ISSET_PIXCOLOR( h, Color_cursor )
-		 && ISSET_PIXCOLOR( h, Color_cursor2 )
+		 && ISSET_PIXCOLOR( r, Color_cursor )
+		 && ISSET_PIXCOLOR( r, Color_cursor2 )
 	      )
 		ccol2 = Color_cursor2;
 	    else
@@ -3064,19 +3060,19 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 	setoldcursor = 0;
 	if (ocrow != -1)
 	{
-	    if (CURROW + VSTART != ocrow || CURCOL != h->oldcursor.col)
+	    if (CURROW + VSTART != ocrow || CURCOL != r->h.oldcursor.col)
 	    {
 		if (
 		      ocrow < r->TermWin.nrow
-		      && h->oldcursor.col < r->TermWin.ncol
+		      && r->h.oldcursor.col < r->TermWin.ncol
 		   )
 		{
-		    PVTS(r)->drawn_rend[ocrow][h->oldcursor.col] ^=
+		    PVTS(r)->drawn_rend[ocrow][r->h.oldcursor.col] ^=
 			(RS_RVid | RS_Uline);
 #ifdef MULTICHAR_SET
-		    if (h->oldcursormulti)
+		    if (r->h.oldcursormulti)
 		    {
-			col = h->oldcursor.col + h->oldcursormulti;
+			col = r->h.oldcursor.col + r->h.oldcursormulti;
 			if (col < r->TermWin.ncol)
 			    PVTS(r)->drawn_rend[ocrow][col] ^=
 				(RS_RVid | RS_Uline);
@@ -3084,7 +3080,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 #endif
 		}
 		if (r->TermWin.focus || !showcursor)
-		    h->oldcursor.row = -1;
+		    r->h.oldcursor.row = -1;
 		else
 		    setoldcursor = 1;
 	    }
@@ -3095,13 +3091,13 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 	if (setoldcursor)
 	{
 	    if (CURROW + VSTART >= r->TermWin.nrow)
-		h->oldcursor.row = -1;
+		r->h.oldcursor.row = -1;
 	    else
 	    {
-		h->oldcursor.row = CURROW + VSTART;
-		h->oldcursor.col = CURCOL;
+		r->h.oldcursor.row = CURROW + VSTART;
+		r->h.oldcursor.col = CURCOL;
 #ifdef MULTICHAR_SET
-		h->oldcursormulti = morecur;
+		r->h.oldcursormulti = morecur;
 #endif
 	    }
 	}
@@ -3116,7 +3112,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
     */
     i = PVTS(r)->num_scr;
     if (refresh_type == FAST_REFRESH &&
-	    h->num_scr_allow &&
+	    r->h.num_scr_allow &&
 	    i &&
 	    abs(i) < r->TermWin.nrow &&
 	    !must_clear)
@@ -3166,7 +3162,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 	    {
 		/* also comes here at end if needed because of >= above */
 		if (wlen < len)
-		    SWAP_IT(wlen, len, int);
+		    SWAP_IT(wlen, len);
 
 		rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "rxvt_scr_refresh (): " "XCopyArea: %d -> %d (height: %d)\n", len + i, len, wlen - len + 1));
 		XCopyArea(r->Xdisplay, PVTS(r)->vt,
@@ -3404,7 +3400,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 			    (srp[col] == drp[col]) &&
 			    (stp[col + 1] == dtp[col + 1]))
 			    break;
-			if (len == h->currmaxcol)
+			if (len == r->h.currmaxcol)
 			    break;
 			dtp[col] = stp[col];
 			drp[col] = srp[col];
@@ -3415,7 +3411,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 
 		if (buffer[0] & 0x80)
 		{
-		    (h->multichar_decode)( (unsigned char*) buffer, len);
+		    (r->h.multichar_decode)( (unsigned char*) buffer, len);
 		}
 		wlen = len / 2;
 	    }
@@ -3548,7 +3544,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 		if ( rend & RS_Bold )
 		{
 		    if (
-			  XDEPTH > 2 && ISSET_PIXCOLOR(h, Color_BD)
+			  XDEPTH > 2 && ISSET_PIXCOLOR(r, Color_BD)
 			  && r->pixColors[fore] != r->pixColors[Color_BD]
 			  && r->pixColors[back] != r->pixColors[Color_BD]
 		       )
@@ -3569,7 +3565,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 		else if ( rend & RS_Uline )
 		{
 		    if (
-			  XDEPTH > 2 && ISSET_PIXCOLOR(h, Color_UL)
+			  XDEPTH > 2 && ISSET_PIXCOLOR(r, Color_UL)
 			  && r->pixColors[fore] != r->pixColors[Color_UL]
 			  && r->pixColors[back] != r->pixColors[Color_UL]
 		       )
@@ -3590,13 +3586,13 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 	    if ( (rend & RS_Blink))
 	    {
 		if (
-		      XDEPTH > 2 && ISSET_PIXCOLOR(h, Color_HC)
+		      XDEPTH > 2 && ISSET_PIXCOLOR(r, Color_HC)
 		      && r->pixColors[fore] != r->pixColors[Color_HC]
 		      && r->pixColors[back] != r->pixColors[Color_HC]
 # ifndef NO_CURSORCOLOR
 			/* Don't do this for the cursor */
 		      && (
-			    !ISSET_PIXCOLOR(h, Color_cursor)
+			    !ISSET_PIXCOLOR(r, Color_cursor)
 			    || !r->TermWin.focus || !showcursor
 			    || CURROW != row || CURCOL != col
 			 )
@@ -3620,13 +3616,13 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 	    {
 #ifndef NO_BOLD_UNDERLINE_REVERSE
 		if (
-		      XDEPTH > 2 && ISSET_PIXCOLOR(h, Color_RV)
+		      XDEPTH > 2 && ISSET_PIXCOLOR(r, Color_RV)
 		      && r->pixColors[fore] != r->pixColors[Color_RV]
 		      && r->pixColors[back] != r->pixColors[Color_RV]
 # ifndef NO_CURSORCOLOR
 		      /* Don't do this for the cursor */
 		      && (
-			    !ISSET_PIXCOLOR(h, Color_cursor)
+			    !ISSET_PIXCOLOR(r, Color_cursor)
 			    || !r->TermWin.focus || !showcursor
 			    || CURROW != row || CURCOL != col
 			 )
@@ -3636,11 +3632,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 		else
 #endif
 		{
-#ifdef TTY_256COLOR
-		    SWAP_IT(fore, back, uint16_t);
-#else
-		    SWAP_IT(fore, back, unsigned char);
-#endif
+		    SWAP_IT(fore, back);
 		}
 	    }
 
@@ -3655,7 +3647,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 		if( fore == Color_fg )
 		{
 		    if (
-			  XDEPTH > 2 && ISSET_PIXCOLOR(h, Color_BD)
+			  XDEPTH > 2 && ISSET_PIXCOLOR(r, Color_BD)
 			  && r->pixColors[fore] != r->pixColors[Color_BD]
 			  && r->pixColors[back] != r->pixColors[Color_BD]
 		       )
@@ -3725,7 +3717,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 		gcmask |= GCForeground;
 	    }
 #ifndef NO_BOLD_UNDERLINE_REVERSE
-	    else if (rend & RS_Bold && ISSET_PIXCOLOR( h, Color_BD) )
+	    else if (rend & RS_Bold && ISSET_PIXCOLOR( r, Color_BD) )
 	    {
 # ifdef XFT_SUPPORT
 		/*
@@ -3748,7 +3740,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 		if (NOTSET_OPTION(r, Opt2_veryBold))
 		    rend &= ~RS_Bold;
 	    }
-	    else if (rend & RS_Uline && ISSET_PIXCOLOR( h, Color_UL) )
+	    else if (rend & RS_Uline && ISSET_PIXCOLOR( r, Color_UL) )
 	    {
 # ifdef XFT_SUPPORT
 		if( ISSET_OPTION(r, Opt_xft) && PVTS(r)->xftvt )
@@ -3786,8 +3778,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 # ifdef XFT_SUPPORT
 		    if( ISSET_OPTION(r, Opt_xft) )
 		    {
-			SWAP_IT( r->TermWin.xftfont, r->TermWin.xftbfont,
-				XftFont*);
+			SWAP_IT( r->TermWin.xftfont, r->TermWin.xftbfont );
 		    }
 		    else
 # endif
@@ -3821,7 +3812,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 # ifdef XFT_SUPPORT
 		if( ISSET_OPTION(r, Opt_xft) )
 		{
-		    SWAP_IT( r->TermWin.xftfont, r->TermWin.xftbfont, XftFont*);
+		    SWAP_IT( r->TermWin.xftfont, r->TermWin.xftbfont);
 		}
 		else
 # endif
@@ -3848,7 +3839,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 				buffer, wlen, drawfunc,
 				fore, back, rend,
 				((refresh_type & CLIPPED_REFRESH) ?
-					r->h->refreshRegion : None ));
+					r->h.refreshRegion : None ));
 			break;
 		    }
 	    }
@@ -3872,7 +3863,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 			xpixel, ypixelc, buffer, wlen, drawfunc,
 			fore, back, rend,
 			((refresh_type & CLIPPED_REFRESH) ?
-				r->h->refreshRegion : None ));
+				r->h.refreshRegion : None ));
 	    }
 	    else
 	    {
@@ -3881,7 +3872,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 			xpixel, ypixelc, buffer, wlen, image_drawfunc,
 			fore, back, rend,
 			((refresh_type & CLIPPED_REFRESH) ?
-				r->h->refreshRegion : None ));
+				r->h.refreshRegion : None ));
 	    }
 
 #ifndef NO_BOLDOVERSTRIKE
@@ -3899,7 +3890,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 			xpixel + 1, ypixelc, buffer, wlen, drawfunc,
 			fore, back, rend,
 			((refresh_type & CLIPPED_REFRESH) ?
-				r->h->refreshRegion : None ));
+				r->h.refreshRegion : None ));
 	    }
 #endif
 	    if (rend & RS_Uline)
@@ -3947,7 +3938,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 #ifdef XFT_SUPPORT
 	if( ISSET_OPTION(r, Opt_xft) )
 	{
-	    SWAP_IT( r->TermWin.xftfont, r->TermWin.xftbfont, XftFont*);
+	    SWAP_IT( r->TermWin.xftfont, r->TermWin.xftbfont);
 	}
 	else
 # endif
@@ -3984,13 +3975,13 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 	    }
 #endif
 	}
-	else if (h->oldcursor.row >= 0)
+	else if (r->h.oldcursor.row >= 0)
 	{
 #ifndef NO_CURSORCOLOR
 	    unsigned long   gcmask; /* Graphics Context mask */
 
 	    gcmask = 0;
-	    if (XDEPTH > 2 && ISSET_PIXCOLOR(h, Color_cursor))
+	    if (XDEPTH > 2 && ISSET_PIXCOLOR(r, Color_cursor))
 	    {
 		gcvalue.foreground = r->pixColors[Color_cursor];
 		gcmask = GCForeground;
@@ -4000,8 +3991,8 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 #endif
 
 	    XDrawRectangle(r->Xdisplay, drawBuffer, r->TermWin.gc,
-		Col2Pixel(h->oldcursor.col + morecur),
-		Row2Pixel(h->oldcursor.row),
+		Col2Pixel(r->h.oldcursor.col + morecur),
+		Row2Pixel(r->h.oldcursor.row),
 		(unsigned int)(Width2Pixel(1 + (morecur?1:0)) - 1),
 		(unsigned int)(Height2Pixel(1)
 		/* - r->TermWin.lineSpace*/ - 1));
@@ -4043,7 +4034,7 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
     if (refresh_type & SMOOTH_REFRESH)
 	XSync(r->Xdisplay, False);
 
-    if( (refresh_type & CLIPPED_REFRESH) && IS_REGION(h->refreshRegion))
+    if( (refresh_type & CLIPPED_REFRESH) && IS_REGION(r->h.refreshRegion))
     {
 	/*
 	 * A clipped refresh is complete. Don't restrict future refreshes.
@@ -4064,19 +4055,19 @@ rxvt_scr_refresh(rxvt_t* r, unsigned char refresh_type)
 	/* If we performed an unclipped refresh, then the screen is current */
 	PVTS(r)->want_refresh = 0;
 
-    h->refresh_type &= ~CLIPPED_REFRESH;
-    h->want_clip_refresh = 0; /* clipping is current (regardless of wether we
+    r->h.refresh_type &= ~CLIPPED_REFRESH;
+    r->h.want_clip_refresh = 0; /* clipping is current (regardless of wether we
 				 performed a clipped refresh or not. */
 
     /* Clipping regions will now carry stale information. */
-    if (IS_REGION(h->refreshRegion))
+    if (IS_REGION(r->h.refreshRegion))
     {
-	XDestroyRegion( h->refreshRegion );
-	UNSET_REGION(h->refreshRegion);
+	XDestroyRegion( r->h.refreshRegion );
+	UNSET_REGION(r->h.refreshRegion);
     }
 
     PVTS(r)->num_scr = 0;
-    h->num_scr_allow = 1;
+    r->h.num_scr_allow = 1;
 }
 
 
@@ -4098,7 +4089,7 @@ rxvt_scr_clear(rxvt_t* r)
 {
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "rxvt_scr_clear()\n"));
 
-    r->h->num_scr_allow = 0;
+    r->h.num_scr_allow = 0;
     PVTS(r)->want_refresh = 1;
     XClearWindow(r->Xdisplay, PVTS(r)->vt);
 }
@@ -4235,16 +4226,16 @@ rxvt_selection_paste(rxvt_t* r, Window win, Atom prop, Bool delete_prop)
     char**	    cl;
 #endif
 
-    rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "rxvt_selection_paste (%08lx, %lu, %d), wait=%2x\n", win, (unsigned long)prop, (int)delete_prop, r->h->selection_wait));
+    rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "rxvt_selection_paste (%08lx, %lu, %d), wait=%2x\n", win, (unsigned long)prop, (int)delete_prop, r->h.selection_wait));
 
     if (NOT_ATOM(prop))	    /* check for failed XConvertSelection */
     {
 #ifdef MULTICHAR_SET
-	if ((r->h->selection_type & Sel_CompoundText))
+	if ((r->h.selection_type & Sel_CompoundText))
 	{
-	    int	    selnum = r->h->selection_type & Sel_whereMask;
+	    int	    selnum = r->h.selection_type & Sel_whereMask;
 
-	    r->h->selection_type = 0;
+	    r->h.selection_type = 0;
 	    if (selnum != Sel_direct)
 		rxvt_selection_request_other(r, XA_STRING, selnum);
 	}
@@ -4278,7 +4269,7 @@ rxvt_selection_paste(rxvt_t* r, Window win, Atom prop, Bool delete_prop)
 	{
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "rxvt_selection_paste: property empty - also INCR end\n"));
 
-	    if( r->h->selection_wait == Sel_normal && nread == 0 )
+	    if( r->h.selection_wait == Sel_normal && nread == 0 )
 	    {
 		/*
 		 * pass through again trying CUT_BUFFER0 if we've come from
@@ -4317,8 +4308,8 @@ rxvt_selection_paste(rxvt_t* r, Window win, Atom prop, Bool delete_prop)
     if (ct.value)
 	XFree(ct.value);
 
-    if (r->h->selection_wait == Sel_normal)
-	r->h->selection_wait = Sel_none;
+    if (r->h.selection_wait == Sel_normal)
+	r->h.selection_wait = Sel_none;
 
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "rxvt_selection_paste: bytes written: %ld\n", nread));
     return (int)nread;
@@ -4338,7 +4329,7 @@ rxvt_selection_property(rxvt_t* r, Window win, Atom prop)
 	return;
 
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "rxvt_selection_property(%08lx, %lu)\n", win, (unsigned long)prop));
-    if (r->h->selection_wait == Sel_normal)
+    if (r->h.selection_wait == Sel_normal)
     {
 	int	     a, afmt;
 	Atom		atype;
@@ -4346,38 +4337,38 @@ rxvt_selection_property(rxvt_t* r, Window win, Atom prop)
 	unsigned char  *s = NULL;
 
 	a = XGetWindowProperty(r->Xdisplay, win, prop, 0L, 1L, False,
-		   r->h->xa[XA_INCR], &atype, &afmt, &nitems,
+		   r->h.xa[XA_INCR], &atype, &afmt, &nitems,
 		   &bytes_after, &s);
 	if (s)
 	    XFree(s);
 	if (a != Success)
 	    return;
 #ifndef OS_CYGWIN
-	if (atype == r->h->xa[XA_INCR])	    /* start an INCR transfer */
+	if (atype == r->h.xa[XA_INCR])	    /* start an INCR transfer */
 	{
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "rxvt_selection_property: INCR: starting transfer\n"));
 	    XDeleteProperty(r->Xdisplay, win, prop);
 	    XFlush(r->Xdisplay);
 	    reget_time = 1;
-	    r->h->selection_wait = Sel_incr;
+	    r->h.selection_wait = Sel_incr;
 	}
 #endif
     }
-    else if (r->h->selection_wait == Sel_incr)
+    else if (r->h.selection_wait == Sel_incr)
     {
 	reget_time = 1;
 	if (rxvt_selection_paste(r, win, prop, True) == -1)
 	{
 	    rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "rxvt_selection_property: INCR: clean end\n"));
-	    r->h->selection_wait = Sel_none;
-	    r->h->timeout[TIMEOUT_INCR].tv_sec = 0; /* turn off timer */
+	    r->h.selection_wait = Sel_none;
+	    r->h.timeout[TIMEOUT_INCR].tv_sec = 0; /* turn off timer */
 	}
     }
     if (reget_time)	/* received more data so reget time */
     {
-	gettimeofday( &(r->h->timeout[TIMEOUT_INCR]), NULL);
+	gettimeofday( &(r->h.timeout[TIMEOUT_INCR]), NULL);
 	/* ten seconds wait */
-	r->h->timeout[TIMEOUT_INCR].tv_sec += 10;
+	r->h.timeout[TIMEOUT_INCR].tv_sec += 10;
     }
 }
 
@@ -4397,17 +4388,17 @@ rxvt_selection_request_by_sel(rxvt_t* r, Time tm, int x, int y,int sel)
     if (x < 0 || x >= VT_WIDTH(r) || y < 0 || y >= VT_HEIGHT(r))
 	return;		/* outside window */
 
-	r->h->selection_request_time = tm;
-	r->h->selection_wait = Sel_normal;
+	r->h.selection_request_time = tm;
+	r->h.selection_wait = Sel_normal;
 
 #ifdef MULTICHAR_SET
-   r->h->selection_type = Sel_CompoundText;
+   r->h.selection_type = Sel_CompoundText;
 #else
-   r->h->selection_type = 0;
+   r->h.selection_type = 0;
 #endif
    rxvt_selection_request_other(r,
 #ifdef MULTICHAR_SET
-	 r->h->xa[XA_COMPOUND_TEXT],
+	 r->h.xa[XA_COMPOUND_TEXT],
 #else
 	 XA_STRING,
 #endif
@@ -4444,19 +4435,19 @@ rxvt_selection_request(rxvt_t* r, Time tm, int x, int y)
     {
 	int	     i;
 
-	r->h->selection_request_time = tm;
-	r->h->selection_wait = Sel_normal;
+	r->h.selection_request_time = tm;
+	r->h.selection_wait = Sel_normal;
 
 	for (i = Sel_Primary; i <= Sel_Clipboard; i++)
 	{
 #ifdef MULTICHAR_SET
-	    r->h->selection_type = Sel_CompoundText;
+	    r->h.selection_type = Sel_CompoundText;
 #else
-	    r->h->selection_type = 0;
+	    r->h.selection_type = 0;
 #endif
 	    if (rxvt_selection_request_other(r,
 #ifdef MULTICHAR_SET
-		 r->h->xa[XA_COMPOUND_TEXT],
+		 r->h.xa[XA_COMPOUND_TEXT],
 #else
 		 XA_STRING,
 #endif
@@ -4466,7 +4457,7 @@ rxvt_selection_request(rxvt_t* r, Time tm, int x, int y)
     }
 
     /* don't loop in rxvt_selection_paste() */
-    r->h->selection_wait = Sel_none;
+    r->h.selection_wait = Sel_none;
     rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "rxvt_selection_request: pasting CUT_BUFFER0\n" ));
     rxvt_selection_paste(r, XROOT, XA_CUT_BUFFER0, False);
 }
@@ -4481,21 +4472,21 @@ rxvt_selection_request_other(rxvt_t* r, Atom target, int selnum)
     char	   *debug_xa_names[] = { "PRIMARY", "SECONDARY", "CLIPBOARD" };
 #endif
 
-    r->h->selection_type |= selnum;
+    r->h.selection_type |= selnum;
     if (selnum == Sel_Primary)
 	sel = XA_PRIMARY;
     else if (selnum == Sel_Secondary)
 	sel = XA_SECONDARY;
     else
-	sel = r->h->xa[XA_CLIPBOARD];
+	sel = r->h.xa[XA_CLIPBOARD];
     if (XGetSelectionOwner(r->Xdisplay, sel) != None)
     {
 	rxvt_dbgmsg(( DBG_DEBUG, DBG_SCREEN, "rxvt_selection_request_other: "
 		    "pasting %s\n", debug_xa_names[selnum] ));
 
 	XConvertSelection(r->Xdisplay, sel, target,
-	    r->h->xa[XA_VT_SELECTION], PVTS(r)->vt,
-	    r->h->selection_request_time);
+	    r->h.xa[XA_VT_SELECTION], PVTS(r)->vt,
+	    r->h.selection_request_time);
 	return 1;
     }
     return 0;
@@ -4677,7 +4668,7 @@ rxvt_selection_make(rxvt_t* r, Time tm)
 #endif	/* MULTICHAR_SET */
 #ifdef ACS_ASCII
 	    if ((*re++ & RS_acsFont) && *t >= 0x60 && *t < 0x80)
-		*str = r->h->rs[Rs_acs_chars][(*t) - 0x60];
+		*str = r->h.rs[Rs_acs_chars][(*t) - 0x60];
 	    else
 #endif	/* ACS_ASCII */
 	    *str = *t;
@@ -4729,7 +4720,7 @@ rxvt_selection_make(rxvt_t* r, Time tm)
 #endif	/* MULTICHAR_SET */
 #ifdef ACS_ASCII
 	if ((*re++ & RS_acsFont) && *t >= 0x60 && *t < 0x80)
-	    *str = r->h->rs[Rs_acs_chars][(*t) - 0x60];
+	    *str = r->h.rs[Rs_acs_chars][(*t) - 0x60];
 	else
 #endif	/* ACS_ASCII */
 	*str = *t;
@@ -4770,7 +4761,7 @@ rxvt_selection_make(rxvt_t* r, Time tm)
 	rxvt_msg (DBG_ERROR, DBG_SCREEN, "can't get primary selection");
     XChangeProperty(r->Xdisplay, XROOT, XA_CUT_BUFFER0, XA_STRING, 8,
 	PropModeReplace, SEL(r).text, (int)SEL(r).len);
-    r->h->selection_time = tm;
+    r->h.selection_time = tm;
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "rxvt_selection_make (): sel.len=%d\n", SEL(r).len));
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "sel.text=%s\n", SEL(r).text));
 }
@@ -4836,7 +4827,7 @@ rxvt_selection_start_colrow(rxvt_t* r, int col, int row)
 
 /* what do we want: spaces/tabs are delimiters or cutchars or non-cutchars */
 #define DELIMIT_TEXT(x) \
-    (((x) == ' ' || (x) == '\t') ? 2 : (STRCHR(r->h->rs[Rs_cutchars], (x)) != NULL))
+    (((x) == ' ' || (x) == '\t') ? 2 : (STRCHR(r->h.rs[Rs_cutchars], (x)) != NULL))
 #ifdef MULTICHAR_SET
 # define DELIMIT_REND(x)    (((x) & RS_multiMask) ? 1 : 0)
 #else
@@ -5096,9 +5087,9 @@ rxvt_selection_extend_colrow(rxvt_t* r, int32_t col, int32_t row, int button3, i
     {
 	if (SEL(r).clicks == 1 || button3)
 	{
-	    if (r->h->hate_those_clicks)
+	    if (r->h.hate_those_clicks)
 	    {
-		r->h->hate_those_clicks = 0;
+		r->h.hate_those_clicks = 0;
 		if (SEL(r).clicks == 1)
 		{
 		    SEL(r).beg.row = SEL(r).mark.row;
@@ -5135,14 +5126,14 @@ rxvt_selection_extend_colrow(rxvt_t* r, int32_t col, int32_t row, int button3, i
 		&(SEL(r).beg));
 	    rxvt_selection_delimit_word(r, DN, &(SEL(r).mark),
 		&(SEL(r).end));
-	    r->h->hate_those_clicks = 1;
+	    r->h.hate_those_clicks = 1;
 	}
 	else if (SEL(r).clicks == 3)
 	{
 	    SEL(r).beg.row = SEL(r).end.row = SEL(r).mark.row;
 	    SEL(r).beg.col = 0;
 	    SEL(r).end.col = ncol;
-	    r->h->hate_those_clicks = 1;
+	    r->h.hate_those_clicks = 1;
 	}
 
 	rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "rxvt_selection_extend_colrow () EXIT b:(r:%d,c:%d) m:(r:%d,c:%d), e:(r:%d,c:%d)\n", SEL(r).beg.row, SEL(r).beg.col, SEL(r).mark.row, SEL(r).mark.col, SEL(r).end.row, SEL(r).end.col));
@@ -5387,7 +5378,9 @@ rxvt_process_selectionrequest (rxvt_t* r, const XSelectionRequestEvent *rq)
 #endif
     Atom	    target;
     XTextProperty   ct;
+#ifdef USE_XIM
     XICCEncodingStyle style;
+#endif
     char	   *cl[2], dummy[1];
 
     ev.type = SelectionNotify;
@@ -5398,13 +5391,13 @@ rxvt_process_selectionrequest (rxvt_t* r, const XSelectionRequestEvent *rq)
     ev.target = rq->target;
     ev.time = rq->time;
 
-    if (rq->target == r->h->xa[XA_TARGETS])
+    if (rq->target == r->h.xa[XA_TARGETS])
     {
-	target_list[0] = r->h->xa[XA_TARGETS];
+	target_list[0] = r->h.xa[XA_TARGETS];
 	target_list[1] = XA_STRING;
-	target_list[2] = r->h->xa[XA_TEXT];
+	target_list[2] = r->h.xa[XA_TEXT];
 #ifdef USE_XIM
-	target_list[3] = r->h->xa[XA_COMPOUND_TEXT];
+	target_list[3] = r->h.xa[XA_COMPOUND_TEXT];
 #endif
 	XChangeProperty(r->Xdisplay, rq->requestor, rq->property,
 	    XA_ATOM, 32, PropModeReplace,
@@ -5412,23 +5405,23 @@ rxvt_process_selectionrequest (rxvt_t* r, const XSelectionRequestEvent *rq)
 	    (sizeof(target_list) / sizeof(target_list[0])));
 	ev.property = rq->property;
     }
-    else if (rq->target == r->h->xa[XA_MULTIPLE])
+    else if (rq->target == r->h.xa[XA_MULTIPLE])
     {
 	/* TODO: Handle MULTIPLE */
     }
-    else if (rq->target == r->h->xa[XA_TIMESTAMP] && SEL(r).text)
+    else if (rq->target == r->h.xa[XA_TIMESTAMP] && SEL(r).text)
     {
 	XChangeProperty(r->Xdisplay, rq->requestor, rq->property,
 	    XA_INTEGER,
 	    sizeof(Time) > 4 ? 32 : (8 * sizeof(Time)),
-	    PropModeReplace, (unsigned char*)&r->h->selection_time,
+	    PropModeReplace, (unsigned char*)&r->h.selection_time,
 	    sizeof(Time) > 4 ? sizeof(Time)/4 : 1);
 	ev.property = rq->property;
     }
     else if (
 	      rq->target == XA_STRING
-	      || rq->target == r->h->xa[XA_COMPOUND_TEXT]
-	      || rq->target == r->h->xa[XA_TEXT]
+	      || rq->target == r->h.xa[XA_COMPOUND_TEXT]
+	      || rq->target == r->h.xa[XA_TEXT]
 	    )
     {
 #ifdef USE_XIM
@@ -5439,14 +5432,16 @@ rxvt_process_selectionrequest (rxvt_t* r, const XSelectionRequestEvent *rq)
 #ifdef USE_XIM
 	if (rq->target != XA_STRING)
 	{
-	    target = r->h->xa[XA_COMPOUND_TEXT];
-	    style = (rq->target == r->h->xa[XA_COMPOUND_TEXT])
+	    target = r->h.xa[XA_COMPOUND_TEXT];
+	    style = (rq->target == r->h.xa[XA_COMPOUND_TEXT])
 		? XCompoundTextStyle : XStdICCTextStyle;
 	} else
 #endif
 	{
 	    target = XA_STRING;
+#ifdef USE_XIM
 	    style = XStringStyle;
+#endif
 	}
 	if (SEL(r).text)
 	{

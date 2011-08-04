@@ -397,7 +397,7 @@ rxvt_set_multichar_encoding (rxvt_t* r, const char* str)
 	if (0 == STRCASECMP (str, a->name))
 	{
 	    r->encoding_method = a->method;
-	    r->h->multichar_decode = a->func;
+	    r->h.multichar_decode = a->func;
 	    break;
 	}
     }
@@ -407,7 +407,7 @@ rxvt_set_multichar_encoding (rxvt_t* r, const char* str)
 	rxvt_msg( DBG_INFO, DBG_ENCODING,
 		    "... effectively set to noenc\n");
 	r->encoding_method = ENC_NOENC;
-	r->h->multichar_decode = rxvt_decode_dummy;
+	r->h.multichar_decode = rxvt_decode_dummy;
     }
     else
 	rxvt_msg( DBG_INFO, DBG_ENCODING,
@@ -475,7 +475,7 @@ rxvt_set_default_locale (rxvt_t* r)
 
     rxvt_msg (DBG_INFO, DBG_ENCODING, "set default locale to %s\n",
 	    locale ? locale : "none");
-    r->h->locale = locale;
+    r->h.locale = locale;
 }
 
 
@@ -490,7 +490,7 @@ rxvt_get_encoding_from_locale (rxvt_t* r)
 {
     char*   enc;
 
-    if (IS_NULL(r->h->locale))
+    if (IS_NULL(r->h.locale))
 	return NULL;
 
 #ifdef HAVE_NL_LANGINFO
@@ -500,10 +500,10 @@ rxvt_get_encoding_from_locale (rxvt_t* r)
     {
 	char *end;
 	// the codeset is between '.' and '@'.
-	if (IS_NULL(enc = strchr (r->h->locale, '.')))
+	if (IS_NULL(enc = strchr (r->h.locale, '.')))
 	    return NULL;
 
-	if (!IS_NULL (end = strchr (r->h->locale, '@')))
+	if (!IS_NULL (end = strchr (r->h.locale, '@')))
 	    end[0] = '\0';
 
 	enc ++;
@@ -545,12 +545,12 @@ rxvt_fallback_mfont_xft (rxvt_t* r)
 void
 rxvt_set_default_font_xft (rxvt_t* r)
 {
-    if (ISSET_OPTION(r, Opt_xft) && IS_NULL(r->h->rs[Rs_xftfont]))
-	r->h->rs[Rs_xftfont] = DEFAULT_XFT_FONT_NAME;
+    if (ISSET_OPTION(r, Opt_xft) && IS_NULL(r->h.rs[Rs_xftfont]))
+	r->h.rs[Rs_xftfont] = DEFAULT_XFT_FONT_NAME;
 
 # ifdef MULTICHAR_SET
-    if (ISSET_OPTION(r, Opt_xft) && IS_NULL(r->h->rs[Rs_xftmfont]))
-	r->h->rs[Rs_xftmfont] = rxvt_fallback_mfont_xft (r);
+    if (ISSET_OPTION(r, Opt_xft) && IS_NULL(r->h.rs[Rs_xftmfont]))
+	r->h.rs[Rs_xftmfont] = rxvt_fallback_mfont_xft (r);
 # endif
 }
 #endif	/* XFT_SUPPORT */
@@ -646,11 +646,11 @@ rxvt_set_default_font_x11 (rxvt_t* r)
 
     /* Overrided by -km option or X resources */
     for (i = 0; i < MAX_NFONTS; i ++)	{
-	if (IS_NULL(r->h->rs[Rs_font +i]))
-	    r->h->rs[Rs_font +i] = def_fontName[i];
+	if (IS_NULL(r->h.rs[Rs_font +i]))
+	    r->h.rs[Rs_font +i] = def_fontName[i];
 #ifdef MULTICHAR_SET
-	if (IS_NULL(r->h->rs[Rs_mfont +i]))
-	    r->h->rs[Rs_mfont +i] = def_mfontName[i];
+	if (IS_NULL(r->h.rs[Rs_mfont +i]))
+	    r->h.rs[Rs_mfont +i] = def_mfontName[i];
 #endif
     }
 }

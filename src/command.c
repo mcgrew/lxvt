@@ -271,7 +271,7 @@ rxvt_0xffxx_keypress (rxvt_t* r, KeySym keysym,
 		if (
 			meta
 # ifdef META8_OPTION
-			&& (r->h->meta_char == C0_ESC)
+			&& (r->h.meta_char == C0_ESC)
 # endif
 		   )
 		{
@@ -291,14 +291,14 @@ rxvt_0xffxx_keypress (rxvt_t* r, KeySym keysym,
 		}
 		else
 		    /*
-		     * If PrivMode_HaveBackSpace is unset, then h->key_backspace
+		     * If PrivMode_HaveBackSpace is unset, then r->h.key_backspace
 		     * will be a one character string.
 		     */
-		    STRCPY( bsKbuf, r->h->key_backspace);
+		    STRCPY( bsKbuf, r->h.key_backspace);
 
 # ifdef META8_OPTION
 		if( meta )  /* We must be in 8bit mode if meta is set here */
-		    *bsKbuf |= r->h->meta_char;
+		    *bsKbuf |= r->h.meta_char;
 # endif
 
 # ifdef MULTICHAR_SET
@@ -345,12 +345,12 @@ rxvt_0xffxx_keypress (rxvt_t* r, KeySym keysym,
 	case XK_Return:
 	    newlen = 0;
 #ifdef META8_OPTION
-	    if (r->h->meta_char == 0x80)
+	    if (r->h.meta_char == 0x80)
 		/*
 		 * 2006-12-12 gi1242: In 8 bit mode, xterm sends 0x8d for
 		 * Alt+enter. Enter sends 0x0d.
 		 */
-		kbuf[newlen++] = meta ? (r->h->meta_char|C0_CR) : C0_CR;
+		kbuf[newlen++] = meta ? (r->h.meta_char|C0_CR) : C0_CR;
 	    else
 #endif	/* META8_OPTION */
 	    {
@@ -573,7 +573,7 @@ rxvt_0xffxx_keypress (rxvt_t* r, KeySym keysym,
 
 	case XK_Delete:
 #ifndef NO_DELETE_KEY
-	    STRCPY( kbuf, r->h->key_delete);
+	    STRCPY( kbuf, r->h.key_delete);
 #else
 	    SET_TILDE_KEY_SEQ( kbuf, "\033[3" );
 #endif
@@ -835,14 +835,14 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
     ** function to avoid potential abuse of this buffer at somewhere
     ** else.
     */
-    static unsigned char kbuf[KBUFSZ];	/* was r->h->kbuf */
+    static unsigned char kbuf[KBUFSZ];	/* was r->h.kbuf */
 
 
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "KeyPress event\n"));
     shft = (ev->state & ShiftMask);
     ctrl = (ev->state & ControlMask);
-    meta = (ev->state & r->h->ModMetaMask);
-    alt = (ev->state & r->h->ModAltMask);
+    meta = (ev->state & r->h.ModMetaMask);
+    alt = (ev->state & r->h.ModAltMask);
 
 #if 0 /* {{{ Old numlock handling (conflicts with Xterm) */
     /*
@@ -850,9 +850,9 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
      * allow an escape sequence to toggle the Keypad. Always permit
      * `shift' to override the current setting
      */
-    if (r->numlock_state || (ev->state & r->h->ModNumLockMask))
+    if (r->numlock_state || (ev->state & r->h.ModNumLockMask))
     {
-	r->numlock_state = (ev->state & r->h->ModNumLockMask);
+	r->numlock_state = (ev->state & r->h.ModNumLockMask);
 	PrivMode((!r->numlock_state), PrivMode_aplKP);
     }
 #endif /*}}}*/
@@ -862,15 +862,15 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
      * store the numlock state so that we can cancel shift if numlock is
      * pressed, and we get an un-shifted keypad key.
      */
-    r->numlock_state = ( ev->state & r->h->ModNumLockMask );
+    r->numlock_state = ( ev->state & r->h.ModNumLockMask );
 
 #ifdef USE_XIM
-    if (NOT_NULL(r->h->Input_Context))
+    if (NOT_NULL(r->h.Input_Context))
     {
 	Status	      status_return;
 
 	kbuf[0] = '\0';
-	len = XmbLookupString(r->h->Input_Context, ev, (char *)kbuf,
+	len = XmbLookupString(r->h.Input_Context, ev, (char *)kbuf,
 		  KBUFSZ, &keysym, &status_return);
 	valid_keysym = ((status_return == XLookupKeySym) ||
 			(status_return == XLookupBoth));
@@ -1094,7 +1094,7 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
 	    /*
 	     * Pass meta for all function keys, if 'meta' option set
 	     */
-	    if (meta && (r->h->meta_char == 0x80) && len > 0)
+	    if (meta && (r->h.meta_char == 0x80) && len > 0)
 		kbuf[len - 1] |= 0x80;
 #endif	/* META8_OPTION */
 
@@ -1160,7 +1160,7 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
 		 * indicated with a modifier parameter, as Xterm does.
 		 */
 #ifdef META8_OPTION
-		if (r->h->meta_char == 0x80)	/* Set 8th bit */
+		if (r->h.meta_char == 0x80)	/* Set 8th bit */
 		{
 		    unsigned char  *ch;
 	
@@ -1196,12 +1196,12 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
 	return;		/* not mapped */
     }
 
-    if ( alt && r->h->rs[Rs_altPrefix] )
+    if ( alt && r->h.rs[Rs_altPrefix] )
     {
-	    unsigned l = STRLEN(r->h->rs[Rs_altPrefix]);
+	    unsigned l = STRLEN(r->h.rs[Rs_altPrefix]);
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND, "Sending alt prefix for keysym %lx\n", keysym));
 	    memmove(&kbuf[l], kbuf, len);
-	    memcpy(kbuf, r->h->rs[Rs_altPrefix], l);
+	    memcpy(kbuf, r->h.rs[Rs_altPrefix], l);
 	    len += l;
     }
 
@@ -1227,7 +1227,7 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
     }
 #endif	/* DEBUG */
 
-    if (0 == STRCMP ("UTF-8", r->h->locale))
+    if (0 == STRCMP ("UTF-8", r->h.locale))
     {
 	rxvt_msg (DBG_INFO, DBG_COMMAND, "UTF-8 string?");
     }
@@ -1772,37 +1772,35 @@ rxvt_check_quick_timeout (rxvt_t* r)
     int			quick_timeout = 0;
 
 #if defined(MOUSE_WHEEL) && defined(MOUSE_SLIP_WHEELING)
-    if (r->h->mouse_slip_wheel_speed)
+    if (r->h.mouse_slip_wheel_speed)
     {
-	struct rxvt_hidden*	h = r->h;
 	quick_timeout = 1;
 	/* Only work for current active tab */
-	if (!h->mouse_slip_wheel_delay-- &&
+	if (!r->h.mouse_slip_wheel_delay-- &&
 	    rxvt_scr_page( r,
-		h->mouse_slip_wheel_speed >0 ? UP : DN,
-		abs(h->mouse_slip_wheel_speed) ))
+		r->h.mouse_slip_wheel_speed >0 ? UP : DN,
+		abs(r->h.mouse_slip_wheel_speed) ))
 	{
-	    h->mouse_slip_wheel_delay = SCROLLBAR_CONTINUOUS_DELAY;
-	    h->refresh_type |= SMOOTH_REFRESH;
+	    r->h.mouse_slip_wheel_delay = SCROLLBAR_CONTINUOUS_DELAY;
+	    r->h.refresh_type |= SMOOTH_REFRESH;
 	    PVTS(r)->want_refresh = 1;
 	}
     }
 #endif /* MOUSE_WHEEL && MOUSE_SLIP_WHEELING */
 
 #ifdef SELECTION_SCROLLING
-    if (r->h->pending_scroll_selection)
+    if (r->h.pending_scroll_selection)
     {
-	struct rxvt_hidden*	h = r->h;
 	quick_timeout = 1;
 	/* Only work for current active tab */
-	if (!h->scroll_selection_delay-- &&
-	    rxvt_scr_page(r, h->scroll_selection_dir,
-		h->scroll_selection_lines))
+	if (!r->h.scroll_selection_delay-- &&
+	    rxvt_scr_page(r, r->h.scroll_selection_dir,
+		r->h.scroll_selection_lines))
 	{
-	    rxvt_selection_extend(r, h->selection_save_x,
-		h->selection_save_y, h->selection_save_state);
-	    h->scroll_selection_delay = SCROLLBAR_CONTINUOUS_DELAY;
-	    h->refresh_type |= SMOOTH_REFRESH;
+	    rxvt_selection_extend(r, r->h.selection_save_x,
+		r->h.selection_save_y, r->h.selection_save_state);
+	    r->h.scroll_selection_delay = SCROLLBAR_CONTINUOUS_DELAY;
+	    r->h.refresh_type |= SMOOTH_REFRESH;
 	    PVTS(r)->want_refresh = 1;
 	}
     }
@@ -1816,7 +1814,6 @@ rxvt_check_quick_timeout (rxvt_t* r)
 static int
 rxvt_adjust_quick_timeout (rxvt_t* r, int quick_timeout, struct timeval* value)
 {
-    struct rxvt_hidden*	h = r->h;
     struct timeval	tp;
     int			set_quick_timeout = 0;
     int32_t		fsdiff = 60000000l;	/* or say LONG_MAX */
@@ -1827,11 +1824,11 @@ rxvt_adjust_quick_timeout (rxvt_t* r, int quick_timeout, struct timeval* value)
     value->tv_sec = 0;
 
 
-    if( !r->TermWin.mapped || r->h->refresh_type == NO_REFRESH )
+    if( !r->TermWin.mapped || r->h.refresh_type == NO_REFRESH )
 	quick_timeout = 0;
     else
     {
-	quick_timeout |= (PVTS(r)->want_refresh || h->want_clip_refresh);
+	quick_timeout |= (PVTS(r)->want_refresh || r->h.want_clip_refresh);
     }
 
 #if defined(POINTER_BLANK) || defined(CURSOR_BLINK)
@@ -1849,21 +1846,21 @@ rxvt_adjust_quick_timeout (rxvt_t* r, int quick_timeout, struct timeval* value)
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND, "** get cursor time on select\n"));
 	    (void)gettimeofday(&tp, NULL);
 
-	    csdiff = (tp.tv_sec - h->lastcursorchange.tv_sec) * 1000000L
-		 + tp.tv_usec - h->lastcursorchange.tv_usec;
-	    if (csdiff > h->blinkInterval)
+	    csdiff = (tp.tv_sec - r->h.lastcursorchange.tv_sec) * 1000000L
+		 + tp.tv_usec - r->h.lastcursorchange.tv_usec;
+	    if (csdiff > r->h.blinkInterval)
 	    {
 		/* XXX: settable blink times */
-		h->lastcursorchange.tv_sec = tp.tv_sec;
-		h->lastcursorchange.tv_usec = tp.tv_usec;
-		h->hidden_cursor = !h->hidden_cursor;
-		rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "%s\n", h->hidden_cursor ?  "** hide cursor" : "** show cursor"));
+		r->h.lastcursorchange.tv_sec = tp.tv_sec;
+		r->h.lastcursorchange.tv_usec = tp.tv_usec;
+		r->h.hidden_cursor = !r->h.hidden_cursor;
+		rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "%s\n", r->h.hidden_cursor ?  "** hide cursor" : "** show cursor"));
 
 		PVTS(r)->want_refresh = 1;
 		csdiff = 0;
 	    }
 	    else
-		csdiff = h->blinkInterval - csdiff;
+		csdiff = r->h.blinkInterval - csdiff;
 	    set_quick_timeout = 1;
 	}
 # endif	/* CURSOR_BLINK */
@@ -1873,16 +1870,16 @@ rxvt_adjust_quick_timeout (rxvt_t* r, int quick_timeout, struct timeval* value)
 	 * If we haven't moved the pointer for a while
 	 */
 	if (ISSET_OPTION(r, Opt_pointerBlank) &&
-	    (h->pointerBlankDelay > 0) &&
+	    (r->h.pointerBlankDelay > 0) &&
 	    (0 == PVTS(r)->hidden_pointer))
 	{
 	    int32_t	pdelay;
 
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND, "** get pointer time on select\n"));
 	    (void) gettimeofday(&tp, NULL);
-	    psdiff = (tp.tv_sec - h->lastmotion.tv_sec) * 1000000L
-		 + tp.tv_usec - h->lastmotion.tv_usec;
-	    pdelay = h->pointerBlankDelay * 1000000L;
+	    psdiff = (tp.tv_sec - r->h.lastmotion.tv_sec) * 1000000L
+		 + tp.tv_usec - r->h.lastmotion.tv_usec;
+	    pdelay = r->h.pointerBlankDelay * 1000000L;
 	    /* only work for current active tab */
 	    if (psdiff >= pdelay)
 		rxvt_pointer_blank(r);
@@ -1921,16 +1918,16 @@ rxvt_refresh_vtscr_if_needed( rxvt_t *r )
      * If parts of the screen have changed, we should not honor the GC clipping.
      */
     if( PVTS(r)->want_refresh )
-	r->h->refresh_type &= ~CLIPPED_REFRESH;
+	r->h.refresh_type &= ~CLIPPED_REFRESH;
 
     if(
-	 (PVTS(r)->want_refresh || r->h->want_clip_refresh)
-	 && r->h->refresh_type != NO_REFRESH
+	 (PVTS(r)->want_refresh || r->h.want_clip_refresh)
+	 && r->h.refresh_type != NO_REFRESH
       )
     {
 	rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND, "%lu: produced %d bytes (%d in buffer)\n", time(NULL), PVTS(r)->nbytes_last_read, PVTS(r)->outbuf_end - PVTS(r)->outbuf_base ));
 
-	rxvt_scr_refresh(r, r->h->refresh_type);
+	rxvt_scr_refresh(r, r->h.refresh_type);
 
 #ifdef USE_XIM
 	rxvt_IM_send_spot (r);
@@ -1970,7 +1967,6 @@ rxvt_cmd_getc(rxvt_t *r)
     struct timeval  tp;
 #endif
     struct timeval  value;
-    struct rxvt_hidden *h = r->h;
 
 
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_COMMAND,  "Entering rxvt_cmd_getc\n"));
@@ -2004,10 +2000,10 @@ rxvt_cmd_getc(rxvt_t *r)
 		if (ISSET_OPTION(r, Opt_cursorBlink) &&
 		    KeyPress == xev.type)
 		{
-		    if (h->hidden_cursor)
+		    if (r->h.hidden_cursor)
 		    {
 			rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND, "** hide cursor on keypress\n"));
-			h->hidden_cursor = 0;
+			r->h.hidden_cursor = 0;
 			PVTS(r)->want_refresh = 1;
 		    }
 		    want_keypress_time = 1;
@@ -2016,7 +2012,7 @@ rxvt_cmd_getc(rxvt_t *r)
 
 #ifdef POINTER_BLANK
 		if (ISSET_OPTION(r, Opt_pointerBlank) &&
-		    (h->pointerBlankDelay > 0))
+		    (r->h.pointerBlankDelay > 0))
 		{
 		    if (MotionNotify == xev.type ||
 			ButtonPress == xev.type ||
@@ -2034,11 +2030,11 @@ rxvt_cmd_getc(rxvt_t *r)
 #endif	/* POINTER_BLANK */
 
 #ifdef USE_XIM
-		if (NOT_NULL(r->h->Input_Context))
+		if (NOT_NULL(r->h.Input_Context))
 		{
 		    if (!XFilterEvent(&xev, xev.xany.window))
 			rxvt_process_x_event(r, &xev);
-		    h->event_type = xev.type;
+		    r->h.event_type = xev.type;
 		}
 		else
 #endif	/* USE_XIM */
@@ -2075,8 +2071,8 @@ rxvt_cmd_getc(rxvt_t *r)
 	    /* reset last cursor change time on keypress event */
 	    (void) gettimeofday (&tp, NULL);
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND, "** init cursor time on keypress\n"));
-	    h->lastcursorchange.tv_sec = tp.tv_sec;
-	    h->lastcursorchange.tv_usec = tp.tv_usec;
+	    r->h.lastcursorchange.tv_sec = tp.tv_sec;
+	    r->h.lastcursorchange.tv_usec = tp.tv_usec;
 	}
 #endif	/* CURSOR_BLINK */
 
@@ -2084,8 +2080,8 @@ rxvt_cmd_getc(rxvt_t *r)
 	if (ISSET_OPTION(r, Opt_pointerBlank) && want_motion_time)
 	{
 	    (void) gettimeofday (&tp, NULL);
-	    h->lastmotion.tv_sec = tp.tv_sec;
-	    h->lastmotion.tv_usec = tp.tv_usec;
+	    r->h.lastmotion.tv_sec = tp.tv_sec;
+	    r->h.lastmotion.tv_usec = tp.tv_usec;
 	}
 #endif	/* POINTER_BLANK */
 
@@ -2217,13 +2213,13 @@ rxvt_pointer_unblank(rxvt_t* r)
 
     PVTS(r)->hidden_pointer = 0;
 
-    if (r->h->pointerBlankDelay > 0)
+    if (r->h.pointerBlankDelay > 0)
     {
 	struct timeval  tp;
 
 	(void)gettimeofday(&tp, NULL);
-	r->h->lastmotion.tv_sec = tp.tv_sec;
-	r->h->lastmotion.tv_usec = tp.tv_usec;
+	r->h.lastmotion.tv_sec = tp.tv_sec;
+	r->h.lastmotion.tv_usec = tp.tv_usec;
     }
 #endif
 }
@@ -2236,10 +2232,10 @@ rxvt_pointer_blank(rxvt_t* r)
 {
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Blanking pointer\n"));
     if (ISSET_OPTION(r, Opt_pointerBlank) &&
-	IS_CURSOR(r->h->blank_pointer))
+	IS_CURSOR(r->h.blank_pointer))
     {
 	XDefineCursor(r->Xdisplay, PVTS(r)->vt,
-	    r->h->blank_pointer);
+	    r->h.blank_pointer);
 	XFlush(r->Xdisplay);
 	PVTS(r)->hidden_pointer = 1;
     }
@@ -2257,13 +2253,13 @@ rxvt_mouse_report(rxvt_t* r, const XButtonEvent *ev)
     y = ev->y;
     rxvt_pixel_position(r, &x, &y);
 
-    if (r->h->MEvent.button == AnyButton)
+    if (r->h.MEvent.button == AnyButton)
     {
 	button_number = 3;
     }
     else
     {
-	button_number = r->h->MEvent.button - Button1;
+	button_number = r->h.MEvent.button - Button1;
 	/* add 0x3D for wheel events, like xterm does */
 	if (button_number >= 3)
 	    button_number += (64 - 3);
@@ -2288,11 +2284,11 @@ rxvt_mouse_report(rxvt_t* r, const XButtonEvent *ev)
 	 * plus will add in our own Double-Click reporting
 	 *  32 = Double Click
 	 */
-	key_state = ((r->h->MEvent.state & ShiftMask) ? 4 : 0)
-	     + ((r->h->MEvent.state & r->h->ModMetaMask) ? 8 : 0)
-	     + ((r->h->MEvent.state & ControlMask) ? 16 : 0);
+	key_state = ((r->h.MEvent.state & ShiftMask) ? 4 : 0)
+	     + ((r->h.MEvent.state & r->h.ModMetaMask) ? 8 : 0)
+	     + ((r->h.MEvent.state & ControlMask) ? 16 : 0);
 #ifdef MOUSE_REPORT_DOUBLECLICK
-	key_state += ((r->h->MEvent.clicks > 1) ? 32 : 0);
+	key_state += ((r->h.MEvent.clicks > 1) ? 32 : 0);
 #endif
     }
 
@@ -2325,14 +2321,14 @@ rxvt_process_keyrelease(rxvt_t* r, XKeyEvent *ev)
 {
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "KeyRelease event\n"));
     if (!(ev->state & ControlMask))
-	r->h->mouse_slip_wheel_speed = 0;
+	r->h.mouse_slip_wheel_speed = 0;
     else
     {
 	KeySym	      ks;
 
 	ks = XKeycodeToKeysym(r->Xdisplay, ev->keycode, 0);
 	if (ks == XK_Control_L || ks == XK_Control_R)
-	    r->h->mouse_slip_wheel_speed = 0;
+	    r->h.mouse_slip_wheel_speed = 0;
     }
 }
 #endif
@@ -2343,12 +2339,11 @@ static void
 rxvt_process_buttonpress(rxvt_t* r, XButtonEvent *ev)
 {
     int			reportmode = 0, clickintime;
-    struct rxvt_hidden*	h = r->h;
 
 
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "ButtonPress event\n"));
-    h->bypass_keystate = ev->state & (h->ModMetaMask | ShiftMask);
-    if (!h->bypass_keystate)
+    r->h.bypass_keystate = ev->state & (r->h.ModMetaMask | ShiftMask);
+    if (!r->h.bypass_keystate)
 	reportmode = !!ISSET_PMODE(r, PrivMode_mouse_report);
 
     /*
@@ -2356,66 +2351,66 @@ rxvt_process_buttonpress(rxvt_t* r, XButtonEvent *ev)
      */
     if (ev->window == PVTS(r)->vt)
     {
-	clickintime = ev->time - h->MEvent.time < MULTICLICK_TIME;
+	clickintime = ev->time - r->h.MEvent.time < MULTICLICK_TIME;
 	if (reportmode)
 	{
 	    /* mouse report from vt window */
 	    /* save the xbutton state (for ButtonRelease) */
-	    h->MEvent.state = ev->state;
+	    r->h.MEvent.state = ev->state;
 #ifdef MOUSE_REPORT_DOUBLECLICK
-	    if (ev->button == h->MEvent.button && clickintime)
+	    if (ev->button == r->h.MEvent.button && clickintime)
 	    {
 		/* same button, within alloted time */
-		h->MEvent.clicks++;
-		if (h->MEvent.clicks > 1)
+		r->h.MEvent.clicks++;
+		if (r->h.MEvent.clicks > 1)
 		{
 		    /* only report double clicks */
-		    h->MEvent.clicks = 2;
+		    r->h.MEvent.clicks = 2;
 		    rxvt_mouse_report(r, ev);
 
 		    /* don't report the release */
-		    h->MEvent.clicks = 0;
-		    h->MEvent.button = AnyButton;
+		    r->h.MEvent.clicks = 0;
+		    r->h.MEvent.button = AnyButton;
 		}
 	    }
 	    else
 	    {
 		/* different button, or time expired */
-		h->MEvent.clicks = 1;
-		h->MEvent.button = ev->button;
+		r->h.MEvent.clicks = 1;
+		r->h.MEvent.button = ev->button;
 		rxvt_mouse_report(r, ev);
 	    }
 #else
-	    h->MEvent.button = ev->button;
+	    r->h.MEvent.button = ev->button;
 	    rxvt_mouse_report(r, ev);
 #endif		    /* MOUSE_REPORT_DOUBLECLICK */
 	}
 	else
 	{
-	    if (ev->button != h->MEvent.button)
-		h->MEvent.clicks = 0;
+	    if (ev->button != r->h.MEvent.button)
+		r->h.MEvent.clicks = 0;
 	    switch (ev->button)
 	    {
 		case Button1:
-		    if (h->MEvent.button == Button1 && clickintime)
-			h->MEvent.clicks++;
+		    if (r->h.MEvent.button == Button1 && clickintime)
+			r->h.MEvent.clicks++;
 		    else
-			h->MEvent.clicks = 1;
-		    rxvt_selection_click(r, h->MEvent.clicks,
+			r->h.MEvent.clicks = 1;
+		    rxvt_selection_click(r, r->h.MEvent.clicks,
 			ev->x, ev->y);
-		    h->MEvent.button = Button1;
+		    r->h.MEvent.button = Button1;
 		    break;
 
 		case Button3:
-		    if (h->MEvent.button == Button3 && clickintime)
+		    if (r->h.MEvent.button == Button3 && clickintime)
 			rxvt_selection_rotate(r, ev->x, ev->y);
 		    else
 			rxvt_selection_extend(r, ev->x, ev->y, 1);
-		    h->MEvent.button = Button3;
+		    r->h.MEvent.button = Button3;
 		    break;
 	    }
 	}
-	h->MEvent.time = ev->time;
+	r->h.MEvent.time = ev->time;
 	return;
     }
 
@@ -2441,8 +2436,8 @@ rxvt_process_wheel_button(rxvt_t* r, XButtonEvent *ev)
 # ifdef MOUSE_SLIP_WHEELING
     if (ev->state & ControlMask)
     {
-	r->h->mouse_slip_wheel_speed += (v ? -1 : 1);
-	r->h->mouse_slip_wheel_delay = SCROLLBAR_CONTINUOUS_DELAY;
+	r->h.mouse_slip_wheel_speed += (v ? -1 : 1);
+	r->h.mouse_slip_wheel_delay = SCROLLBAR_CONTINUOUS_DELAY;
     }
 # endif
 
@@ -2472,12 +2467,12 @@ rxvt_process_buttonrelease(rxvt_t* r, XButtonEvent *ev)
     int		 reportmode = 0;
 
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "ButtonRelease event\n"));
-    r->h->csrO = 0;	/* reset csr Offset */
-    if (!r->h->bypass_keystate)
+    r->h.csrO = 0;	/* reset csr Offset */
+    if (!r->h.bypass_keystate)
 	reportmode = !!ISSET_PMODE(r, PrivMode_mouse_report);
 
 #ifdef SELECTION_SCROLLING
-    r->h->pending_scroll_selection=0;
+    r->h.pending_scroll_selection=0;
 #endif	/* SELECTION_SCROLLING */
 
     if (ev->window == PVTS(r)->vt)
@@ -2493,19 +2488,19 @@ rxvt_process_buttonrelease(rxvt_t* r, XButtonEvent *ev)
 #ifdef MOUSE_REPORT_DOUBLECLICK
 		/* only report the release of 'slow' single clicks */
 		if (
-			r->h->MEvent.button != AnyButton
+			r->h.MEvent.button != AnyButton
 			&& (
-			    ev->button != r->h->MEvent.button
-			    || (ev->time - r->h->MEvent.time > MULTICLICK_TIME / 2)
+			    ev->button != r->h.MEvent.button
+			    || (ev->time - r->h.MEvent.time > MULTICLICK_TIME / 2)
 			   )
 		   )
 		{
-		    r->h->MEvent.clicks = 0;
-		    r->h->MEvent.button = AnyButton;
+		    r->h.MEvent.clicks = 0;
+		    r->h.MEvent.button = AnyButton;
 		    rxvt_mouse_report(r, ev);
 		}
 #else	/* MOUSE_REPORT_DOUBLECLICK */
-		r->h->MEvent.button = AnyButton;
+		r->h.MEvent.button = AnyButton;
 		rxvt_mouse_report(r, ev);
 #endif	/* MOUSE_REPORT_DOUBLECLICK */
 		return;
@@ -2515,9 +2510,9 @@ rxvt_process_buttonrelease(rxvt_t* r, XButtonEvent *ev)
 	     * when overriding mouse reporting
 	     */
 	    if (ISSET_PMODE(r, PrivMode_mouse_report) &&
-		r->h->bypass_keystate &&
+		r->h.bypass_keystate &&
 		Button1 == ev->button &&
-		r->h->MEvent.clicks <= 1)
+		r->h.MEvent.clicks <= 1)
 		rxvt_selection_extend(r, ev->x, ev->y, 0);
 
 	    switch (ev->button)
@@ -2548,14 +2543,14 @@ rxvt_process_clientmessage(rxvt_t* r, XClientMessageEvent* ev)
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "ClientMessage event\n"));
     if (
 	  ev->format == 32
-	  && (Atom) ev->data.l[0] == r->h->xa[XA_WMDELETEWINDOW]
+	  && (Atom) ev->data.l[0] == r->h.xa[XA_WMDELETEWINDOW]
        )
 	rxvt_exit_request (r);
 
 #ifdef OFFIX_DND
     /* OffiX Dnd (drag 'n' drop) protocol */
     if (
-	    ev->xclient.message_type == h->xa[XA_DNDPROTOCOL]
+	    ev->xclient.message_type == r->h.xa[XA_DNDPROTOCOL]
 	    && (
 		ev->xclient.data.l[0] == DndFile
 		|| ev->xclient.data.l[0] == DndDir
@@ -2570,7 +2565,7 @@ rxvt_process_clientmessage(rxvt_t* r, XClientMessageEvent* ev)
 	uint32_t	Size, RemainingBytes;
 
 	XGetWindowProperty(r->Xdisplay, XROOT,
-	   r->h->xa[XA_DNDSELECTION], 0L, 1000000L,
+	   r->h.xa[XA_DNDSELECTION], 0L, 1000000L,
 	   False, AnyPropertyType, &ActualType, &ActualFormat,
 	   &Size, &RemainingBytes, &data);
 	XChangeProperty(r->Xdisplay, XROOT, XA_CUT_BUFFER0,
@@ -2591,13 +2586,13 @@ rxvt_process_visibilitynotify(rxvt_t* r, XVisibilityEvent* ev)
     switch (ev->state)
     {
 	case VisibilityUnobscured:
-	    r->h->refresh_type = FAST_REFRESH;
+	    r->h.refresh_type = FAST_REFRESH;
 	    break;
 	case VisibilityPartiallyObscured:
-	    r->h->refresh_type = SLOW_REFRESH;
+	    r->h.refresh_type = SLOW_REFRESH;
 	    break;
 	default:
-	    r->h->refresh_type = NO_REFRESH;
+	    r->h.refresh_type = NO_REFRESH;
 	    break;
     }
 }
@@ -2668,16 +2663,16 @@ rxvt_process_focus (rxvt_t* r, XFocusChangeEvent* ev)
 
 #ifdef CURSOR_BLINK
 	if (!focus)
-	    r->h->hidden_cursor = 0;
+	    r->h.hidden_cursor = 0;
 #endif
 
 #ifdef USE_XIM
-	if (NOT_NULL(r->h->Input_Context))
+	if (NOT_NULL(r->h.Input_Context))
 	{
 	  if (focus)
-	    XSetICFocus(r->h->Input_Context);
+	    XSetICFocus(r->h.Input_Context);
 	  else
-	    XUnsetICFocus(r->h->Input_Context);
+	    XUnsetICFocus(r->h.Input_Context);
 	}
 #endif
 
@@ -2736,7 +2731,7 @@ rxvt_resize_on_subwin (rxvt_t* r)
 	     * Just incase the window is not resized by the WM, then we still need
 	     * to refresh the screen.
 	     */
-	    r->h->want_resize |= FORCE_REFRESH;
+	    r->h.want_resize |= FORCE_REFRESH;
 
     /* Reset WMNormal Hints. We need not worry about r->szHint.flags */
     XSetWMNormalHints (r->Xdisplay, r->TermWin.parent, &(r->szHint));
@@ -2756,7 +2751,7 @@ rxvt_resize_on_subwin (rxvt_t* r)
      * events, if this variable is set, we resize the window regardless of
      * wether it apears to be in the same position or not.
      */
-    r->h->want_resize |= FORCE_RESIZE;
+    r->h.want_resize |= FORCE_RESIZE;
 
 #ifndef NO_FRILLS
     while(ISSET_OPTION(r, Opt2_smartResize))
@@ -2872,7 +2867,7 @@ rxvt_calc_colrow (rxvt_t* r, unsigned int width, unsigned int height)
     assert (0 != r->TermWin.fheight);
 
     /* Do nothing if size does not change, unless we requested the resize. */
-    if ( !r->h->want_resize &&
+    if ( !r->h.want_resize &&
 	    r->szHint.width == width && r->szHint.height == height)
 	return 0;
 
@@ -2882,8 +2877,8 @@ rxvt_calc_colrow (rxvt_t* r, unsigned int width, unsigned int height)
     MAX_IT(ncol, 1);
     MAX_IT(nrow, 1);
 
-    r->h->prev_ncol = r->TermWin.ncol;
-    r->h->prev_nrow = r->TermWin.nrow;
+    r->h.prev_ncol = r->TermWin.ncol;
+    r->h.prev_nrow = r->TermWin.nrow;
     r->TermWin.ncol = ncol;
     r->TermWin.nrow = nrow;
 
@@ -2895,11 +2890,11 @@ rxvt_calc_colrow (rxvt_t* r, unsigned int width, unsigned int height)
     r->szHint.width = width;
     r->szHint.height = height;
 
-    r->h->window_vt_x = (width - Width2Pixel(ncol))/2 - r->TermWin.int_bwidth;
-    r->h->window_vt_y = (height - Height2Pixel(nrow) + 1)/2 - r->TermWin.int_bwidth;
+    r->h.window_vt_x = (width - Width2Pixel(ncol))/2 - r->TermWin.int_bwidth;
+    r->h.window_vt_y = (height - Height2Pixel(nrow) + 1)/2 - r->TermWin.int_bwidth;
 
-    return ((r->h->prev_ncol != r->TermWin.ncol) ||
-	    (r->h->prev_nrow != r->TermWin.nrow));
+    return ((r->h.prev_ncol != r->TermWin.ncol) ||
+	    (r->h.prev_nrow != r->TermWin.nrow));
 }
 
 
@@ -2910,7 +2905,7 @@ rxvt_resize_sub_windows (rxvt_t* r)
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "rxvt_resize_sub_windows\n"));
 
 	XMoveResizeWindow (r->Xdisplay, PVTS(r)->vt,
-	    r->h->window_vt_x, r->h->window_vt_y,
+	    r->h.window_vt_x, r->h.window_vt_y,
 	    VT_WIDTH(r), VT_HEIGHT(r));
 }
 
@@ -2932,7 +2927,7 @@ rxvt_resize_on_configure (rxvt_t* r, unsigned int width, unsigned int height)
      * Check for refresh. If called XResizeWindow, and the WM politely refused
      * to resize window, then we should still process the resize event.
      */
-    if (r->h->want_resize ||
+    if (r->h.want_resize ||
 	    old_width != r->szHint.width || old_height != r->szHint.height)
 	rxvt_resize_sub_windows (r);
 
@@ -2948,8 +2943,8 @@ rxvt_resize_on_configure (rxvt_t* r, unsigned int width, unsigned int height)
 	     * update it, thus other VT will not correctly adjust their
 	     * column/row.
 	     */
-	    PVTS(r)->prev_nrow = r->h->prev_nrow;
-	    PVTS(r)->prev_ncol = r->h->prev_ncol;
+	    PVTS(r)->prev_nrow = r->h.prev_nrow;
+	    PVTS(r)->prev_ncol = r->h.prev_ncol;
 	    old_ncol = PVTS(r)->prev_ncol;
 
 	    rxvt_scr_clear(r);
@@ -3072,7 +3067,7 @@ rxvt_process_configurenotify (rxvt_t* r, XConfigureEvent* ev)
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Geometry: %ux%u+%d+%d\n", width, height, r->szHint.x, r->szHint.y));
 
     if (
-	    r->h->want_resize
+	    r->h.want_resize
 	    || r->szHint.width != width || r->szHint.height != height
        )
     {
@@ -3086,9 +3081,9 @@ rxvt_process_configurenotify (rxvt_t* r, XConfigureEvent* ev)
     }
 #endif
 
-    if( (r->h->want_resize & ~FORCE_REFRESH) )
+    if( (r->h.want_resize & ~FORCE_REFRESH) )
     {
-	r->h->want_resize = 0;
+	r->h.want_resize = 0;
 
 	rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Forcing refresh (from want_resize)\n"));
 
@@ -3106,7 +3101,7 @@ static void
 rxvt_process_selectionnotify (rxvt_t* r, XSelectionEvent* ev)
 {
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "SelectionNotify event\n"));
-    if (r->h->selection_wait == Sel_normal)
+    if (r->h.selection_wait == Sel_normal)
 	rxvt_selection_paste(r, ev->requestor, ev->property, True);
 }
 
@@ -3134,7 +3129,7 @@ rxvt_process_propertynotify (rxvt_t* r, XEvent* ev)
 #endif
 
 	if (
-		ev->xproperty.atom == r->h->xa[XA_VT_SELECTION]
+		ev->xproperty.atom == r->h.xa[XA_VT_SELECTION]
 		&& ev->xproperty.state == PropertyNewValue
 	   )
 	{
@@ -3167,10 +3162,10 @@ rxvt_process_expose (rxvt_t* r, XEvent* ev)
 	 * We group exposes, and clip to the appropriate locations.
 	 */
 
-	if (NOT_REGION(r->h->refreshRegion))
+	if (NOT_REGION(r->h.refreshRegion))
 	{
-	    r->h->refreshRegion = XCreateRegion();
-	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Created clip region %p\n", r->h->refreshRegion));
+	    r->h.refreshRegion = XCreateRegion();
+	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Created clip region %p\n", r->h.refreshRegion));
 	    /* Will be freed when rxvt_scr_refresh completes */
 	}
 
@@ -3210,8 +3205,8 @@ rxvt_process_expose (rxvt_t* r, XEvent* ev)
 		XClearArea( r->Xdisplay, win, rect.x, rect.y,
 			rect.width, rect.height, False );
 
-	    XUnionRectWithRegion( &rect, r->h->refreshRegion,
-		    r->h->refreshRegion);
+	    XUnionRectWithRegion( &rect, r->h.refreshRegion,
+		    r->h.refreshRegion);
 	    rxvt_scr_expose(r,
 		    rect.x, rect.y, rect.width, rect.height,
 		    False); /* Don't generate a screen refresh */
@@ -3224,8 +3219,8 @@ rxvt_process_expose (rxvt_t* r, XEvent* ev)
 		|| XCheckTypedWindowEvent( r->Xdisplay, win, GraphicsExpose, ev)
 	     );
 
-	r->h->refresh_type |= CLIPPED_REFRESH;
-	r->h->want_clip_refresh = 1;
+	r->h.refresh_type |= CLIPPED_REFRESH;
+	r->h.want_clip_refresh = 1;
     }
     else
     {
@@ -3258,7 +3253,7 @@ rxvt_process_motionnotify (rxvt_t* r, XEvent* ev)
 #endif
 
     if (ISSET_PMODE(r, PrivMode_mouse_report) &&
-	!(r->h->bypass_keystate))
+	!(r->h.bypass_keystate))
 	return;
 
     if (ev->xany.window == PVTS(r)->vt)
@@ -3275,7 +3270,7 @@ rxvt_process_motionnotify (rxvt_t* r, XEvent* ev)
 		&unused_mask);
 #ifdef MOUSE_THRESHOLD
 	    /* deal with a `jumpy' mouse */
-	    if ((ev->xmotion.time - r->h->MEvent.time) > MOUSE_THRESHOLD)
+	    if ((ev->xmotion.time - r->h.MEvent.time) > MOUSE_THRESHOLD)
 	    {
 #endif
 		rxvt_selection_extend(r,
@@ -3289,38 +3284,38 @@ rxvt_process_motionnotify (rxvt_t* r, XEvent* ev)
 		{
 		    int dist;
 
-		    r->h->pending_scroll_selection=1;
+		    r->h.pending_scroll_selection=1;
 
 		    /*
 		    ** don't clobber the current delay if we are
 		    ** already in the middle of scrolling.
 		    */
-		if (r->h->scroll_selection_delay<=0)
-		    r->h->scroll_selection_delay = SCROLLBAR_CONTINUOUS_DELAY;
+		if (r->h.scroll_selection_delay<=0)
+		    r->h.scroll_selection_delay = SCROLLBAR_CONTINUOUS_DELAY;
 
 		    /*
 		    ** save the event params so we can highlight
 		    ** the selection in the pending-scroll loop
 		    */
-		r->h->selection_save_x = ev->xbutton.x;
-		r->h->selection_save_y = ev->xbutton.y;
-		r->h->selection_save_state = (ev->xbutton.state & Button3Mask) ? 2 : 0;
+		r->h.selection_save_x = ev->xbutton.x;
+		r->h.selection_save_y = ev->xbutton.y;
+		r->h.selection_save_state = (ev->xbutton.state & Button3Mask) ? 2 : 0;
 
 		    /* calc number of lines to scroll */
 		    if (ev->xbutton.y<r->TermWin.int_bwidth)
 		    {
-			r->h->scroll_selection_dir = UP;
+			r->h.scroll_selection_dir = UP;
 			dist = r->TermWin.int_bwidth - ev->xbutton.y;
 		    }
 		    else
 		    {
-			r->h->scroll_selection_dir = DN;
+			r->h.scroll_selection_dir = DN;
 			dist = ev->xbutton.y -
 			(r->TermWin.int_bwidth + VT_HEIGHT(r));
 		    }
-		    r->h->scroll_selection_lines=(Pixel2Height(dist)/
+		    r->h.scroll_selection_lines=(Pixel2Height(dist)/
 			SELECTION_SCROLL_LINE_SPEEDUP)+1;
-		    MIN_IT(r->h->scroll_selection_lines,
+		    MIN_IT(r->h.scroll_selection_lines,
 			SELECTION_SCROLL_MAX_LINES);
 		}
 		else
@@ -3329,7 +3324,7 @@ rxvt_process_motionnotify (rxvt_t* r, XEvent* ev)
 		    ** we are within the text window, so we
 		    ** shouldn't be scrolling
 		    */
-		    r->h->pending_scroll_selection = 0;
+		    r->h.pending_scroll_selection = 0;
 		}
 #endif
 #ifdef MOUSE_THRESHOLD
@@ -3346,7 +3341,6 @@ rxvt_process_x_event(rxvt_t* r, XEvent *ev)
 {
     int		    i, want_timeout = 0;
     struct timeval  tp;
-    struct rxvt_hidden *h = r->h;
 #ifdef DEBUG_X
     const char *const eventnames[] =
     {		    /* mason - this matches my system */
@@ -3394,7 +3388,7 @@ rxvt_process_x_event(rxvt_t* r, XEvent *ev)
      */
 
     for (i = NUM_TIMEOUTS; i--; )
-	if (h->timeout[i].tv_sec)
+	if (r->h.timeout[i].tv_sec)
 	{
 	    want_timeout = 1;
 	    break;
@@ -3416,23 +3410,23 @@ rxvt_process_x_event(rxvt_t* r, XEvent *ev)
 	for (i = NUM_TIMEOUTS; i--; )
 	{
 	    if (
-		    h->timeout[i].tv_sec == 0		||
-		    tp.tv_sec < h->timeout[i].tv_sec	||
+		    r->h.timeout[i].tv_sec == 0		||
+		    tp.tv_sec < r->h.timeout[i].tv_sec	||
 		    (
-		      tp.tv_sec == h->timeout[i].tv_sec	    &&
-		      tp.tv_usec < h->timeout[i].tv_usec
+		      tp.tv_sec == r->h.timeout[i].tv_sec	    &&
+		      tp.tv_usec < r->h.timeout[i].tv_usec
 		    )
 	       )
 		continue;
 
 	    /* We timed out on the "i"th timeout */
-	    h->timeout[i].tv_sec = 0;
+	    r->h.timeout[i].tv_sec = 0;
 	    switch(i)
 	    {
 		case TIMEOUT_INCR:
 		    rxvt_msg (DBG_ERROR, DBG_COMMAND,
 			"data loss: timeout on INCR selection paste");
-		    h->selection_wait = Sel_none;
+		    r->h.selection_wait = Sel_none;
 		    break;
 
 		default:
@@ -3589,10 +3583,10 @@ rxvt_process_nonprinting(rxvt_t* r, unsigned char ch)
     switch (ch)
     {
 	case C0_ENQ:	/* terminal Status */
-	    if (r->h->rs[Rs_answerbackstring])
+	    if (r->h.rs[Rs_answerbackstring])
 		rxvt_tt_write(r,
-		    (const unsigned char *)r->h->rs[Rs_answerbackstring],
-		    (unsigned int)STRLEN(r->h->rs[Rs_answerbackstring]));
+		    (const unsigned char *)r->h.rs[Rs_answerbackstring],
+		    (unsigned int)STRLEN(r->h.rs[Rs_answerbackstring]));
 	    else
 		rxvt_tt_write(r, (unsigned char *)VT100_ANS,
 		    (unsigned int)STRLEN(VT100_ANS));
@@ -4163,7 +4157,7 @@ rxvt_process_csi_seq(rxvt_t* r)
 #if defined (ENABLE_DISPLAY_ANSWER)
 		case 7:		/* unofficial extension */
 		    rxvt_tt_printf(r, "%-.250s\n",
-			r->h->rs[Rs_display_name]);
+			r->h.rs[Rs_display_name]);
 		    break;
 #endif
 		case 8:		/* unofficial extension */
@@ -4284,7 +4278,7 @@ rxvt_process_window_ops(rxvt_t* r, const int *args, unsigned int nargs)
 	    w = (unsigned int) args[2];
 	    h = (unsigned int) args[1];
 	    XResizeWindow (r->Xdisplay, r->TermWin.parent, w, h);
-	    r->h->want_resize = 1;
+	    r->h.want_resize = 1;
 	    break;
 	case 5:		/* raise window */
 	    XRaiseWindow (r->Xdisplay, r->TermWin.parent);
@@ -4299,7 +4293,7 @@ rxvt_process_window_ops(rxvt_t* r, const int *args, unsigned int nargs)
 	    w = (unsigned int) (Width2Pixel(args[2]) + r->szHint.base_width);
 	    h = (unsigned int) (Height2Pixel(args[1]) + r->szHint.base_height);
 	    XResizeWindow (r->Xdisplay, r->TermWin.parent, w, h);
-	    r->h->want_resize = 1;
+	    r->h.want_resize = 1;
 	    break;
 	default:
 	    if (args[0] >= 24)
@@ -4308,7 +4302,7 @@ rxvt_process_window_ops(rxvt_t* r, const int *args, unsigned int nargs)
 		w = (unsigned int) r->szHint.width;
 		h = (unsigned int) (args[1] * r->TermWin.fheight + r->szHint.base_height);
 		XResizeWindow (r->Xdisplay, r->TermWin.parent, w, h);
-		r->h->want_resize = 1;
+		r->h.want_resize = 1;
 	    }
 	    break;
 
@@ -4802,7 +4796,7 @@ rxvt_xterm_seq(rxvt_t* r, int op, const char *str, unsigned char resp __attribut
 #endif	/* MULTICHAR_SET */
 
 	case MRxvt_opacity:
-	    if (IS_ATOM(r->h->xa[XA_NET_WM_WINDOW_OPACITY]))
+	    if (IS_ATOM(r->h.xa[XA_NET_WM_WINDOW_OPACITY]))
 	    {
 		int	oldopacity = r->TermWin.opacity;
 		int	tmp;
@@ -4810,13 +4804,13 @@ rxvt_xterm_seq(rxvt_t* r, int op, const char *str, unsigned char resp __attribut
 		if ('-' == *str && (char) 0 == *(str+1))
 		{
 		    /* handle '-' only, remember it's opposite  */
-		    tmp = (r->h->rs[Rs_opacityDegree]) ?
+		    tmp = (r->h.rs[Rs_opacityDegree]) ?
 			    r->TermWin.opacity_degree : 1;
 		}
 		else if ('+' == *str && (char) 0 == *(str+1))
 		{
 		    /* handle '+' only, remember it's opposite  */
-		    tmp = (r->h->rs[Rs_opacityDegree]) ?
+		    tmp = (r->h.rs[Rs_opacityDegree]) ?
 			    -(r->TermWin.opacity_degree) : -1;
 		}
 		else
@@ -4999,15 +4993,15 @@ rxvt_process_terminal_mode(rxvt_t* r, int mode, int priv __attribute__((unused))
 					    + r->szHint.base_width;
 		    unsigned int h = r->szHint.base_height;
 		    XResizeWindow (r->Xdisplay, r->TermWin.parent, w, h);
-		    r->h->want_resize = 1;
+		    r->h.want_resize = 1;
 		}
 		break;
 	    case 4:	    /* smooth scrolling */
 		if (state)
 		{
 		    /* Unset jump scroll */
-		    r->h->refresh_limit = BUFSIZ-1;
-		    r->h->skip_pages	= 1;
+		    r->h.refresh_limit = BUFSIZ-1;
+		    r->h.skip_pages	= 1;
 		}
 		else
 		{
@@ -5261,7 +5255,7 @@ rxvt_process_getc( rxvt_t *r, unsigned char ch )
     int		    limit;	/* Number of lines to read before asking for a
 				   refresh */
 
-    limit = r->h->skip_pages * r->TermWin.nrow;
+    limit = r->h.skip_pages * r->TermWin.nrow;
     if( limit < 0 )
 	/* Integer overflow */
 	limit = INT_MAX;
@@ -5357,7 +5351,7 @@ rxvt_process_getc( rxvt_t *r, unsigned char ch )
 		 */
 		rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Requesting refresh." " scrolled %d lines\n", PVTS(r)->scrolled_lines ));
 		rxvt_scr_refresh(r,
-			(r->h->refresh_type & ~CLIPPED_REFRESH) );
+			(r->h.refresh_type & ~CLIPPED_REFRESH) );
 
 		/* If we have X events to process, then do so now. */
 		if( XPending( r->Xdisplay ) )
@@ -5463,7 +5457,7 @@ rxvt_main_loop(rxvt_t *r)
 	 * windows (and not only the active tab).
 	 */
 
-	if( PVTS(r)->nbytes_last_read <= r->h->refresh_limit )
+	if( PVTS(r)->nbytes_last_read <= r->h.refresh_limit )
 	    rxvt_refresh_vtscr_if_needed( r );
 
 	/*

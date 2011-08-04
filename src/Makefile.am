@@ -28,7 +28,6 @@ drxvt_SOURCES =	    command.h		\
 	       	    init.h		\
 	       	    protos.h		\
 	       	    rxvt.h		\
-	       	    rxvtlib.h		\
 		    rxvtmem.h
 
 
@@ -84,8 +83,7 @@ RXVT_H =	    ../config.h			\
 		    debug.h			\
 		    feature.h			\
 		    protos.h			\
-		    rxvt.h			\
-		    rxvtlib.h
+		    rxvt.h
 
 AUTOMAKE_OPTIONS = no-dependencies
 

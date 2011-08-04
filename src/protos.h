@@ -28,6 +28,7 @@
 
 
 /* Begin prototypes of command.c */
+void	    rxvt_main_loop(rxvt_t *);
 void		 rxvt_cmd_write                   __PROTO((rxvt_t* r, const unsigned char* str, unsigned int count));
 void             rxvt_tt_printf                   __PROTO((rxvt_t* r, const char* fmt,...));
 void             rxvt_tt_write                    __PROTO((rxvt_t* r, const unsigned char* d, int len));
@@ -101,6 +102,7 @@ void             rxvt_free                        __PROTO((void *ptr));
 
 
 /* Begin prototypes of main.c */
+rxvt_t*	    rxvt_init (int, const char *const *);
 void             rxvt_privileges                  __PROTO((int mode));
 RETSIGTYPE       rxvt_Child_signal                __PROTO((int sig __attribute__((unused))));
 RETSIGTYPE       rxvt_Exit_signal                 __PROTO((int sig));

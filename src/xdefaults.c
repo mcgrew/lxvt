@@ -607,7 +607,7 @@ rxvt_save_options (rxvt_t* r, const char* filename)
     int		i;
     FILE*	pf = fopen (filename, "w");
 
-    const char	*name = r->h->rs[Rs_name] ? r->h->rs[Rs_name] : APL_NAME;
+    const char	*name = r->h.rs[Rs_name] ? r->h.rs[Rs_name] : APL_NAME;
 
     char	*tabs="\t\t\t\t\t";
 
@@ -637,12 +637,12 @@ rxvt_save_options (rxvt_t* r, const char* filename)
 		num_tabs( STRLEN(name) + 1 + STRLEN(optList[i].kw) + 1 ), tabs,
 		OnOff[bval] );
 	}
-	else if (r->h->rs[optList[i].doff])
+	else if (r->h.rs[optList[i].doff])
 	{
 	    fprintf( pf, "%s.%s:%.*s%s\n", name,
 		optList[i].kw,
 		num_tabs( STRLEN(name) + 1 + STRLEN(optList[i].kw) + 1 ), tabs,
-		r->h->rs[optList[i].doff] );
+		r->h.rs[optList[i].doff] );
 	}
     }
 
@@ -756,7 +756,7 @@ rxvt_get_options(rxvt_t *r, int argc, const char *const *argv)
 		if (flag == On && str && (optList[entry].doff != -1))
 		{
 		    rxvt_dbgmsg ((DBG_DEBUG, DBG_RESOURCE, "\"%s\"\n", str));
-		    r->h->rs[optList[entry].doff] = str;
+		    r->h.rs[optList[entry].doff] = str;
 		    /*
 		     * special cases are handled in main.c:main() to allow X
 		     * resources to set these values before we settle for
@@ -940,13 +940,13 @@ rxvt_get_xdefaults(rxvt_t *r, FILE *stream, const char *name,
 			}
 		    }
 
-		    else if( IS_NULL( r->h->rs[ optList[entry].doff ] ) )
+		    else if( IS_NULL( r->h.rs[ optList[entry].doff ] ) )
 		    {
 			/*
 			 * Regular option, that has not previously been set.
 			 * The argument needs to be duplicated and stored.
 			 */
-			r->h->rs[optList[entry].doff] =
+			r->h.rs[optList[entry].doff] =
 			    n && !optList_isBool(entry) ?
 				STRDUP( str ) : emptyResource;
 		    }
@@ -989,22 +989,22 @@ rxvt_extract_resources (
     /* Compute the path of the possibly available localized Rxvt file */ 
     char	   *localepath = NULL;
 
-    if (NOT_NULL(r->h->locale))
+    if (NOT_NULL(r->h.locale))
     {
 	/* XXX: must limit length of string */
 
 	localepath = rxvt_malloc(256); 
 	sprintf( localepath, XAPPLOADDIRLOCALE "/" APL_SUBCLASS,
 	    (int) ( 258 - sizeof(XAPPLOADDIRLOCALE) - sizeof(APL_SUBCLASS)),
-	    r->h->locale);  /* 258 = 255 + 4 (-.*s) - 1 (/) */
+	    r->h.locale);  /* 258 = 255 + 4 (-.*s) - 1 (/) */
     }
 #  endif
 # endif /* XAPPLOADDIR */
 
 
     /* open user supplied config file first */
-    if (NOT_NULL(r->h->rs[Rs_confFile]))
-	fd = fopen( r->h->rs[Rs_confFile], "r" );
+    if (NOT_NULL(r->h.rs[Rs_confFile]))
+	fd = fopen( r->h.rs[Rs_confFile], "r" );
 
     if (IS_NULL(fd) && NOT_NULL(home = getenv("HOME")))
     {
@@ -1105,10 +1105,10 @@ rxvt_extract_resources (
 
 	for( i=0; i < NUM_RESOURCES; i++)
 	{
-	    if( r->h->rs[i] == emptyResource )
+	    if( r->h.rs[i] == emptyResource )
 	    {
 		rxvt_dbgmsg ((DBG_DEBUG, DBG_RESOURCE, "Setting resource #%d to NULL\n", i));
-		r->h->rs[i] = NULL;
+		r->h.rs[i] = NULL;
 	    }
 	}
     }
@@ -1129,8 +1129,8 @@ rxvt_extract_resources (
      * and command-line long options
      */
 #ifdef MULTICHAR_SET
-    if (r->h->rs[Rs_multichar_encoding])
-	rxvt_set_multichar_encoding(r, r->h->rs[Rs_multichar_encoding]);
+    if (r->h.rs[Rs_multichar_encoding])
+	rxvt_set_multichar_encoding(r, r->h.rs[Rs_multichar_encoding]);
     else
     {
 	char*    enc;

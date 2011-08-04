@@ -26,7 +26,7 @@
 
 
 /*
- * Must sync these to macroFnNames in rxvtlib.h.
+ * Must sync these to macroFnNames in rxvt.h.
  */
 static const char *const macroNames[] =
 {
@@ -620,8 +620,8 @@ rxvt_process_macros( rxvt_t *r, KeySym keysym, XKeyEvent *ev)
     ck.modFlags = 0;
     if (ev->state & ShiftMask)		    ck.modFlags |= MACRO_SHIFT;
     if (ev->state & ControlMask)	    ck.modFlags |= MACRO_CTRL;
-    if (ev->state & r->h->ModMetaMask)	    ck.modFlags |= MACRO_META;
-    if (ev->state & r->h->ModAltMask)	    ck.modFlags |= MACRO_ALT;
+    if (ev->state & r->h.ModMetaMask)	    ck.modFlags |= MACRO_META;
+    if (ev->state & r->h.ModAltMask)	    ck.modFlags |= MACRO_ALT;
 
     /* Use lowercase version so we can ignore caps lock */
     {

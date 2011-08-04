@@ -40,8 +40,8 @@ rxvt_set_opacity (rxvt_t* r)
 
 
     /* do not set opacity */
-    if (IS_NULL(r->h->rs[Rs_opacity]) ||
-	NOT_ATOM(r->h->xa[XA_NET_WM_WINDOW_OPACITY]))
+    if (IS_NULL(r->h.rs[Rs_opacity]) ||
+	NOT_ATOM(r->h.xa[XA_NET_WM_WINDOW_OPACITY]))
 	return 0;
 
     opacity = (CARD32) (r->TermWin.opacity * (0xffffffff / 100));
@@ -65,7 +65,7 @@ rxvt_set_opacity (rxvt_t* r)
     {
 	while (k-- > 0)
 	    XChangeProperty (r->Xdisplay, wintree[k],
-		r->h->xa[XA_NET_WM_WINDOW_OPACITY], XA_CARDINAL, 32,
+		r->h.xa[XA_NET_WM_WINDOW_OPACITY], XA_CARDINAL, 32,
 		PropModeReplace, (unsigned char*) &opacity, 1L);
     }
 

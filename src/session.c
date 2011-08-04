@@ -291,7 +291,7 @@ rxvt_session_init (rxvt_t* r)
 	callbacks.shutdown_cancelled.client_data = (SmPointer) NULL;
 
     /* previous client id must be NULL if it is not specified */
-    prev_client_id = (char*) r->h->rs[Rs_smClientID];
+    prev_client_id = (char*) r->h.rs[Rs_smClientID];
 
     r->TermWin.sm_conn = SmcOpenConnection(NULL, NULL,
 		    SmProtoMajor, SmProtoMinor,
