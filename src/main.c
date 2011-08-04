@@ -43,39 +43,23 @@
 /*--------------------------------------------------------------------*
  *         BEGIN `INTERNAL' ROUTINE PROTOTYPES                        *
  *--------------------------------------------------------------------*/
-void rxvt_alarm_signal	       ( __attribute__((unused)) int sig );
-void rxvt_pre_show_init	       (rxvt_t* r);
-void rxvt_clean_commands       (rxvt_t* r, int command_number);
-void rxvt_free_hidden          (rxvt_t*);
-void rxvt_font_up_down         (rxvt_t*, int, int);
-int  rxvt_get_font_widest      (XFontStruct*);
-void rxvt_set_colorfgbg        (rxvt_t*);
-void rxvt_resize_sub_windows   (rxvt_t*);
+static void rxvt_free_hidden          (rxvt_t*);
+static int  rxvt_get_font_widest      (XFontStruct*);
 #ifdef USE_XIM
-void rxvt_IM_set_size          (rxvt_t*, XRectangle*);
-void rxvt_IM_set_position      (rxvt_t*, XPoint*);
-void rxvt_IM_set_color         (rxvt_t*, unsigned long*, unsigned long*);
-Bool rxvt_IM_is_running        (rxvt_t*);
-void rxvt_IM_change_fontset    (rxvt_t*, int);
-void rxvt_IM_set_preedit_area  (rxvt_t*, XRectangle*, XRectangle*, XRectangle*);
-void rxvt_IM_destroy_callback  (XIM, XPointer, XPointer);
-Bool rxvt_IM_get_IC            (rxvt_t*);
-void rxvt_IM_send_size         (rxvt_t*);
-void rxvt_IM_set_status_pos    (rxvt_t*);
+static void rxvt_IM_change_fontset    (rxvt_t*, int);
+static Bool rxvt_IM_get_IC            (rxvt_t*);
+static void rxvt_IM_set_status_pos    (rxvt_t*);
 #endif
-void rxvt_set_r                (rxvt_t*);
+static void rxvt_set_r                (rxvt_t*);
 #ifdef XFT_SUPPORT
-void xftFreeUnusedFont	       (rxvt_t*, XftFont*);
-void setXftWeight	       (XftPattern *, const char *, int);
-void rxvt_init_font_fixed      (rxvt_t*);
-# ifndef NO_BOLDFONT
-void rxvt_init_bfont_xft       (rxvt_t*, XftPattern*);
-# endif
+static void xftFreeUnusedFont	       (rxvt_t*, XftFont*);
+static void setXftWeight	       (XftPattern *, const char *, int);
+static void rxvt_init_font_fixed      (rxvt_t*);
 # ifdef MULTICHAR_SET
-int  rxvt_init_mfont_xft       (rxvt_t*, XftPattern*, const char*);
-int  isDoubleWidthFont         (Display *dpy, XftFont *font);
+static int  isDoubleWidthFont         (Display *dpy, XftFont *font);
 # endif
 #endif	/* XFT_SUPPORT */
+static void		 rxvt_close_all_tabs		  __PROTO((rxvt_t* r));
 /*--------------------------------------------------------------------*
  *         END   `INTERNAL' ROUTINE PROTOTYPES                        *
  *--------------------------------------------------------------------*/
@@ -91,7 +75,7 @@ const char**	cmd_argv;
  * rxvt_create_show_windows().
  */
 /* INTPROTO */
-void
+static void
 rxvt_pre_show_init( rxvt_t *r )
 {
     /*
@@ -272,7 +256,7 @@ rxvt_Exit_signal(int sig)
 }
 
 
-void
+static void
 rxvt_alarm_signal( __attribute__((unused)) int sig )
 {
     int i;
@@ -293,7 +277,7 @@ rxvt_alarm_signal( __attribute__((unused)) int sig )
 
 
 /* INTPROTO */
-void
+static void
 rxvt_free_hidden( rxvt_t* r )
 {
 #ifdef DEBUG
@@ -383,7 +367,7 @@ rxvt_exit_request( rxvt_t *r )
  * mrxvt forcefully exit (but leaving the child processes running).
  */
 /* EXTPROTO */
-void
+static void
 rxvt_close_all_tabs( rxvt_t *r)
 {
     static struct timeval   lastRequest = {0, 0};
@@ -784,7 +768,7 @@ rxvt_tt_winsize(int fd, unsigned short col, unsigned short row, pid_t pid)
 #ifdef XFT_SUPPORT
 # ifndef NO_BOLDFONT
 /* INTPROTO */
-void
+static void
 rxvt_init_bfont_xft (rxvt_t* r, XftPattern* xpold)
 {
     XftResult	    fr;
@@ -870,7 +854,7 @@ rxvt_init_bfont_xft (rxvt_t* r, XftPattern* xpold)
 
 # ifdef MULTICHAR_SET
 /* INTPROTO */
-int
+static int
 rxvt_init_mfont_xft (rxvt_t* r, XftPattern* xp, const char* ofname)
 {
     XftResult	    fr;
@@ -1043,7 +1027,7 @@ Failure:
  * Set the weight of an Xft font from the weight description.
  */
 /* INTPROTO */
-void
+static void
 setXftWeight( XftPattern *xp, const char *weightString, int defaultWeight )
 {
     assert(xp);
@@ -1423,7 +1407,7 @@ Failure:
 /*----------------------------------------------------------------------*/
 /* rxvt_init_font_fixed () - initialize fixed font */
 /* INTPROTO */
-void
+static void
 rxvt_init_font_fixed (rxvt_t* r)
 {
     XFontStruct*    xfont;
@@ -1637,7 +1621,7 @@ Abort:
 #  define FULL_WIDTH_CHAR2  0xAC00  /* Korean script syllable 'Ka' */
 
 /*INTPROTO*/
-int
+static int
 isDoubleWidthFont(Display * dpy, XftFont * font)
 {
     XGlyphInfo gi1, gi2;
@@ -1682,7 +1666,7 @@ isDoubleWidthFont(Display * dpy, XftFont * font)
  * Close font f if it is not one of xftfont, xftpfont, xftbfont, xftmfont.
  */
 /* INTPROTO */
-void
+static void
 xftFreeUnusedFont( rxvt_t *r, XftFont *f)
 {
     if( f && f != r->TermWin.xftfont &&
@@ -2101,38 +2085,12 @@ rxvt_change_font_x11 (rxvt_t* r, const char *fontname)
     return 1;
 }
 
-
-/* INTPROTO */
-void
-rxvt_font_up_down(rxvt_t* r, int n, int direction)
-{
-    const char	 *p;
-    int		    initial, j;
-
-    for (j = 0; j < n; j++)
-    {
-	initial = r->h->fnum;
-	for (;;)
-	{
-	    r->h->fnum += direction;
-	    if (r->h->fnum == MAX_NFONTS || r->h->fnum == -1)
-	    {
-		r->h->fnum = initial;
-		return;
-	    }
-	    p = r->h->rs[Rs_font + FNUM2IDX(r->h->fnum)];
-
-	    if (NOT_NULL(p) && STRLEN(p) > 1)
-		break;
-	}
-    }
-}
 #undef IDX2FNUM
 #undef FNUM2IDX
 
 
 /* INTPROTO */
-int
+static int
 rxvt_get_font_widest(XFontStruct *f)
 {
     int		    i, cw, fw = 0;
@@ -2153,7 +2111,7 @@ rxvt_get_font_widest(XFontStruct *f)
 /*----------------------------------------------------------------------*/
 #ifdef X_HAVE_UTF8_STRING
 /* INTPROTO */
-void
+static void
 rxvt_set_utf8_property (rxvt_t* r, Atom prop, Window win, const char* str)
 {
 #ifdef HAVE_WCHAR_H
@@ -2344,13 +2302,6 @@ Done:
     }
 
     /* handle Color_BD, scrollbar background, etc. */
-#if 0 /*{{{*/
-    /*
-     * Setting the environment will not propogate to an already running child
-     * process.
-     */
-    rxvt_set_colorfgbg(r);
-#endif /*}}}*/
     if( idx == Color_pointer )
 	rxvt_recolour_cursor(r);
 
@@ -2413,7 +2364,8 @@ rxvt_recolour_cursor(rxvt_t *r)
  * find if fg/bg matches any of the normal (low-intensity) colors
  */
 /* INTPROTO */
-void
+/* TODO: check if this function is still used somewhere. */
+static void
 rxvt_set_colorfgbg(rxvt_t *r)
 {
     unsigned int    i;
@@ -2584,7 +2536,7 @@ rxvt_alloc_color( rxvt_t* r, XColor *screen_in_out, const char *colour )
  * -------------------------------------------------------------------- */
 #ifdef USE_XIM
 /* INTPROTO */
-void
+static void
 rxvt_IM_set_size(rxvt_t* r, XRectangle *size)
 {
     XWindowAttributes	xwa;
@@ -2597,7 +2549,7 @@ rxvt_IM_set_size(rxvt_t* r, XRectangle *size)
 }
 
 /* INTPROTO */
-void
+static void
 rxvt_IM_set_position(rxvt_t* r, XPoint *pos)
 {
     XWindowAttributes	xwa;
@@ -2608,7 +2560,7 @@ rxvt_IM_set_position(rxvt_t* r, XPoint *pos)
 }
 
 /* INTPROTO */
-void
+static void
 rxvt_IM_set_color(rxvt_t* r, unsigned long *fg, unsigned long *bg)
 {
     *fg = r->pixColorsFocus[Color_fg];
@@ -2617,7 +2569,7 @@ rxvt_IM_set_color(rxvt_t* r, unsigned long *fg, unsigned long *bg)
 
 /* Checking whether input method is running. */
 /* INTPROTO */
-Bool
+static Bool
 rxvt_IM_is_running(rxvt_t *r)
 {
     char		*p;
@@ -2734,7 +2686,7 @@ rxvt_IM_set_fontset (rxvt_t* r, int idx)
 }
 
 /* INTPROTO */
-void
+static void
 rxvt_IM_change_fontset(rxvt_t* r, int idx)
 {
     XVaNestedList   preedit_attr, status_attr;
@@ -2758,7 +2710,7 @@ rxvt_IM_change_fontset(rxvt_t* r, int idx)
 }
 
 /* INTPROTO */
-void
+static void
 rxvt_IM_set_preedit_area(rxvt_t* r, XRectangle *preedit_rect, XRectangle *status_rect, XRectangle *needed_rect)
 {
     XWindowAttributes	xwa;
@@ -2778,7 +2730,7 @@ rxvt_IM_set_preedit_area(rxvt_t* r, XRectangle *preedit_rect, XRectangle *status
 
 /* ARGSUSED */
 /* INTPROTO */
-void
+static void
 rxvt_IM_destroy_callback(XIM xim __attribute__((unused)), XPointer client_data __attribute__((unused)), XPointer call_data __attribute__((unused)))
 {
     rxvt_t	    *r = rxvt_get_r();
@@ -2860,7 +2812,7 @@ rxvt_IM_init_callback (Display *unused __attribute__((unused)), XPointer client_
  * open a suitable preedit type
  */
 /* INTPROTO */
-Bool
+static Bool
 rxvt_IM_get_IC(rxvt_t *r)
 {
     int		    i, j, found;
@@ -3007,7 +2959,7 @@ rxvt_IM_get_IC(rxvt_t *r)
 }
 
 /* INTPROTO */
-void
+static void
 rxvt_IM_send_size(rxvt_t* r)
 {
     XRectangle	size;
@@ -3021,7 +2973,7 @@ rxvt_IM_send_size(rxvt_t* r)
 }
 
 /* INTPROTO */
-void
+static void
 rxvt_IM_set_status_pos (rxvt_t *r)
 {
     XRectangle	    preedit_rect, status_rect, *needed_rect;
@@ -3069,7 +3021,7 @@ rxvt_get_r(void)
     return _rxvt_vars;
 }
 /* INTPROTO */
-void
+static void
 rxvt_set_r(rxvt_t *r)
 {
     _rxvt_vars = r;

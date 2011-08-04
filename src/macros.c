@@ -63,9 +63,7 @@ static const char *const macroNames[] =
 /******************************************************************************\
 * 		       BEGIN INTERNAL ROUTINE PROTOTYPES		       *
 \******************************************************************************/
-int		macro_cmp	    ( const void*, const void*);
-int		rxvt_add_macro	    ( rxvt_t*, KeySym, unsigned char, char*, Bool, macro_priority_t);
-unsigned char	macro_set_number    ( unsigned char, unsigned char);
+static int		rxvt_add_macro	    ( rxvt_t*, KeySym, unsigned char, char*, Bool, macro_priority_t);
 /******************************************************************************\
 *			END INTERNAL ROUTINE PROTOTYPES			       *
 \******************************************************************************/
@@ -204,7 +202,7 @@ rxvt_toggle_subwin( rxvt_t *r, const unsigned char *str)
  *
  * Used by bsearch and qsort for macro comparison.
  */
-int
+static int
 macro_cmp( const void *p1, const void *p2)
 {
     const macros_t  *macro1 = p1,
@@ -229,7 +227,7 @@ macro_cmp( const void *p1, const void *p2)
 
 /* {{{1 macro_set_number( flag, num ) */
 /* INTPROTO */
-unsigned char
+static unsigned char
 macro_set_number( unsigned char flag, unsigned char num )
 {
     flag &= MACRO_MODMASK;
@@ -369,7 +367,7 @@ rxvt_parse_macros( rxvt_t *r, const char *str, const char *arg,
  * previous macro's priority.
  */
 /* INTPROTO */
-int
+static int
 rxvt_add_macro( rxvt_t *r, KeySym keysym, unsigned char modFlags, char *astring,
 	Bool addmacro, macro_priority_t priority)
 {
@@ -627,7 +625,7 @@ rxvt_cleanup_macros( rxvt_t *r )
      * we assume the macro list is sorted, so we can use a binary search to
      * lookup macros quickly.
      */
-    qsort( r->macros, r->nmacros, sizeof( macros_t ), macro_cmp);
+    qsort( r->macros, r->nmacros, sizeof( macros_t ), (comparison_fn_t)&macro_cmp);
 
     /* Remove dummy macros from our list */
     MEMMOVE( r->macros, r->macros + nDummyMacros,
@@ -654,7 +652,6 @@ rxvt_cleanup_macros( rxvt_t *r )
  * The string astring might be modified, but can be freed immediately after
  * calling this function (regardless of wether it succeeds or not).
  */
-/* EXTPROTO */
 Bool
 rxvt_set_action	    (action_t *action, char *astring)
 {
@@ -760,7 +757,7 @@ rxvt_process_macros( rxvt_t *r, KeySym keysym, XKeyEvent *ev)
 
     /* Check if macro ck is in our list of macros. */
     macro = bsearch( &ck, r->macros, r->nmacros, sizeof( macros_t ),
-		macro_cmp);
+		(comparison_fn_t)&macro_cmp);
     if (
          /*
           * No macro found.
@@ -803,7 +800,6 @@ rxvt_process_macros( rxvt_t *r, KeySym keysym, XKeyEvent *ev)
  * Exec the macro / menu action with type "type" and action "action". Returns 1
  * on success, -1 on failure.
  */
-/* EXTPROTO */
 int
 rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 {

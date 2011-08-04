@@ -170,44 +170,41 @@
 /*--------------------------------------------------------------------*
  *         BEGIN `INTERNAL' ROUTINE PROTOTYPES                        *
  *--------------------------------------------------------------------*/
-void rxvt_blank_line              (text_t*, rend_t*, unsigned int, rend_t);
-void rxvt_blank_screen_mem        (rxvt_t*, int, text_t**, rend_t **, unsigned int, rend_t);
-void rxvt_scr_reset_realloc       (rxvt_t*, int);
-void rxvt_scr_delete_row          (rxvt_t*, int);
-void rxvt_scr_add_row             (rxvt_t*, int, unsigned int, unsigned int);
-void static inline rxvt_clear_area       (rxvt_t*, int page, int x, int y, unsigned int w, unsigned int h);
-void static inline rxvt_fill_rectangle   (rxvt_t*, int page, int x, int y, unsigned int w, unsigned int h);
-void
-rxvt_scr_draw_string (rxvt_t* r, int page,
-	int x, int y, char* str, int len, int drawfunc,
-	uint16_t fore, uint16_t back,
-	__attribute__((unused)) rend_t rend, Region refreshRegion);
-void rxvt_scr_adjust_col          (rxvt_t*, int, unsigned int);
-void rxvt_set_font_style          (rxvt_t*, int);
-int  rxvt_scr_change_view         (rxvt_t*, int, uint16_t);
-void rxvt_scr_reverse_selection   (rxvt_t*, int);
-void rxvt_paste_str                 (rxvt_t*, int, const unsigned char*, unsigned int);
-int  rxvt_selection_request_other (rxvt_t*, int, Atom, int);
-void rxvt_selection_start_colrow  (rxvt_t*, int, int, int);
-void rxvt_selection_delimit_word  (rxvt_t*, int, enum page_dirn, const row_col_t*, row_col_t*);
+static void rxvt_blank_line              (text_t*, rend_t*, unsigned int, rend_t);
+static void rxvt_blank_screen_mem        (rxvt_t*, int, text_t**, rend_t **, unsigned int, rend_t);
+static void rxvt_scr_reset_realloc       (rxvt_t*, int);
+static void rxvt_scr_delete_row          (rxvt_t*, int);
+static void rxvt_scr_add_row             (rxvt_t*, int, unsigned int, unsigned int);
+static void inline rxvt_clear_area       (rxvt_t*, int page, int x, int y, unsigned int w, unsigned int h);
+static void inline rxvt_fill_rectangle   (rxvt_t*, int page, int x, int y, unsigned int w, unsigned int h);
+static void        rxvt_scr_draw_string (rxvt_t* r, int page,
+                     int x, int y, char* str, int len, int drawfunc,
+                     uint16_t fore, uint16_t back,
+                     __attribute__((unused)) rend_t rend, Region refreshRegion);
+static void rxvt_scr_adjust_col          (rxvt_t*, int, unsigned int);
+static void rxvt_set_font_style          (rxvt_t*, int);
+static int  rxvt_scr_change_view         (rxvt_t*, int, uint16_t);
+static void rxvt_scr_reverse_selection   (rxvt_t*, int);
+static void rxvt_paste_str                 (rxvt_t*, int, const unsigned char*, unsigned int);
+static int  rxvt_selection_request_other (rxvt_t*, int, Atom, int);
+static void rxvt_selection_start_colrow  (rxvt_t*, int, int, int);
+static void rxvt_selection_delimit_word  (rxvt_t*, int, enum page_dirn, const row_col_t*, row_col_t*);
 #ifdef MULTICHAR_SET
-void rxvt_selection_adjust_kanji  (rxvt_t*, int);
+static void rxvt_selection_adjust_kanji  (rxvt_t*, int);
 #endif
-void rxvt_selection_extend_colrow (rxvt_t*, int, int32_t, int32_t, int, int, int);
+static void rxvt_selection_extend_colrow (rxvt_t*, int, int32_t, int32_t, int, int, int);
 #ifndef NO_FRILLS
-void rxvt_selection_trim          (rxvt_t*, int);
+static void rxvt_selection_trim          (rxvt_t*, int);
 #endif
 #ifdef TEXT_SHADOW
 # ifdef XFT_SUPPORT
-void rxvt_set_clipping		  (rxvt_t*, XftDraw*, GC, Region, int, int, unsigned, unsigned, int*, int*);
-void rxvt_free_clipping		  (rxvt_t*, XftDraw*, GC, Region);
+static void rxvt_set_clipping		  (rxvt_t*, XftDraw*, GC, Region, int, int, unsigned, unsigned, int*, int*);
+static void rxvt_free_clipping		  (rxvt_t*, XftDraw*, GC, Region);
 # else
-void rxvt_set_clipping		  (rxvt_t*, __attribute__((unused)) void*, GC, Region, int, int, unsigned, unsigned, int*, int*);
-void rxvt_free_clipping		  (rxvt_t*, __attribute__((unused)) void*, GC, Region);
+static void rxvt_set_clipping		  (rxvt_t*, __attribute__((unused)) void*, GC, Region, int, int, unsigned, unsigned, int*, int*);
+static void rxvt_free_clipping		  (rxvt_t*, __attribute__((unused)) void*, GC, Region);
 # endif
 #endif
-#ifdef XFT_SUPPORT
-#endif	/* XFT_SUPPORT */
 /*--------------------------------------------------------------------*
  *         END   `INTERNAL' ROUTINE PROTOTYPES                        *
  *--------------------------------------------------------------------*/
@@ -220,7 +217,7 @@ void rxvt_free_clipping		  (rxvt_t*, __attribute__((unused)) void*, GC, Region);
 
 /* Fill part/all of a line with blanks. */
 /* INTPROTO */
-void
+static void
 rxvt_blank_line(text_t *et, rend_t *er, unsigned int width, rend_t efs)
 {
     MEMSET(et, ' ', (size_t)width);
@@ -232,7 +229,7 @@ rxvt_blank_line(text_t *et, rend_t *er, unsigned int width, rend_t efs)
 /* ------------------------------------------------------------------------- */
 /* Fill a full line with blanks - make sure it is allocated first */
 /* INTPROTO */
-void
+static void
 rxvt_blank_screen_mem(rxvt_t* r, int page, text_t **tp, rend_t **rp,
 	unsigned int row, rend_t efs)
 {
@@ -279,7 +276,7 @@ rxvt_init_screen (rxvt_t* r)
 }
 
 
-void
+static void
 rxvt_scr_alloc (rxvt_t* r, int page)
 {
     unsigned int    ncol, nrow, total_rows;
@@ -361,7 +358,7 @@ rxvt_scr_alloc (rxvt_t* r, int page)
 
 
 /* INTPROTO */
-void
+static void
 rxvt_scr_reset_realloc(rxvt_t* r, int page)
 {
     unsigned int   total_rows, nrow;
@@ -400,7 +397,7 @@ rxvt_scr_reset_realloc(rxvt_t* r, int page)
 
 
 /* INTPROTO */
-void
+static void
 rxvt_scr_delete_row (rxvt_t* r, int page)
 {
     unsigned int    nrow, prev_nrow;
@@ -456,7 +453,7 @@ rxvt_scr_delete_row (rxvt_t* r, int page)
 
 
 /* INTPROTO */
-void
+static void
 rxvt_scr_add_row (rxvt_t* r, int page, unsigned int total_rows, unsigned int prev_total_rows)
 {
     unsigned int    nrow, prev_nrow;
@@ -519,7 +516,7 @@ rxvt_scr_add_row (rxvt_t* r, int page, unsigned int total_rows, unsigned int pre
 
 
 /* INTPROTO */
-void
+static void
 rxvt_scr_adjust_col (rxvt_t* r, int page, unsigned int total_rows)
 {
     unsigned int    nrow, ncol, prev_ncol;
@@ -677,7 +674,7 @@ void
 rxvt_scr_release(rxvt_t* r, int page)
 {
     unsigned int    total_rows;
-    int		    i;
+    unsigned i;
 
 
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "rxvt_scr_release %d ()\n", page));
@@ -1077,7 +1074,7 @@ rxvt_scroll_text(rxvt_t* r, int page, int row1, int row2, int count, int spec)
  * Adjust the PVTS(r, page)->view_start so that the if nlines of text are added,
  * the view will not change.
  */
-void static inline
+static inline void
 adjust_view_start( rxvt_t *r, int page, int nlines)
 {
     if(
@@ -2146,7 +2143,7 @@ rxvt_scr_report_position(rxvt_t* r, int page)
  * Set font style
  */
 /* INTPROTO */
-void
+static void
 rxvt_set_font_style(rxvt_t *r, int page)
 {
     PVTS(r, page)->rstyle &= ~RS_fontMask;
@@ -2342,7 +2339,7 @@ rxvt_scr_page(rxvt_t* r, int page, enum page_dirn direction, int nlines)
 
 
 /* INTPROTO */
-int
+static int
 rxvt_scr_change_view(rxvt_t* r, int page, uint16_t oldviewstart)
 {
     if (VSTART != oldviewstart)
@@ -2499,12 +2496,12 @@ rxvt_scr_bell(rxvt_t *r, int page)
  */
 /* INTPROTO */
 # ifdef XFT_SUPPORT
-void
+static void
 rxvt_set_clipping (rxvt_t* r, XftDraw *xftdraw, GC gc, Region refreshRegion,
 	int x, int y, unsigned width, unsigned height,
 	int* offx, int* offy)
 # else
-void
+static void
 rxvt_set_clipping (rxvt_t* r, __attribute__((unused)) void *xftdraw,
 	GC gc, Region refreshRegion,
 	int x, int y, unsigned width, unsigned height,
@@ -2607,7 +2604,7 @@ rxvt_set_clipping (rxvt_t* r, __attribute__((unused)) void *xftdraw,
 
 
 /* INTPROTO */
-void
+static void
 # ifdef XFT_SUPPORT
 rxvt_free_clipping (rxvt_t* r, XftDraw* xftdraw, GC gc, Region refreshRegion)
 # else
@@ -2631,7 +2628,7 @@ rxvt_free_clipping (rxvt_t* r, void* xftdraw, GC gc, Region refreshRegion)
 #endif	/* TEXT_SHADOW */
 
 
-void static inline
+static inline void
 rxvt_clear_area (rxvt_t* r, int page, int x, int y, unsigned int w, unsigned int h)
 {
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "clear area (%d, %d, %d, %d)\n", x,y,w,h));
@@ -2640,7 +2637,7 @@ rxvt_clear_area (rxvt_t* r, int page, int x, int y, unsigned int w, unsigned int
 }
 
 
-void static inline
+static inline void
 rxvt_fill_rectangle (rxvt_t* r, int page, int x, int y, unsigned int w, unsigned int h)
 {
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "fill rectangle (%d, %d, %d, %d)\n", x,y,w,h));
@@ -2885,7 +2882,7 @@ rxvt_draw_string_x11 (rxvt_t* r, Window win, GC gc, Region refreshRegion,
 **	     attribute with Xft for correct drawing of ACS graphics characters.
 */
 /* INTPROTO */
-void
+static void
 rxvt_scr_draw_string (rxvt_t* r, int page,
 	int x, int y, char* str, int len, int drawfunc,
 	uint16_t fore, uint16_t back,
@@ -4518,7 +4515,7 @@ rxvt_scr_clear(rxvt_t* r, int page)
 
 /* ------------------------------------------------------------------------- */
 /* INTPROTO */
-void
+static void
 rxvt_scr_reverse_selection(rxvt_t* r, int page)
 {
     int		 i, col, row, end_row;
@@ -4560,42 +4557,6 @@ rxvt_scr_reverse_selection(rxvt_t* r, int page)
     }
 }
 
-/* ------------------------------------------------------------------------- */
-/*
- * Dump the whole scrollback and screen to the passed filedescriptor.  The
- * invoking routine must close the fd.
- */
-#if 0
-/* EXTPROTO */
-void
-rxvt_scr_dump(rxvt_t* r, int fd)
-{
-    int		 row, wrote;
-    unsigned int    width, towrite;
-    char	    r1[] = "\n";
-
-    for (
-	  row = SVLINES - PVTS(r, page)->nscrolled;
-	  row < SVLINES + r->TermWin.nrow - 1;
-	  row++
-	)
-    {
-    width = PSCR(r, page).tlen[row] >= 0 ? PSCR(r, page).tlen[row]
-		     : r->TermWin.ncol;
-    for (towrite = width; towrite; towrite -= wrote)
-    {
-	wrote = write(fd, &(PSCR(r, page).text[row][width - towrite]),
-	      towrite);
-	if (wrote < 0)
-	return;	    /* XXX: death, no report */
-    }
-    if (PSCR(r, page).tlen[row] >= 0)
-	if (write(fd, r1, 1) <= 0)
-	return;	/* XXX: death, no report */
-    }
-}
-#endif
-
 /* ------------------------------------------------------------------------- *
  *			   CHARACTER SELECTION				 *
  * ------------------------------------------------------------------------- */
@@ -4645,7 +4606,7 @@ rxvt_selection_check(rxvt_t* r, int page, int check_more)
  * Paste a selection direct to the command fd
  */
 /* INTPROTO */
-void
+static void
 rxvt_paste_str(rxvt_t* r, int page,
 	const unsigned char *data, unsigned int nitems)
 {
@@ -4923,7 +4884,7 @@ rxvt_selection_request(rxvt_t* r, int page, Time tm, int x, int y)
 
 
 /* INTPROTO */
-int
+static int
 rxvt_selection_request_other(rxvt_t* r, int page, Atom target, int selnum)
 {
     Atom	    sel;
@@ -5259,7 +5220,7 @@ rxvt_selection_click(rxvt_t* r, int page, int clicks, int x, int y)
  * Mark a selection at the specified col/row
  */
 /* INTPROTO */
-void
+static void
 rxvt_selection_start_colrow(rxvt_t* r, int page, int col, int row)
 {
     PVTS(r, page)->want_refresh = 1;
@@ -5298,7 +5259,7 @@ rxvt_selection_start_colrow(rxvt_t* r, int page, int col, int row)
 #endif
 
 /* INTPROTO */
-void
+static void
 rxvt_selection_delimit_word(rxvt_t* r, int page, enum page_dirn dirn, const row_col_t *mark, row_col_t *ret)
 {
     int		 col, row, dirnadd, tcol, trow, w1, w2;
@@ -5445,7 +5406,7 @@ rxvt_selection_extend(rxvt_t* r, int page, int x, int y, int flag)
 
 #ifdef MULTICHAR_SET
 /* INTPROTO */
-void
+static void
 rxvt_selection_adjust_kanji(rxvt_t* r, int page)
 {
     int		 c1, r1;
@@ -5475,7 +5436,7 @@ rxvt_selection_adjust_kanji(rxvt_t* r, int page)
  * Extend the selection to the specified col/row
  */
 /* INTPROTO */
-void
+static void
 rxvt_selection_extend_colrow(rxvt_t* r, int page, int32_t col, int32_t row, int button3, int buttonpress, int clickchange)
 {
     unsigned int    ncol = r->TermWin.ncol;
@@ -5771,7 +5732,7 @@ rxvt_selection_extend_colrow(rxvt_t* r, int page, int32_t col, int32_t row, int 
 
 #ifndef NO_FRILLS
 /* INTPROTO */
-void
+static void
 rxvt_selection_trim(rxvt_t* r, int page)
 {
     int32_t	 end_col, end_row;

@@ -32,9 +32,6 @@
 /*--------------------------------------------------------------------*
  *         BEGIN `INTERNAL' ROUTINE PROTOTYPES                        *
  *--------------------------------------------------------------------*/
-#ifndef NO_RESOURCES
-void  rxvt_get_xdefaults (rxvt_t*, FILE*, const char*, macro_priority_t);
-#endif
 /*--------------------------------------------------------------------*
  *         END   `INTERNAL' ROUTINE PROTOTYPES                        *
  *--------------------------------------------------------------------*/
@@ -698,8 +695,7 @@ static const char optionsstring[] = "Options: "
 /*
  * Print usage and exit.
  */
-/* EXTPROTO */
-void
+static void
 rxvt_usage(int type)
 {
     unsigned int    i, col;
@@ -796,7 +792,7 @@ rxvt_usage(int type)
 
 
 /* INTPROTO */
-int
+static int
 num_tabs( int len )
 {
     return (len >=0 && len < 40) ? (40 - (len - (len%8)) ) / 8 : 0;
@@ -1054,7 +1050,7 @@ rxvt_get_options(rxvt_t *r, int argc, const char *const *argv)
  * Read resources from a file. "name" is the class name to use.
  */
 /* INTPROTO */
-void
+static void
 rxvt_get_xdefaults(rxvt_t *r, FILE *stream, const char *name,
 	macro_priority_t priority)
 {

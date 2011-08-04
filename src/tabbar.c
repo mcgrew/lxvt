@@ -342,7 +342,7 @@ rxvt_tabbar_set_visible_tabs (rxvt_t* r, Bool refresh)
  *  Returns the pixel width of the string drawn.
  */
 /* INTPROTO */
-static int
+int
 draw_string (rxvt_t* r, Region clipRegion,
 	int x, int y, char* str, int len,
 	__attribute__((unused)) int multichar, int active)
@@ -700,7 +700,8 @@ refresh_tabbar_tab( rxvt_t *r, int page)
  * it.
  */
 /* INTPROTO */
-void rxvt_draw_tabs (rxvt_t* r, Region region)
+static void 
+rxvt_draw_tabs (rxvt_t* r, Region region)
 {
     int	    page, x;
 

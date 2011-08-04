@@ -144,68 +144,26 @@ static DeadKeyChar  dkc_tab[] = {
 /*--------------------------------------------------------------------*
  *         BEGIN `INTERNAL' ROUTINE PROTOTYPES                        *
  *--------------------------------------------------------------------*/
-void           rxvt_process_keypress         (rxvt_t*, XKeyEvent*);
-void           rxvt_clean_cmd_page           (rxvt_t*);
-int static inline rxvt_cmdbuf_has_input	     ( rxvt_t *r, int page );
-int            rxvt_find_cmd_child           (rxvt_t*);
-void           rxvt_check_cmdbuf             (rxvt_t*, int);
-int            rxvt_read_child_cmdfd         (rxvt_t*, int, unsigned int);
-void           rxvt_process_children_cmdfd   (rxvt_t*, fd_set*);
-int            rxvt_check_quick_timeout      (rxvt_t*);
-int            rxvt_adjust_quick_timeout     (rxvt_t*, int, struct timeval*);
-void	       rxvt_refresh_vtscr_if_needed  (rxvt_t*);
-unsigned char  rxvt_cmd_getc                 (rxvt_t*, int* page);
+static inline int rxvt_cmdbuf_has_input	     ( rxvt_t *r, int page );
+static void    rxvt_check_cmdbuf             (rxvt_t*, int);
+static int     rxvt_read_child_cmdfd         (rxvt_t*, int, unsigned int);
 #ifdef POINTER_BLANK
-void           rxvt_pointer_blank            (rxvt_t*, int);
+static void    rxvt_pointer_blank            (rxvt_t*, int);
 #endif
-void           rxvt_mouse_report             (rxvt_t*, const XButtonEvent*);
-void           rxvt_set_bg_focused           (rxvt_t*, int, Bool);
-#if defined(MOUSE_WHEEL) && defined(MOUSE_SLIP_WHEELING)
-void           rxvt_process_keyrelease       (rxvt_t*, XKeyEvent*);
-#endif
-void           rxvt_scrollbar_dispatcher     (rxvt_t*, int, XButtonEvent*);
-void           rxvt_process_buttonpress      (rxvt_t*, int, XButtonEvent*);
-#ifdef MOUSE_WHEEL
-void           rxvt_process_wheel_button     (rxvt_t*, int, XButtonEvent*);
-#endif
-void           rxvt_process_buttonrelease    (rxvt_t*, int, XButtonEvent*);
-void           rxvt_process_clientmessage    (rxvt_t*, XClientMessageEvent*);
-void           rxvt_process_visibilitynotify (rxvt_t*, XVisibilityEvent*);
-#ifdef MONITOR_ENTER_LEAVE
-void           rxvt_process_enter            (rxvt_t*, XCrossingEvent*);
-void           rxvt_process_leave            (rxvt_t*, XCrossingEvent*);
-#endif
-void	       rxvt_change_colors_on_focus	     (rxvt_t*);
-void           rxvt_process_focus            (rxvt_t*, XFocusChangeEvent*);
-int            rxvt_calc_colrow              (rxvt_t* r, unsigned int width, unsigned int height);
-void           rxvt_resize_sub_windows       (rxvt_t* r);
-void           rxvt_resize_on_configure      (rxvt_t* r, unsigned int width, unsigned int height);
 #ifndef NO_FRILLS
-Bool	       getWMStruts		     (Display *dpy, Window w, CARD32 *left, CARD32 *right, CARD32 *top, CARD32 *bottom);
+static Bool	getWMStruts			(Display *dpy, Window w, CARD32 *left, CARD32 *right, CARD32 *top, CARD32 *bottom);
 #endif
-void           rxvt_process_configurenotify  (rxvt_t*, XConfigureEvent*);
-void           rxvt_process_selectionnotify  (rxvt_t*, XSelectionEvent*);
-void           rxvt_process_propertynotify   (rxvt_t*, XEvent*);
-void           rxvt_process_expose           (rxvt_t*, XEvent*);
-void           rxvt_process_motionnotify     (rxvt_t*, XEvent*);
-void           rxvt_process_x_event          (rxvt_t*, XEvent*);
-void           rxvt_process_nonprinting      (rxvt_t*, int, unsigned char);
-void           rxvt_process_escape_vt52      (rxvt_t*, int, unsigned char);
-void           rxvt_process_escape_seq       (rxvt_t*, int);
-void           rxvt_process_csi_seq          (rxvt_t*, int);
+static void    rxvt_process_x_event          (rxvt_t*, XEvent*);
+static void    rxvt_process_csi_seq          (rxvt_t*, int);
 #ifndef NO_FRILLS
-void           rxvt_process_window_ops       (rxvt_t*, int, const int*, unsigned int);
+static void    rxvt_process_window_ops       (rxvt_t*, int, const int*, unsigned int);
 #endif
-unsigned char* rxvt_get_to_st                (rxvt_t*, int, unsigned char*);
-void           rxvt_process_dcs_seq          (rxvt_t*, int);
-void           rxvt_process_osc_seq          (rxvt_t*, int);
-void           rxvt_xwsh_seq                 (rxvt_t*, int, const char*);
-void           rxvt_process_xwsh_seq         (rxvt_t*, int);
-int            rxvt_privcases                (rxvt_t*, int, int, uint32_t);
-void           rxvt_process_terminal_mode    (rxvt_t*, int, int, int, unsigned int, const int*);
-void           rxvt_process_sgr_mode         (rxvt_t*, int, unsigned int, const int*);
-void           rxvt_process_graphics         (rxvt_t*, int);
-void	       rxvt_process_getc	     (rxvt_t*, int, unsigned char);
+static void    rxvt_process_osc_seq          (rxvt_t*, int);
+static void    rxvt_process_xwsh_seq         (rxvt_t*, int);
+static void    rxvt_process_terminal_mode    (rxvt_t*, int, int, int, unsigned int, const int*);
+static void    rxvt_process_sgr_mode         (rxvt_t*, int, unsigned int, const int*);
+static void    rxvt_process_graphics         (rxvt_t*, int);
+static void    rxvt_process_getc             (rxvt_t*, int, unsigned char);
 /*--------------------------------------------------------------------*
  *         END   `INTERNAL' ROUTINE PROTOTYPES                        *
  *--------------------------------------------------------------------*/
@@ -263,7 +221,7 @@ void	       rxvt_process_getc	     (rxvt_t*, int, unsigned char);
  * as xterm does). The fourth argument is the character suffix.
  */
 /* NOPROTO */
-void
+static void
 set_xterm_key_seq( unsigned char *kbuf, const char *umod_prefix,
 	const char *mod_prefix_format, char suffix,
 	int ctrl, int meta, int shft)
@@ -279,7 +237,7 @@ set_xterm_key_seq( unsigned char *kbuf, const char *umod_prefix,
 
 
 /* INTPRO */
-int
+static int
 rxvt_0xffxx_keypress (rxvt_t* r, KeySym keysym,
 	int ctrl, int meta, int shft, unsigned char* kbuf)
 {
@@ -847,7 +805,7 @@ rxvt_0xffxx_keypress (rxvt_t* r, KeySym keysym,
 
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Returning %d\n", newlen ? (int) STRLEN(kbuf) : -1 ));
 
-    return newlen ? STRLEN(kbuf) : -1;
+    return newlen ? (int)STRLEN(kbuf) : -1;
     /*
      * B: end of a {} body
      */
@@ -856,8 +814,7 @@ rxvt_0xffxx_keypress (rxvt_t* r, KeySym keysym,
 
 
 /*{{{ Convert the keypress event into a string */
-/* INTPROTO */
-void
+static void
 rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
 {
     int		    ctrl, meta, alt, shft, len;
@@ -1359,7 +1316,7 @@ rxvt_cmd_write( rxvt_t* r, int page, const unsigned char *str,
  * Does a waitpid() on each child, and marks it as dead if it's dead. This
  * function is safe to call from anywhere.
  */
-void
+static void
 rxvt_mark_dead_childs( rxvt_t *r )
 {
     int	    i, j;
@@ -1490,8 +1447,7 @@ rxvt_mark_dead_childs( rxvt_t *r )
  * NOTE: This function MUST NOT be called from rxvt_cmd_getc(), because it could
  * redirect command buffer input of the tabs.
  */
-/* INTPROTO */
-void
+static void
 rxvt_clean_cmd_page (rxvt_t* r)
 {
     int		i;
@@ -1644,7 +1600,7 @@ rxvt_clean_cmd_page (rxvt_t* r)
 
 /* Returns true if there is input pending in PVTS(r, page)->cmdbuf */
 /* INTPROTO */
-int static inline
+static inline int
 rxvt_cmdbuf_has_input( rxvt_t *r, int page )
 {
     return PVTS(r, page)->outbuf_escfail ?
@@ -1708,7 +1664,7 @@ rxvt_find_cmd_child (rxvt_t* r)
 /* rxvt_check_cmdbuf (r, p) manage the free space in the buffer of the page p.
  * It will move the used space in it to the beginning when needed.
  */
-void
+static void
 rxvt_check_cmdbuf (rxvt_t* r, int page)
 {
     assert( PVTS(r, page)->outbuf_base <= PVTS(r, page)->outbuf_end );
@@ -1773,7 +1729,7 @@ rxvt_check_cmdbuf (rxvt_t* r, int page)
  * - count is the maximum number of bytes you want to read.
  */
 /* INTPROTO */
-int
+static int
 rxvt_read_child_cmdfd (rxvt_t* r, int page, unsigned int count)
 {
     int		    n = 0, bread = 0;
@@ -1991,8 +1947,7 @@ rxvt_monitor_tab(rxvt_t* r,int i)
 }
 
 
-/* INTPROTO */
-void
+static void
 rxvt_process_children_cmdfd( rxvt_t* r, fd_set* p_readfds )
 {
     /*
@@ -2051,7 +2006,7 @@ rxvt_process_children_cmdfd( rxvt_t* r, fd_set* p_readfds )
 
 /* Check quick_timeout before select */
 /* INTPROTO */
-int
+static int
 rxvt_check_quick_timeout (rxvt_t* r)
 {
     struct rxvt_hidden*	h = r->h;
@@ -2115,7 +2070,7 @@ rxvt_check_quick_timeout (rxvt_t* r)
 
 /* Adjust quick_timeout after select */
 /* INTPROTO */
-int
+static int
 rxvt_adjust_quick_timeout (rxvt_t* r, int quick_timeout, struct timeval* value)
 {
     struct rxvt_hidden*	h = r->h;
@@ -2252,7 +2207,7 @@ rxvt_adjust_quick_timeout (rxvt_t* r, int quick_timeout, struct timeval* value)
 
 /* Refresh the VT screen and scrollbar if needed */
 /* INTPROTO */
-void
+static void
 rxvt_refresh_vtscr_if_needed( rxvt_t *r )
 {
 #ifdef TRANSPARENT
@@ -2310,7 +2265,7 @@ rxvt_refresh_vtscr_if_needed( rxvt_t *r )
  */
 
 /* INTPROTO */
-unsigned char
+static int
 rxvt_cmd_getc(rxvt_t *r, int* p_page)
 {
     int		    selpage = *p_page, retpage;
@@ -2716,7 +2671,7 @@ rxvt_pointer_unblank(rxvt_t* r, int page)
 
 #ifdef POINTER_BLANK
 /* INTPROTO */
-void
+static void
 rxvt_pointer_blank(rxvt_t* r, int page)
 {
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Blanking pointer\n"));
@@ -2732,8 +2687,7 @@ rxvt_pointer_blank(rxvt_t* r, int page)
 #endif
 
 
-/* INTPROTO */
-void
+static void
 rxvt_mouse_report(rxvt_t* r, const XButtonEvent *ev)
 {
     int		 button_number, key_state = 0;
@@ -2806,8 +2760,7 @@ rxvt_mouse_report(rxvt_t* r, const XButtonEvent *ev)
 ** Individual X Event handlers
 */
 #if defined(MOUSE_WHEEL) && defined(MOUSE_SLIP_WHEELING)
-/* INTPROTO */
-void
+static void
 rxvt_process_keyrelease(rxvt_t* r, XKeyEvent *ev)
 {
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "KeyRelease event\n"));
@@ -2828,7 +2781,7 @@ rxvt_process_keyrelease(rxvt_t* r, XKeyEvent *ev)
 
 #ifdef HAVE_SCROLLBARS
 /* INTPROTO */
-void
+static void
 rxvt_scrollbar_dispatcher (rxvt_t* r, int page, XButtonEvent* ev)
 {
     int		reportmode = 0;
@@ -3008,7 +2961,7 @@ rxvt_scrollbar_dispatcher (rxvt_t* r, int page, XButtonEvent* ev)
 
 
 /* INTPROTO */
-void
+static void
 rxvt_process_buttonpress(rxvt_t* r, int page, XButtonEvent *ev)
 {
     int			reportmode = 0, clickintime;
@@ -3164,7 +3117,7 @@ rxvt_process_buttonpress(rxvt_t* r, int page, XButtonEvent *ev)
 
 #ifdef MOUSE_WHEEL
 /* INTPROTO */
-void
+static void
 rxvt_process_wheel_button(rxvt_t* r, int page, XButtonEvent *ev)
 {
     int		 i, v;
@@ -3214,7 +3167,7 @@ rxvt_process_wheel_button(rxvt_t* r, int page, XButtonEvent *ev)
 
 
 /* INTPROTO */
-void
+static void
 rxvt_process_buttonrelease(rxvt_t* r, int page, XButtonEvent *ev)
 {
     int		 reportmode = 0;
@@ -3330,8 +3283,7 @@ rxvt_process_buttonrelease(rxvt_t* r, int page, XButtonEvent *ev)
 
 
 
-/* INTPROTO */
-void
+static void
 rxvt_process_clientmessage(rxvt_t* r, XClientMessageEvent* ev)
 {
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "ClientMessage event\n"));
@@ -3373,8 +3325,7 @@ rxvt_process_clientmessage(rxvt_t* r, XClientMessageEvent* ev)
 
 
 
-/* INTPROTO */
-void
+static void
 rxvt_process_visibilitynotify(rxvt_t* r, XVisibilityEvent* ev)
 {
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "VisibilityNotify event\n"));
@@ -3395,8 +3346,7 @@ rxvt_process_visibilitynotify(rxvt_t* r, XVisibilityEvent* ev)
 
 
 #ifdef MONITOR_ENTER_LEAVE
-/* INTPROTO */
-void
+static void
 rxvt_process_enter (rxvt_t* r, XCrossingEvent* ev)
 {
     if (ev->window == r->TermWin.parent)
@@ -3407,8 +3357,7 @@ rxvt_process_enter (rxvt_t* r, XCrossingEvent* ev)
 }
 
 
-/* INTPROTO */
-void
+static void
 rxvt_process_leave (rxvt_t* r, XCrossingEvent* ev)
 {
     if (ev->window == r->TermWin.parent)
@@ -3424,7 +3373,7 @@ rxvt_process_leave (rxvt_t* r, XCrossingEvent* ev)
  * Change the bg / faded colors because of a focus change
  */
 /* INTPROTO */
-void
+static void
 rxvt_change_colors_on_focus( rxvt_t *r )
 {
     rxvt_dbgmsg(( DBG_DEBUG, DBG_COMMAND, "%s(r)\n", __func__ ));
@@ -3437,7 +3386,7 @@ rxvt_change_colors_on_focus( rxvt_t *r )
 
 
 /* INTPROTO */
-void
+static void
 rxvt_process_focus (rxvt_t* r, XFocusChangeEvent* ev)
 {
     if( ev->mode == NotifyGrab || ev->mode == NotifyUngrab )
@@ -3488,7 +3437,7 @@ rxvt_process_focus (rxvt_t* r, XFocusChangeEvent* ev)
  */
 /* INTPROTO */
 void
-rxvt_resize_on_subwin (rxvt_t* r)
+rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason )
 {
     /*
      * Store the old width and height
@@ -3711,7 +3660,7 @@ rxvt_resize_on_font (rxvt_t* r, char* fontname)
     if (!rxvt_change_font_x11 (r, fontname))
 	return ;
 
-    rxvt_resize_on_subwin (r);
+    rxvt_resize_on_subwin (r, RESIZE_FONT);
 }
 
 
@@ -3720,7 +3669,7 @@ rxvt_resize_on_font (rxvt_t* r, char* fontname)
 ** Recalculate the window col/row upon window resizing
 */
 /* INTPROTO */
-int
+static int
 rxvt_calc_colrow (rxvt_t* r, unsigned int width, unsigned int height)
 {
     unsigned int    ncol, nrow;
@@ -3762,7 +3711,7 @@ rxvt_calc_colrow (rxvt_t* r, unsigned int width, unsigned int height)
 
 
 /* INTPROTO */
-void
+static void
 rxvt_resize_sub_windows (rxvt_t* r)
 {
     register int    i;
@@ -3790,8 +3739,7 @@ rxvt_resize_sub_windows (rxvt_t* r)
 
 
 /* Resize windows on configurenotify event */
-/* INTPROTO */
-void
+static void
 rxvt_resize_on_configure (rxvt_t* r, unsigned int width, unsigned int height)
 {
     register int    i = 0;
@@ -3859,7 +3807,7 @@ rxvt_resize_on_configure (rxvt_t* r, unsigned int width, unsigned int height)
  * and puts 0 in left / right / top / bottom.
  */
 #ifndef NO_FRILLS
-Bool getWMStruts( Display *dpy, Window w,
+static Bool getWMStruts( Display *dpy, Window w,
 	CARD32 *left, CARD32 *right, CARD32 *top, CARD32 *bottom)
 {
 
@@ -3926,8 +3874,7 @@ Bool getWMStruts( Display *dpy, Window w,
 }
 #endif
 
-/* INTPROTO */
-void
+static void
 rxvt_process_configurenotify (rxvt_t* r, XConfigureEvent* ev)
 {
     unsigned int    height, width;
@@ -4033,8 +3980,7 @@ rxvt_process_configurenotify (rxvt_t* r, XConfigureEvent* ev)
 }
 
 
-/* INTPROTO */
-void
+static void
 rxvt_process_selectionnotify (rxvt_t* r, XSelectionEvent* ev)
 {
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "SelectionNotify event\n"));
@@ -4043,8 +3989,7 @@ rxvt_process_selectionnotify (rxvt_t* r, XSelectionEvent* ev)
 }
 
 
-/* INTPROTO */
-void
+static void
 rxvt_process_propertynotify (rxvt_t* r, XEvent* ev)
 {
 #ifdef TRANSPARENT
@@ -4150,8 +4095,7 @@ rxvt_process_propertynotify (rxvt_t* r, XEvent* ev)
 /*
  * ev must either be Expose or GraphicsExpose.
  */
-/* INTPROTO */
-void
+static void
 rxvt_process_expose (rxvt_t* r, XEvent* ev)
 {
     int		page = ATAB(r);
@@ -4287,8 +4231,7 @@ rxvt_process_expose (rxvt_t* r, XEvent* ev)
 }
 
 
-/* INTPROTO */
-void
+static void
 rxvt_process_motionnotify (rxvt_t* r, XEvent* ev)
 {
     int		    page = ATAB(r);
@@ -4425,7 +4368,7 @@ rxvt_process_motionnotify (rxvt_t* r, XEvent* ev)
 
 /*{{{ process an X event */
 /* INTPROTO */
-void
+static void
 rxvt_process_x_event(rxvt_t* r, XEvent *ev)
 {
     int		    page = ATAB(r);
@@ -4645,7 +4588,7 @@ enum {
  * nchars is the minimum number of chars needed to be read
  */
 /* INTPROTO */
-void
+static void
 rxvt_set_escfail( rxvt_t *r, int page, int nchars )
 {
     assert( PVTS(r, page)->outbuf_escstart );
@@ -4671,7 +4614,7 @@ rxvt_set_escfail( rxvt_t *r, int page, int nchars )
 
 /*{{{ process non-printing single characters */
 /* INTPROTO */
-void
+static void
 rxvt_process_nonprinting(rxvt_t* r, int page, unsigned char ch)
 {
     switch (ch)
@@ -4726,7 +4669,7 @@ rxvt_process_nonprinting(rxvt_t* r, int page, unsigned char ch)
 
 /*{{{ process VT52 escape sequences */
 /* INTPROTO */
-void
+static void
 rxvt_process_escape_vt52(rxvt_t* r, int page, unsigned char ch)
 {
     int	    row, col;
@@ -4814,7 +4757,7 @@ rxvt_process_escape_vt52(rxvt_t* r, int page, unsigned char ch)
 
 /*{{{ process escape sequences */
 /* INTPROTO */
-void
+static void
 rxvt_process_escape_seq(rxvt_t* r, int page)
 {
     int		    readpage = page;
@@ -5022,7 +4965,7 @@ enum {
 #define get_byte_array_bit(array, bit)		    \
     (!!((array)[(bit) / 8] & (128 >> ((bit) & 7))))
 
-const unsigned char csi_defaults[] = {
+static const unsigned char csi_defaults[] = {
     make_byte(1,1,1,1,1,1,1,1),	/* @, A, B, C, D, E, F, G, */
     make_byte(1,1,0,0,1,1,0,0),	/* H, I, J, K, L, M, N, O, */
     make_byte(1,0,1,1,1,1,1,0),	/* P, Q, R, S, T, U, V, W, */
@@ -5036,7 +4979,7 @@ const unsigned char csi_defaults[] = {
 
 
 /* INTPROTO */
-void
+static void
 rxvt_process_csi_seq(rxvt_t* r, int page)
 {
     int		    readpage = page;
@@ -5353,7 +5296,7 @@ rxvt_process_csi_seq(rxvt_t* r, int page)
 #ifndef NO_FRILLS
 /* ARGSUSED */
 /* INTPROTO */
-void
+static void
 rxvt_process_window_ops(rxvt_t* r, int page, const int *args, unsigned int nargs)
 {
     int			x, y;
@@ -5442,7 +5385,7 @@ rxvt_process_window_ops(rxvt_t* r, int page, const int *args, unsigned int nargs
  * ends_how is terminator used.  returned input must be free()d
  */
 /* INTPROTO */
-unsigned char  *
+static unsigned char  *
 rxvt_get_to_st(rxvt_t* r, int page, unsigned char *ends_how)
 {
     int		    readpage = page;
@@ -5513,24 +5456,24 @@ rxvt_get_to_st(rxvt_t* r, int page, unsigned char *ends_how)
  * process DEVICE CONTROL STRING `ESC P ... (ST|BEL)' or `0x90 ... (ST|BEL)'
  */
 /* INTPROTO */
-void
-rxvt_process_dcs_seq(rxvt_t* r, int page)
-{
-    unsigned char   eh, *s;
-
-    /* Not handled yet */
-    s = rxvt_get_to_st (r, page, &eh);
-    if (s)
-	rxvt_free(s);
-    return;
-}
-
+//void
+//rxvt_process_dcs_seq(rxvt_t* r, int page)
+//{
+//    unsigned char   eh, *s;
+//
+//    /* Not handled yet */
+//    s = rxvt_get_to_st (r, page, &eh);
+//    if (s)
+//	rxvt_free(s);
+//    return;
+//}
+//
 /*----------------------------------------------------------------------*/
 /*
  * process OPERATING SYSTEM COMMAND sequence `ESC ] Ps ; Pt (ST|BEL)'
  */
 /* INTPROTO */
-void
+static void
 rxvt_process_osc_seq (rxvt_t* r, int page)
 {
     int		    readpage = page;
@@ -5597,8 +5540,7 @@ rxvt_process_osc_seq (rxvt_t* r, int page)
  *     101 = bind string to key Ps+1 and pass as value
  *     103 = bind string to key Ps+1 and pass s function
  */
-/* INTPROTO */
-void
+static void
 rxvt_xwsh_seq(rxvt_t* r, int op, const char *str)
 {
     assert(NOT_NULL(str));
@@ -5635,7 +5577,7 @@ rxvt_xwsh_seq(rxvt_t* r, int op, const char *str)
 
 
 /* INTPROTO */
-void
+static void
 rxvt_process_xwsh_seq (rxvt_t* r, int page)
 {
     int		    readpage = page;
@@ -6185,7 +6127,7 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
  * so no need for fancy checking
  */
 /* INTPROTO */
-int
+static int
 rxvt_privcases(rxvt_t* r, int page, int mode, uint32_t bit)
 {
     int		 state;
@@ -6210,7 +6152,7 @@ rxvt_privcases(rxvt_t* r, int page, int mode, uint32_t bit)
 
 /* we're not using priv _yet_ */
 /* INTPROTO */
-void
+static void
 rxvt_process_terminal_mode(rxvt_t* r, int page, int mode, int priv __attribute__((unused)), unsigned int nargs, const int *arg)
 {
     unsigned int    i, j;
@@ -6439,7 +6381,7 @@ rxvt_process_terminal_mode(rxvt_t* r, int page, int mode, int priv __attribute__
 
 /*{{{ process sgr sequences */
 /* INTPROTO */
-void
+static void
 rxvt_process_sgr_mode(rxvt_t* r, int page, unsigned int nargs, const int *arg)
 {
     unsigned int    i;
@@ -6573,7 +6515,7 @@ rxvt_process_sgr_mode(rxvt_t* r, int page, unsigned int nargs, const int *arg)
 
 /*{{{ process Rob Nation's own graphics mode sequences */
 /* INTPROTO */
-void
+static void
 rxvt_process_graphics(rxvt_t* r, int page)
 {
     int		    readpage = page;
@@ -6615,7 +6557,7 @@ rxvt_process_graphics(rxvt_t* r, int page)
  * sequences, and adds text to the tabs output buffer.
  */
 /* INTPROTO */
-void
+static void
 rxvt_process_getc( rxvt_t *r, int page, unsigned char ch )
 {
     int		    limit;	/* Number of lines to read before asking for a

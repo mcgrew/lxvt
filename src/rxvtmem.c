@@ -75,10 +75,7 @@ rxvt_realloc(void *ptr, size_t size)
 {
     void*   p;
 
-    if (ptr)
-	p = realloc(ptr, size);
-    else
-	p = malloc(size);
+    p = realloc(ptr, size);
     if (p)
 	return p;
 

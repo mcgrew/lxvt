@@ -25,7 +25,6 @@
 #include "../config.h"
 #include "rxvt.h"
 
-
 struct KNOWN_ENCODINGS {
     char*	    name;
     enum enc_label  method;
@@ -33,6 +32,10 @@ struct KNOWN_ENCODINGS {
 };
 
 #ifdef MULTICHAR_SET
+static void             rxvt_decode_euc2jis              (unsigned char* str, int len);
+static void             rxvt_decode_sjis2jis             (unsigned char* str, int len);
+static void             rxvt_decode_gb180302jis          (unsigned char* str, int len);
+
 static struct KNOWN_ENCODINGS known_encodings[] = {
     {"SHIFTJIS",    ENC_SJIS,	    rxvt_decode_sjis2jis},
     {"SJIS",	    ENC_SJIS,	    rxvt_decode_sjis2jis},
@@ -317,14 +320,16 @@ static struct FALLBACK_FONT_LIST fallback_mfont_list_x11[] = {
 };
 
 
-char**	    def_fontName;
-char**	    def_mfontName;
+static char**	    def_fontName;
+#ifdef MULTICHAR_SET
+static char**	    def_mfontName;
+#endif
 
 
 
 #ifdef MULTICHAR_SET
 /* EXTPROTO */
-void
+static void
 rxvt_decode_euc2jis (unsigned char* str, int len)
 {
     register int    i;
@@ -337,7 +342,7 @@ rxvt_decode_euc2jis (unsigned char* str, int len)
 
 
 /* EXTPROTO */
-void
+static void
 rxvt_decode_sjis2jis (unsigned char* str, int len)
 {
     register int    i;
@@ -364,7 +369,7 @@ rxvt_decode_sjis2jis (unsigned char* str, int len)
 
 
 /* EXTPROTO */
-void
+static void
 rxvt_decode_gb180302jis (unsigned char* str, int len)
 {
     register int    i;
