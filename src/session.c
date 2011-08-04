@@ -31,20 +31,6 @@
 #define GnomePriority	"_GSM_Priority"
 
 
-/*--------------------------------------------------------------------*
- *         BEGIN `INTERNAL' ROUTINE PROTOTYPES                        *
- *--------------------------------------------------------------------*/
-static void callback_die                (SmcConn, SmPointer);
-static void fetch_window_position       (rxvt_t*, int*, int*);
-static void callback_save_yourself      (SmcConn, SmPointer, int, Bool, int, Bool);
-static void callback_shutdown_cancelled (SmcConn, SmPointer);
-static void callback_save_complete      (SmcConn, SmPointer);
-static void ice_io_error_handler        (IceConn);
-static void ice_connection_watch        (IceConn, IcePointer, Bool, IcePointer*);
-/*--------------------------------------------------------------------*
- *         END `INTERNAL' ROUTINE PROTOTYPES                          *
- *--------------------------------------------------------------------*/
-
 /* INTPROTO */
 static void
 callback_die (SmcConn smc_conn, SmPointer client_data)

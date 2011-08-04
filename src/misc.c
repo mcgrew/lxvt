@@ -61,17 +61,6 @@ rxvt_str_match(const char *s1, const char *s2)
 }
 
 
-/* EXTPROTO */
-const char*
-rxvt_str_skip_space(const char *str)
-{
-    if (str)
-    while (*str && isspace((int) *str))
-        str++;
-    return str;
-}
-
-
 /*
  * remove leading/trailing space and strip-off leading/trailing quotes.
  * in place.

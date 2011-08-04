@@ -29,22 +29,15 @@
 
 /* Begin prototypes of command.c */
 void		 rxvt_cmd_write                   __PROTO((rxvt_t* r, const unsigned char* str, unsigned int count));
-FILE*            rxvt_popen_printer               __PROTO((rxvt_t *r, const char *pipeName));
-int              rxvt_pclose_printer              __PROTO((FILE *stream));
-void             rxvt_xterm_seq                   __PROTO((rxvt_t* r, int op, const char* str, unsigned char resp __attribute__((unused))));
 void             rxvt_tt_printf                   __PROTO((rxvt_t* r, const char* fmt,...));
 void             rxvt_tt_write                    __PROTO((rxvt_t* r, const unsigned char* d, int len));
 void             rxvt_pointer_unblank             __PROTO((rxvt_t* r));
-void             rxvt_resize_on_subwin            __PROTO((rxvt_t* r));
 void           	 rxvt_resize_on_font           	  __PROTO((rxvt_t* r, char* fontname));
 /* End prototypes of command.c */
 
 
 /* Begin prototypes of encoding.c */
 #ifdef MULTICHAR_SET
-void             rxvt_decode_euc2jis              __PROTO((unsigned char* str, int len));
-void             rxvt_decode_sjis2jis             __PROTO((unsigned char* str, int len));
-void             rxvt_decode_gb180302jis          __PROTO((unsigned char* str, int len));
 void             rxvt_set_multichar_encoding      __PROTO((rxvt_t* r, const char* str));
 #endif
 void             rxvt_decode_dummy                __PROTO((unsigned char* str, int len));
@@ -63,12 +56,7 @@ char*            rxvt_encoding_name               __PROTO((rxvt_t *r));
 /* Begin prototypes of macros.c */
 int		 rxvt_parse_macros		  __PROTO((rxvt_t*, const char *, const char *, macro_priority_t priority));
 void		 rxvt_cleanup_macros		  __PROTO((rxvt_t*));
-Bool		 rxvt_set_action		  __PROTO((action_t*, char*));
 int		 rxvt_process_macros		  __PROTO((rxvt_t*, KeySym, XKeyEvent*));
-int		 rxvt_dispatch_action		  __PROTO((rxvt_t*, action_t*, XEvent *ev));
-
-void		 rxvt_toggle_verybold		  __PROTO((rxvt_t*));
-void		 rxvt_toggle_subwin		  __PROTO((rxvt_t*, const unsigned char *));
 /* End prototypes of macros.c */
 
 /* Begin prototypes of init.c */
@@ -76,18 +64,12 @@ int              rxvt_init_vars                   __PROTO((rxvt_t* r));
 void             rxvt_init_secondary              __PROTO((rxvt_t* r));
 void		 rxvt_set_jumpscroll		  __PROTO((rxvt_t* r));
 const char    ** rxvt_init_resources              __PROTO((rxvt_t* r, int argc, const char* const *argv));
-#ifdef XFT_SUPPORT
-void		 rxvt_fade_color                  __PROTO((rxvt_t* r, const XColor *xcol, unsigned long *pix_return, XftColor *xft_return));
-#else
-void	         rxvt_fade_color                  __PROTO((rxvt_t* r, const XColor *xcol, unsigned long *pix_return, void *xft_return));
-#endif
 int		 rxvt_set_fgbg_colors		  __PROTO((rxvt_t* r));
 int		 rxvt_set_vt_colors		  __PROTO((rxvt_t* r));
 void		 rxvt_copy_color                  __PROTO((rxvt_t*, int, int));
 void		 rxvt_set_color                   __PROTO((rxvt_t*, int, const XColor*));
 void             rxvt_init_env                    __PROTO((rxvt_t *r));
 void             rxvt_init_xlocale                __PROTO((rxvt_t *r));
-void		 rxvt_init_fifo	                  __PROTO((rxvt_t *r));
 void             rxvt_init_command                __PROTO((rxvt_t* r));
 CARD32           rxvt_get_desktop                 __PROTO((rxvt_t* r));
 void             rxvt_create_show_windows         __PROTO((rxvt_t* r, int argc, const char* const *argv));
@@ -97,7 +79,6 @@ const char*	 getProfileOption		  __PROTO(( rxvt_t *r, int resource ));
 Status		 ewmh_message			  __PROTO(( Display *, Window, Window, Atom, long, long, long, long, long));
 int		 rxvt_async_exec		  __PROTO((rxvt_t*, const char *));
 int              rxvt_run_command                 __PROTO((rxvt_t* r, const char** argv));
-void             clean_sigmasks_and_fds           __PROTO((rxvt_t* r));
 termenv_t        rxvt_get_termenv                 __PROTO((const char* str));
 char**		 rxvt_string_to_argv    	  __PROTO((const char*, int*));
 /* End prototypes of init.c */
@@ -112,9 +93,9 @@ void             rxvt_cleanutent                  __PROTO((rxvt_t* r));
 
 
 /* Begin prototypes of rxvtmem.c */
-void*            rxvt_malloc                      __PROTO((size_t size));
-void*            rxvt_calloc                      __PROTO((size_t number, size_t size));
-void*            rxvt_realloc                     __PROTO((void *ptr, size_t size));
+void*            rxvt_malloc                      __PROTO((size_t size)) __attribute__((malloc));
+void*            rxvt_calloc                      __PROTO((size_t number, size_t size)) __attribute__((malloc));
+void*            rxvt_realloc                     __PROTO((void *ptr, size_t size)) __attribute__((warn_unused_result));
 void             rxvt_free                        __PROTO((void *ptr));
 /* End prototypes of rxvtmem.c */
 
@@ -125,7 +106,6 @@ RETSIGTYPE       rxvt_Child_signal                __PROTO((int sig __attribute__
 RETSIGTYPE       rxvt_Exit_signal                 __PROTO((int sig));
 void		 rxvt_exit_request                __PROTO((rxvt_t*));
 void             rxvt_clean_exit                  __PROTO((rxvt_t* r));
-void		 rxvt_close_all_tabs		  __PROTO((rxvt_t* r));
 void             rxvt_privileged_utmp             __PROTO((rxvt_t* r, char action));
 void             rxvt_privileged_ttydev           __PROTO((rxvt_t* r, char action));
 void             rxvt_tt_winsize                  __PROTO((int fd, unsigned short col, unsigned short row, pid_t pid));
@@ -135,7 +115,6 @@ int              rxvt_change_font_x11             __PROTO((rxvt_t* r, const char
 int              rxvt_init_font_xft               __PROTO((rxvt_t *r));
 int              rxvt_change_font_xft             __PROTO((rxvt_t* r, const char* fontname));
 #endif
-void             rxvt_set_win_title               __PROTO((rxvt_t* r, Window win, const char* str));
 void             rxvt_set_term_title              __PROTO((rxvt_t* r, const unsigned char* str));
 void             rxvt_set_icon_name               __PROTO((rxvt_t* r, const unsigned char* str));
 void             rxvt_set_window_color            __PROTO((rxvt_t* r, int idx, const char* color));
@@ -145,7 +124,6 @@ int              rxvt_alloc_xft_color             __PROTO((rxvt_t *r, const XCol
 #endif
 int              rxvt_parse_alloc_color           __PROTO((rxvt_t* r, XColor *screen_in_out, const char* colour));
 int              rxvt_alloc_color                 __PROTO((rxvt_t* r, XColor *screen_in_out, const char* colour));
-void             rxvt_set_widthheight             __PROTO((rxvt_t* r, unsigned int width, unsigned int height));
 void             rxvt_IM_send_spot                __PROTO((rxvt_t *r));
 void             rxvt_IM_set_fontset              __PROTO((rxvt_t* r, int idx));
 void             rxvt_IM_init_callback            __PROTO((Display *unused __attribute__((unused)), XPointer client_data __attribute__((unused)), XPointer call_data __attribute__((unused))));
@@ -157,14 +135,10 @@ rxvt_t         * rxvt_get_r                       __PROTO((void));
 /* Begin prototypes of misc.c */
 char           * rxvt_r_basename                  __PROTO((const char* str));
 int              rxvt_str_match                   __PROTO((const char* s1, const char* s2));
-const char*      rxvt_str_skip_space              __PROTO((const char* str));
 char*            rxvt_str_trim                    __PROTO((char* str));
 int              rxvt_str_escaped                 __PROTO((char* str));
 int		 rxvt_percent_interpolate         __PROTO((rxvt_t*, const char *, int, char *, int));
 char**           rxvt_splitcommastring            __PROTO((const char* cs));
-char*            rxvt_File_find                   __PROTO((const char* file, const char* ext, const char* path));
-void             rxvt_draw_shadow                 __PROTO((Display *Xdisplay, Window win, GC gc, unsigned long topShadow, unsigned long botShadow, int x, int y, int w, int h));
-void             rxvt_draw_triangle               __PROTO((Display *Xdisplay, Window win, GC gc, unsigned long topShadow, unsigned long botShadow, int x, int y, int w, int type));
 /* End prototypes of misc.c */
 
 
@@ -183,16 +157,6 @@ int              rxvt_control_tty                 __PROTO((int fd_tty, const cha
 
 
 /* Begin prototypes of screen.c */
-void
-rxvt_draw_string_x11 (rxvt_t* r, Window win, GC gc, Region refreshRegion,
-	int x, int y, char* str, int len, int (*draw_string)());
-#ifdef XFT_SUPPORT
-void
-rxvt_draw_string_xft (rxvt_t* r, Drawable d, GC gc, Region refreshRegion,
-	rend_t rend, int pfont,
-	XftDraw* win, XftColor* fore, int x, int y, char* str, int len,
-	void (*xftdraw_string)());
-#endif
 void             rxvt_init_screen                 __PROTO((rxvt_t* r));
 void             rxvt_scr_reset                   __PROTO((rxvt_t* r));
 void             rxvt_scr_release                 __PROTO((rxvt_t* r));
@@ -231,7 +195,6 @@ void             rxvt_scr_touch                   __PROTO((rxvt_t* r, Bool refre
 int              rxvt_scr_move_to                 __PROTO((rxvt_t* r, int y, int len));
 int              rxvt_scr_page                    __PROTO((rxvt_t* r, enum page_dirn direction, int nlines));
 void             rxvt_scr_bell                    __PROTO((rxvt_t *r));
-void             rxvt_scr_printscreen             __PROTO((rxvt_t* r, int fullhist, int pretty, int linecont, const char *pipeName));
 void             rxvt_scr_refresh                 __PROTO((rxvt_t* r, unsigned char refresh_type));
 void             rxvt_scr_clear                   __PROTO((rxvt_t* r));
 void             rxvt_scr_dump                    __PROTO((rxvt_t* r, int fd));
@@ -253,10 +216,8 @@ void             rxvt_pixel_position              __PROTO((rxvt_t* r, int *x, in
 
 /* Begin prototypes of strings.c */
 #ifdef HAVE_WCHAR_H
-char*            rxvt_wcstombs                    __PROTO((const wchar_t* str, int len));
 wchar_t*         rxvt_mbstowcs                    __PROTO((const char* str));
 char*            rxvt_wcstoutf8                   __PROTO((const wchar_t* str));
-wchar_t*         rxvt_utf8towcs                   __PROTO((const char* str));
 #endif	/* HAVE_WCHAR_H */
 /* End prototypes of strings.c */
 
@@ -266,7 +227,6 @@ void		rxvt_process_reparentnotify   	 __PROTO((rxvt_t*, XEvent*));
 /* End prototypes of transparent.c */
 
 /* Begin prototypes of xdefaults.c */
-void             rxvt_usage                       __PROTO((int type));
 int              rxvt_save_options                __PROTO((rxvt_t* r, const char* filename));
 void             rxvt_get_options                 __PROTO((rxvt_t* r, int argc, const char* const *argv));
 void             rxvt_extract_resources           __PROTO((rxvt_t* r, Display *display __attribute__((unused)), const char* name));
@@ -277,8 +237,6 @@ void             rxvt_extract_resources           __PROTO((rxvt_t* r, Display *d
 void             rxvt_append_page               __PROTO((rxvt_t*, const char *command));
 void             rxvt_kill_page                 __PROTO((rxvt_t*));
 void             rxvt_remove_page               __PROTO((rxvt_t*));
-void             rxvt_adjust_fd_number          __PROTO((rxvt_t* r));
-void		 sync_tab_title		        __PROTO((rxvt_t*));
 /* End prototypes of tabbar.c */
 
 /* Begin prototypes of session.c */

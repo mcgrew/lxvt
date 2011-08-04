@@ -43,23 +43,18 @@
 /*--------------------------------------------------------------------*
  *         BEGIN `INTERNAL' ROUTINE PROTOTYPES                        *
  *--------------------------------------------------------------------*/
-#if defined(OS_SVR4) && !defined(_POSIX_VERSION)
-int    rxvt_getdtablesize     ();
-#endif
-int    rxvt_xerror_handler    (const Display*, const XErrorEvent*);
-void   rxvt_init_colors       (rxvt_t*);
-void   rxvt_init_win_size     (rxvt_t*);
-void   rxvt_color_aliases     (rxvt_t*, int);
-void   rxvt_get_ourmods       (rxvt_t*);
-int    rxvt_run_child         (rxvt_t*, const char**);
-void   rxvt_get_ttymode       (ttymode_t*, int);
+static void   rxvt_color_aliases     (rxvt_t*, int);
+static void   rxvt_get_ourmods       (rxvt_t*);
+static int    rxvt_run_child         (rxvt_t*, const char**);
+static void   rxvt_get_ttymode       (ttymode_t*, int);
+static void             clean_sigmasks_and_fds           (rxvt_t* r);
 /*--------------------------------------------------------------------*
  *         END   `INTERNAL' ROUTINE PROTOTYPES                        *
  *--------------------------------------------------------------------*/
 
 
 
-const char *const def_colorName[] = {
+static const char *const def_colorName[] = {
     COLOR_FOREGROUND,
     COLOR_BACKGROUND,
 /* low-intensity colors */
@@ -610,8 +605,7 @@ const char *const xa_names[NUM_XA] = {
 
 /* substitute system functions */
 #if defined(OS_SVR4) && ! defined(_POSIX_VERSION)
-/* INTPROTO */
-int
+static int
 rxvt_getdtablesize(void)
 {
     struct rlimit   rlim;
@@ -829,8 +823,7 @@ rxvt_init_secondary(rxvt_t *r)
 }
 
 
-/* INTPROTO */
-int
+static int
 rxvt_xerror_handler(const Display *display __attribute__((unused)), const XErrorEvent *event)
 {
     rxvt_t*	r = rxvt_get_r();
@@ -1486,7 +1479,7 @@ rxvt_init_command(rxvt_t* r)
 
 
 /* EXTPROTO */
-void
+static void
 rxvt_fade_color( rxvt_t* r, const XColor *xcol,
 	unsigned long	*pix_return,
 # ifdef XFT_SUPPORT
@@ -1668,8 +1661,7 @@ rxvt_set_color( rxvt_t *r, int cIndex, const XColor *xcol )
  * that case we should avoid allocating XColors, since we can always access them
  * through xftcolor.pixel.
  */
-/* INTPROTO */
-void
+static void
 rxvt_init_colors( rxvt_t *r )
 {
     register int    i;
@@ -1835,7 +1827,7 @@ rxvt_init_colors( rxvt_t *r )
 /*----------------------------------------------------------------------*/
 /* color aliases, fg/bg bright-bold */
 /* INTPROTO */
-void
+static void
 rxvt_color_aliases( rxvt_t *r, int idx )
 {
     if (r->h->rs[Rs_color + idx] && isdigit((int) *(r->h->rs[Rs_color + idx])))
@@ -1856,8 +1848,7 @@ rxvt_color_aliases( rxvt_t *r, int idx )
 }
 
 
-/* INTPROTO */
-void
+static void
 rxvt_init_win_size( rxvt_t *r )
 {
     int		    flags = 0;	/* must initialize to 0!!! */
@@ -1987,7 +1978,7 @@ rxvt_init_win_size( rxvt_t *r )
  * Use resource ``modifier'' to override the Meta modifier
  */
 /* INTPROTO */
-void
+static void
 rxvt_get_ourmods( rxvt_t *r )
 {
     int			i, j, k;
@@ -2395,7 +2386,7 @@ rxvt_get_termenv( const char *env )
  * - 'page' is not valid: it must be between 0 and the last page + 1.
  *   If it is less than the last page + 1, then all pages >= page are moved up.
  */
-int
+static int
 rxvt_init_vts( rxvt_t *r )
 {
 #ifdef TTY_GID_SUPPORT
@@ -2597,8 +2588,7 @@ getProfileOption( rxvt_t *r, int resource )
     return r->h->rs[resource];
 }
 
-/* INTPROTO */
-void
+static void
 rxvt_set_borderless( rxvt_t *r )
 {
     Atom	prop;
@@ -2663,7 +2653,7 @@ ewmh_message( Display *dpy, Window root_win, Window client_win,
 
 
 /* INTPROTO */
-void
+static void
 rxvt_set_desktop( rxvt_t* r, CARD32 desktop )
 {
     /* GNOME compatible WM */
@@ -3289,8 +3279,7 @@ rxvt_run_command(rxvt_t *r, const char **argv)
  * Reset signal masks to their default values, and close all open file
  * descriptors.
  */
-/* EXTPROTO */
-void
+static void
 clean_sigmasks_and_fds( rxvt_t* r )
 {
 #ifdef SIGTSTP
@@ -3341,7 +3330,7 @@ clean_sigmasks_and_fds( rxvt_t* r )
  * returns are fatal
  */
 /* INTPROTO */
-int
+static int
 rxvt_run_child(rxvt_t* r, const char **argv)
 {
     char*		login;
@@ -3478,7 +3467,7 @@ rxvt_run_child(rxvt_t* r, const char **argv)
  * ------------------------------------------------------------------------- */
 /* rxvt_get_ttymode() */
 /* INTPROTO */
-void
+static void
 rxvt_get_ttymode(ttymode_t *tio, int erase)
 {
 #ifdef HAVE_TERMIOS_H

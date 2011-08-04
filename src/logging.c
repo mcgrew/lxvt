@@ -34,29 +34,29 @@
 
 #ifdef UTMP_SUPPORT
 
-# if defined(HAVE_UPDWTMP) && defined(OS_SOLARIS)
+#ifdef OS_SOLARIS
+# if defined(HAVE_UPDWTMP)
 void updwtmp(char *wfile, struct utmp *utmp);
 # endif
-# if defined(HAVE_STRUCT_UTMPX) && !defined(HAVE_STRUCT_UTMP) && defined(OS_SOLARIS)
+# if defined(HAVE_STRUCT_UTMPX) && !defined(HAVE_STRUCT_UTMP)
 void updwtmpx(char *wfile, struct utmpx *utmp);
 # endif
+#endif
 
 
 /*--------------------------------------------------------------------*
  *         BEGIN `INTERNAL' ROUTINE PROTOTYPES                        *
  *--------------------------------------------------------------------*/
-#ifdef HAVE_UTMP_H
-# ifndef UTEMPTER_SUPPORT
-int  rxvt_write_bsd_utmp (int utmp_pos, struct utmp* wu);
-# endif
+#if defined(HAVE_STRUCT_UTMP) && !defined(HAVE_UTMP_PID)
+static int  rxvt_write_bsd_utmp (int utmp_pos, struct utmp* wu);
 #endif
 #if defined(WTMP_SUPPORT) && !defined(HAVE_UPDWTMP)
 # ifndef UTEMPTER_SUPPORT
-void rxvt_update_wtmp    (const char *fname, const struct utmp *putmp);
+static void rxvt_update_wtmp    (const char *fname, const struct utmp *putmp);
 # endif
 #endif
 #ifdef LASTLOG_SUPPORT
-void rxvt_update_lastlog (const char *fname, const char *pty, const char *host);
+static void rxvt_update_lastlog (const char *fname, const char *pty, const char *host);
 #endif
 /*--------------------------------------------------------------------*
  *         END `INTERNAL' ROUTINE PROTOTYPES                          *
@@ -345,10 +345,9 @@ rxvt_cleanutent(rxvt_t *r)
 /*
  * Write a BSD style utmp entry
  */
-#ifdef HAVE_UTMP_H
-# ifndef UTEMPTER_SUPPORT
+#if defined(HAVE_STRUCT_UTMP) && !defined(HAVE_UTMP_PID)
 /* INTPROTO */
-int
+static int
 rxvt_write_bsd_utmp(int utmp_pos, struct utmp *wu)
 {
     int             fd;
@@ -361,7 +360,6 @@ rxvt_write_bsd_utmp(int utmp_pos, struct utmp *wu)
     close(fd);
     return 1;
 }
-# endif	/* UTEMPTER_SUPPORT */
 #endif
 
 /* ------------------------------------------------------------------------- */
@@ -371,7 +369,7 @@ rxvt_write_bsd_utmp(int utmp_pos, struct utmp *wu)
 #if defined(WTMP_SUPPORT) && !defined(HAVE_UPDWTMP)
 # ifndef UTEMPTER_SUPPORT
 /* INTPROTO */
-void
+static void
 rxvt_update_wtmp(const char *fname, const struct utmp *putmp)
 {
     int             fd, gotlock, retry;
@@ -415,7 +413,7 @@ rxvt_update_wtmp(const char *fname, const struct utmp *putmp)
 /* ------------------------------------------------------------------------- */
 #ifdef LASTLOG_SUPPORT
 /* INTPROTO */
-void
+static void
 rxvt_update_lastlog(const char *fname, const char *pty, const char *host)
 {
 # ifdef HAVE_STRUCT_LASTLOGX

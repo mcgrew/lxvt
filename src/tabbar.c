@@ -33,13 +33,6 @@
 #endif
 
 
-/******************************************************************************
-*			Begin internal routine prototypes.		      *
-******************************************************************************/
-/******************************************************************************
-*			End internal routine prototypes.		      *
-******************************************************************************/
-
 extern char **cmd_argv;
 
 /* INTPROTO */
@@ -54,7 +47,7 @@ rxvt_kill_page (rxvt_t* r)
  * Reduce r->num_fds so that select() is more efficient
  */
 /* EXTPROTO */
-void
+static void
 rxvt_adjust_fd_number( rxvt_t* r )
 {
     int	    num_fds = STDERR_FILENO;
