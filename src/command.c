@@ -2561,7 +2561,7 @@ rxvt_process_clientmessage(rxvt_t* r, XClientMessageEvent* ev)
 	/* Get Dnd data */
 	Atom		ActualType;
 	int		ActualFormat;
-	unsigned char*	data;
+	unsigned char*	data = NULL;
 	uint32_t	Size, RemainingBytes;
 
 	XGetWindowProperty(r->Xdisplay, XROOT,
@@ -2570,6 +2570,7 @@ rxvt_process_clientmessage(rxvt_t* r, XClientMessageEvent* ev)
 	   &Size, &RemainingBytes, &data);
 	XChangeProperty(r->Xdisplay, XROOT, XA_CUT_BUFFER0,
 	    XA_STRING, 8, PropModeReplace, data, STRLEN(data));
+	XFree(data);
 
 	rxvt_selection_paste(r, XROOT, XA_CUT_BUFFER0, True);
 	XSetInputFocus(r->Xdisplay, XROOT, RevertToNone, CurrentTime);
@@ -2987,7 +2988,7 @@ static Bool getWMStruts( Display *dpy, Window w,
     int		    format;
     unsigned long   nitems, bytes_after;
 
-    unsigned char  *prop; /* left, right, top and bottom borders */
+    unsigned char  *prop = NULL; /* left, right, top and bottom borders */
 
     /*
      * Initialize return values to 0, just incase we can't read the window
@@ -3034,6 +3035,7 @@ static Bool getWMStruts( Display *dpy, Window w,
 	}
 
 	XFree( prop);
+	prop = NULL;
     }
     return i == natoms + 1;
 }

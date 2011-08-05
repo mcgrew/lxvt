@@ -58,6 +58,7 @@ char*            rxvt_encoding_name               __PROTO((rxvt_t *r));
 int		 rxvt_parse_macros		  __PROTO((rxvt_t*, const char *, const char *, macro_priority_t priority));
 void		 rxvt_cleanup_macros		  __PROTO((rxvt_t*));
 int		 rxvt_process_macros		  __PROTO((rxvt_t*, KeySym, XKeyEvent*));
+void	 	 rxvt_free_macros		  __PROTO((rxvt_t*));
 /* End prototypes of macros.c */
 
 /* Begin prototypes of init.c */
