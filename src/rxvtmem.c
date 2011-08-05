@@ -24,6 +24,7 @@
 #include "../config.h"
 #include "rxvt.h"
 
+#ifndef MTRACE
 static const char*  abort_msg = APL_NAME ": memory allocation failure.  Aborting";
 
 /* -------------------------------------------------------------------- *
@@ -91,5 +92,7 @@ rxvt_free(void* ptr)
 #endif
     free (ptr);
 }
+
+#endif
 
 /*----------------------- end-of-file (C source) -----------------------*/

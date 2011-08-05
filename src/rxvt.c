@@ -32,6 +32,10 @@
 int
 main(int argc, const char *const *argv)
 {
+#ifdef MTRACE
+    mtrace();
+    unsetenv("MALLOC_TRACE");
+#endif
     rxvt_t*	rxvt_vars;
 
     /*

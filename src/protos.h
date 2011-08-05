@@ -94,10 +94,17 @@ void             rxvt_cleanutent                  __PROTO((rxvt_t* r));
 
 
 /* Begin prototypes of rxvtmem.c */
+#ifndef MTRACE
 void*            rxvt_malloc                      __PROTO((size_t size)) __attribute__((malloc));
 void*            rxvt_calloc                      __PROTO((size_t number, size_t size)) __attribute__((malloc));
 void*            rxvt_realloc                     __PROTO((void *ptr, size_t size)) __attribute__((warn_unused_result));
 void             rxvt_free                        __PROTO((void *ptr));
+#else
+#define rxvt_malloc malloc
+#define rxvt_calloc calloc
+#define rxvt_realloc realloc
+#define rxvt_free free
+#endif
 /* End prototypes of rxvtmem.c */
 
 
