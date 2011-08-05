@@ -24,9 +24,6 @@
 #include "../config.h"
 #include "rxvt.h"
 
-#include "rxvtmem.h"
-
-
 static const char*  abort_msg = APL_NAME ": memory allocation failure.  Aborting";
 
 /* -------------------------------------------------------------------- *

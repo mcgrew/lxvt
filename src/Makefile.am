@@ -27,8 +27,7 @@ drxvt_SOURCES =	    command.h		\
 	       	    feature.h		\
 	       	    init.h		\
 	       	    protos.h		\
-	       	    rxvt.h		\
-		    rxvtmem.h
+	       	    rxvt.h
 
 
 drxvt_SOURCES +=    command.c		\
@@ -100,7 +99,7 @@ misc.o:		    $(RXVT_H) 				misc.c
 netdisp.o:	    $(RXVT_H) 				netdisp.c
 ptytty.o:	    $(RXVT_H) 				ptytty.c
 rxvt.o:		    $(RXVT_H) 				rxvt.c
-rxvtmem.o:	    $(RXVT_H) 				rxvtmem.h rxvtmem.c
+rxvtmem.o:	    $(RXVT_H) 				rxvtmem.c
 screen.o:	    $(RXVT_H) $(XFTACS_H)		screen.c
 session.o:	    $(RXVT_H) 				session.c
 strings.o:	    $(RXVT_H) 				strings.c
