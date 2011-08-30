@@ -471,6 +471,9 @@
  */
 /* #define TERMCAP_HAS_BW */
 
+/* Enable mtrace malloc debugging */
+#undef MTRACE
+
 #endif	/* __FEATURE_H__ */
 
 /*}}}1*/

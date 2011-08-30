@@ -1382,9 +1382,6 @@ typedef uint32_t	unicode_t;
  *                      DO NOT TOUCH ANYTHING BELOW HERE                     *
  *****************************************************************************/
 
-struct rxvt_vars;	/* defined later on */
-struct rxvt_hidden;	/* not defined here */
-
 typedef unsigned char text_t;
 
 /*

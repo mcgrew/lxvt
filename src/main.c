@@ -721,10 +721,6 @@ rxvt_init_bfont_xft (rxvt_t* r, XftPattern* xpold)
 {
     XftResult	    fr;
     XftPattern*	    xp, *xftbpattern;
-# ifdef DEBUG
-    FT_Face	    face;
-# endif
-
 
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_MAIN, "rxvt_init_bfont_xft()"));
 
@@ -788,7 +784,7 @@ rxvt_init_bfont_xft (rxvt_t* r, XftPattern* xpold)
 	{
 	    if (!IS_NULL(r->TermWin.xftbfont)) 
 	    {
-		face = XftLockFace (r->TermWin.xftbfont);
+		XftLockFace (r->TermWin.xftbfont);
 		XftUnlockFace (r->TermWin.xftbfont);
 	    }
 	}
@@ -810,9 +806,6 @@ rxvt_init_mfont_xft (rxvt_t* r, XftPattern* xp, const char* ofname)
     char*	    mfname;	    /* mfont name to open */
     FcChar8*	    omfname = NULL; /* actually opened mfont name */
     int		    width, height;
-# ifdef DEBUG
-    FT_Face	    face;
-# endif
 
     /* temporary XftPattern */
     assert (NOT_NULL(xp));
@@ -915,7 +908,7 @@ rxvt_init_mfont_xft (rxvt_t* r, XftPattern* xp, const char* ofname)
 		"Cannot open mfont '%s'. Using mfont '%s' instead.\n",
 	    mfname, omfname);
 
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_MAIN, "create xftmpattern = 0x%x on mfont %d\n", (unsigned int) r->TermWin.xftmpattern, r->h.rs[Rs_xftmsz] ?  r->TermWin.xftmsize : r->TermWin.xftfont->height-1));
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_MAIN, "create xftmpattern = 0x%x on mfont %d\n", (unsigned long) r->TermWin.xftmpattern, r->h.rs[Rs_xftmsz] ?  r->TermWin.xftmsize : r->TermWin.xftfont->height-1));
 
     /*
      * Actually open the mfont.
@@ -927,7 +920,7 @@ rxvt_init_mfont_xft (rxvt_t* r, XftPattern* xp, const char* ofname)
 	goto Failure;
 
 # ifdef DEBUG
-    face = XftLockFace (r->TermWin.xftmfont);
+    XftLockFace (r->TermWin.xftmfont);
     XftUnlockFace (r->TermWin.xftmfont);
 # endif
 
@@ -1017,9 +1010,6 @@ rxvt_init_font_xft (rxvt_t* r)
     int		    len, olen;	    /* font name length */
     char*	    fname;	    /* font name to open */
     FcChar8*	    ofname = NULL;  /* actually opened font name */
-# ifdef DEBUG
-    FT_Face	    face;
-# endif
 
 
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_MAIN, "rxvt_init_font_xft\n"));
@@ -1167,7 +1157,7 @@ rxvt_init_font_xft (rxvt_t* r)
 		"Cannot open font '%s'. Using font '%s' instead.\n",
 	    fname, ofname);
 
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_MAIN, "create xftpattern = 0x%x on font %d\n", (unsigned int) r->TermWin.xftpattern, r->TermWin.xftsize));
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_MAIN, "create xftpattern = 0x%x on font %d\n", (unsigned long) r->TermWin.xftpattern, r->TermWin.xftsize));
 
     /*
      * Actually open the font.
@@ -1294,7 +1284,7 @@ rxvt_init_font_xft (rxvt_t* r)
     }
 
 #ifdef DEBUG
-    face = XftLockFace (r->TermWin.xftfont);
+    XftLockFace (r->TermWin.xftfont);
     XftUnlockFace (r->TermWin.xftfont);
 # endif
 
@@ -2395,8 +2385,8 @@ rxvt_IM_set_position(rxvt_t* r, XPoint *pos)
     XWindowAttributes	xwa;
 
     XGetWindowAttributes(r->Xdisplay, PVTS(r)->vt, &xwa);
-    pos->x = xwa.x + Col2Pixel(ASCR(r).cur.col);
-    pos->y = xwa.y + Row2Pixel(ASCR(r).cur.row) + r->TermWin.font->ascent;
+    pos->x = xwa.x + Col2Pixel(PSCR(r).cur.col);
+    pos->y = xwa.y + Row2Pixel(PSCR(r).cur.row) + r->TermWin.font->ascent;
 }
 
 /* INTPROTO */
@@ -2665,7 +2655,7 @@ rxvt_IM_get_IC(rxvt_t *r)
     XIMStyles	    *xim_styles;
     XVaNestedList   preedit_attr, status_attr;
     XIMCallback	 ximcallback;
-    struct rxvt_hidden *h = r->h;
+    struct rxvt_hidden *h = &r->h;
     long	    im_event_mask = 0;
 
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_MAIN, "rxvt_IM_get_IC()\n"));
