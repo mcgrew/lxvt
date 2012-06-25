@@ -13,7 +13,7 @@
 #
 # Install this file using "tic mrxvt.terminfo".
 #
-mrxvt|mrxvt terminal emulator (X Window System):\
+lxvt|lxvt terminal emulator (X Window System):\
 	:am:eo:km:mi:ms:ut:xn:xo:\
 	:Co#256:NC@:co#80:it#8:li#24:pa#32717:\
 	:#2=\E[7$:#4=\E[d:%c=\E[6$:%e=\E[5$:%i=\E[c:*4=\E[3$:\
