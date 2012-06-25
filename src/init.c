@@ -3187,7 +3187,7 @@ rxvt_get_desktop( rxvt_t* r )
     int	    format;
     unsigned long   nitems;
     unsigned long   bytes_after;
-    unsigned char   *prop;
+    unsigned char   *prop = NULL;
     CARD32  desktop;
 
     if (NOT_ATOM(r->h->xa[XA_NET_WM_DESKTOP]))

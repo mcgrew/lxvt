@@ -280,6 +280,8 @@ rxvt_alarm_signal( __attribute__((unused)) int sig )
 static void
 rxvt_free_hidden( rxvt_t* r )
 {
+    unsigned i;
+
 #ifdef DEBUG
     if (IS_CURSOR(r->h->bar_pointer))
     {
@@ -302,6 +304,22 @@ rxvt_free_hidden( rxvt_t* r )
 	SET_NULL(r->h->Input_Context); 
     }
 #endif
+
+    for (i = 0; i < MAX_NFONTS; i ++)
+	if (NOT_NULL(r->h->newfont[i]))   
+	    rxvt_free (r->h->newfont[i]);
+
+    rxvt_free(r->h->env_display);
+    SET_NULL(r->h->env_display);
+
+    rxvt_free(r->h->env_windowid);
+    SET_NULL(r->h->env_windowid);
+
+    rxvt_free(r->h->env_term);
+    SET_NULL(r->h->env_term);
+
+    rxvt_free(r->h->buffer);
+    SET_NULL(r->h->buffer);
 }
 
 
@@ -428,6 +446,8 @@ rxvt_clean_exit (rxvt_t* r)
      */
 /* #ifdef DEBUG	*/
     rxvt_free_hidden (r);
+
+    rxvt_free_macros(r);
 
     /* Destroy windows before other X resources */
     if (IS_WIN(r->TermWin.parent))

@@ -1381,5 +1381,17 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 }
 /* }}} */
 
+void
+rxvt_free_macros( rxvt_t *r )
+{
+    unsigned i;
+    for (i = 0; i < r->nmacros; i ++)
+    {
+	rxvt_free(r->macros[i].action.str);
+    }
+    rxvt_free(r->macros);
+    r->macros = NULL;
+}
+
 /* vim: set fdm=marker: */
 /*----------------------- end-of-file (C source) -----------------------*/

@@ -614,6 +614,8 @@ rxvt_set_default_font_x11 (rxvt_t* r)
     {
 	for (i = 0; i < MAX_NFONTS; i ++)
 	{
+	    if (NOT_NULL(r->h->rs[Rs_mfont+i]))
+		continue;
 	    char*   ptr = rxvt_malloc (STRLEN(isofont[i])+4);
 	    if(
 		    r->encoding_method >= ENC_ISO8859_1 &&
@@ -631,6 +633,8 @@ rxvt_set_default_font_x11 (rxvt_t* r)
     /* Found no font, fall back to ISO8859-X font */
     if (IS_NULL(def_fontName[0]))   {
 	for (i = 0; i < MAX_NFONTS; i ++)   {
+	    if (NOT_NULL(r->h->rs[Rs_font+i]))
+		continue;
 	    char*   ptr = rxvt_malloc (STRLEN(isofont[i])+4);
 #ifdef MULTICHAR_SET
 	    if (r->encoding_method >= ENC_ISO8859_1 &&

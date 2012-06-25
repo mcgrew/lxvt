@@ -72,6 +72,7 @@ int		 rxvt_parse_macros		  __PROTO((rxvt_t*, const char *, const char *, macro_p
 void		 rxvt_cleanup_macros		  __PROTO((rxvt_t*));
 Bool		 rxvt_set_action		  (action_t*, char*);
 int		 rxvt_process_macros		  __PROTO((rxvt_t*, KeySym, XKeyEvent*));
+void	 	 rxvt_free_macros		  __PROTO((rxvt_t*));
 int		 rxvt_dispatch_action		  (rxvt_t*, action_t*, XEvent *ev);
 /* End prototypes of macros.c */
 
