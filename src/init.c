@@ -870,6 +870,7 @@ rxvt_init_secondary(rxvt_t *r)
 	close(i);
     }
     dup2(STDERR_FILENO, STDOUT_FILENO);
+#ifndef MTRACE
     for (i = STDERR_FILENO + 1; i < num_fds; i++)
     {
     /* #ifdef __sgi */
@@ -880,6 +881,7 @@ rxvt_init_secondary(rxvt_t *r)
 #endif
 	close(i);
     }
+#endif
 
     /* Now set the correct num_fds */
     r->num_fds = STDERR_FILENO + 1;
