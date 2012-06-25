@@ -3704,9 +3704,6 @@ rxvt_calc_colrow (rxvt_t* r, unsigned int width, unsigned int height)
     r->szHint.width = width;
     r->szHint.height = height;
 
-    r->h->window_vt_x = (width - Width2Pixel(ncol))/2 - r->TermWin.int_bwidth;
-    r->h->window_vt_y = (height - Height2Pixel(nrow) + 1)/2 - r->TermWin.int_bwidth;
-
     return ((r->h->prev_ncol != r->TermWin.ncol) ||
 	    (r->h->prev_nrow != r->TermWin.nrow));
 }
