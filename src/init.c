@@ -2307,6 +2307,11 @@ rxvt_init_win_size( rxvt_t *r )
     if (recalc_y)
 	r->szHint.y += (DisplayHeight(r->Xdisplay, XSCREEN)
 	    - r->szHint.height - 2 * r->TermWin.ext_bwidth);
+    /* Set the terminal window starting position */
+  r->h->window_vt_x = (ISSET_OPTION(r, Opt_scrollBar_right)) ?
+          0 : r->szHint.base_width - 2*r->TermWin.int_bwidth;
+  r->h->window_vt_y = r->szHint.base_height - 2*r->TermWin.int_bwidth;
+
 #ifdef HAVE_TABBAR
     if (ISSET_OPTION(r, Opt2_bottomTabbar) && NOTSET_OPTION(r, Opt2_hideTabbar))
 	r->h->window_vt_y -= rxvt_tabbar_rheight (r);
