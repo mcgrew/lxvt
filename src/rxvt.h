@@ -9,7 +9,8 @@
  * Copyright (c) 2005        Teun Burgers <burgers@ecn.nl>
  * Copyright (c) 2004-2005   Jingmin Zhou <jimmyzhou@users.sourceforge.net>
  * Copyright (c) 2005-2006   Gautam Iyer <gi1242@users.sourceforge.net>
- * Copyright (C) 2008		  Jehan Hysseo <hysseo@users.sourceforge.net>
+ * Copyright (C) 2008        Jehan Hysseo <hysseo@users.sourceforge.net>
+ * Copyright (C) 2012        Thomas McGrew <tjmcgrew@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -837,10 +838,29 @@ enum {
     WBYTE
 };
 
+#if defined(TTY_RGBCOLOR)
+typedef uint64_t rend_t;
+#elif defined(TTY_256COLOR) || defined(MULTICHAR_SET)
+typedef uint32_t rend_t;
+#else
+typedef uint16_t rend_t;
+#endif
 
-#define RS_None		0   /* Normal */
+#define RS_None		((rend_t)0)   /* Normal */
 
-#if defined(TTY_256COLOR)
+#ifdef TTY_RGBCOLOR
+/* 64 whole bits and it's still tight */
+# define RS_fgMask	    0x0000000001FFFFFFULL
+# define RS_fgMaskRGB	    0x0000000001000000ULL
+# define RS_bgMask	    0x01FFFFFF00000000ULL
+# define RS_bgMaskRGB	    0x0100000000000000ULL
+# define RS_Bold	    0x0000000002000000ULL	/* bold */
+# define RS_Blink	    0x0000000004000000ULL	/* blink */
+# define RS_RVid	    0x0000000008000000ULL	/* reverse video */
+# define RS_Uline	    0x0000000010000000ULL	/* underline */
+# define RS_acsFont	    0x0200000000000000ULL	/* ACS graphics char set */
+# define RS_ukFont	    0x0400000000000000ULL	/* UK character set */
+#elif defined(TTY_256COLOR)
 /* have at least 32 bits to use */
 # define RS_fgMask	    0x000001FFu	/* 512 colors */
 # define RS_bgMask	    0x0003FE00u	/* 512 colors */
@@ -863,8 +883,8 @@ enum {
 #endif
 
 #ifdef MULTICHAR_SET
-# define RS_multi0	    0x10000000u	/* only multibyte characters */
-# define RS_multi1	    0x20000000u	/* multibyte 1st byte */
+# define RS_multi0	    0x40000000u	/* only multibyte characters */
+# define RS_multi1	    0x80000000u	/* multibyte 1st byte */
 /* multibyte 2nd byte */
 # define RS_multi2	    (RS_multi0|RS_multi1)
 /* multibyte mask */
@@ -1071,16 +1091,21 @@ enum colour_list {
 #endif
 };
 
-#ifdef TTY_256COLOR
+#ifdef TTY_RGBCOLOR
+# define Color_Bits 32
+#elif defined(TTY_256COLOR)
 # define Color_Bits 9
-# define NPIXCLR_SETS	9   /* (256 + 14) bits / 32 bits */
 #else
 # define Color_Bits 5
+#endif
+#if defined(TTY_256COLOR)
+# define NPIXCLR_SETS	9   /* (256 + 14) bits / 32 bits */
+#else
 # define NPIXCLR_SETS	1   /* (16 + 14) bits / 32 bits */
 #endif
 #define NPIXCLR_BITS	32
 
-#define DEFAULT_RSTYLE	    (RS_None | (Color_fg) | (Color_bg<<Color_Bits))
+#define DEFAULT_RSTYLE	    (RS_None | (Color_fg) | ((rend_t)Color_bg<<Color_Bits))
 
 
 
@@ -1340,19 +1365,10 @@ enum {
 #define XSCREEN		DefaultScreen(r->Xdisplay)
 #define XROOT		DefaultRootWindow(r->Xdisplay)
 
-#ifdef PREFER_24BIT
-# define XDEPTH		(r->Xdepth)
-# define XCMAP		(r->Xcmap)
-# define XVISUAL	(r->h->Xvisual)
-#else
-# ifdef DEBUG_DEPTH
-#  define XDEPTH	DEBUG_DEPTH
-# else
-#  define XDEPTH	DefaultDepth(r->Xdisplay, XSCREEN)
-#  define XCMAP		DefaultColormap(r->Xdisplay, XSCREEN)
-#  define XVISUAL	DefaultVisual(r->Xdisplay, XSCREEN)
-# endif
-#endif
+#define XVISUAL		(r->Xvisual)
+#define XDEPTH		(r->Xdepth)
+#define XCMAP		(r->Xcmap)
+ 
 
 
 #define IMBUFSIZ	128 /* input modifier buffer sizes */
@@ -1385,35 +1401,25 @@ enum {
 /* how to build & extract colors and attributes */
 #define GET_BASEFG(x)	    (((x) & RS_fgMask))
 #define GET_BASEBG(x)	    (((x) & RS_bgMask)>>Color_Bits)
-#if 0 /* Was ifndef NO_BRIGHTCOLOR */
-# define GET_FGCOLOR(x)						    \
-    ((((x) & RS_Bold) == 0		    	    		    \
-      || GET_BASEFG(x) < minCOLOR		    		    \
-      || GET_BASEFG(x) >= minBrightCOLOR)	    		    \
-     ? GET_BASEFG(x)				    		    \
-     : (GET_BASEFG(x) + (minBrightCOLOR - minCOLOR)))
-# define GET_BGCOLOR(x)						    \
-    ((((x) & RS_Blink) == 0		    			    \
-      || GET_BASEBG(x) < minCOLOR				    \
-      || GET_BASEBG(x) >= minBrightCOLOR)			    \
-     ? GET_BASEBG(x)						    \
-     : (GET_BASEBG(x) + (minBrightCOLOR - minCOLOR)))
-#else
 # define GET_FGCOLOR(x)	    GET_BASEFG(x)
 # define GET_BGCOLOR(x)	    GET_BASEBG(x)
-#endif
 
 #define GET_ATTR(x)	(((x) & RS_attrMask))
 #define GET_BGATTR(x)				\
     (((x) & RS_RVid) ? (((x) & (RS_attrMask & ~RS_RVid))	\
 	    | (((x) & RS_fgMask)<<Color_Bits))	    \
 	     : ((x) & (RS_attrMask | RS_bgMask)))
-#define SET_FGCOLOR(x,fg)   (((x) & ~RS_fgMask)  | (fg))
-#define SET_BGCOLOR(x,bg)   (((x) & ~RS_bgMask)  | ((bg)<<Color_Bits))
-#define SET_ATTR(x,a)	    (((x) & ~RS_attrMask)| (a))
+#define SET_FGCOLOR(x,fg)   (((x) & ~RS_fgMask)  | ((fg) & RS_fgMask))
+#define SET_BGCOLOR(x,bg)   (((x) & ~RS_bgMask)  | (((rend_t)(bg)<<Color_Bits) & RS_bgMask))
+#define SET_ATTR(x,a)	    (((x) & ~RS_attrMask)| ((a) & RS_attrMask))
 
 #define SET_PIXCOLOR(h, x)	((h)->pixcolor_set[(x) / NPIXCLR_BITS] |= (1 << ((x) % NPIXCLR_BITS)))
 #define ISSET_PIXCOLOR(h, x)	((h)->pixcolor_set[(x) / NPIXCLR_BITS] & (1 << ((x) % NPIXCLR_BITS)))
+#ifdef TTY_RGBCOLOR
+#define PIXCOLOR(r, n) (((n) & RS_fgMaskRGB) ? ((n) & ~RS_fgMaskRGB) : (r)->pixColors[n])
+#else
+#define PIXCOLOR(r, n) ((r)->pixColors[n])
+#endif
 
 #define scrollbar_isMotion()	(r->scrollBar.state == 'm')
 #define scrollbar_isUp()	(r->scrollBar.state == 'U')
@@ -1597,14 +1603,10 @@ struct rxvt_hidden {
 		    ModAltMask,
 		    ModNumLockMask;
 #ifndef NO_BRIGHTCOLOR
-    unsigned long   colorfgbg;
+    rend_t          colorfgbg;
 #endif
 
     gid_t	    ttygid;
-
-#ifdef PREFER_24BIT
-    Visual*	    Xvisual;
-#endif
 
     Atom	    xa[NUM_XA];
 

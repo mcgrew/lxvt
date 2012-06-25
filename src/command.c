@@ -21,6 +21,7 @@
  * Copyright (c) 2004-2006   Jingmin Zhou <jimmyzhou@users.sourceforge.net>
  * Copyright (c) 2005-2006   Gautam Iyer <gi1242@users.sourceforge.net>
  * Copyright (C) 2008		  Jehan Hysseo <hysseo@users.sourceforge.net>
+ * Copyright (C) 2012        Thomas McGrew <tjmcgrew@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -6386,7 +6387,7 @@ rxvt_process_sgr_mode(rxvt_t* r, int page, unsigned int nargs, const int *arg)
 {
     unsigned int    i;
     short	    rendset;
-    int		    rendstyle = 0;
+    rend_t	    rendstyle = 0;
 
     if (nargs == 0)
     {
@@ -6445,16 +6446,28 @@ rxvt_process_sgr_mode(rxvt_t* r, int page, unsigned int nargs, const int *arg)
 		rxvt_scr_color(r, page,
 		    (unsigned int)(minCOLOR+(arg[i]-30)), Color_fg);
 		break;
-#ifdef TTY_256COLOR
 	    case 38:
+#ifdef TTY_256COLOR
 		if (nargs > i + 2 && arg[i + 1] == 5)
 		{
 		    rxvt_scr_color(r, page,
 			(unsigned int)(minCOLOR+arg[i+2]), Color_fg);
 		    i += 2;
 		}
-		break;
 #endif
+#ifdef TTY_RGBCOLOR
+		if (r->rgbColors && nargs > i + 4 && arg[i+1] == 2)
+		{
+		    rxvt_scr_color(r, page,
+			    RS_fgMaskRGB |
+			    ((arg[i+2] & 0xff) << 16) | 
+			    ((arg[i+3] & 0xff) << 8) |
+			    (arg[i+4] & 0xff),
+			    Color_fg);
+		    i += 4;
+		}
+#endif
+		break;
 	    case 39:	    /* default fg */
 		rxvt_scr_color(r, page, Color_fg, Color_fg);
 		break;
@@ -6470,16 +6483,28 @@ rxvt_process_sgr_mode(rxvt_t* r, int page, unsigned int nargs, const int *arg)
 		rxvt_scr_color(r, page,
 		    (unsigned int)(minCOLOR+(arg[i]-40)), Color_bg);
 		break;
-#ifdef TTY_256COLOR
 	    case 48:
+#ifdef TTY_256COLOR
 		if (nargs > i + 2 && arg[i + 1] == 5)
 		{
 		    rxvt_scr_color(r, page,
 			(unsigned int)(minCOLOR+arg[i+2]), Color_bg);
 		    i += 2;
 		}
-		break;
 #endif
+#ifdef TTY_RGBCOLOR
+		if (r->rgbColors && nargs > i + 4 && arg[i+1] == 2)
+		{
+		    rxvt_scr_color(r, page,
+			    RS_fgMaskRGB |
+			    ((arg[i+2] & 0xff) << 16) | 
+			    ((arg[i+3] & 0xff) << 8) |
+			    (arg[i+4] & 0xff),
+			    Color_bg);
+		    i += 4;
+		}
+#endif
+		break;
 	    case 49:	    /* default bg */
 		rxvt_scr_color(r, page, Color_bg, Color_bg);
 		break;

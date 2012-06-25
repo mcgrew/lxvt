@@ -6,6 +6,7 @@ dnl#  Copyright (c) 2004        Hiramatsu Yoshifumi
 dnl#  Copyright (c) 2004-2006   Jingmin Zhou <jimmyzhou@users.sourceforge.net>
 dnl#  Copyright (c) 2006	Gautam Iyer <gi1242@users.sourceforge.net>
 dnl#	Copyright (c) 2007	Jehan Hysseo <hysseo@users.sourceforge.net>
+dnl#  Copyright (C) 2012        Thomas McGrew <tjmcgrew@gmail.com>
 dnl#
 dnl# This program is free software; you can redistribute it and/or
 dnl# modify it under the terms of the GNU General Public License as
@@ -140,6 +141,7 @@ support_utempter=no
 support_linespace=yes
 support_24bits=no
 support_256colors=yes
+support_rgbcolors=no
 support_cursor_blink=yes
 support_pointer_blank=yes
 support_text_shadow=no
@@ -197,6 +199,7 @@ if test "x$support_everything" = "xyes"; then
     support_linespace=yes
     support_24bits=yes
     support_256colors=yes
+    support_rgbcolors=yes
     support_cursor_blink=yes
     support_pointer_blank=yes
     support_text_shadow=yes
@@ -253,6 +256,7 @@ if test "x$support_minimal" = "xyes"; then
     support_linespace=no
     support_24bits=no
     support_256colors=no
+    support_rgbcolors=no
     support_cursor_blink=no
     support_pointer_blank=no
     support_text_shadow=no
@@ -491,7 +495,7 @@ fi
 
 AC_ARG_ENABLE(
     24bits,
-    AC_HELP_STRING([--enable-24bits],[prefer 24 bits color [no]]),
+    AC_HELP_STRING([--enable-24bits],[prefer 24 bits color visuals [no]]),
     [support_24bits=$enableval]
 )
 if test "x$support_24bits" = "xyes"; then
@@ -506,6 +510,16 @@ AC_ARG_ENABLE(
 )
 if test "x$support_256colors" = "xyes"; then
     AC_DEFINE(TTY_256COLOR, [], [set 256 color support])
+fi
+
+
+AC_ARG_ENABLE(
+    rgbcolors,
+    AC_HELP_STRING([--enable-rgbcolors],[support 24-bit rgb color (requires 24-bit visual) [no]]),
+    [support_rgbcolors=$enableval]
+)
+if test "x$support_rgbcolors" = "xyes"; then
+    AC_DEFINE(TTY_RGBCOLOR, [], [set rgb color support])
 fi
 
 
@@ -1485,6 +1499,7 @@ echo "Visual features:"
 echo "Support line space          : $support_linespace"
 echo "24 bits color mode          : $support_24bits"
 echo "256 color mode              : $support_256colors"
+echo "RGB color mode              : $support_rgbcolors"
 echo "Blink cursor                : $support_cursor_blink"
 echo "Blank pointer               : $support_pointer_blank"
 echo "Color text shadow           : $support_text_shadow"

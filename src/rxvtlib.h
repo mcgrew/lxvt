@@ -8,7 +8,8 @@
  * Copyright (c) 2005        Teun Burgers <burgers@ecn.nl>
  * Copyright (c) 2004-2005   Jingmin Zhou <jimmyzhou@users.sourceforge.net>
  * Copyright (c) 2005        Gautam Iyer <gi1242@users.sourceforge.net>
- * Copyright (C) 2008		  Jehan Hysseo <hysseo@users.sourceforge.net>
+ * Copyright (C) 2008        Jehan Hysseo <hysseo@users.sourceforge.net>
+ * Copyright (C) 2012        Thomas McGrew <tjmcgrew@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,10 @@
 #ifndef __RXVTLIB_H__
 #define __RXVTLIB_H__
 
-/*
+#include "rxvt.h"
+typedef uint64_t rend_t;
+
+/* 
  * Boolean variables
  */
 #ifdef __GNUC__
@@ -57,12 +61,6 @@ typedef struct
 } row_col_t;
 
 typedef unsigned char text_t;
-#if defined(TTY_256COLOR) || defined(MULTICHAR_SET)
-# define rend_t	    uint32_t
-#else
-# define rend_t	    uint16_t
-#endif
-
 /* Size of the FIFO buffer */
 #define FIFO_BUF_SIZE (512)
 
@@ -929,7 +927,9 @@ typedef struct rxvt_vars
 					       stored in memory pointed to by
 					       "macros" */
 
-    Colormap        Xcmap;
+    Visual*	    Xvisual;
+     Colormap        Xcmap;
+    int		    Xdepth;
 
     unsigned long   *pixColorsFocus,
 		    *pixColorsUnfocus;	    /* Arrays of size TOTAL_COLORS.
@@ -949,11 +949,13 @@ typedef struct rxvt_vars
 		    *xftColorsUnfocus;
 # endif
 
+#ifdef TTY_RGBCOLOR
+    unsigned	    BOOLVAR(rgbColors, 1);
+#endif
 
     profile_t	    profile;
 
     Cursor	    term_pointer;	    /* cursor for vt window */
-    int		    Xdepth;
     int		    sb_shadow;		    /* scrollbar shadow width */
     int		    Xfd;		    /* file descriptor of the X
 					       connection */

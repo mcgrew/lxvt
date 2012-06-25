@@ -7,6 +7,7 @@
  * Copyright (c) 2004        Sergey Popov <p_sergey@jungo.com>
  * Copyright (c) 2004        Jingmin Zhou <jimmyzhou@users.sourceforge.net>
  * Copyright (C) 2008		  Jehan Hysseo <hysseo@users.sourceforge.net>
+ * Copyright (C) 2012        Thomas McGrew <tjmcgrew@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,7 +217,7 @@ void             rxvt_scr_poweron                 __PROTO((rxvt_t* r, int page))
 void             rxvt_scr_cursor                  __PROTO((rxvt_t* r, int page, int mode));
 int              rxvt_scr_change_screen           __PROTO((rxvt_t* r, int page, int scrn));
 void             rxvt_scr_color                   __PROTO((rxvt_t* r, int page, unsigned int color, int fgbg));
-void             rxvt_scr_rendition               __PROTO((rxvt_t* r, int page, int set, int style));
+void             rxvt_scr_rendition               __PROTO((rxvt_t* r, int page, int set, rend_t style));
 int              rxvt_scroll_text                 __PROTO((rxvt_t* r, int page, int row1, int row2, int count, int spec));
 void             rxvt_scr_add_lines               __PROTO((rxvt_t* r, int page, const unsigned char* str, int nlines, int len));
 void             rxvt_scr_backspace               __PROTO((rxvt_t* r, int page));
