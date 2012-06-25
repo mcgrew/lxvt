@@ -630,7 +630,7 @@ struct mouse_event {
 
 #define APL_CLASS	"XTerm"	    /* class name */
 #define APL_SUBCLASS	"Mrxvt"	/* also check resources under this name */
-#define APL_NAME	"mrxvt"	/* normal name */
+#define APL_NAME	"lxvt"	/* normal name */
 
 /* COLORTERM, TERM environment variables */
 #define COLORTERMENV	"rxvt"
@@ -801,7 +801,7 @@ struct mouse_event {
 #define FORCE_REFRESH	    (1U << 1)
 
 /*
- * Continue undocumented mrxvt code
+ * Continue undocumented lxvt code
  */
 #define IGNORE		0
 #define SAVE		's'
@@ -980,7 +980,7 @@ enum {
 
 
 /*
- * mrxvt extensions of XTerm OSCs: ESC ] Ps;Pt (ST|BEL)
+ * lxvt extensions of XTerm OSCs: ESC ] Ps;Pt (ST|BEL)
  * Example: echo "\e]61;newtitle\a"
  */
 #define MRxvt_term	    (60) /* Change window title */

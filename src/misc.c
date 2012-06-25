@@ -124,12 +124,12 @@ rxvt_str_escaped(char *str)
 
     /*
      * 2006-03-23 gi1242: Disabled, as the user has no 'easy' way to send
-     * strings beginning with M-x to mrxvt.
+     * strings beginning with M-x to lxvt.
      *
      * 2006-05-24 gi1242: With macros, the user has an 'easy' way to send
-     * strings to mrxvt. However emacs users should use emacs macros do do such
-     * things, and not require code bloat in mrxvt for these random features.
-     * Besides, mrxvt users should use Vim anyway ... :)
+     * strings to lxvt. However emacs users should use emacs macros do do such
+     * things, and not require code bloat in lxvt for these random features.
+     * Besides, lxvt users should use Vim anyway ... :)
      */
 #if 0
     if (*s == 'M' && s[1] == '-')
@@ -276,7 +276,7 @@ rxvt_percent_interpolate( rxvt_t *r, int page,
 		case 's':
 		    /*
 		     * Selection. TODO Also paste selection if it is not
-		     * owned by mrxvt.
+		     * owned by lxvt.
 		     */
 		    if( NOT_NULL( r->selection.text ) )
 			j += snprintf( dst + j, maxLen -j,
@@ -292,7 +292,7 @@ rxvt_percent_interpolate( rxvt_t *r, int page,
 		    break;
 
 		case 'P':
-		    /* PID of mrxvt */
+		    /* PID of lxvt */
 		    j += snprintf( dst + j, maxLen - j, "%d", getpid() );
 		    i++;
 		    break;
@@ -484,9 +484,9 @@ rxvt_File_find(const char *file, const char *ext, const char *path)
 	    if(( f = rxvt_File_search_path( envpath, file, ext) )) break;
 
 	/*
-	 * Check in ~/.mrxvt
+	 * Check in ~/.lxvt
 	 */
-	rxvt_dbgmsg ((DBG_DEBUG, DBG_MISC, "Searching for %s in ~/.mrxvt\n", file));
+	rxvt_dbgmsg ((DBG_DEBUG, DBG_MISC, "Searching for %s in ~/.lxvt\n", file));
 	envpath = getenv("HOME");
 	if( envpath )
 	{

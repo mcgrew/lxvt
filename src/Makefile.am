@@ -20,8 +20,8 @@
 
 DEFS = -DPKG_CONF_DIR=\"$(sysconfdir)/$(PACKAGE_NAME)\"
 
-bin_PROGRAMS = mrxvt
-mrxvt_SOURCES =	    command.h		\
+bin_PROGRAMS = lxvt
+lxvt_SOURCES =	    command.h		\
 	       	    debug.h		\
 	       	    encoding.h		\
 	       	    feature.h		\
@@ -33,7 +33,7 @@ mrxvt_SOURCES =	    command.h		\
 		    rxvtmem.h
 
 
-mrxvt_SOURCES +=    command.c		\
+lxvt_SOURCES +=    command.c		\
 		    debug.c		\
 		    encoding.c		\
 		    init.c		\
@@ -53,12 +53,12 @@ mrxvt_SOURCES +=    command.c		\
 		    transparent.c	\
 		    xdefaults.c
 
-mrxvt_SOURCES +=    close_term.xbm	\
+lxvt_SOURCES +=    close_term.xbm	\
 		    left.xbm		\
 		    right.xbm		\
 		    term.xbm
 
-mrxvt_SOURCES +=    close_term.xpm	\
+lxvt_SOURCES +=    close_term.xpm	\
 		    close_term_d.xpm	\
 		    left.xpm		\
 		    left_d.xpm		\
@@ -68,9 +68,9 @@ mrxvt_SOURCES +=    close_term.xpm	\
 		    term_d.xpm
 
 #install-exec-hook:
-#   -chown root $(DESTDIR)$(bindir)/mrxvt
-#   -chmod go-r $(DESTDIR)$(bindir)/mrxvt
-#   -chmod u+s $(DESTDIR)$(bindir)/mrxvt
+#   -chown root $(DESTDIR)$(bindir)/lxvt
+#   -chmod go-r $(DESTDIR)$(bindir)/lxvt
+#   -chmod u+s $(DESTDIR)$(bindir)/lxvt
 
 if USE_JPEG
 JPEG_SRC = mjpg.c
@@ -141,7 +141,7 @@ XFTACS_H   =
 endif
 
 
-mrxvt_SOURCES +=    $(SCROLLBAR_PLAIN_SRC)	\
+lxvt_SOURCES +=    $(SCROLLBAR_PLAIN_SRC)	\
 		    $(SCROLLBAR_XTERM_SRC)	\
 		    $(SCROLLBAR_NEXT_SRC)	\
 		    $(SCROLLBAR_RXVT_SRC)	\

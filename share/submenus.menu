@@ -21,7 +21,7 @@
 #  Ave, Cambridge, MA 02139, USA.
 # ------------------------------------------------------------------------------
 
-# This file contains the basic menu blocks for mrxvt. The idea is that when
+# This file contains the basic menu blocks for lxvt. The idea is that when
 # defining menus, all one needs to do is add a line containing
 #
 #	[read:submenus.menu;<submenu_name>]
@@ -44,7 +44,7 @@
 {Vim}				    NewTab !vim
 {Shell (root)}			    NewTab "su" su -
 {-}
-{Mrxvt Man page}{Ctrl-Shift-F1}	    NewTab "man mrxvt" man mrxvt
+{Mrxvt Man page}{Ctrl-Shift-F1}	    NewTab "man lxvt" man lxvt
 ../
 {Close tab}{Ctrl-Shift-w}	    Close 0
 {-}

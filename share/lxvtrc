@@ -287,7 +287,7 @@ Mrxvt.macro.Ctrl+Shift+g:	    MonitorTab AUTO
 # disable the useFifo option.
 #
 Mrxvt.macro.Ctrl+Shift+z:		UseFifo 1
-Mrxvt.macro.Add+Ctrl+Shift+z:		NewTab "mrxvt Console" \!cat >> /tmp/.mrxvt-%P && echo "UseFifo 0" >> /tmp/.mrxvt-%P
+Mrxvt.macro.Add+Ctrl+Shift+z:		NewTab "lxvt Console" \!cat >> /tmp/.lxvt-%P && echo "UseFifo 0" >> /tmp/.lxvt-%P
 Mrxvt.macro.Add+Ctrl+Shift+z:		ToggleHold -7
 
 # External programs. In keeping with the Unix "minimalist" philosophy, we don't
@@ -297,14 +297,14 @@ Mrxvt.macro.Add+Ctrl+Shift+z:		ToggleHold -7
 # default. Also prefixing commands with '!' will start them in a shell (so when
 # you're done, the tab won't close, and you'll have a shell prompt).
 #
-# As of mrxvt-0.5.0, new tabs will be opened in the current directory. So the
+# As of lxvt-0.5.0, new tabs will be opened in the current directory. So the
 # shortcut for Vim below is extremely useful :).
 
-Mrxvt.macro.Ctrl+Shift+F1:		NewTab "man mrxvt" man mrxvt
+Mrxvt.macro.Ctrl+Shift+F1:		NewTab "man lxvt" man lxvt
 # Mrxvt.macro.Ctrl+Shift+F2:		NewTab !vim
 # Mrxvt.macro.Ctrl+Shift+F3:		NewTab !mutt
 
-# These are the keyboard combinations compatible with mrxvt 0.4x, and
+# These are the keyboard combinations compatible with lxvt 0.4x, and
 # they may be useful for some applications like mc. Thanks to Dimitri
 # AT sun.com for the information:
 

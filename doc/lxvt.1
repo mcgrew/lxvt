@@ -24,13 +24,13 @@
 .
 .Dd January 10, 2006
 .Os X "Version 11"
-.Dt mrxvt 1
+.Dt lxvt 1
 .
 .
 .Sh NAME \"{{{1
 .
 .
-.Nm mrxvt
+.Nm lxvt
 .Nd A tabbed VT102 terminal emulator for X Window System
 .
 .
@@ -68,9 +68,9 @@ include (but are not limited to) multiple tabs, dynamically changeable tab title
 The default
 .Nm
 behaviour can be set using the resource configuration file
-.Pa ~/.mrxvtrc .
+.Pa ~/.lxvtrc .
 For backward compatibility, if
-.Pa ~/.mrxvtrc
+.Pa ~/.lxvtrc
 is not found,
 .Nm
 tries to load configuration settings from the files
@@ -94,7 +94,7 @@ accepts. To disable an option, prefix it with an
 instead of a
 .Sq Em -
 Most options can be set from your
-.Pa ~/.mrxvtrc
+.Pa ~/.lxvtrc
 file using the option name listed in brackets as
 .Op Cm option_name .
 The option name can also be used as a "long option" from the command line (i.e. by prefixing it with 
@@ -103,11 +103,11 @@ or
 .Sq Em ++
 as appropriate. For example
 .Vb
-mrxvt -tr -shade 85 +trt
+lxvt -tr -shade 85 +trt
 .Ve
 is the same as
 .Vb
-mrxvt --transparent --shading 85 ++transparentTabbar
+lxvt --transparent --shading 85 ++transparentTabbar
 .Ve
 which is the same as putting the lines
 .Vb
@@ -116,7 +116,7 @@ Mrxvt.shading:			85
 Mrxvt.transparentTabbar:	False
 .Ve
 in your
-.Pa ~/.mrxvtrc .
+.Pa ~/.lxvtrc .
 .Pp
 .
 All options are case sensitive. Some options are similar to those of other terminals, so if you find the explanation given here insufficient, we strongly recommend you look in the
@@ -366,7 +366,7 @@ color of cursor
 .It Fl fade Ar %d
 Make colors
 .Ar %d
-darker when mrxvt looses focus.
+darker when lxvt looses focus.
 .Ar %d
 is an integer between 0 and 100
 .Op Cm fading
@@ -708,9 +708,9 @@ Then all the settings from that profile number are used.
 .
 .Ar N
 can be any integer between 0 and the compiled in maximum (default 5). The profile number 0 is special, and contains default settings which are used for all profiles where this option is not set (e.g.
-.Fl profile0.tt Ar mrxvt
+.Fl profile0.tt Ar lxvt
 sets the tab title to
-.Ar mrxvt
+.Ar lxvt
 for all profiles where the tab title has not been set). In this case the
 .Fl profile0.
 can be omitted entirely (i.e.
@@ -1000,7 +1000,7 @@ information is printed
 The
 .Nm
 configuration file. (Default is
-.Ar ~/mrxvtrc ) .
+.Ar ~/lxvtrc ) .
 .It Fl cfs Ar filename
 Filename to file to save the current configuration
 .Op Cm confFileSave
@@ -1013,13 +1013,13 @@ first searches for the file in the current directory, then in the directories sp
 then in the directories specified by the environment variable
 .Ev PATH_ENV
 and finally tries in the user configuration directory
-.Pa ~/.mrxvt
+.Pa ~/.lxvt
 and the (compiled in) system wide configuration directory
-.Pa /etc/mrxvt .
+.Pa /etc/lxvt .
 .Op Cm path
 .
 .It Fl sid Ar string
-Client identity of mrxvt for X session management
+Client identity of lxvt for X session management
 .Op Cm smClientID
 .
 .BO sm
@@ -1189,11 +1189,11 @@ Color of scrollbar trough (see also
 .Cm scrollColor ) .
 .
 .It Cm useFifo Ar True Ns | Ns Ar False
-If enabled, then mrxvt will create a
-.Xr fifo 7 Pa /tmp/.mrxvt-%pid
+If enabled, then lxvt will create a
+.Xr fifo 7 Pa /tmp/.lxvt-%pid
 and listen for macros on it. To execute macros, just write them to this fifo. For example
 .Vb
-/bin/echo -e "NewTab\enRaise" >> /tmp/.mrxvt-%pid
+/bin/echo -e "NewTab\enRaise" >> /tmp/.lxvt-%pid
 .Ve
 creates a new tab and raises the
 .Nm
@@ -1207,7 +1207,7 @@ Amount of time (in milliseconds) to flash the screen if using a visual bell.
 .
 .It Cm monitorTimeout Ar ms
 Amount of time (in milliseconds) to detect the type of monitoring type or tab-inactivity.
-Default value is 2000 ms this causes that mrxvt is waiting 2 seconds after invoking the 
+Default value is 2000 ms this causes that lxvt is waiting 2 seconds after invoking the 
 .Ic MonitorTab
 macro with argument "AUTO" or "INACTIVITY" to determine if or what type a notification is 
 needed. The detection of "ACTIVITY" does not make use of the configuration value.
@@ -1244,7 +1244,7 @@ are ignored (comments).
 The ClassName is the name specified via the
 .Fl name
 option (by default
-.Sq Em mrxvt ) .
+.Sq Em lxvt ) .
 When
 .Nm
 starts up, it ONLY reads options with ClassName
@@ -1253,7 +1253,7 @@ starts up, it ONLY reads options with ClassName
 or the class specified via the
 .Fl name
 option. See
-.Pa /etc/mrxvt/mrxvtrc.sample
+.Pa /etc/lxvt/lxvtrc.sample
 for how this feature can be used.
 .Pp
 .
@@ -1268,11 +1268,11 @@ alongside regular options in this man page. Finally Value is the value of this o
 .Ss Example
 .Bd -filled
 The following is an example
-.Pa ~/.mrxvtrc
+.Pa ~/.lxvtrc
 file, or in a configuration file you will load with 
 .Fl cf
 option at startup. You can consult the
-.Pa doc/mrxvtrc.sample
+.Pa doc/lxvtrc.sample
 in the directory for more details.
 .Vb
 Mrxvt.profile0.tabTitle:        term1
@@ -1342,13 +1342,13 @@ which contains the default menu definitions. The file is searched for in your se
 .
 .
 .Bd -filled
-You have several default keyboard shortcuts to ease the use of mrxvt. The default gnome-terminal, Konsole, rxvt shortcuts are predefined for you. You can also define your own shortcuts as described in
+You have several default keyboard shortcuts to ease the use of lxvt. The default gnome-terminal, Konsole, rxvt shortcuts are predefined for you. You can also define your own shortcuts as described in
 .Sx "Defining custom shortcuts" .
 .Ed
 .Ss "Default keyboard shortcuts" \"{{{2
 .Bd -filled
 The following key combinations are defined by default. These are defined in the system configuration file
-.Pa /etc/mrxvt/mrxvtrc ,
+.Pa /etc/lxvt/lxvtrc ,
 and can be disabled using the option
 .Fl nsc .
 See the next section for instructions on defining your own custom keyboard shortcuts.
@@ -1579,7 +1579,7 @@ will disable the default keyboard shortcut
 If you want to disable all keyboard macros, use the option
 .Sq Fl dm
 (which can also be accessed via a pop-up menu). The default keyboard macros are defined in the system configuration file
-.Pa /etc/mrxvt/mrxvtrc
+.Pa /etc/lxvt/lxvtrc
 so if you only want to disable all default shortcuts keys, don't read the system configuration file by using the 
 .Fl nsc
 option.
@@ -1856,7 +1856,7 @@ or the compiled in default is used).
 .\" ------------------------------------------------------------
 .It Ic SaveConfig Op Ar filename
 Save config to file. If no filename is specified, save to
-.Pa ~/.mrxvtrc.save .
+.Pa ~/.lxvtrc.save .
 .\" ------------------------------------------------------------
 .It Ic ToggleMacros
 Toggle the use of keyboard shortcuts. When macros are disabled (either by using this macro, or by the
@@ -1952,7 +1952,7 @@ escape sequences are supported by
 A few extra escape sequences have been added to improve DEC compatibility, and allow interaction with extra
 .Nm
 features (e.g. tabs). The supported escape sequences are listed in the file
-.Pa mrxvt_seq.txt
+.Pa lxvt_seq.txt
 included in the distribution.
 .Pp
 For omissions in the documentation, and a more complete reference to escape sequences you should look at the file
@@ -1967,7 +1967,7 @@ For basic interaction with
 (e.g. changing the tab title etc.) you should also look at the programs
 .Pa share/scripts/settitle.c
 and
-.Pa share/scripts/mrxvtset.pl
+.Pa share/scripts/lxvtset.pl
 that are supplied with the
 .Nm
 distribution.
@@ -1994,7 +1994,7 @@ Set to the terminal name in the window you have created.
 .It Ev MRXVT_TABTITLE
 Set to the initial tab title of each terminal. Notice that its value will not be altered if the user uses a shortcut or escape sequence to change the tab title. The user must modify it manually after doing that.
 .It Ev WINDOWID
-Set to the X window id number of the mrxvt window.
+Set to the X window id number of the lxvt window.
 .El
 .Ed
 .
@@ -2008,23 +2008,23 @@ The actual pathnames given may differ on your system.
 .It Pa default.menu
 The default menu file loaded at startup (searched for in your
 .Fl path ) .
-.It Pa ~/mrxvt
+.It Pa ~/lxvt
 Directory in which to look for user menu and image files.
-.It Pa ~/.mrxvtrc
+.It Pa ~/.lxvtrc
 This is the default configuration file (since 0.3.9). If present, resources read from this file override existing resources.
 .It Pa ~/.Xdefaults
 (OBSOLETE) This was the default configuration file (before 0.3.9). If present, resources read from this file override existing resources.
 .It Pa ~/.Xresources
 (OBSOLETE) If both
-.Pa .mrxvtrc
+.Pa .lxvtrc
 and
 .Pa .Xdefaults
 are not found, try this one.
-.It Pa /etc/mrxvt
+.It Pa /etc/lxvt
 System wide directory in which to look for user menu and image files.
-.It Pa /etc/mrxvt/default.menu
+.It Pa /etc/lxvt/default.menu
 Default menu file read on startup.
-.It Pa /etc/mrxvt/mrxvtrc
+.It Pa /etc/lxvt/lxvtrc
 System wide configuration file. (By default this file only defines the default keyboard macros)
 .It Pa /etc/utmp
 System file for login records.
@@ -2047,7 +2047,7 @@ Please report bugs using the sourceforge bug tracker system at
 .Ad http://sourceforge.net/projects/materm
 .Ed
 .Pp
-Alternately you can send your bug report to the mrxvt developer mailing list at
+Alternately you can send your bug report to the lxvt developer mailing list at
 .Pp
 .Bd -centered
 .Mt materm-devel@lists.sourceforge.net
@@ -2075,7 +2075,7 @@ The transparentForce option does not work well with all window managers (e.g. Op
 .Xr rxvt 1 ,
 .Xr xterm 1 ,
 .Xr resize 1 ,
-.Pa mrxvt_seq.txt ,
+.Pa lxvt_seq.txt ,
 .Ar Xterm control sequences
 (this is the file
 .Pa ctlseqs.ms

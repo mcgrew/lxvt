@@ -22,20 +22,20 @@ confdir = $(sysconfdir)/$(PACKAGE_NAME)
 
 # Distribute scripts with documentation. Package maintaners can clean them up
 # and install them if necessary.
-dist_scripts_DATA = scripts/mrxvt.vbs scripts/mrxvtset.pl scripts/settitle.c
+dist_scripts_DATA = scripts/lxvt.vbs scripts/lxvtset.pl scripts/settitle.c
 scriptsdir = $(docdir)/scripts
 
-dist_pixmap_DATA =  pixmaps/mrxvt-csh.png	\
-		    pixmaps/mrxvt-root.png	\
-		    pixmaps/mrxvt.png		\
-		    pixmaps/mrxvt-csh.xpm	\
-		    pixmaps/mrxvt-root.xpm	\
-		    pixmaps/mrxvt.xpm
+dist_pixmap_DATA =  pixmaps/lxvt-csh.png	\
+		    pixmaps/lxvt-root.png	\
+		    pixmaps/lxvt.png		\
+		    pixmaps/lxvt-csh.xpm	\
+		    pixmaps/lxvt-root.xpm	\
+		    pixmaps/lxvt.xpm
 pixmapdir = $(datadir)/pixmaps
 
-# builds_DATA =	builds/mrxvt.SlackBuild		\
-#		builds/mrxvt.slack-desc		\
-#		builds/mrxvt.spec
+# builds_DATA =	builds/lxvt.SlackBuild		\
+#		builds/lxvt.slack-desc		\
+#		builds/lxvt.spec
 # buildsdir = $(pkgdatadir)/builds
 
 dist_etc_DATA  =    etc/XTerm.ad		\

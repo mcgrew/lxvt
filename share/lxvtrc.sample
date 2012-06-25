@@ -1,4 +1,4 @@
-# Sample configuration for mrxvt-0.5.0. To use, copy it to ~/.mrxvtrc.
+# Sample configuration for lxvt-0.5.0. To use, copy it to ~/.lxvtrc.
 #
 # This sets up a pseudo-transparent terminal with black tinted background, Xft
 # font, a transparent Firefox style tab-bar, and a next style scroll bar.
@@ -6,11 +6,11 @@
 # Additionally, using the -name option you can get the following behaviour:
 #
 #   Full screen:
-#   	Start mrxvt with "mrxvt -name FullScreen". Produces a full screen
+#   	Start lxvt with "lxvt -name FullScreen". Produces a full screen
 #   	terminal.
 #
 #   Kitchen Sink:
-#   	Start mrxvt with "mrxvt -name KitchenSink". This produces an mrxvt
+#   	Start lxvt with "lxvt -name KitchenSink". This produces an lxvt
 #   	window with three tabs on startup. It loads your shell in the first tab,
 #   	and vim and mutt in the other two tabs. There aren't any other
 #   	applications you need to load anyway... ;)
@@ -19,12 +19,12 @@
 #   	Produces a small blue tinted terminal, mainly for use as an fvwm
 #   	console. Just load the FvwmConsole module with
 #
-#   		FvwmConsole -terminal mrxvt
+#   		FvwmConsole -terminal lxvt
 #
 #   	and these settings will be used.
 #
 #   Root:
-#   	Start mrxvt with "mrxvt -name Root". This produces a green tinted mrxvt
+#   	Start lxvt with "lxvt -name Root". This produces a green tinted lxvt
 #   	windows which loads a root shell in the first tab. Ctrl+Shift+t opens a
 #   	new tab as root, and Ctrl+Shift+n opens a new tab as a regular user.
 #
@@ -218,7 +218,7 @@ Mrxvt.showMenu:     True
 # Mrxvt.termName:		xterm
 
 # Default title of each tab.
-Mrxvt.tabTitle:			mrxvt
+Mrxvt.tabTitle:			lxvt
 
 # Border to leave around terminal text
 Mrxvt.internalBorder:		2
@@ -353,4 +353,4 @@ Root.tintColor:			    #002000
 Root.itabBackground:		    #002000
 
 # ---------------------------------------------------------------------------- #
-# vim: set ft=mrxvtrc ts=8 sts=4:
+# vim: set ft=lxvtrc ts=8 sts=4:

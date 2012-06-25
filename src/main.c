@@ -127,8 +127,8 @@ rxvt_pre_show_init( rxvt_t *r )
 /* LIBPROTO */
 /*
  * The main initialization function called from main with the command line parameters.
- *  If it fails, it will return NULL (hence mrxvt will stop with failure).
- *  Otherwise it will return the mrxvt structure (rxvt_t) which keeps the status of mrxvt
+ *  If it fails, it will return NULL (hence lxvt will stop with failure).
+ *  Otherwise it will return the lxvt structure (rxvt_t) which keeps the status of lxvt
  *  during the whole runtime (must be passed to all functions).
  */
 rxvt_t *
@@ -216,7 +216,7 @@ rxvt_Child_signal(int sig __attribute__((unused)))
      */
     rxvt_t  *r;
 
-    rxvt_dbgmsg ((DBG_VERBOSE, DBG_MAIN, "\e[31mrxvt_Child_signal()\e[0m\n"));
+    rxvt_dbgmsg ((DBG_VERBOSE, DBG_MAIN, "\e[31lxvt_Child_signal()\e[0m\n"));
 
     r = rxvt_get_r();
     r->ndead_childs++;
@@ -371,18 +371,18 @@ rxvt_exit_request( rxvt_t *r )
 /*
  * Remove all held tabs, and send SIGHUP to processes in all live tabs
  *
- * 2006-09-22 gi1242: In mrxvt-0.5.1 and before, we would exit mrxvt by calling
+ * 2006-09-22 gi1242: In mrxvt-0.5.1 and before, we would exit lxvt by calling
  * rxvt_clean_exit(). This would send SIGHUP to all child processes, and then
  * call exit(). This however is flawed! If some processes do not exit on SIGHUP,
  * then they will remain in the background and the user will not know.
  *
  * To fix this issue, we call rxvt_close_all_tabs() instead of rxvt_clean_exit()
- * when we want to exit mrxvt. rxvt_close_all_tabs() will send SIGHUP's to all
- * child processes, and remove all held tabs. If mrxvt does not exit within two
+ * when we want to exit lxvt. rxvt_close_all_tabs() will send SIGHUP's to all
+ * child processes, and remove all held tabs. If lxvt does not exit within two
  * seconds, then it will sound an alarm warning the user of the offending
  * processes which ignored SIGHUP. The user can either kill -9 those processes
- * manually, or request another exit of mrxvt within the next 3 seconds to have
- * mrxvt forcefully exit (but leaving the child processes running).
+ * manually, or request another exit of lxvt within the next 3 seconds to have
+ * lxvt forcefully exit (but leaving the child processes running).
  */
 /* EXTPROTO */
 static void
@@ -406,7 +406,7 @@ rxvt_close_all_tabs( rxvt_t *r)
 
     gettimeofday( &now, NULL );
     if( lastRequest.tv_sec != 0 && now.tv_sec - lastRequest.tv_sec < 5 )
-	/* Second request within 5 seconds. Kill mrxvt */
+	/* Second request within 5 seconds. Kill lxvt */
 	rxvt_clean_exit(r);
 
     else
@@ -930,7 +930,7 @@ rxvt_init_mfont_xft (rxvt_t* r, XftPattern* xp, const char* ofname)
     /*
      * 2006-02-11 gi1242: This is however HORRIBLE for regular fonts. It's
      * probably better to fall back to xftsz. Thus the random user who knows
-     * nothing about mrxvt (or encodings) will get a reasonable looking terminal
+     * nothing about lxvt (or encodings) will get a reasonable looking terminal
      * by default.
      */
 #if 0
@@ -946,7 +946,7 @@ rxvt_init_mfont_xft (rxvt_t* r, XftPattern* xp, const char* ofname)
 
     /*
      * XXX 2006-01-26 gi1242: I don't know anything about mfont. Not sure if it
-     * should be monospaced or not. Original mrxvt code did not have mono space
+     * should be monospaced or not. Original lxvt code did not have mono space
      * for any font, so I remove it here for the mfont.
      */
 #if 0

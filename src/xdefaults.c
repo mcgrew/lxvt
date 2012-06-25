@@ -39,7 +39,7 @@
 static const char *emptyResource    = "";
 
 static const char *const xnames[3] = {
-    ".mrxvtrc",
+    ".lxvtrc",
     ".Xdefaults",
     ".Xresources",
 };
@@ -521,7 +521,7 @@ static const struct {
 	"select style mode = old|oldword"),
 
     BOOL( "noSysConfig", "nsc", Opt2_noSysConfig,
-	    "reading /etc/mrxvt/mrxvtrc." ),
+	    "reading /etc/lxvt/lxvtrc." ),
     BOOL( "disableMacros", "dm", Opt2_disableMacros,
 	    "all keyboard shortcuts (macros)" ),
     BOOL( "linuxHomeEndKey", "lk", Opt2_linuxHomeEndKey,
@@ -547,7 +547,7 @@ static const struct {
     BOOL( "sessionMgt", "sm", Opt2_enableSessionMgt,
 	    "enabling X session management" ),
     STRG(Rs_smClientID, "smClientID", "sid", "string",
-	"client id of mrxvt for X session management"),
+	"client id of lxvt for X session management"),
 #endif	/* HAVE_X11_SM_SMLIB_H */
 
     /* Initial number of terminals */
@@ -846,7 +846,7 @@ rxvt_save_options (rxvt_t* r, const char* filename)
 	}
     }
 
-    fputs( "\n\n# vim: set ft=mrxvtrc :\n", pf );
+    fputs( "\n\n# vim: set ft=lxvtrc :\n", pf );
 
     fclose (pf);
     return 1;
@@ -1296,7 +1296,7 @@ rxvt_extract_resources (
      * Now read config from system wide config file.
      */
     if (NOTSET_OPTION(r, Opt2_noSysConfig) &&
-        NOT_NULL(fd = fopen( PKG_CONF_DIR "/mrxvtrc", "r")))
+        NOT_NULL(fd = fopen( PKG_CONF_DIR "/lxvtrc", "r")))
     {
 	rxvt_get_xdefaults( r, fd, APL_SUBCLASS, priority++ );
 	fclose(fd);

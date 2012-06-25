@@ -3,7 +3,6 @@
 --------------------------------------------------------------------------
 
 Q:  I have a question...
-Q:  What exactly is the name of this project, materm or mrxvt?
 Q:  Why not use GNU screen? It has provided the multi-screen features!
 Q:  Why not use gnome-terminal/konsole? They have provided the functionality of
     mrxvt!
@@ -102,21 +101,6 @@ A:  Have you read the README, README.configure, INSTALL, FAQ, TIPS, man page...?
     Here is a good tutorial to ask questions:
 
 	http://www.catb.org/~esr/faqs/smart-questions.html
-
------
-
-Q:  What exactly is the name of this project, materm or mrxvt?
-
-A:  The current official name of this project is mrxvt (I honestly hope Rui
-    Carmo will not reclaim the ownership of mrxvt because he is the first person
-    who tried to hack a multi-tab rxvt on Cygwin and got this name for his
-    project. Here is the link of his work:
-    http://the.taoofmac.com/space/Projects/mrxvt).
-
-    As stated in README, in the beginning, the project name was materm - derived
-    from the project multi-aterm. And this was the name when I registered the
-    project at sourceforge. Unfortunately it is not easy to rename materm to
-    mrxvt at sourceforge. This is why we keep materm as the name at sourceforge.
 
 -----
 

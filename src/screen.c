@@ -3177,7 +3177,7 @@ rxvt_scr_draw_string (rxvt_t* r, int page,
  *
  * 2006-02-11 gi1242: Added a CLIPPED_REFRESH option. If set, only clipped areas
  * are redrawn. This adds a TREMENDOUS speedup when dragging some window over
- * mrxvt's window. (Not to mention got rid of that annoying flicker).
+ * lxvt's window. (Not to mention got rid of that annoying flicker).
  */
 /* EXTPROTO */
 void

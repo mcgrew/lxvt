@@ -1,5 +1,5 @@
 /* XPM */
-static char * mrxvt_root_xpm[] = {
+static char * lxvt_root_xpm[] = {
 "50 50 435 2",
 "  	c None",
 ". 	c #1B1C1B",

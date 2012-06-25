@@ -31,7 +31,7 @@
 static const char *const macroNames[] =
 {
     "Dummy",		    /* Delete macro */
-    "Esc",		    /* Escape sequence to send to mrxvt */
+    "Esc",		    /* Escape sequence to send to lxvt */
     "Str",		    /* String to send to child process */
 		"NewTab",     /* Open a new tab, and exec a program in it. */
     "Exec",		    /* Exec a program asynchronusly */
@@ -72,7 +72,7 @@ static int		rxvt_add_macro	    ( rxvt_t*, KeySym, unsigned char, char*, Bool, ma
 /*
  * 2006-02-23 gi1242: New macro code. This should extend the hotkey aproach
  * without causing code bloat. The idea is that defining "macros" can also
- * enable the user to communicate with mrxvt using escape sequences!
+ * enable the user to communicate with lxvt using escape sequences!
  */
 
 /*
@@ -430,7 +430,7 @@ rxvt_add_macro( rxvt_t *r, KeySym keysym, unsigned char modFlags, char *astring,
 	    /*
 	     * 2006-03-06 gi1242: Don't delete "Dummy" macros here. If we do
 	     * that then the user will have no way to delete macros defined in
-	     * the system /etc/mrxvt/mrxvtrc file. "Dummy" macros will be
+	     * the system /etc/lxvt/lxvtrc file. "Dummy" macros will be
 	     * deleted after init.
 	     */
 	    else
@@ -1274,7 +1274,7 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	    else
 	    {
 		/*
-		 * Behaviour almost compatible with mrxvt-0.5.1: Just get rid of
+		 * Behaviour almost compatible with lxvt-0.5.1: Just get rid of
 		 * all held tabs.
 		 */
 		int k;
@@ -1357,7 +1357,7 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		if (IS_NULL(home)) return -1; /* Failure */
 
 		snprintf (cfile, PATH_MAX-1, "%s/%s", home,
-			".mrxvtrc.save");
+			".lxvtrc.save");
 	    }
 	    cfile[PATH_MAX-1] = (char) 0;   /* Null terminate */
 

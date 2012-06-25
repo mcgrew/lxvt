@@ -1057,7 +1057,7 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
 
 	/*
 	 * 2006-02-24 gi1242: If you want to "hard code" a few macros into
-	 * mrxvt, do them here. The code for unshifted-scrollkeys etc used to be
+	 * lxvt, do them here. The code for unshifted-scrollkeys etc used to be
 	 * here, and has now been removed.
 	 *
 	 * Rather than hardcode macros in, it is better to use the macro feature
@@ -1725,7 +1725,7 @@ rxvt_check_cmdbuf (rxvt_t* r, int page)
 
 /*
  * This function returns the number of bytes being read from a child
- * - r is the mrxvt state;
+ * - r is the lxvt state;
  * - page is the tab number you want to read the child output from;
  * - count is the maximum number of bytes you want to read.
  */
@@ -5903,7 +5903,7 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	 *
 	 * Only the local user should be able to create / close / move tabs.
 	 *
-	 * NOTE: The disabled code uses the old hotkey code (from mrxvt-0.4.2).
+	 * NOTE: The disabled code uses the old hotkey code (from lxvt-0.4.2).
 	 * To enable the escape sequences below, you have to uncomment the code
 	 * below AND port it to use the macro feature from 0.5.0 upward.
 	 */

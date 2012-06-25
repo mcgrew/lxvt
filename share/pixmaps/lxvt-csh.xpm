@@ -1,5 +1,5 @@
 /* XPM */
-static char * mrxvt_csh_xpm[] = {
+static char * lxvt_csh_xpm[] = {
 "50 50 423 2",
 "  	c None",
 ". 	c #1B1C1B",

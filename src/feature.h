@@ -323,7 +323,7 @@
 #define MAX_CHILDS  (16)
 
 /*
- * Quick timeout default. The amount of time (micro seconds) mrxvt should wait
+ * Quick timeout default. The amount of time (micro seconds) lxvt should wait
  * for X events when a screen refresh is pending. Screen refreshes (especially
  * with Xft and anti-aliasing) is quite expensive. The higher the value, the
  * fewer screen refreshes are preformed. If you set it too high, you might find

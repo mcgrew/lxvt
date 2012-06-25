@@ -524,7 +524,7 @@ static const char *const def_colorName[] = {
     "rgbi:1/1/.8",
     "rgbi:1/1/1",
 # endif	/* XTERM_COLORS */
-    "rgb:08/08/08", /* xterm, rxvt, mrxvt use the same greyscale ramp */
+    "rgb:08/08/08", /* xterm, rxvt, lxvt use the same greyscale ramp */
     "rgb:12/12/12",
     "rgb:1c/1c/1c",
     "rgb:26/26/26",
@@ -633,10 +633,10 @@ rxvt_getdtablesize(void)
 
 
 /* EXTPROTO */
-/* This initialization function sets all variable in the mrxvt structure
+/* This initialization function sets all variable in the lxvt structure
  * to their "neutral" value.
  * It is run by rxvt_init and returns 0
- * (no failure possible unless the memory allocation for mrxvt structure has failed
+ * (no failure possible unless the memory allocation for lxvt structure has failed
  * in rxvt_init).
  */
 int
@@ -812,7 +812,7 @@ rxvt_init_vars(rxvt_t *r)
     {
 	char fifo_name[FILENAME_MAX];
 
-	sprintf( fifo_name, "/tmp/.mrxvt-%d", getpid() );
+	sprintf( fifo_name, "/tmp/.lxvt-%d", getpid() );
 	r->fbuf_ptr = r->fifo_buf;
 	r->fifo_name = STRDUP( fifo_name );
     }

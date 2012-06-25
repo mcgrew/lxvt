@@ -24,12 +24,12 @@
 #define __DEBUG_H__
 
 /* Debug level definition.
- *   fatal  : fatal error, mrxvt must abort immediately
- *   error  : serious error, mrxvt should gracefully exit
- *   warn   : some problems cause certain function of mrxvt not working
- *   info   : informative messages about mrxvt execution
- *   verbose: verbose information about mrxvt that is useful for developers
- *   debug  : more information about mrxvt that is useful for developers
+ *   fatal  : fatal error, lxvt must abort immediately
+ *   error  : serious error, lxvt should gracefully exit
+ *   warn   : some problems cause certain function of lxvt not working
+ *   info   : informative messages about lxvt execution
+ *   verbose: verbose information about lxvt that is useful for developers
+ *   debug  : more information about lxvt that is useful for developers
  */
 typedef enum {
     DBG_FATAL = 0,

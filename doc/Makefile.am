@@ -20,12 +20,12 @@
 
 docdir = $(datadir)/doc/$(PACKAGE_NAME)
 
-dist_man_MANS = mrxvt.1
+dist_man_MANS = lxvt.1
 dist_doc_DATA =	README.greek.bz2	\
 		README.menu.bz2		\
 		README.xvt.bz2		\
-		behind_mrxvt.txt.bz2	\
-		hack-mrxvt.txt.bz2	\
-		mrxvt_seq.txt.bz2	\
+		behind_lxvt.txt.bz2	\
+		hack-lxvt.txt.bz2	\
+		lxvt_seq.txt.bz2	\
 		rxvtRef.txt.bz2		\
 		xterm-ctlseqs.txt.bz2

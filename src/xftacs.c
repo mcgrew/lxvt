@@ -514,7 +514,7 @@ xftDrawACSChars(
  * graphics characters and are drawn by hand. Ther rest are passed to
  * xftdraw_string to be drawn by Xft. xftdraw_string should be XftDrawString8 /
  * Utf8. Changing this to accept XftDrawString16 etc is not hard, but will bloat
- * mrxvt (and isn't done here).
+ * lxvt (and isn't done here).
  */
 void
 xftDrawACSString ( Display *dpy, Drawable d, GC gc,
