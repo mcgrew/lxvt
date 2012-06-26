@@ -629,7 +629,7 @@ struct mouse_event {
 #endif
 
 #define APL_CLASS	"XTerm"	    /* class name */
-#define APL_SUBCLASS	"Mrxvt"	/* also check resources under this name */
+#define APL_SUBCLASS	"lxvt"	/* also check resources under this name */
 #define APL_NAME	"lxvt"	/* normal name */
 
 /* COLORTERM, TERM environment variables */

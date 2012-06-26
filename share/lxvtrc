@@ -22,6 +22,9 @@
 #
 # ---------------------------------------------------------------------------- #
 
+lxvt.titleFormat:      %n. %t
+lxvt.scrollTtyOutputInhibit: true
+lxvt.scrollTtyKeypress: true
 
 
 
