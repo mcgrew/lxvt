@@ -746,9 +746,9 @@ fi
 
 AC_ARG_WITH(
     term,
-    AC_HELP_STRING([--with-term=NAME],[set the terminal to NAME [rxvt]]),
+    AC_HELP_STRING([--with-term=NAME],[set the terminal to NAME [xterm-256color]]),
     [term_name_option=$withval],
-    [term_name_option=rxvt]
+    [term_name_option="xterm-256color"]
 )
 AC_DEFINE_UNQUOTED(TERMENV, "$term_name_option", [default TERM name])
 

@@ -575,7 +575,7 @@ static uint32_t	pSetOpts[ MAX_OPTION_ARRAY ] = { 0u, 0u, 0u, 0u };
 #undef BOOL
 /*}}} */
 
-static const char releasestring[] = "Mrxvt v" VERSION "\n";
+static const char releasestring[] = "lxvt v" VERSION "\n";
 static const char optionsstring[] = "Options: "
 #if defined(BACKGROUND_IMAGE)
 # ifdef HAVE_LIBXPM
@@ -846,7 +846,7 @@ rxvt_save_options (rxvt_t* r, const char* filename)
 	}
     }
 
-    fputs( "\n\n# vim: set ft=lxvtrc :\n", pf );
+//    fputs( "\n\n# vim: set ft=lxvtrc :\n", pf );
 
     fclose (pf);
     return 1;
