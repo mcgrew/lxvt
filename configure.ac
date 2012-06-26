@@ -962,7 +962,7 @@ AM_CONDITIONAL(USE_JPEG, test "x$support_jpeg" = "xyes")
 if test "x$support_png" = "xyes"; then
     AC_CHECK_LIB(
         png,
-        png_check_sig,
+        png_sig_cmp,
         [],
         [support_png=no],
         [-lz -lm]
