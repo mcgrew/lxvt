@@ -18,78 +18,42 @@
 
 00   INTRODUCTION
 
-Mrxvt is a multi-tabbed (like gnome-terminal/konsole) terminal emulator for the
-X Window System. It targets to be light-weight, so the desktop environment,
-like CDE, KDE or GTK is not required in order to run it. It achieves this
-without losing the common useful features, like tab, image and
-pseudo-transparent background, multi-style scrollbars, XIM and CJK support,
-etc.
+lxvt is a multi-tabbed (like gnome-terminal/konsole) terminal emulator for the
+X Window System. It targets to be light-weight, and independent of any desktop
+environment. It achieves this without losing the common useful features, like 
+tabs and pseudo-transparent background, multi-style scrollbars, XIM and CJK 
+support, etc.
 
 
 
 01   A BRIEF HISTORY
 
-You can safely skip this section if you do not have time.
+This project was started because of performance issues in libvte.  I searched 
+for an alternative to vte-based terminals which still had tab support, and came
+across mrxvt. It had good performance and functionality, but I wanted to see
+improvements to certain features. I discovered that the project had been
+abandoned (there were no commits for ~6 years), so I decided to fork the project
+and add the enhancements I desired. 
 
-For years, a multi-tabbed rxvt has been requested by the users with no luck.
-Now, things have changed! Mrxvt (previously named as materm) is a tabbed X
-terminal emulator based on aterm/rxvt. It's small, fast, portable, feature rich
-and only depends on X library.
-
-An early version of mrxvt is based on multi-aterm v0.1 and named materm.
-Multi-aterm was first developed by Alexis from 2002 based on aterm. But the
-development seems to stop in 2004 without reaching a usable stable status. So I
-took over the project, began to hack it and renamed it to materm. I have made
-lots of changes to the code since I dislike the original code style. Hopefully,
-I have not broken too many things. ;-)
-
-Due to the limits of aterm, many features are not well implemented in materm,
-such as XIM support. So after release 0.2, I decided to pick up the latest rxvt
-as the base of new development branch. And the name of the project is changed
-to mrxvt. This branch is completely new compared to the branch prior to 0.2. I
-have found that rxvt coding style is much better than aterm (except the indent
-is horrible ;-)), and it is enjoyable to work on it. I have also ported many
-features from aterm and eterm to mrxvt, like tinting and text shadow. Be aware
-that some features in the new branch are slightly different from release 0.2,
-e.g., color background tinting is available for each individual terminal in
-release 0.2, but is global from 0.3.0.
-
-[quote="Gautam Iyer"]
-In 2005, I decided to join Jimmy in his wonderful efforts on mrxvt. Mainly
-because I had finished my thesis and had a few months to kill before
-graduating. I started by fixing a bug with Xft (to get the ACS graphics
-characters drawn under Xft), and gradually did major rewrites to the legacy rxvt
-code.
-
-Most of the code Jimmy wrote was great. But the old rxvt code sucked! The screen
-refresh routines for instance were "flicker-rama". If you moved a tiny clock
-over the mrxvt window, then the *whole* window would flicker. Of course, I was
-running this on a AMD K6, 500 mHz, with Xft and anti aliasing, so the flicker
-was *quite* prominent.
-
-By around August 2006, significant portions of the legacy code has been
-overhauled, and I think we have a rock solid code base. If all goes well, maybe
-we'll come out with a 1.0 version in 2008.
-[/quote]
-
+I found that the user dylex on github had made some improvements, but also some
+changes I found undesirable (like removing tab support). I incorporated some of
+his improvements and then began some of my own.
 
 
 02   BUG REPORT AND FAQ
 
-Bug reports are very welcome! You can build mrxvt with debug support. So if you
-have gdb in your system, you may run mrxvt in gdb with the source to track down
-the bug, and report it to me.
+Bug reports are welcome! You can build lxvt with debug support. If you have gdb 
+on your system, you may run lxvt in gdb with the source to track down the bug.
 
-To save both your time and my time, please write down detailed steps to
-replicate the bug. If I cannot replicate it by myself, I will ignore it even if
-it may destroy the universe.
+To save both your time and mine, please document detailed steps to replicate the 
+bug. If I cannot replicate it by myself, I will ignore it even if it may destroy 
+the universe.
 
-Patches are extremely welcome since I am not familiar with many things, like
-multi-languages and accent.
+Patches are welcome. Fork this project and send me a pull request, or e-mail
+me a git patch file.
 
-In addition, I may not have time to update the documents in time. Feel free to
-help me and the users to improve them. Translations are also welcome. Of course,
-not from C to C++ or something like that! You know my meaning of translations.
+In addition, I may not have time to update the documents. Feel free to help me 
+and the users to improve them. Translations are also welcome.
 
 If you run into certain problems, please read the FAQ file and the man page
 before trying to contact me! Your question may be answered by them already. I
@@ -97,58 +61,47 @@ most likely will dump your question to /dev/null if it is already answered
 there.
 
 
-
 03   BUILD AND INSTALL
 
 To build and install from the source, please read INSTALL file!
 
-A quick (lazy) choice is to configure mrxvt as the following. After you
+A quick (lazy) choice is to configure lxvt as the following. After you
 --enable-everything, usually there is no need to enable other options
-explicitly. I have found that many distributions, like gentoo, enable other
-options with --enable-everything. This is NOT necessary in fact. The option is a
-shortcut to avoid a long list of configuration options.
+explicitly. This is a shortcut to avoid a long list of configuration options.
 
     $ ./configure --enable-everything --disable-debug
 
-
-
 04   CONFIGURATION FILE
 
-To run mrxvt with your own preferences, you can set X resources in ~/.mrxvtrc. A
-sample mrxvtrc.sample is included in the share/ directory of the source code,
-and you can start to hack your own ~/.mrxvtrc from it. You can also customize
-mrxvt for all users via a system-wide configuration file, usually
-/etc/mrxvt/mrxvtrc or /usr/local/etc/mrxvt/mrxvtrc.
+To run lxvt with your own preferences, you can set X resources in ~/.lxvtrc. A
+sample lxvtrc.sample is included in the share/ directory of the source code,
+and you can start to hack your own ~/.lxvtrc from it. You can also customize
+lxvt for all users via a system-wide configuration file, usually
+/etc/lxvt/lxvtrc or /usr/local/etc/lxvt/lxvtrc.
 
-Since 0.5.0, configuration via file ~/.Xdefaults and ~/.Xresources is not
-supported any longer. Most options in the config file can be replace by a
-(short) command line option if you like command line options.
-
-
+Since 0.5.0, configuration via file ~/.Xdefaults and ~/.Xresources is no longer
+supported. Most options in the config file can be replace by a (short) command 
+line option if you like command line options.
 
 05   HOTKEY BINDINGS
 
 NOTE: As of 0.5.0, the "hotkey" feature was renamed to "macros".
 
-Several hot key combinations are available for keyboard users. Mrxvt is designed
-to be as flexible as possible. It can be surprising to see that many features
-can be altered during runtime using hotkeys or escape sequences. Please read the
-manual for a list of them. Be aware that they may be changed in the near future
-because the shortage of combinations for all features. ;-)
+Several hot key combinations are available for keyboard users. lxvt is designed
+to be as flexible as possible. Many features can be altered during runtime using 
+hotkeys or escape sequences. Please read the manual for a list of them.
 
 If you do not like the default hot key combinations, you can define the
-combinations by yourself. Please read the manual page to find out how to define
+combinations yourself. Please read the manual page to find out how to define
 them.
-
-
 
 06   CJK DISPLAY AND INPUT
 
 To display and input Chinese (Korea/Japanese), you can do the following:
 
-    . Configure mrxvt with "--enable-cjk --enable-xim" options, and build it.
+    . Configure lxvt with "--enable-cjk --enable-xim" options, and build it.
 
-    . Install the correct CJK fonts. Mrxvt will try to look for some default CJK
+    . Install the correct CJK fonts. lxvt will try to look for some default CJK
       fonts if you do not specify them  using the -fm option or mfont X resource
       name. The default CJK fonts are listed in the src/encoding.h file. Notice
       that they are -fm and mfont, NOT -fn and font!!! If you use freetype font,
@@ -164,14 +117,14 @@ To display and input Chinese (Korea/Japanese), you can do the following:
       instead of setting it globally here. Keep reading the following for
       details.
 
-    . Set X resources in ~/.mrxvtrc. Notice that the value of inputMethod is
+    . Set X resources in ~/.lxvtrc. Notice that the value of inputMethod is
       case sensitive.
 
-	Mrxvt.mfont:		  hanzigb16st
-	Mrxvt.xftmfont:		  simsun
-	Mrxvt.xftSize:		  14
-	Mrxvt.multichar_encoding: GB
-	Mrxvt.inputMethod:	  SCIM
+	lxvt.mfont:		  hanzigb16st
+	lxvt.xftmfont:		  simsun
+	lxvt.xftSize:		  14
+	lxvt.multichar_encoding: GB
+	lxvt.inputMethod:	  SCIM
 
     . Start the SCIM X input server as usual. For example:
 
@@ -196,7 +149,7 @@ To display and input Chinese (Korea/Japanese), you can do the following:
       input. For FreeBSD, they must be zh_CN.eucCN for fcitx input. For OpenBSD,
       they can be zh_CN.EUC or zh_CN.GBK for fcitx input.
 
-Mrxvt is tested to work with SCIM, fcitx and gcin on Linux, FreeBSD, OpenBSD and
+lxvt is tested to work with SCIM, fcitx and gcin on Linux, FreeBSD, OpenBSD and
 Mac OS X. It should work fine with other X Input methods, like xcin, Chinput and
 miniChinput. It is reported to work with French ascent as well.
 
@@ -236,6 +189,10 @@ features compared with rxvt):
     . only depends on X, no GTK, no Qt
     . small and fast
 
+Improvements to lxvt over mrxvt thus far:
+
+    * No more invisible tabs. Tabs now shrink to fit in the tab bar.
+
 For a complete list of all features, please read README.configure file.
 
 
@@ -268,16 +225,11 @@ them to add it into the system. :-)
 
 09   KNOWN ISSUES
 
-Here are several known issues of mrxvt:
+Here are several known issues of lxvt:
 
     . UTF-8 is not supported yet.
 
-    . Some users report that they have problem to envoke the SCIM Chinese input
-      method under Gentoo 2004.3 and Debian Sarge. I have no idea why this is
-      the case because it always works for me. The solution? Dump Gentoo/Debian
-      and turn to Slackware, or trace the program and send me patch. ;-)
-
-    . To build mrxvt on HP-UX, you need to disable logging features.
+    . To build lxvt on HP-UX, you need to disable logging features.
 
     . Background image support requires libxpm, libpng or libjpeg be installed.
       The images are only tiled on the background of the terminal window. They
@@ -295,8 +247,7 @@ Here are several known issues of mrxvt:
       a technical difficulty), but it will significantly increase the X
       resources usage since each terminal needs at least one pixmap.
 
-    . Certain characters, e.g., characters with accent in European languages may
-      not be correctly displayed under XFT.
+    . Certain characters, e.g., not be correctly displayed under XFT.
 
 
 
