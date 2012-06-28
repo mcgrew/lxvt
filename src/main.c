@@ -134,8 +134,6 @@ rxvt_pre_show_init( rxvt_t *r )
 rxvt_t *
 rxvt_init (int argc, const char *const *argv)
 {
-	register int    i;
-	register int    itnum; /* initial terminal number */
 	rxvt_t*	    r;
 
 	rxvt_dbgmsg ((DBG_DEBUG, DBG_MAIN, "rxvt_init (%d, %s)\n", argc, argv));
@@ -2212,7 +2210,6 @@ void
 rxvt_set_window_color(rxvt_t* r, int page, int idx, const char *color)
 {
     XColor	    xcol;
-    int		    color_set;
     register int    i;
 
 
@@ -2226,8 +2223,6 @@ rxvt_set_window_color(rxvt_t* r, int page, int idx, const char *color)
      * changed.
      */
     rxvt_set_fgbg_colors( r, page );
-
-    color_set = ISSET_PIXCOLOR(r->h, idx);
 
     /* handle color aliases */
     if( isdigit((int) *color) )
@@ -2378,62 +2373,6 @@ rxvt_recolour_cursor(rxvt_t *r)
     rxvt_dbgmsg ((DBG_DEBUG, DBG_MAIN, "%s(r): fg=%06lx, bg=%06lx\n", __func__, xcol[0].pixel, xcol[1].pixel));
 }
 
-
-/*----------------------------------------------------------------------*/
-/*
- * find if fg/bg matches any of the normal (low-intensity) colors
- */
-/* INTPROTO */
-/* TODO: check if this function is still used somewhere. */
-static void
-rxvt_set_colorfgbg(rxvt_t *r)
-{
-    unsigned int    i;
-    const char	 *xpmb = "\0";
-    char	    fstr[sizeof("default") + 1], bstr[sizeof("default") + 1];
-
-    r->h->env_colorfgbg = rxvt_malloc(sizeof("COLORFGBG=default;default;bg")
-			+ 1);
-    STRCPY(fstr, "default");
-    STRCPY(bstr, "default");
-    for (i = Color_Black; i <= Color_White; i++)
-	if (r->pixColorsFocus[Color_fg] == r->pixColorsFocus[i])
-	{
-	    sprintf(fstr, "%d", (i - Color_Black));
-	    break;
-	}
-    for (i = Color_Black; i <= Color_White; i++)
-	if (r->pixColorsFocus[Color_bg] == r->pixColorsFocus[i])
-	{
-	    sprintf(bstr, "%d", (i - Color_Black));
-#ifdef BACKGROUND_IMAGE
-	    xpmb = "default;";
-#endif
-	    break;
-	}
-    sprintf(r->h->env_colorfgbg, "COLORFGBG=%s;%s%s", fstr, xpmb, bstr);
-    putenv(r->h->env_colorfgbg);
-
-#ifndef NO_BRIGHTCOLOR
-    r->h->colorfgbg = DEFAULT_RSTYLE;
-    for (i = minCOLOR; i <= maxCOLOR; i++)
-    {
-	if (
-		r->pixColorsFocus[Color_fg] == r->pixColorsFocus[i]
-# if !(defined(NO_BRIGHTCOLOR) && defined(NO_BOLD_UNDERLINE_REVERSE))
-		&& r->pixColorsFocus[Color_fg] == r->pixColorsFocus[Color_BD]
-# endif
-		/* if we wanted boldFont to have precedence */
-# if 0	/* was ifndef NO_BOLDFONT */
-		&& IS_NULL(r->TermWin.bfont)
-# endif	
-	   )
-	    r->h->colorfgbg = SET_FGCOLOR(r->h->colorfgbg, i);
-	if (r->pixColorsFocus[Color_bg] == r->pixColorsFocus[i])
-	    r->h->colorfgbg = SET_BGCOLOR(r->h->colorfgbg, i);
-    }
-#endif	/* NO_BRIGHTCOLOR */
-}
 
 /*----------------------------------------------------------------------*/
 /*

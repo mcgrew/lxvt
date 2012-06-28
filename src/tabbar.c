@@ -164,8 +164,8 @@ extern char **cmd_argv;
 void
 rxvt_tabbar_set_visible_tabs (rxvt_t* r, Bool refresh)
 {
-	int i;
-	short	tabWidth, oldTabWidth = PVTS(r,i)->tab_width;
+	int i=0;
+	short	tabWidth, oldTabWidth = PVTS(r,0)->tab_width;
 
         assert( LTAB(r) >= 0 );
         tabWidth = rxvt_tab_width( r, NULL);  
@@ -832,7 +832,6 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
 {
     register int    i;
     int		    topoff;
-    unsigned long   frame;
 
 
     if (LTAB(r) < 0)
@@ -847,11 +846,6 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
 	return;
 
     topoff = BTN_TOPOFF;
-#if 0
-    frame = NOTSET_OPTION(r, Opt2_bottomTabbar) ?
-		r->tabBar.frame : r->tabBar.delimit;
-#endif
-    frame = r->tabBar.frame;
 
     CHOOSE_GC_FG (r, r->tabBar.fg);
     for (i = NB_XPM; i >= 1; i--)

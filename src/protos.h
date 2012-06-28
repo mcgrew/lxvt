@@ -93,6 +93,7 @@ void		 rxvt_set_color                   __PROTO((rxvt_t*, int, const XColor*));
 void             rxvt_init_env                    __PROTO((rxvt_t *r));
 void             rxvt_init_xlocale                __PROTO((rxvt_t *r));
 void             rxvt_init_command                __PROTO((rxvt_t* r));
+void             rxvt_init_fifo                   __PROTO(( rxvt_t *r ));
 CARD32           rxvt_get_desktop                 __PROTO((rxvt_t* r));
 void             rxvt_create_show_windows         __PROTO((rxvt_t* r, int argc, const char* const *argv));
 void             rxvt_destroy_termwin             __PROTO((rxvt_t* r, int page));
@@ -190,6 +191,9 @@ char*            rxvt_str_trim                    __PROTO((char* str));
 int              rxvt_str_escaped                 __PROTO((char* str));
 int		 rxvt_percent_interpolate         __PROTO((rxvt_t*, int, const char *, int, char *, int));
 char**           rxvt_splitcommastring            __PROTO((const char* cs));
+void             rxvt_draw_shadow                 __PROTO((Display*, Window, GC , unsigned long topShadow, unsigned long botShadow, int x, int y, int w, int h));
+char*            rxvt_File_find                   __PROTO((const char *file, const char *ext, const char *path));
+void             rxvt_draw_triangle               __PROTO(( Display*, Window, GC, unsigned long topShadow, unsigned long botShadow, int x, int y, int w, int type));
 /* End prototypes of misc.c */
 
 

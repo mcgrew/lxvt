@@ -2358,7 +2358,7 @@ rxvt_get_ourmods( rxvt_t *r )
 	    if (kc[k] == 0)
 		break;
 
-	    switch (XKeycodeToKeysym(r->Xdisplay, kc[k], 0))
+	    switch (XkbKeycodeToKeysym(r->Xdisplay, kc[k], 0, 0))
 	    {
 		case XK_Num_Lock:
 		    r->h->ModNumLockMask = modmasks[i - 1];

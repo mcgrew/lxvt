@@ -2771,7 +2771,7 @@ rxvt_process_keyrelease(rxvt_t* r, XKeyEvent *ev)
     {
 	KeySym	      ks;
 
-	ks = XKeycodeToKeysym(r->Xdisplay, ev->keycode, 0);
+	ks = XkbKeycodeToKeysym(r->Xdisplay, ev->keycode, 0, 0);
 	if (ks == XK_Control_L || ks == XK_Control_R)
 	    r->h->mouse_slip_wheel_speed = 0;
     }

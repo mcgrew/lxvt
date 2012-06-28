@@ -280,12 +280,11 @@ rxvt_init_screen (rxvt_t* r)
 static void
 rxvt_scr_alloc (rxvt_t* r, int page)
 {
-    unsigned int    ncol, nrow, total_rows;
+    unsigned int    nrow, total_rows;
     unsigned int    p, q;
 
 
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "rxvt_scr_alloc %d ()\n", page));
-    ncol = r->TermWin.ncol;
     nrow = r->TermWin.nrow;
     total_rows = nrow + SVLINES;
 

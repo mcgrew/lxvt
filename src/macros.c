@@ -867,19 +867,10 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 		char	    *command = (char *) astr;
 		char	    *title = NULL;
 
-		int	    profile = 0;
-
 		/* See if a profile is specified */
 		if( *command == '-' )
 		{
-		    char *pnum_end;
-		    profile = strtoul( ++command, &pnum_end, 0 );
-
-//		    if( profile < 0 || profile >= MAX_PROFILES )
-//			profile = AVTS(r)->profileNum;
-
 		    /* Skip spaces */
-		    command = pnum_end;
 		    while( isspace( *command ) ) command++;
 		}
 
