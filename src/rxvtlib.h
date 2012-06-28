@@ -89,8 +89,8 @@ typedef struct
     uint16_t	    ext_bwidth; /* external border width */
 
     uint16_t	    maxTabWidth,    /* max width of tab title to display */
-		    minVisibleTabs; /* Minimum number of tabs to try and keep
-				       visible */
+                  minVisibleTabs; /* Minimum number of tabs to try and keep
+                                     visible */
 #ifndef NO_LINESPACE
     uint16_t	    lineSpace;	/* space between rows */
 #endif

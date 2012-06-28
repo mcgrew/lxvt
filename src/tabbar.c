@@ -151,83 +151,6 @@ extern char **cmd_argv;
 
 #ifdef HAVE_TABS
 #ifdef HAVE_TABBAR
-/*
- * Width between two tabs:
- * From the left of the first tab to the right of the second tab
- */
-/* INTPROTO */
-static int
-width_between (rxvt_t* r, int start, int end)
-{
-    register int    i, w=0;
-    
-    for (i = start; i <= end; i++)
-	w += TAB_WIDTH(i);
-    
-    return w;
-}
-
-
-/*
- * Find most left tab within specified distance. Note that the
- * distance does not include the width of tab[start]. It means
- * distance = (beginning of tab[start] - 0)
- */
-/* INTPROTO */
-static int
-find_left_tab (rxvt_t* r, int start, int distance)
-{
-    register int    i, left;
-
-    /* Sanatization */
-    if (0 == start)
-	return 0;
-
-    /* BUG: tab overlap with button */
-    if (distance < 0)
-	return start;
-
-    left = distance;
-    for (i = start - 1; i >= 0; i --)
-    {
-	if (left < TAB_WIDTH(i))
-	    break;
-	left -= (TAB_WIDTH(i));
-    }
-    return (i + 1);
-}
-
-
-
-/*
- * Find most right tab within specified distance. Note that the
- * distance does not include the width of tab[start]. It means
- * distance = (beginning of first button - end of tab[start])
- */
-/* INTPROTO */
-static int
-find_right_tab (rxvt_t* r, int start, int distance)
-{
-    register int    i, left;
-
-    /* Sanatization */
-    if (LTAB(r) == start)
-	return start;
-
-    /* BUG: tab overlap with button */
-    if (distance < 0)
-	return start;
-
-    left = distance;
-    for (i = start + 1; i <= LTAB(r); i ++)
-    {
-	if (left < TAB_WIDTH(i))
-	    break;
-	left -= (TAB_WIDTH(i));
-    }
-    return (i - 1);
-}
-
 
 /* EXTPROTO */
 /*
@@ -235,100 +158,25 @@ find_right_tab (rxvt_t* r, int start, int distance)
  * NOTE: This function redraws parts of the tabbar soley based on wether the tab
  * position / width has changed. It does not check to see if the tab titles /
  * etc has changed.
+ *
+ * 2012-06-30 All tabs are always visible now, so this function is badly named.
  */
 void
 rxvt_tabbar_set_visible_tabs (rxvt_t* r, Bool refresh)
 {
-    assert( LTAB(r) >= 0 );
+	int i;
+	short	tabWidth, oldTabWidth = PVTS(r,i)->tab_width;
 
-    /*
-     * For Firefox style tabs, we should recompute all tabwidths.
-     */
-#ifdef XFT_SUPPORT
-    if( ISSET_OPTION(r, Opt_xft) && r->TermWin.xftpfont )
-    {
-	int	i;
-	short	tabWidth = rxvt_tab_width( r, NULL);	/* Firefox style tabs
-							   don't need the tab
-							   title */
-	int	numVisible = (TAB_SPACE - TAB_BORDER)
-				/ (TAB_BORDER + tabWidth);
-
-	int	oldTabWidth = PVTS(r,0)->tab_width,
-		oldFVtab    = FVTAB(r),
-		oldLVtab    = LVTAB(r);
-
-	/*
-	 * Reset the widths of all tabs (visible or not).
-	 */
-	for (i = 0; i <= LTAB(r); i ++) PVTS(r, i)->tab_width = tabWidth;
-
-	/*
-	 * Set visible tabs. First make sure the active tab is visible
-	 */
-	if( numVisible == 1 )
-	    FVTAB(r) = LVTAB(r) = ATAB(r);
-	else
-	{
-	    if( ATAB(r) < FVTAB(r) )
-		/* Make ATAB second last tab that's visible */
-		FVTAB(r) = max( ATAB(r) - numVisible + 2, 0);
-	    else if ( ATAB(r) >= FVTAB(r) + numVisible )
-		/* Make ATAB the second tab that's visible */
-		FVTAB(r) = max( ATAB(r) - 1, 0);
-
-	    /*
-	     * Active tab is now visible. Try and make as many other tabs
-	     * visible.
-	     */
-	    if( FVTAB(r) + numVisible - 1 > LTAB(r) )
-	    {
-		LVTAB(r) = LTAB(r);
-		FVTAB(r) = max( LVTAB(r) - numVisible + 1, 0);
-	    }
-	    else
-		LVTAB(r) = FVTAB(r) + numVisible - 1;
-	}
-
-	if( refresh && IS_WIN(r->tabBar.win))
-	{
-	    /* Clear out the parts of the tabbar that have changed. Expose
-	     * events will be sent to the tabbar. */
-	    if( tabWidth != oldTabWidth || FVTAB(r) != oldFVtab )
-		/* Refresh all tabs */
-		XClearArea( r->Xdisplay, r->tabBar.win,
-			0, 0, TAB_SPACE, 0, True);
-
-	    else if( oldLVtab != LVTAB(r) )
-	    {
-		int x = TAB_BORDER +
-		    (TAB_BORDER + tabWidth) * min( oldLVtab, LVTAB(r));
-		XClearArea( r->Xdisplay, r->tabBar.win,
-			x, 0, TAB_SPACE - x + 1, 0, True);
-	    }
-	}
-    }
-    else
-#endif
-    {
-	/* set first visible tab to active tab */
-	FVTAB(r) = ATAB(r);
-
-	/* always try visualize the right tabs */
-	LVTAB(r) = find_right_tab (r, FVTAB(r),
-	    TAB_SPACE - TAB_WIDTH(FVTAB(r)));
-
-	if (LVTAB(r) == LTAB(r) && 0 != FVTAB(r))
-	{
-	    /* now try to visualize the left tabs */
-	    register int size = TAB_SPACE -
-		width_between (r, FVTAB(r), LVTAB(r));
-
-	    FVTAB(r) = find_left_tab (r, FVTAB(r), size);
-	}
-	if( refresh && IS_WIN(r->tabBar.win))
-	    XClearArea( r->Xdisplay, r->tabBar.win, 0, 0, TAB_SPACE, 0, True);
-    }
+        assert( LTAB(r) >= 0 );
+        tabWidth = rxvt_tab_width( r, NULL);  
+        /* set all tabs to a uniform width, based on the number of tabs */
+	for (i = 0; i <= LTAB(r); i ++) 
+                PVTS(r,i)->tab_width = tabWidth;
+        FVTAB(r) = 0;
+        LVTAB(r) = LTAB(r);
+        if( refresh || tabWidth != oldTabWidth )
+                /* Refresh all tabs */
+                XClearArea( r->Xdisplay, r->tabBar.win, 0, 0, TAB_SPACE, 0, True);
 }
 
 
@@ -491,6 +339,19 @@ draw_title (rxvt_t* r, int x, int y, int tnum, Region region)
 
     UNSET_REGION( clipRegion );
 
+    /* set the clip region so the text doesn't overflow our tab */
+    XRectangle rect;
+    rect.x = x;
+    rect.y = y - r->TermWin.pheight;
+    rect.width = PVTS(r, tnum)->tab_width - 2*TXT_XOFF;
+    rect.height = r->TermWin.pheight;
+
+    clipRegion = XCreateRegion();
+    XUnionRectWithRegion( &rect, clipRegion, clipRegion);
+    if (IS_REGION(region))
+        XIntersectRegion( clipRegion, region, clipRegion);
+    XSetRegion( r->Xdisplay, r->tabBar.gc, clipRegion );
+
     /*
      * Adjust y offset, and make sure output is restricted to the current tab
      * title.
@@ -500,24 +361,6 @@ draw_title (rxvt_t* r, int x, int y, int tnum, Region region)
     {
 	if( r->TermWin.xftpfont )
 	{
-	    /*
-	     * If we use pfont to draw tab titles, the we dont' know how many
-	     * characters will fit on the title. So we should clip the output
-	     * correctly.
-	     */
-	    XRectangle rect;
-
-	    rect.x = x;
-	    rect.y = y - r->TermWin.pheight;
-	    rect.width = PVTS(r, tnum)->tab_width - 2*TXT_XOFF;
-	    rect.height = r->TermWin.pheight;
-
-	    clipRegion = XCreateRegion();
-	    XUnionRectWithRegion( &rect, clipRegion, clipRegion);
-
-	    if (IS_REGION(region))
-		XIntersectRegion( clipRegion, region, clipRegion);
-
 	    XftDrawSetClip( r->tabBar.xftwin, clipRegion);
 
 	    y -= r->TermWin.xftpfont->descent;
@@ -525,14 +368,11 @@ draw_title (rxvt_t* r, int x, int y, int tnum, Region region)
 	else y -= r->TermWin.xftfont->descent;
     }
     else
-#endif /* XFT_SUPPORT */
-	y -= r->TermWin.font->descent;
 
     /*
      * Get the title into str. Under Xft, we use the format specified by
      * title_format.
      */
-#ifdef XFT_SUPPORT
     if(
 	  NOTSET_OPTION( r, Opt_xft )			||
 	  IS_NULL( r->TermWin.xftpfont )		||
@@ -565,6 +405,7 @@ draw_title (rxvt_t* r, int x, int y, int tnum, Region region)
 		     r->TermWin.maxTabWidth + 1 );  /* + 1 ensures we get \0 */
 	}
     }
+    y -= r->TermWin.font->descent;
 
 
     /*
@@ -596,24 +437,6 @@ draw_title (rxvt_t* r, int x, int y, int tnum, Region region)
 	    x += draw_string (r, clipRegion,
 		    x, y, buf, len, multichar, tnum == ATAB(r));
 
-	    /* adjust start position */
-	    /* x += Width2Pixel(len); */
-	    /*
-#ifdef XFT_SUPPORT
-	    if (ISSET_OPTION(r, Opt_xft) && r->tabBar.xftwin)
-	    {
-		x += Width2Pixel(len);
-	    }
-	    else
-#endif
-	    {
-		if (multichar)
-		    x += XTextWidth (r->TermWin.mfont, buf, len/2);
-		else
-		    x += XTextWidth (r->TermWin.font, buf, len);
-	    }
-	    */
-
 	    /* ok, now the next sub-string */
 	    sptr = ptr;
 	    multichar = (*ptr & 0x80);
@@ -643,7 +466,7 @@ draw_title (rxvt_t* r, int x, int y, int tnum, Region region)
      */
     if (IS_REGION(clipRegion))
     {
-	XDestroyRegion( clipRegion);
+	XDestroyRegion(clipRegion);
 
 	if (NOT_REGION(region))
 	    XSetClipMask( r->Xdisplay, r->tabBar.gc, None);
@@ -841,25 +664,6 @@ rxvt_draw_tabs (rxvt_t* r, Region region)
 		XFillPolygon( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
 			points+1, 6, Convex, CoordModeOrigin);
 
-		/*
-		 * This misses the bottom of the ATAB, so we should color it
-		 * ourselves.
-		 *
-		 * 2006-02-14 gi1242: Drawing with XDrawLine is not enough. For
-		 * some reason a thin line below is still missed. Be super safe
-		 * and XFillRectangle it.
-		 *
-		 * 2006-05-26 gi1242: The thin line looks kinda nice actually...
-		 */
-#if 0
-		XDrawLine( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-			points[1].x, points[1].y,
-			points[6].x, points[6].y);
-
-		XFillRectangle( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-			points[1].x, points[1].y,
-			points[6].x - points[1].x, 2);
-#endif
 	    }
 
 
@@ -2456,43 +2260,46 @@ rxvt_tabbar_rheight (rxvt_t* r)
 unsigned int
 rxvt_tab_width (rxvt_t *r, const char *str)
 {
-#ifdef XFT_SUPPORT
-    if ( ISSET_OPTION (r, Opt_xft) && r->TermWin.xftpfont)
-    {
-	/*
-	 * With a proportionally spaced font defined, let's try and make the
-	 * tabs look like firefox. All tabs have the same width. The more tabs
-	 * there are, the narrower the width becomes. The width does not depend
-	 * on the tab title.
-	 */
-	if( LTAB(r) >= 0 )
-	{
-	    int twidth = (TAB_SPACE - TAB_BORDER)
-			    / min( LTAB(r) + 1, r->TermWin.minVisibleTabs )
-			    - TAB_BORDER;
-	    return min( twidth, MAX_TAB_PIXEL_WIDTH);
-	}
-	else return MAX_TAB_PIXEL_WIDTH;
-    }
-    else
-#endif
-    {
-	int	    len;
-	uint16_t    maxw = r->TermWin.maxTabWidth;
+		int twidth = (TAB_SPACE - TAB_BORDER) / (LTAB(r) + 1) - TAB_BORDER;
+		return min(twidth, MAX_TAB_PIXEL_WIDTH);
 
-	assert (str);
-	len = STRLEN (str);
-	if (len > maxw)
-	    len = maxw;
-#ifdef XFT_SUPPORT
-	if (ISSET_OPTION (r, Opt_xft) && (NULL != r->tabBar.xftwin))
-	{
-	    return (2 * TXT_XOFF + Width2Pixel(len));
-	}
-	else
-#endif	/* XFT_SUPPORT */
-	return (2 * TXT_XOFF + XTextWidth (r->TermWin.font, str, len));
-    }
+//#ifdef XFT_SUPPORT
+//    if ( ISSET_OPTION (r, Opt_xft) && r->TermWin.xftpfont)
+//    {
+//	/*
+//	 * With a proportionally spaced font defined, let's try and make the
+//	 * tabs look like firefox. All tabs have the same width. The more tabs
+//	 * there are, the narrower the width becomes. The width does not depend
+//	 * on the tab title.
+//	 */
+//	if( LTAB(r) >= 0 )
+//	{
+//	    int twidth = (TAB_SPACE - TAB_BORDER)
+//			    / min( LTAB(r) + 1, r->TermWin.minVisibleTabs )
+//			    - TAB_BORDER;
+//	    return min( twidth, MAX_TAB_PIXEL_WIDTH);
+//	}
+//	else return MAX_TAB_PIXEL_WIDTH;
+//    }
+//    else
+//#endif
+//    {
+//	int	    len;
+//	uint16_t    maxw = r->TermWin.maxTabWidth;
+//
+//	assert (str);
+//	len = STRLEN (str);
+//	if (len > maxw)
+//	    len = maxw;
+//#ifdef XFT_SUPPORT
+//	if (ISSET_OPTION (r, Opt_xft) && (NULL != r->tabBar.xftwin))
+//	{
+//	    return (2 * TXT_XOFF + Width2Pixel(len));
+//	}
+//	else
+//#endif	/* XFT_SUPPORT */
+//	return (2 * TXT_XOFF + XTextWidth (r->TermWin.font, str, len));
+//    }
 }
 
 
