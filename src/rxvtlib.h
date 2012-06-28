@@ -516,8 +516,6 @@ typedef struct
     short	ltab;	/* last tab */
     short	atab;	/* active tab */
     short	ptab;	/* previous active tab */
-    short	fvtab;	/* first visible tab */
-    short	lvtab;	/* last visible tab */
 
 #ifdef HAVE_TABBAR
     Window	win;
@@ -1070,21 +1068,15 @@ typedef enum
 /* MACROS for tab/page number */
 #define ATAB(R)	    ((R)->tabBar.atab)
 #define LTAB(R)	    ((R)->tabBar.ltab)
-#define FVTAB(R)    ((R)->tabBar.fvtab)
-#define LVTAB(R)    ((R)->tabBar.lvtab)
 #define PTAB(R)	    ((R)->tabBar.ptab)
 #else
 #define ATAB(R)	    0
 #define LTAB(R)	    0
-#define FVTAB(R)    0
-#define LVTAB(R)    0
 #define PTAB(R)	    0
 #endif
 
 #define APAGE(R)    ATAB(R)
 #define LPAGE(R)    LTAB(R)
-#define FVPAGE(R)   FVTAB(R)
-#define LVPAGE(R)   LVTAB(R)
 #define PPAGE(R)    PTAB(R)
 
 /* MACROS for vts structure */

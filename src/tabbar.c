@@ -172,8 +172,6 @@ rxvt_tabbar_set_visible_tabs (rxvt_t* r, Bool refresh)
         /* set all tabs to a uniform width, based on the number of tabs */
 	for (i = 0; i <= LTAB(r); i ++) 
                 PVTS(r,i)->tab_width = tabWidth;
-        FVTAB(r) = 0;
-        LVTAB(r) = LTAB(r);
         if( refresh || tabWidth != oldTabWidth )
                 /* Refresh all tabs */
                 XClearArea( r->Xdisplay, r->tabBar.win, 0, 0, TAB_SPACE, 0, True);
@@ -504,9 +502,7 @@ refresh_tabbar_tab( rxvt_t *r, int page)
 
     rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "Refreshing tabbar title of page %d\n", page));
 
-    if( page < FVTAB(r) || page > LVTAB(r) ) return;
-
-    for( i=FVTAB(r), rect.x=TAB_BORDER; i < page; i++)
+    for( i=0, rect.x=TAB_BORDER; i < page; i++)
 	rect.x += TAB_WIDTH(i);
     
     rect.y	= TAB_TOPOFF;
@@ -536,18 +532,12 @@ rxvt_draw_tabs (rxvt_t* r, Region region)
 
     /* Sanatization */
     assert( LTAB(r)  >= 0	 );
-    assert( FVTAB(r) >= 0	 );
-    assert( FVTAB(r) <= LTAB(r)	 );
-    assert( LVTAB(r) >= 0	 );
-    assert( LVTAB(r) <= LTAB(r)	 );
-    assert( ATAB(r)  >= FVTAB(r) );
-    assert( ATAB(r)  <= LVTAB(r) );
 
 
     if (IS_REGION(region))
 	XSetRegion( r->Xdisplay, r->tabBar.gc, region);
 
-    for( page=FVTAB(r), x=TAB_BORDER; page <= LVTAB(r); page++)
+    for( page=0, x=TAB_BORDER; page <= LTAB(r); page++)
     {
 	/*
 	 * Draw the tab corresponding to "page".
@@ -788,12 +778,6 @@ rxvt_tabbar_highlight_tab (rxvt_t* r, short page, Bool force)
 
     /* Sanatization */
     assert (LTAB(r) >= 0);
-    assert (FVTAB(r) >= 0);
-    assert (FVTAB(r) <= LTAB(r));
-    assert (LVTAB(r) >= 0);
-    assert (LVTAB(r) <= LTAB(r));
-    assert (ATAB(r) >= FVTAB(r));
-    assert (ATAB(r) <= LVTAB(r));
 
     assert (page <= LTAB(r));
 
@@ -807,11 +791,11 @@ rxvt_tabbar_highlight_tab (rxvt_t* r, short page, Bool force)
     if (LTAB(r) < 0 || NOT_WIN(r->tabBar.win) || !r->tabBar.state)
 	return ;
 
-    /* do not highlight invisible/active tab */
-    if (page < FVTAB(r) || page > LVTAB(r) || page == ATAB(r))
+    /* do not highlight active tab */
+    if ( page == ATAB(r))
 	return;
 
-    for (i = FVTAB(r), x=TAB_BORDER; i < page; x += TAB_WIDTH(i), i++);
+    for (i = 0, x=TAB_BORDER; i < page; x += TAB_WIDTH(i), i++);
 
     /* set dash-line attributes */
     XGetGCValues( r->Xdisplay, r->tabBar.gc,
@@ -890,11 +874,10 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
 			img_d[XPM_CLOSE] : img_e[XPM_CLOSE];
 		break;
 	    case XPM_LEFT:
-		img[XPM_LEFT] = (FVTAB(r) == 0) ? 
-		    img_d[XPM_LEFT] : img_e[XPM_LEFT];
+		img[XPM_LEFT] = img_d[XPM_LEFT];
 		break;
 	    case XPM_RIGHT:
-		img[XPM_RIGHT] = (LVTAB(r) == LTAB(r)) ? 
+		img[XPM_RIGHT] = (LTAB(r) == LTAB(r)) ? 
 		    img_d[XPM_RIGHT] : img_e[XPM_RIGHT];
 		break;
 	}
@@ -954,8 +937,6 @@ rxvt_tabbar_init (rxvt_t* r)
 
     LTAB(r) = -1;   /* the last tab */
     r->tabBar.atab = 0;	/* the active tab */
-    FVTAB(r) = 0;   /* first visiable tab */
-    LVTAB(r) = 0;   /* last visiable tab */
     r->tabBar.ptab = 0;	    /* previous active tab */
 
 #ifdef HAVE_TABBAR
@@ -1337,15 +1318,12 @@ rxvt_remove_page (rxvt_t* r, short page)
     LTAB(r)--;
     rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "\tThe last tab is %d.", LTAB(r)));
 
-    if (FVTAB(r) > page)
-	FVTAB(r)--;
-    if (LVTAB(r) > page)
-    {
 #ifdef HAVE_TABBAR
-	refresh_tabbar_tab (r, LVTAB (r));
-#endif
-	LVTAB(r)--;
+    if (LTAB(r) > page)
+    {
+	refresh_tabbar_tab (r, LTAB (r));
     }
+#endif
     /* Reorganize the tabs array. */
     /* update TermWin and tab_widths */
     for (i = page; i <= LTAB(r); i++)
@@ -1379,7 +1357,7 @@ rxvt_remove_page (rxvt_t* r, short page)
 	r->selection.vt --;
 
     /*
-     * Now we try to set correct atab, ptab, fvtab, and lvtab
+     * Now we try to set correct atab, and ptab
      * Must be careful here!!!
      */
     /* update previous active tab */
@@ -1480,15 +1458,9 @@ rxvt_tabbar_set_title (rxvt_t* r, short page, const unsigned char TAINTED * str)
     }
 
 #ifdef HAVE_TABBAR
-    /*
-     * If visible tab's title is changed, refresh tab bar
-     */
-    if (page >= FVTAB(r) && page <= LVTAB(r))
-    {
-	/* adjust visible tabs */
-	rxvt_tabbar_set_visible_tabs (r, True);
-	refresh_tabbar_tab(r, page);
-    }
+    /* adjust tabs */
+//    rxvt_tabbar_set_visible_tabs (r, True); /* shouldn't affect tab width */
+    refresh_tabbar_tab(r, page);
 #endif
 
     /* synchronize terminal title with active tab title */
@@ -1526,15 +1498,6 @@ rxvt_activate_page (rxvt_t* r, short index)
     AVTS(r)->highlight = 0; /* clear highlight flag */
     
 #ifdef HAVE_TABBAR
-    /*
-     * Now the visible tabs may be changed, recompute the visible
-     * tabs before redrawing.
-     */
-    if (index < FVTAB(r) || index > LVTAB(r))
-    {
-	/* adjust visible tabs */
-	rxvt_tabbar_set_visible_tabs (r, True);
-    }
     refresh_tabbar_tab( r, ATAB(r));
     refresh_tabbar_tab( r, PTAB(r));
 #endif
@@ -1716,7 +1679,7 @@ rxvt_tabbar_dispatcher (rxvt_t* r, XButtonEvent* ev)
     {
 	register int	w = 0;
 	register int	i;
-	for ( i = FVTAB(r); w < x && i <= LVTAB(r); i++)
+	for ( i = 0; w < x && i <= LTAB(r); i++)
 	    w += TAB_WIDTH(i);
 
 	if( w - TAB_BORDER >= x )
@@ -1777,8 +1740,8 @@ rxvt_tabbar_button_release( rxvt_t *r, XButtonEvent *ev)
 
 	/* Figure out where the user released the mouse */
 	for (
-		droppedTab = FVTAB(r), w=0;
-		w < ev->x && droppedTab <= LVTAB(r);
+		droppedTab = w = 0;
+		w < ev->x && droppedTab <= LTAB(r);
 		droppedTab++
 	    )
 	    w += TAB_WIDTH( droppedTab );
@@ -2493,9 +2456,7 @@ rxvt_tabbar_move_tab (rxvt_t* r, short newPage)
     if (PTAB(r) == newPage) PTAB(r) = curPage;
 
     /* refresh tabbar */
-    if (newPage < FVTAB(r) || newPage > LVTAB(r))
-	rxvt_tabbar_set_visible_tabs (r, True);
-    else
+    if ( newPage < LTAB(r))
     {
 	/*
 	 * If the width of newPage is different from that of curPage, then all
