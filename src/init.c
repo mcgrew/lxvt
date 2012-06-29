@@ -1199,6 +1199,11 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
 	    shade = 100;
 	r->TermWin.shade = 100 - shade;
     }
+    else
+    {
+        /* set a sensible default value */
+        r->TermWin.shade = 25;
+    }
 #endif
 
     rxvt_set_jumpscroll(r);
