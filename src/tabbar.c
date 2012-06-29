@@ -159,7 +159,8 @@ extern char **cmd_argv;
  * position / width has changed. It does not check to see if the tab titles /
  * etc has changed.
  *
- * 2012-06-30 All tabs are always visible now, so this function is badly named.
+ * 2012-06-28 All tabs are always visible now, so this function is badly named.
+ * Todo: make more sensible use of the 'refresh' parameter.
  */
 void
 rxvt_tabbar_set_visible_tabs (rxvt_t* r, Bool refresh)
@@ -168,7 +169,7 @@ rxvt_tabbar_set_visible_tabs (rxvt_t* r, Bool refresh)
 	short	tabWidth, oldTabWidth = PVTS(r,0)->tab_width;
 
         assert( LTAB(r) >= 0 );
-        tabWidth = rxvt_tab_width( r, NULL);  
+        tabWidth = rxvt_tab_width(r);  
         /* set all tabs to a uniform width, based on the number of tabs */
 	for (i = 0; i <= LTAB(r); i ++) 
                 PVTS(r,i)->tab_width = tabWidth;
@@ -1447,7 +1448,7 @@ rxvt_tabbar_set_title (rxvt_t* r, short page, const unsigned char TAINTED * str)
 
 #ifdef HAVE_TABBAR
 	/* Compute the new width of the tab */
-	PVTS(r, page)->tab_width = rxvt_tab_width (r, n_title);
+	PVTS(r, page)->tab_width = rxvt_tab_width (r);
 #endif
     }
 
@@ -1543,7 +1544,7 @@ rxvt_tabbar_resize (rxvt_t* r)
 
     /* recompute width of each tab */
     for (i = 0; i <= LTAB(r); i ++)
-	PVTS(r, i)->tab_width = rxvt_tab_width (r, PVTS(r, i)->tab_title);
+	PVTS(r, i)->tab_width = rxvt_tab_width (r);
 
     /* adjust visible tabs */
     rxvt_tabbar_set_visible_tabs (r, False);
@@ -2215,48 +2216,10 @@ rxvt_tabbar_rheight (rxvt_t* r)
 
 /* EXTPROTO */
 unsigned int
-rxvt_tab_width (rxvt_t *r, const char *str)
+rxvt_tab_width (rxvt_t *r)
 {
 		int twidth = (TAB_SPACE - TAB_BORDER) / (LTAB(r) + 1) - TAB_BORDER;
 		return min(twidth, MAX_TAB_PIXEL_WIDTH);
-
-//#ifdef XFT_SUPPORT
-//    if ( ISSET_OPTION (r, Opt_xft) && r->TermWin.xftpfont)
-//    {
-//	/*
-//	 * With a proportionally spaced font defined, let's try and make the
-//	 * tabs look like firefox. All tabs have the same width. The more tabs
-//	 * there are, the narrower the width becomes. The width does not depend
-//	 * on the tab title.
-//	 */
-//	if( LTAB(r) >= 0 )
-//	{
-//	    int twidth = (TAB_SPACE - TAB_BORDER)
-//			    / min( LTAB(r) + 1, r->TermWin.minVisibleTabs )
-//			    - TAB_BORDER;
-//	    return min( twidth, MAX_TAB_PIXEL_WIDTH);
-//	}
-//	else return MAX_TAB_PIXEL_WIDTH;
-//    }
-//    else
-//#endif
-//    {
-//	int	    len;
-//	uint16_t    maxw = r->TermWin.maxTabWidth;
-//
-//	assert (str);
-//	len = STRLEN (str);
-//	if (len > maxw)
-//	    len = maxw;
-//#ifdef XFT_SUPPORT
-//	if (ISSET_OPTION (r, Opt_xft) && (NULL != r->tabBar.xftwin))
-//	{
-//	    return (2 * TXT_XOFF + Width2Pixel(len));
-//	}
-//	else
-//#endif	/* XFT_SUPPORT */
-//	return (2 * TXT_XOFF + XTextWidth (r->TermWin.font, str, len));
-//    }
 }
 
 
@@ -2404,10 +2367,9 @@ rxvt_tabbar_move_tab (rxvt_t* r, short newPage)
 
     
     if (
-	    0 == LTAB(r) ||			/* Only one tab (no move
-						   possible) */
-	    newPage == curPage ||		/* Move to itself */
-	    newPage < 0 || newPage > LTAB(r)	/* Out of range */
+        0 == LTAB(r) ||			/* Only one tab (no move possible) */
+        newPage == curPage ||		/* Move to itself */
+        newPage < 0 || newPage > LTAB(r)	/* Out of range */
        )
 	return;
 

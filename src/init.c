@@ -3005,7 +3005,7 @@ rxvt_create_termwin( rxvt_t *r, int page,
 #endif
 
 #ifdef HAVE_TABBAR
-    PVTS(r, page)->tab_width = rxvt_tab_width (r, PVTS(r, page)->tab_title);
+    PVTS(r, page)->tab_width = rxvt_tab_width (r);
 #endif
 
     /*

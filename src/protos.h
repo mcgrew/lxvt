@@ -422,7 +422,7 @@ void             rxvt_tabbar_create             __PROTO((rxvt_t*));
 void             rxvt_tabbar_clean_exit         __PROTO((rxvt_t*));
 unsigned short   rxvt_tabbar_height             __PROTO((rxvt_t*));
 unsigned short   rxvt_tabbar_rheight            __PROTO((rxvt_t*));
-unsigned int     rxvt_tab_width                 __PROTO((rxvt_t*, const char*));
+unsigned int     rxvt_tab_width                 __PROTO((rxvt_t*));
 int              rxvt_is_tabbar_win             __PROTO((rxvt_t*, Window));
 void             rxvt_tabbar_draw_buttons       __PROTO((rxvt_t*));
 void		 rxvt_adjust_fd_number	        __PROTO((rxvt_t* r));
