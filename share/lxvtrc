@@ -26,6 +26,30 @@ lxvt.titleFormat:      %n. %t
 lxvt.scrollTtyOutputInhibit: true
 lxvt.scrollTtyKeypress: true
 
+lxvt.color0:        #000000
+lxvt.color1:        #af0000
+lxvt.color2:        #00af00
+lxvt.color3:        #afaf00
+lxvt.color4:        #0000af
+lxvt.color5:        #af00af
+lxvt.color6:        #00afaf
+lxvt.color7:        #9a9a9a
+lxvt.color8:        #5f5f5f
+lxvt.color9:        #d70000
+lxvt.color10:       #00d700
+lxvt.color11:       #d7d700
+lxvt.color12:       #0000d7
+lxvt.color13:       #d700d7
+lxvt.color14:       #00d7d7
+lxvt.color15:       #d7d7d7
+
+# Display bold and underlined text in color, rather than using the terminal
+# attributes. This makes reading man pages a little easier.
+lxvt.colorBD:       #00afaf
+lxvt.colorUL:       #00af00
+
+# Default shading for transparency
+lxvt.shading:		70
 
 
 
