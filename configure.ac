@@ -157,7 +157,7 @@ support_xpm=yes
 support_jpeg=yes
 support_png=yes
 support_xft=no
-support_xim=no
+dnl support_xim=no
 support_greek=no
 support_cjk=no
 support_ttygid=yes
@@ -215,7 +215,7 @@ if test "x$support_everything" = "xyes"; then
     support_jpeg=yes
     support_png=yes
     support_xft=yes
-    support_xim=yes
+dnl    support_xim=yes
     support_greek=yes
     support_cjk=yes
     support_ttygid=yes
@@ -272,7 +272,7 @@ if test "x$support_minimal" = "xyes"; then
     support_jpeg=no
     support_png=no
     support_xft=no
-    support_xim=no
+dnl    support_xim=no
     support_greek=no
     support_cjk=no
     support_ttygid=yes
@@ -648,11 +648,11 @@ AC_ARG_ENABLE(
 )
 
 
-AC_ARG_ENABLE(
-    xim,
-    AC_HELP_STRING([--enable-xim],[enable XIM support [no]]),
-    [support_xim=$enableval]
-)
+dnl AC_ARG_ENABLE(
+dnl     xim,
+dnl     AC_HELP_STRING([--enable-xim],[enable XIM support [no]]),
+dnl     [support_xim=$enableval]
+dnl )
 
 
 AC_ARG_ENABLE(
@@ -885,8 +885,6 @@ AC_CHECK_LIB(
     AC_MSG_ERROR([Mrxvt requires the libX11 libraries.])
 )
 
-AC_CHECK_HEADERS(X11/XKBlib.h)
-
 dnl AC_CHECK_LIB(
 dnl     Xext,
 dnl     XextAddDisplay,
@@ -895,14 +893,14 @@ dnl     AC_MSG_ERROR([Mrxvt requires the libXext libraries.])
 dnl )
 
 
-if test "x$support_xim" = "xyes"; then
-    AC_CHECK_LIB(
-        X11,
-        XRegisterIMInstantiateCallback,
-        AC_DEFINE(USE_XIM, [], [set XIM support]),
-        [support_xim=no]
-    )
-fi
+dnl if test "x$support_xim" = "xyes"; then
+dnl    AC_CHECK_LIB(
+dnl        X11,
+dnl        XRegisterIMInstantiateCallback,
+dnl        AC_DEFINE(USE_XIM, [], [set XIM support]),
+dnl        [support_xim=no]
+dnl    )
+dnl fi
 
 
 if test "x$support_sessionmgr" = "xyes"; then
@@ -1528,7 +1526,7 @@ fi
 echo
 echo "Multi-language and font features:"
 echo "Freetype Font               : $support_xft"
-echo "X Input Method              : $support_xim"
+dnl echo "X Input Method              : $support_xim"
 echo "Greek keyboard              : $support_greek"
 echo "CJK multichar language      : $support_cjk"
 if test "x$support_cjk" = "xyes"; then

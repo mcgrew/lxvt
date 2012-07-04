@@ -587,7 +587,7 @@ option must be enabled.
 .Bl -tag -width 4n
 .
 .It Fl aht
-Automatically hide or show the tab bar depending on the number of tabs.  On startup, the tabbar is shown only if there are more than one tabs present.  If there is only one tab, and a new one is created, then the tabbar is shown. If there are two tabs and one is closed, then the tabbar is hidden.  A keyboard shortcut used at any time to hide / show the tabbar.
+Automatically hide or show the tab bar depending on the number of tabs. On startup, the tabbar is shown only if there are more than one tabs present. If there is only one tab, and a new one is created, then the tabbar is shown. If there are two tabs and one is closed, then the tabbar is hidden. A keyboard shortcut used at any time to hide / show the tabbar.
 .Op Cm autohideTabbar
 .BO at
 Run command specified with
@@ -605,14 +605,10 @@ macro is honored.
 Show tabbar at bottom.
 .Op Cm bottomTabbar
 .
-.BO ce
-If a tab title is too long to fit in the space provided, then truncate the end (default). If this option is unset, then truncate the start. This only has effect when Xft is not used.
-.Op Cm chopEnd
-.
 .It Fl e Op Ar arguments ...
 Specifies the program (and its command line arguments) to be run in the
 .Nm
-window.  By default this command is only run initially, and all tabs created after startup will run the default shell (or program supplied by 
+window. By default this command is only run initially, and all tabs created after startup will run the default shell (or program supplied by
 .Fl profile Ns Ar %d Ns ). This behaviour can be overridden with the
 .Fl at
 option.
@@ -637,7 +633,7 @@ Hold the tab open after the child process in it exits.
 .Ar mask
 is the mask of flags which control weather the tab will be held open based on the exit status of the child process. If the lowest bit (0x01) of
 .Ar mask
-is set, then the tab will always be held open after the child exits. If the next bit (0x02) is set, then the tab will be held open if the child exits abnormally (e.g. via
+is set, then the tab will always be held open after the child exits. If the next bit (0x02) is set, then the tab will only be held open if the child exits abnormally (e.g. via
 .Xr abort 1 ) .
 If the third bit (0x04) is set, then the tab will be held open if the child exits with non-zero status.
 .Pp
@@ -997,12 +993,9 @@ are: fatal, error, warn, info, verbose, and debug. The latter, the more
 information is printed
 .
 .It Fl cf Ar filename
-The
-.Nm
-configuration file. (Default is
-.Ar ~/lxvtrc ) .
+X resource configuration file
 .It Fl cfs Ar filename
-Filename to file to save the current configuration
+X resource configuration file to save the current configuration
 .Op Cm confFileSave
 .
 .It Fl path Ar path
@@ -1701,23 +1694,13 @@ is relative to the current tab.
 .It Ic Scroll Ar amount
 Scroll the active tab by
 .Ar amount
-lines (negative values mean scroll backward).  If
+lines (negative values mean scroll backward). If
 .Ar amount
 ends with
 .Sq p
 then scroll
 .Ar amount
-pages instead of lines.  If
-.Ar amount
-ends with
-.Sq %%
-then scroll
-.Ar amount
-percent of a page.  For example,
-.Ar -50%%
-would scroll backwards one half of the current page size.  (Note, we need to use two percent signs, as macro arguments are percent interpolated. Thus putting only one percent sign, will work, but cause
-.Nm
-to print a warning about an unrecognized flag.)
+pages instead of lines.
 .\" ------------------------------------------------------------
 .It Ic Copy
 Copy selection into clipboard (not implemented).

@@ -113,12 +113,13 @@ rxvt_str_trim(char *str)
  */
 /* EXTPROTO */
 int
-rxvt_str_escaped(char *str)
+rxvt_str_escaped(char* str)
 {
-    char            ch, *s, *d;
+    char    ch, *s, *d;
     int             i, num;
 
-    if (IS_NULL(str) || *str == '\0') return 0;
+    if (IS_NULL (str) || *str == '\0')
+	return 0;
 
     d = s = str;
 
@@ -160,7 +161,7 @@ rxvt_str_escaped(char *str)
 			break;
 		    num = num * 8 + ch - '0';
 		}
-		ch = (char)num;
+		ch = (char) num;
 	    }
 	    else if (ch == 'a')
 		ch = C0_BEL;	/* bell */
@@ -214,23 +215,27 @@ rxvt_str_escaped(char *str)
  */
 /* EXTPROTO */
 int
-rxvt_percent_interpolate( rxvt_t *r, int page,
-	const char *src, int len, char *dst, int maxLen )
+rxvt_percent_interpolate (rxvt_t *r, int page,
+	const text_t *src, int len, text_t *dst, int maxLen)
 {
-    int	i=0,	/* Unexpanded string index */
-	j=0;	/* Expanded string index */
+    int	i = 0,	/* Unexpanded string index */
+	j = 0;	/* Expanded string index */
+    char* temp = rxvt_malloc (maxLen + 1);
+    int temp_length, temp_index;
 
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_MISC, "rxvt_percent_interpolate( r, %d, %s, %d, %s, %d )\n", page, src, len, "dst", maxLen));
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_MISC,
+		"rxvt_percent_interpolate (r, page: %d, src, len: %d, dst, maxLen: %d)\n",
+		page, len, maxLen));
 
     /* Must only get here for a valid tab */
     assert( page >=0 && page <= LTAB(r) );
     assert( NOT_NULL( PVTS( r, page ) ) && PVTS( r, page )->vts_idx != -1 );
 
-    while( i < len-1 && j < maxLen-1 )
+    while (i < len - 1 && j < maxLen - 1)
     {
-	if( src[i] == '%' )
+	if (src[i] == '%')
 	{
-	    switch( src[++i] )
+	    switch (src[++i])
 	    {
 		case '%':
 		    /* Copy % over */
@@ -239,36 +244,57 @@ rxvt_percent_interpolate( rxvt_t *r, int page,
 
 		case 'n':
 		    /* Active tab number */
-		    j += snprintf( dst + j, maxLen - j, "%d", page+1 );
+		    //j += snprintf ( dst + j, maxLen - j, "%d", page+1 );
+		    temp_length = snprintf (temp, maxLen - j, "%d", page + 1);
+		    for (temp_index = 0; temp_index < min (temp_length, maxLen - j); temp_index++)
+			dst[j++] = temp[temp_index];
 		    i ++;
 		    break;
 
 		case 't':
 		    /* Active tab title */
-		    j += snprintf( dst + j, maxLen -j,
-			    "%s", PVTS(r, page)->tab_title );
+		    /*j += snprintf( dst + j, maxLen -j,
+			    "%s", PVTS(r, page)->tab_title );*/
+		    //temp_length = snprintf (temp, maxLen - j, "%s", PVTS (r, page)->tab_title);
+		    for (temp_index = 0;
+			    temp_index < maxLen - j && PVTS(r, page)->tab_title[temp_index] != 0;
+			    temp_index++)
+			dst[j++] = PVTS(r, page)->tab_title[temp_index];
 		    i ++;
 		    break;
 
 		case 'S':
 		    /* Exit status of dead processes */
-		    if( PVTS( r, page )->dead )
-			j += snprintf( dst + j, maxLen - j, "%d",
-				WEXITSTATUS( PVTS( r, page )->status ) );
+		    if (PVTS( r, page )->dead)
+		    {
+			temp_length = snprintf (temp, maxLen - j, "%d",
+				WEXITSTATUS (PVTS( r, page )->status));
+			/*j += snprintf( dst + j, maxLen - j, "%d",
+				WEXITSTATUS( PVTS( r, page )->status ) );*/
+			for (temp_index = 0; temp_index < min (temp_length, maxLen - j); temp_index++)
+			    dst[j++] = temp[temp_index];
+		    }
 		    else
-			dst[ j++ ] = src[ i ];
+			dst[j++] = src[i];
 
 		    i++;
 		    break;
 
 		case 'N':
 		    /* Normal / abnormal exit status of dead processes */
-		    if( PVTS( r, page )->dead )
-			j += snprintf( dst + j, maxLen - j, "%s",
-				WIFEXITED( PVTS( r, page )->status )
-				    ? "normally" : "abnormally" );
+		    if (PVTS(r, page )->dead)
+		    {
+			temp_length = snprintf (temp, maxLen - j, "%s",
+				WIFEXITED (PVTS(r, page)->status)
+				? "normally" : "abnormally");
+			/*j += snprintf( dst + j, maxLen - j, "%s",
+			  WIFEXITED( PVTS( r, page )->status )
+			  ? "normally" : "abnormally" );*/
+			for (temp_index = 0; temp_index < min (temp_length, maxLen - j); temp_index++)
+			    dst[j++] = temp[temp_index];
+		    }
 		    else
-			dst[ j++ ] = src[ i ];
+			dst[j++] = src[i];
 
 		    i ++;
 		    break;
@@ -278,41 +304,59 @@ rxvt_percent_interpolate( rxvt_t *r, int page,
 		     * Selection. TODO Also paste selection if it is not
 		     * owned by lxvt.
 		     */
-		    if( NOT_NULL( r->selection.text ) )
-			j += snprintf( dst + j, maxLen -j,
-				"%s", r->selection.text );
+		    if (NOT_NULL (r->selection.text))
+		    {
+			temp_length = snprintf (temp, maxLen - j, "%s",
+				r->selection.text );
+			for (temp_index = 0; temp_index < min (temp_length, maxLen - j); temp_index++)
+			    dst[j++] = temp[temp_index];
+		    }
 		    i++;
 		    break;
 
 		case 'p':
 		    /* Pid of process in current tab */
-		    j += snprintf( dst + j, maxLen - j, "%d",
-			    PVTS(r, page)->cmd_pid );
+		    temp_length = snprintf (temp, maxLen - j, "%d",
+			    PVTS(r, page)->cmd_pid);
+		    for (temp_index = 0; temp_index < min (temp_length, maxLen - j); temp_index++)
+			dst[j++] = temp[temp_index];
 		    i++;
 		    break;
 
 		case 'P':
 		    /* PID of lxvt */
-		    j += snprintf( dst + j, maxLen - j, "%d", getpid() );
+		    temp_length = snprintf (temp, maxLen - j, "%d",
+			    getpid ());
+		    for (temp_index = 0; temp_index < min (temp_length, maxLen - j); temp_index++)
+			dst[j++] = temp[temp_index];
 		    i++;
 		    break;
 
 		case 'G':
 		    /* Global tab number (plus 1) */
-		    j += snprintf( dst + j, maxLen - j, "%d",
-			    PVTS( r, page )->globalTabNum + 1 );
+		    temp_length = snprintf (temp, maxLen - j, "%d",
+ 			    PVTS( r, page )->globalTabNum + 1 );
+		    /*j += snprintf( dst + j, maxLen - j, "%d",
+			    PVTS( r, page )->globalTabNum + 1 );*/
+		    for (temp_index = 0; temp_index < min (temp_length, maxLen - j); temp_index++)
+			dst[j++] = temp[temp_index];
 		    i ++;
 		    break;
 
 		case 'T':
 		    /* # tabs created so far */
-		    j += snprintf( dst + j, maxLen - j, "%d",
-			    r->ntabs + 1 );
+		    temp_length = snprintf (temp, maxLen - j, "%d",
+ 			    r->ntabs + 1 );
+		    for (temp_index = 0; temp_index < min (temp_length, maxLen - j); temp_index++)
+			dst[j++] = temp[temp_index];
 		    i ++;
 		    break;
 
 		default:
-		    rxvt_msg (DBG_ERROR, DBG_MISC, "Unrecognized flag %%%c in '%s'", src[i++], src );
+		    rxvt_msg (DBG_ERROR, DBG_MISC,
+			    "Unrecognized flag '%%%c' in title pattern for tab %d.",
+			    (char) src[i++], page + 1);
+			    //'%s'", src[i++], src);
 		    break;
 	    }
 	}
@@ -320,8 +364,10 @@ rxvt_percent_interpolate( rxvt_t *r, int page,
 	    dst[j++] = src[i++];
     }
 
+    rxvt_free (temp);
+
     /* Copy last char over */
-    if( i == len-1 && j < maxLen-1 )
+    if( i == len - 1 && j < maxLen - 1)
 	dst[j++] = src[i++];
 
     /* NULL terminate dst */

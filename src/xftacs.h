@@ -36,13 +36,13 @@ void xftDrawACSString (
 	Display			*dpy,
 	Drawable		d,
 	GC			gc,
-	void			(*xftdraw_string)(),
+	//void			(*xftdraw_string)(),
 	XftDraw			*draw,
 	const XftColor		*color,
 	XftFont			*pub,
 	int			x,
 	int			y,
-	const unsigned char	*str,
+	const text_t		*str,
 	int			len
     );
 

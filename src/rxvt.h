@@ -93,9 +93,11 @@
 #ifdef HAVE_WCHAR_H
 # if defined(OS_OPENBSD) && (OS_OPENBSD_REL < 39)
 typedef unsigned int    _our_wint_t;
-typedef struct {
+typedef struct
+{
     int __count;
-    union {
+    union
+    {
 	_our_wint_t __wch;
 	char	    __wchb[4]
     } __value;
@@ -211,7 +213,8 @@ typedef struct termios ttymode_t;
 # ifdef HAVE_SGTTY_H
 #  include <sgtty.h>
 # endif
-typedef struct {
+typedef struct
+{
     struct sgttyb   sg;
     struct tchars   tc;
     struct ltchars  lc;
@@ -238,7 +241,8 @@ typedef struct {
  * openmotif as a dependency. We dont' really need it, except to set WM hints,
  * thus this ugly hack.
  */
-typedef struct {
+typedef struct
+{
     int	flags;
     int	functions;
     int	decorations;
@@ -596,7 +600,8 @@ struct rxvt_hidden;
  * the 'essential' information for reporting Mouse Events
  * pared down from XButtonEvent
  */
-struct mouse_event {
+struct mouse_event
+{
     int             clicks;
     Time            time;   /* milliseconds */
     unsigned int    state;  /* key or button mask */
@@ -824,7 +829,8 @@ struct mouse_event {
 #define ERASE		+2
 
 /* modes for rxvt_scr_page() - scroll page. used by scrollbar window */
-enum page_dirn {
+enum page_dirn
+{
     UP,
     DN,
     NO_DIR
@@ -834,7 +840,8 @@ enum page_dirn {
 #define PRIMARY	    (0)
 #define SECONDARY   (1)
 
-enum {
+enum
+{
     SBYTE = 0,
     WBYTE
 };
@@ -867,6 +874,8 @@ typedef uint16_t rend_t;
 # define RS_bgMask	    0x0003FE00u	/* 512 colors */
 # define RS_Bold	    0x00040000u	/* bold */
 # define RS_Blink	    0x00080000u	/* blink */
+#define RS_notStandardSize  0x80000000u
+#define RS_fontID	    0x7F000000u
 # define RS_RVid	    0x00100000u	/* reverse video */
 # define RS_Uline	    0x00200000u	/* underline */
 # define RS_acsFont	    0x00400000u	/* ACS graphics char set */
@@ -886,6 +895,8 @@ typedef uint16_t rend_t;
 #ifdef MULTICHAR_SET
 # define RS_multi0	    0x40000000u	/* only multibyte characters */
 # define RS_multi1	    0x80000000u	/* multibyte 1st byte */
+#define RS_notStandardSize  0x80000000u
+#define RS_fontID	    0x7F000000u
 /* multibyte 2nd byte */
 # define RS_multi2	    (RS_multi0|RS_multi1)
 /* multibyte mask */
@@ -893,6 +904,8 @@ typedef uint16_t rend_t;
 # define IS_MULTI1(R)	    (((R) & RS_multiMask) == RS_multi1)
 # define IS_MULTI2(R)	    (((R) & RS_multiMask) == RS_multi2)
 #else
+#define RS_notStandardSize  0x80000000u
+#define RS_fontID	    0x7F000000u
 # define RS_multiMask	    (0)
 # define IS_MULTI1(r)	    (0)
 # define IS_MULTI2(r)	    (0)
@@ -914,7 +927,7 @@ typedef uint16_t rend_t;
 
 #define RS_fontMask	    (RS_acsFont|RS_ukFont)
 #define RS_baseattrMask	    (RS_Bold|RS_Blink|RS_RVid|RS_Uline)
-#define RS_attrMask	    (RS_baseattrMask|RS_fontMask|RS_multiMask)
+#define RS_attrMask	    (RS_baseattrMask|RS_fontMask|RS_multiMask|RS_fontID)
 
 #define Sel_none	    0	/* Not waiting */
 #define Sel_normal	    0x01    /* normal selection */
@@ -926,7 +939,8 @@ typedef uint16_t rend_t;
 #define Sel_whereMask	    0x0f
 #define Sel_CompoundText    0x10    /* last request was Compound */
 
-enum {
+enum
+{
     C0_NUL = 0x00,
             C0_SOH, C0_STX, C0_ETX, C0_EOT, C0_ENQ, C0_ACK, C0_BEL,
     C0_BS , C0_HT , C0_LF , C0_VT , C0_FF , C0_CR , C0_SO , C0_SI ,
@@ -1025,7 +1039,8 @@ enum {
 ** until we need to.  Also, be aware of usage in pixcolor_set
 */
 
-enum colour_list {
+enum colour_list
+{
     Color_fg = 0,
     Color_bg,
     minCOLOR,		/* 2 */
@@ -1113,7 +1128,8 @@ enum colour_list {
 /*
  * Resource list
  */
-enum {
+enum
+{
     Rs_display_name = 0,
     Rs_debug_masks,
     Rs_debug_level,
@@ -1160,10 +1176,12 @@ enum {
 #endif
 #ifdef XFT_SUPPORT
     Rs_xftfont,	/* Font name, family */
+#if 0
 # ifdef MULTICHAR_SET
     Rs_xftmfont,/* Multichar font name, family */
     Rs_xftmsz,	/* Multichar font size */
 # endif
+#endif
     Rs_xftwt,	/* Font weight */
     Rs_xftBwt,	/* Bold font weight */
     Rs_xftst,	/* Font slant */
@@ -1219,10 +1237,10 @@ enum {
     Rs_delete_key,
 #endif
     Rs_selectstyle,
-#ifdef USE_XIM
+//#ifdef USE_XIM
     Rs_preeditType,
     Rs_inputMethod,
-#endif
+//#endif
     Rs_opacity,		/* transluscent window opacity degree */
     Rs_opacityDegree,	/* opacity change degree */
 #ifndef NO_FRILLS
@@ -1267,7 +1285,8 @@ enum {
     NUM_RESOURCES
 } ;
 
-enum {
+enum
+{
     TIMEOUT_INCR = 0,
     NUM_TIMEOUTS
 } ;
@@ -1276,7 +1295,8 @@ enum {
 /*
 ** MUST sync with init.c:xa_names
 */
-enum {
+enum
+{
     XA_COMPOUND_TEXT = 0,
     XA_UTF8_STRING,
     XA_TEXT,
@@ -1298,9 +1318,9 @@ enum {
 #ifdef HAVE_X11_SM_SMLIB_H
     XA_SM_CLIENT_ID,
 #endif
-#ifdef USE_XIM
+//#ifdef USE_XIM
     XA_WM_LOCALE_NAME,
-#endif
+//#endif
 #ifdef TRANSPARENT
     XA_XROOTPMAPID,
     XA_XSETROOTID,
@@ -1501,7 +1521,8 @@ enum {
  * VARIABLES
  *****************************************************************************
  */
-struct rxvt_hidden {
+struct rxvt_hidden
+{
     unsigned char   BOOLVAR( want_clip_refresh, 1),	/* Only refresh region
 							   specified by
 							   refreshRegion */
@@ -1625,11 +1646,11 @@ struct rxvt_hidden {
 #ifndef NO_DELETE_KEY
     const char*	    key_delete;
 #endif
-#ifdef USE_XIM
+//#ifdef USE_XIM
     XIC		    Input_Context;
     XIMStyle	    input_style;
     int		    event_type;
-#endif
+//#endif
     struct mouse_event	MEvent;
     row_col_t	    oldcursor;
 #ifdef MULTICHAR_SET
@@ -1679,7 +1700,7 @@ struct rxvt_hidden {
 							   variable
 							   MRXVT_TABTITLE*/
     char*	    env_colorfgbg;
-    char*	    buffer;
+    text_t*	    buffer; // Jehan
     char*	    locale;
 
 #if 0

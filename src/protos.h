@@ -30,7 +30,7 @@
 
 /* Begin prototypes of command.c */
 void		 rxvt_cmd_write                   __PROTO((rxvt_t* r, int page, const unsigned char* str, unsigned int count));
-void    rxvt_xterm_seq                __PROTO((rxvt_t* r, int page, int op, const char* str, unsigned char resp __attribute__((unused))));
+void             rxvt_xterm_seq                   __PROTO((rxvt_t* r, int page, int op, const text_t* str, unsigned char resp __attribute__((unused))));
 void             rxvt_tt_printf                   __PROTO((rxvt_t* r, int page, const char* fmt,...));
 void             rxvt_tt_write                    __PROTO((rxvt_t* r, int page, const unsigned char* d, int len));
 void             rxvt_pointer_unblank             __PROTO((rxvt_t* r, int page));
@@ -147,7 +147,8 @@ int              rxvt_change_font_xft             __PROTO((rxvt_t* r, const char
 #endif
 void             rxvt_set_win_title               __PROTO((rxvt_t* r, Window win, const char* str));
 void             rxvt_set_term_title              __PROTO((rxvt_t* r, const unsigned char* str));
-void             rxvt_set_icon_name               __PROTO((rxvt_t* r, const unsigned char* str));
+void             rxvt_set_icon_name               __PROTO((rxvt_t* r, const char* str));
+void             rxvt_set_icon_name_from_text_t   __PROTO((rxvt_t* r, const text_t* str, int str_size));
 void             rxvt_set_window_color            __PROTO((rxvt_t* r, int page, int idx, const char* color));
 void             rxvt_recolour_cursor             __PROTO((rxvt_t *r));
 #ifdef XFT_SUPPORT
@@ -189,7 +190,7 @@ char           * rxvt_r_basename                  __PROTO((const char* str));
 int              rxvt_str_match                   __PROTO((const char* s1, const char* s2));
 char*            rxvt_str_trim                    __PROTO((char* str));
 int              rxvt_str_escaped                 __PROTO((char* str));
-int		 rxvt_percent_interpolate         __PROTO((rxvt_t*, int, const char *, int, char *, int));
+int		 rxvt_percent_interpolate         __PROTO((rxvt_t*, int, const text_t*, int, text_t*, int));
 char**           rxvt_splitcommastring            __PROTO((const char* cs));
 void             rxvt_draw_shadow                 __PROTO((Display*, Window, GC , unsigned long topShadow, unsigned long botShadow, int x, int y, int w, int h));
 char*            rxvt_File_find                   __PROTO((const char *file, const char *ext, const char *path));
@@ -214,13 +215,12 @@ int              rxvt_control_tty                 __PROTO((int fd_tty, const cha
 /* Begin prototypes of screen.c */
 void
 rxvt_draw_string_x11 (rxvt_t* r, Window win, GC gc, Region refreshRegion,
-	int x, int y, char* str, int len, int (*draw_string)());
+	int x, int y, text_t* str, int len, int cols, int drawfunc); //(*draw_string)());
 #ifdef XFT_SUPPORT
 void
 rxvt_draw_string_xft (rxvt_t* r, Drawable d, GC gc, Region refreshRegion,
 	rend_t rend, int pfont,
-	XftDraw* win, XftColor* fore, int x, int y, char* str, int len,
-	void (*xftdraw_string)());
+	XftDraw* win, XftColor* fore, int x, int y, text_t* str, int len);
 #endif
 void             rxvt_init_screen                 __PROTO((rxvt_t* r));
 void             rxvt_scr_reset                   __PROTO((rxvt_t* r, int page));
@@ -231,7 +231,7 @@ int              rxvt_scr_change_screen           __PROTO((rxvt_t* r, int page, 
 void             rxvt_scr_color                   __PROTO((rxvt_t* r, int page, unsigned int color, int fgbg));
 void             rxvt_scr_rendition               __PROTO((rxvt_t* r, int page, int set, rend_t style));
 int              rxvt_scroll_text                 __PROTO((rxvt_t* r, int page, int row1, int row2, int count, int spec));
-void             rxvt_scr_add_lines               __PROTO((rxvt_t* r, int page, const unsigned char* str, int nlines, int len));
+void             rxvt_scr_add_lines               __PROTO((rxvt_t* r, int page, text_t* str, int nlines, int len));
 void             rxvt_scr_backspace               __PROTO((rxvt_t* r, int page));
 void             rxvt_scr_tab                     __PROTO((rxvt_t* r, int page, int count));
 void             rxvt_scr_backindex               __PROTO((rxvt_t* r, int page));
@@ -344,6 +344,8 @@ unsigned long	 rxvt_scrollbar_bg		  __PROTO((rxvt_t* r));
 
 
 /* Begin prototypes of strings.c */
+int from_char_to_text __PROTO((rxvt_t *r, const char* in_str, const int in_str_size, text_t* out_str));
+int from_text_to_char __PROTO((rxvt_t *r, const text_t* in_str, const int in_str_size, char* out_str));
 #ifdef HAVE_WCHAR_H
 wchar_t*         rxvt_mbstowcs                    __PROTO((const char* str));
 char*            rxvt_wcstoutf8                   __PROTO((const wchar_t* str));
@@ -431,7 +433,7 @@ void             rxvt_tabbar_highlight_tab      __PROTO((rxvt_t*, short, Bool));
 void             rxvt_tabbar_move_tab           __PROTO((rxvt_t*, short));
 #endif
 #endif
-void             rxvt_tabbar_set_title          __PROTO((rxvt_t*, short, const unsigned char TAINTED *));
+void             rxvt_tabbar_set_title          __PROTO((rxvt_t*, short, const text_t TAINTED *));
 void		 sync_tab_title		        __PROTO((rxvt_t*, int));
 /* End prototypes of tabbar.c */
 

@@ -26,6 +26,73 @@
 #include "../config.h"
 #include "rxvt.h"
 
+/*
+ * This function translates a string 'in_str' in char*, and of size 'in_str_size'
+ * to a text_t* 'out_str'. 'out_str' has been allocated with rxvt_malloc and must
+ * be deallocated with rxvt_free when it is no more needed.
+ * The return value  is the size of out_str (it can be different from in_str_size).
+ * In case of error, -1 is returned.
+ */
+
+int
+from_char_to_text (rxvt_t *r, const char* in_str, const int in_str_size, text_t* out_str)
+{
+    char* in_str_copy = (char*) in_str;
+#ifdef HAVE_ICONV_H
+    char** in_bytes = &in_str_copy;
+#else
+    const char** in_bytes = &in_str_copy;
+#endif
+    size_t in_str_left = in_str_size;
+    // The returned text will be at most the number of bytes.
+    size_t out_str_left = in_str_size * sizeof (text_t);
+    out_str = rxvt_malloc (out_str_left);
+    text_t* out_str_copy = out_str;
+    char** out_str_p = (char**) &out_str_copy;
+#ifdef HAVE_ICONV_H
+    // First I reset the conversion descriptor.
+    iconv (r->TermWin.internal_converter, NULL, NULL, NULL, NULL);
+    iconv (r->TermWin.internal_converter, in_bytes, &in_str_left, out_str_p, &out_str_left);
+#else
+    mbsrtowcs ((wchar_t*) out_str_copy, in_bytes, in_str_size, r->TermWin.internal_converter);
+#endif
+    return out_str_copy - out_str;
+}
+
+/*
+ * This function translates a string 'in_str' in text_t*, and of size 'in_str_size'
+ * to a char* 'out_str'. 'out_str' has been allocated with rxvt_malloc and must
+ * be deallocated with rxvt_free when it is no more needed.
+ * The return value is the number of bytes of out_str (it can be different from in_str_size),
+ * without counting the finale null character.
+ * In case of error, -1 is returned.
+ */
+
+int
+from_text_to_char (rxvt_t *r, const text_t* in_str, const int in_str_size, char* out_str)
+{
+    text_t* in_str_copy = (text_t*) in_str;
+#ifdef HAVE_ICONV_H
+    char** in_text = (char**) &in_str_copy;
+#else
+    wchar_t** in_text = (wchar_t) &in_str_copy;
+#endif
+    size_t in_str_left = in_str_size * sizeof (text_t);
+    // The returned text will be at most the number of text_t characters * 4 + 1
+    // (the ending null character).
+    size_t out_str_left = in_str_size * 4 + 1;
+    out_str = rxvt_malloc (out_str_left);
+    char* out_str_copy = out_str;
+    char** out_str_p = (char**) &out_str_copy;
+#ifdef HAVE_ICONV_H
+    // First I reset the conversion descriptor.
+    iconv (r->TermWin.external_converter, NULL, NULL, NULL, NULL);
+    iconv (r->TermWin.external_converter, in_text, &in_str_left, out_str_p, &out_str_left);
+#else
+    wcsrtombs ((wchar_t*) out_str_copy, in_text, in_str_size, r->TermWin.external_converter);
+#endif
+    return out_str_copy - out_str;
+}
 
 #ifdef HAVE_WCHAR_H
 # if !defined (OS_FREEBSD) || _FreeBSD_version >= 500000

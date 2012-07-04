@@ -1275,7 +1275,7 @@ rxvt_menu_show(rxvt_t *r)
 		}
 		else
 #endif
-#ifdef USE_XIM
+//#ifdef USE_XIM
 		if (r->TermWin.fontset)
 		{
 		    XmbDrawString(r->Xdisplay,
@@ -1285,7 +1285,7 @@ rxvt_menu_show(rxvt_t *r)
 			  (char*) name, len);
 		}
 		else
-#endif
+//#endif
 		XDrawString(r->Xdisplay, ActiveMenu->win,
 		    r->menuBar.gc, xoff,
 		    2 * SHADOW + y + r->TermWin.font->ascent + 1,
@@ -1314,7 +1314,7 @@ rxvt_menu_show(rxvt_t *r)
 		}
 		else
 #endif
-#ifdef USE_XIM
+//#ifdef USE_XIM
 		if (r->TermWin.fontset)
 		    XmbDrawString(r->Xdisplay,
 			ActiveMenu->win, r->TermWin.fontset,
@@ -1323,7 +1323,7 @@ rxvt_menu_show(rxvt_t *r)
 			2 * SHADOW + y + r->TermWin.font->ascent + 1,
 			(char*) name, len);
 		else
-#endif
+//#endif
 		XDrawString(r->Xdisplay, ActiveMenu->win,
 		    r->menuBar.gc,
 		    amenu_width - (xoff + xright),
@@ -2029,7 +2029,7 @@ rxvt_menubar_draw_labels( rxvt_t *r)
 	}
 	else
 # endif
-# ifdef USE_XIM
+//# ifdef USE_XIM
 	if (r->TermWin.fontset)
 	    XmbDrawString(r->Xdisplay,
 		  r->menuBar.win, r->TermWin.fontset, r->menuBar.gc,
@@ -2038,7 +2038,7 @@ rxvt_menubar_draw_labels( rxvt_t *r)
 			- r->TermWin.font->descent,
 		  (char*) menu->name, len);
 	else
-# endif	/* USE_XIM */
+//# endif	/* USE_XIM */
 	XDrawString(r->Xdisplay, r->menuBar.win, r->menuBar.gc,
 		  (menu->x + HSPACE_PIXEL / 2),
 		  rxvt_menubar_height(r) - SHADOW - MENUBAR_MARGIN
@@ -2128,7 +2128,7 @@ rxvt_menubar_draw_labels( rxvt_t *r)
 	    }
 	    else
 # endif
-# ifdef USE_XIM
+//# ifdef USE_XIM
 	    if (r->TermWin.fontset)
 	    XmbDrawString(r->Xdisplay,
 		      r->menuBar.win, r->TermWin.fontset, r->menuBar.gc,
@@ -2137,7 +2137,7 @@ rxvt_menubar_draw_labels( rxvt_t *r)
 				- r->TermWin.font->descent,
 		      (char*) title, len);
 	    else
-# endif	/* USE_XIM */
+//# endif	/* USE_XIM */
 	    XDrawString(r->Xdisplay, r->menuBar.win, r->menuBar.gc,
 		      x + (npixels + HSPACE_PIXEL) / 2,
 		      rxvt_menubar_height(r) - SHADOW - MENUBAR_MARGIN

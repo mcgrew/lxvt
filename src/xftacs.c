@@ -172,7 +172,7 @@ void
 xftDrawACSChars(
 	Display *dpy, Drawable d, GC gc,
 	XftDraw *draw, const XftColor *color, XftFont *pub,
-	int x, int y, const unsigned char *str, int len)
+	int x, int y, const text_t *str, int len)
 {
 
     /*
@@ -518,14 +518,14 @@ xftDrawACSChars(
  */
 void
 xftDrawACSString ( Display *dpy, Drawable d, GC gc,
-	void (*xftdraw_string)(),
+	//void (*xftdraw_string)(),
 	XftDraw *draw, const XftColor *color, XftFont *pub,
-	int x, int y, const unsigned char *str, int len)
+	int x, int y, const text_t* str, int len)
 {
-    const unsigned char *t = str;
+    const text_t *t = str;
     int chars;
 
-    rxvt_dbgmsg ((DBG_VERBOSE, DBG_XFTACS, "Drawing %d(%d) %sACS characters.", len, STRLEN( str), ( xftdraw_string == XftDrawString8) ? "Utf8 " : ""));
+    //rxvt_dbgmsg ((DBG_VERBOSE, DBG_XFTACS, "Drawing %d(%d) %sACS characters.", len, STRLEN( str), ( xftdraw_string == XftDrawString8) ? "Utf8 " : ""));
 
     while(len > 0)
     {
@@ -536,7 +536,8 @@ xftDrawACSString ( Display *dpy, Drawable d, GC gc,
 	if( chars)
 	{
 	    rxvt_dbgmsg ((DBG_VERBOSE, DBG_XFTACS, " [%d chars]", chars));
-	    xftdraw_string( draw, color, pub, x, y, str, chars);
+	    //xftdraw_string( draw, color, pub, x, y, str, chars);
+	    XftDrawString32 ( draw, color, pub, x, y, (FcChar32*) str, chars);
 
 	    x += chars * pub->max_advance_width;
 	    str = t;

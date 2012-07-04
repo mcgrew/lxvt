@@ -605,9 +605,9 @@ const char *const xa_names[NUM_XA] = {
 #ifdef HAVE_X11_SM_SMLIB_H
     "SM_CLIENT_ID",
 #endif
-#ifdef USE_XIM
+//#ifdef USE_XIM
     "WM_LOCALE_NAME",
-#endif
+//#endif
 #ifdef TRANSPARENT
     "_XROOTPMAP_ID",
     "_XSETROOT_ID",
@@ -655,15 +655,30 @@ rxvt_init_vars(rxvt_t *r)
 #endif
 
     SET_NULL(r->Xdisplay);
-#ifdef USE_XIM
+//#ifdef USE_XIM
     SET_NULL(r->TermWin.fontset);
-#endif
+//#endif
     SET_NULL(r->TermWin.font);
+#if 0
 #ifdef MULTICHAR_SET
     SET_NULL(r->TermWin.mfont);
 #endif
+#endif
 #ifndef NO_BOLDFONT
     SET_NULL(r->TermWin.bfont);
+#endif
+
+#ifdef HAVE_ICONV_H
+    // after being used
+    // this must always be set to the initial state by calling
+    // iconv (internal_converter, NULL, NULL, NULL, NULL);
+    r->TermWin.internal_converter = iconv_open ("WCHAR_T", "");
+    r->TermWin.external_converter = iconv_open ("", "WCHAR_T");
+#else
+    mbstate_t* mbst = r->TermWin.internal_converter = rxvt_malloc (sizeof (mbstate_t));
+    memset (mbst, 0, sizeof(mbst));
+    mbst = r->TermWin.external_converter = rxvt_malloc (sizeof (mbstate_t));
+    memset (mbst, 0, sizeof(mbst));
 #endif
 
 #ifdef XFT_SUPPORT
@@ -674,13 +689,15 @@ rxvt_init_vars(rxvt_t *r)
 # ifndef NO_BOLDFONT
     SET_NULL(r->TermWin.xftbfont);
 # endif	/* NO_BOLDFONT */
-# ifdef MULTICHAR_SET
+//# ifdef MULTICHAR_SET
+#if 0
 #  ifdef HAVE_ICONV_H
     r->TermWin.xfticonv = (iconv_t) -1;
 #  endif
-    SET_NULL(r->TermWin.xftmpattern);
-    SET_NULL(r->TermWin.xftmfont);
-# endif	/* MULTICHAR_SET */
+#endif
+//  SET_NULL(r->TermWin.xftmpattern);
+//    SET_NULL(r->TermWin.xftmfont);
+//# endif	/* MULTICHAR_SET */
 #endif	/* XFT_SUPPORT */
 
     UNSET_ATOM(h->xa[XA_COMPOUND_TEXT]);
@@ -706,9 +723,9 @@ rxvt_init_vars(rxvt_t *r)
     SET_NULL(h->MenuBar.title);
 # endif
 
-# ifdef USE_XIM
+//# ifdef USE_XIM
     SET_NULL(h->Input_Context);
-# endif
+//# endif
     /* SET_NULL(h->inbuf_start); */
     SET_NULL(h->buffer);
 
@@ -1331,6 +1348,7 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
     else /* default xft Pfont size */
 	r->TermWin.xftpsize = DEFAULT_XFT_PFONT_SIZE;
 
+#if 0
 # ifdef MULTICHAR_SET
     if (rs[Rs_xftmsz])
     {
@@ -1341,6 +1359,7 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
     else /* default xft font size */
 	r->TermWin.xftmsize = DEFAULT_XFT_FONT_SIZE;
 # endif	/* MULTICHAR_SET */
+#endif
 
     /* Set default Freetype fonts */
     rxvt_set_default_font_xft (r);
@@ -1590,7 +1609,7 @@ rxvt_init_env(rxvt_t *r)
 void
 rxvt_init_xlocale(rxvt_t *r)
 {
-#ifdef USE_XIM
+//#ifdef USE_XIM
     if (IS_NULL(r->h->locale))
 	rxvt_msg (DBG_ERROR, DBG_INIT, "Setting locale failed.");
     else
@@ -1614,7 +1633,7 @@ rxvt_init_xlocale(rxvt_t *r)
 	    XRegisterIMInstantiateCallback(r->Xdisplay, NULL, NULL,
 		NULL, rxvt_IM_init_callback, NULL);
     }
-#endif
+//#endif
 }
 
 /*----------------------------------------------------------------------*/
@@ -2825,19 +2844,66 @@ rxvt_init_vts( rxvt_t *r, int page )
     SET_NULL(PVTS(r, page)->xftvt);
 #endif
     SET_NULL(PVTS(r, page)->tab_title);
+    PVTS(r, page)->tab_title_length = 0;
+ 
+     /*
+      * Set the tab title format, and window title format. getProfileOption
+      * returns a static string, so duplicate it here
+      */
+    const char *stf = getProfileOption (r, profile, Rs_titleFormat);
+    if (IS_NULL (stf))
+	PVTS(r, page)->title_format = NULL;
+    else
+     {
+	//char** stf_copy = (char**) &(STRDUP (stf));
 
-    /*
-     * Set the tab title format, and window title format. getProfileOption
-     * returns a static string, so duplicate it here
-     */
-    {
-	const char *stf = getProfileOption( r, Rs_titleFormat );
-	PVTS(r, page)->title_format = NOT_NULL(stf) ? STRDUP(stf) : NULL;
-    }
+#ifdef HAVE_ICONV_H
+	char* byte_input = (char*) stf; //stf_copy;
+#else
+	const char* byte_input = (const char*) stf; //stf_copy;
+#endif
+	size_t byte_left = STRLEN (byte_input);
 
-    {
-	const char *wtf = getProfileOption( r, Rs_winTitleFormat );
-	PVTS(r, page)->winTitleFormat = NOT_NULL(wtf) ? STRDUP(wtf) : NULL;
+	PVTS(r, page)->title_format = rxvt_malloc (r->TermWin.maxTabWidth * sizeof (text_t));
+char* text_output = (char*) PVTS(r, page)->title_format; 
+#ifdef HAVE_ICONV_H
+	size_t text_left = r->TermWin.maxTabWidth * sizeof (text_t);
+	iconv (r->TermWin.internal_converter, NULL, NULL, NULL, NULL);
+	iconv (r->TermWin.internal_converter, &byte_input, &byte_left, (char**) &text_output, &text_left); 
+	PVTS(r, page)->title_format_length = r->TermWin.maxTabWidth - text_left;
+#else
+	size_t text_left = r->TermWin.maxTabWidth;
+	PVTS(r, page)->title_format_length = mbsrtowcs (text_output, &byte_input, text_left, r->TermWin.internal_converter);
+#endif
+
+	//rxvt_free (stf_copy);
+	//PVTS(r, page)->title_format = NOT_NULL(stf) ? STRDUP(stf) : NULL;
+     }
+ 
+    const char *wtf = getProfileOption( r, profile, Rs_winTitleFormat );
+    if (IS_NULL (wtf))
+	PVTS(r, page)->winTitleFormat = NULL;
+    else
+     {
+	//PVTS(r, page)->winTitleFormat = NOT_NULL(wtf) ? STRDUP(wtf) : NULL;
+#ifdef HAVE_ICONV_H
+	char* byte_input = (char**) wtf; //stf_copy;
+#else
+	const char* byte_input = (const char*) wtf; //stf_copy;
+#endif
+	size_t byte_left = STRLEN (byte_input);
+
+	PVTS(r, page)->winTitleFormat = rxvt_malloc (r->TermWin.maxTabWidth * sizeof (text_t));
+	char* text_output = (char*) &PVTS(r, page)->winTitleFormat; 
+#ifdef HAVE_ICONV_H
+	size_t text_left = r->TermWin.maxTabWidth * sizeof (text_t);
+	iconv (r->TermWin.internal_converter, NULL, NULL, NULL, NULL);
+	iconv (r->TermWin.internal_converter, &byte_input, &byte_left, (char**) &text_output, &text_left); 
+	PVTS(r, page)->winTitleFormat_length = r->TermWin.maxTabWidth - text_left;
+#else
+	size_t text_left = r->TermWin.maxTabWidth;
+	PVTS(r, page)->winTitleFormat_length = mbsrtowcs (text_output, &byte_input, text_left, r->TermWin.internal_converter);
+#endif
     }
 
 #ifdef BACKGROUND_IMAGE
@@ -2921,6 +2987,19 @@ rxvt_init_vts( rxvt_t *r, int page )
     PVTS(r, page)->outbuf_start	= PVTS(r, page)->outbuf_end
 	= PVTS(r, page)->outbuf_base;
 
+    PVTS(r, page)->textbuf_start = PVTS(r, page)->textbuf_end
+	= PVTS(r, page)->textbuf_base;
+    SET_NULL( PVTS(r, page)->textbuf_escstart);
+    SET_NULL( PVTS(r, page)->textbuf_escfail);
+
+    /* Conversion state created and set to initial state. */
+#ifdef HAVE_ICONV_H
+    PVTS(r, page)->shift_state = iconv_open ("WCHAR_T", ""); // TODO Jehan: is "" enough to define locale encoding?
+#else
+    mbstate_t* mbst = PVTS(r, page)->shift_state = rxvt_malloc (sizeof (mbstate_t)); // TODO Jehan: test NULL?!
+    memset (mbst, 0, sizeof(mbst));
+#endif
+
     /* Initialize write out buffer */
     SET_NULL(PVTS(r, page)->inbuf_base);
     SET_NULL(PVTS(r, page)->inbuf_start);
@@ -2948,9 +3027,10 @@ rxvt_destroy_termwin( rxvt_t *r, int page )
 
     rxvt_free (PVTS(r, page)->tab_title);
     SET_NULL(PVTS(r, page)->tab_title);
+    PVTS(r, page)->tab_title_length = 0;
 
-    rxvt_free( PVTS(r, page)->title_format );
-    SET_NULL( PVTS(r, page)->title_format );
+    rxvt_free (PVTS(r, page)->title_format);
+    SET_NULL (PVTS(r, page)->title_format);
 
 #ifdef XFT_SUPPORT
     if (ISSET_OPTION(r, Opt_xft))
@@ -2977,6 +3057,11 @@ rxvt_destroy_termwin( rxvt_t *r, int page )
     }
 #endif
 
+#ifdef HAVE_ICONV_H
+    iconv_close (PVTS(r, page)->shift_state);
+#else
+    rxvt_free (PVTS(r, page)->shift_state);
+#endif
 #ifdef HAVE_TABS
     rxvt_free (PVTS(r, page));
 #endif

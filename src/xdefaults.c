@@ -406,6 +406,7 @@ static const struct {
 
 #ifdef XFT_SUPPORT
     BOOL( "xft", "xft", Opt_xft, "use freetype font" ),
+#if 0
     STRG(Rs_xftfont, "xftFont", "xftfn", "fontname", "freetype font"),
 # ifdef MULTICHAR_SET
     STRG(Rs_xftmfont, "xftmFont", "xftfm", "fontname", "freetype multichar font"),
@@ -416,6 +417,9 @@ static const struct {
     BOOL( "xftSlowOutput", "xftslow", Opt2_xftSlowOutput,
 	    "multichar string display in slow mode for better visual effect" ),
 # endif
+#endif
+    BOOL( "xftSlowOutput", "xftslow", Opt2_xftSlowOutput,
+	    "string display in slow mode for better visual effect" ),
     BOOL( "xftAntialias", "xftaa", Opt2_xftAntialias,
 	    "antialias of freetype font" ),
     BOOL( "xftHinting", "xftht", Opt2_xftHinting,
@@ -453,11 +457,11 @@ static const struct {
 	"multichar encoding mode = eucj|sjis|big5|gb|gbk|kr|noenc"),
 #endif		    /* MULTICHAR_SET */
 
-#ifdef USE_XIM
+//#ifdef USE_XIM
     STRG(Rs_inputMethod, "inputMethod", "im", "name", "name of input method"),
     STRG(Rs_preeditType, "preeditType", "pt", "style",
 	"input style = OverTheSpot|OffTheSpot|Root"),
-#endif		    /* USE_XIM */
+//#endif		    /* USE_XIM */
 
 #ifdef GREEK_SUPPORT
     STRG(Rs_greek_keyboard, "greek_keyboard", "grk", "mode",
@@ -606,9 +610,9 @@ static const char optionsstring[] = "Options: "
 #if defined(HAVE_MENUBAR)
     "menubar,"
 #endif
-#if defined(USE_XIM)
+/*#if defined(USE_XIM)
     "XIM,"
-#endif
+#endif*/
 #if defined(MULTICHAR_SET)
     "multichar_languages,"
 #endif
@@ -748,7 +752,7 @@ rxvt_usage(int type)
 
 		    fprintf(stdout, "  %s%s %-*s%s%s\n",
 			(optList_isBool(i) ? "-/+" : "-"), optList[i].opt,
-			(INDENT - (int) STRLEN(optList[i].opt)
+			(INDENT - STRLEN(optList[i].opt)
 			 + (optList_isBool(i) ? 0 : 2)),
 			(optList[i].arg ? optList[i].arg : ""),
 			(optList_isBool(i) ? "turn on/off " : ""),
@@ -777,8 +781,9 @@ rxvt_usage(int type)
 #else
 	    for (i = 0; i < optList_size(); i++)
 		if (NOT_NULL(optList[i].kw))
-		    fprintf(stdout, "  %s: %s\n",
+		    fprintf(stdout, "  %s: %*s%s\n",
 			optList[i].kw,
+			(INDENT - STRLEN(optList[i].kw)), "", /* XXX */
 			(optList_isBool(i) ? "boolean" : optList[i].arg));
 #endif
 	    fprintf(stdout, "\n  -help to list options");
@@ -1346,6 +1351,7 @@ rxvt_extract_resources (
     UNSET_OPTION(r, ( Opt_Reverse | IS_OPTION4 ) );
 
 
+#if 0
     /*
      * even without resources, at least do this setup for command-line options
      * and command-line long options
@@ -1362,6 +1368,7 @@ rxvt_extract_resources (
 	else
 	    rxvt_set_multichar_encoding(r, MULTICHAR_ENCODING);
     }
+#endif
 #endif
 
 #ifdef GREEK_SUPPORT

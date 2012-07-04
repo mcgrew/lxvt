@@ -60,7 +60,18 @@ typedef struct
     int32_t         col;
 } row_col_t;
 
-typedef unsigned char text_t;
+//typedef unsigned char text_t;
+#ifdef HAVE_ICONV_H
+// With iconv, characters will be encoded in "UCS-4-INTERNAL", Full Unicode.
+typedef uint32_t text_t;
+#else
+/* Without iconv, characters will be converted to wchar_t, which is often
+ * Unicode on most platform, though it is not required by the Unicode standard.
+ * Hence if possible, using iconv is preferred.
+ */
+typedef wchar_t text_t;
+#endif
+
 /* Size of the FIFO buffer */
 #define FIFO_BUF_SIZE (512)
 
@@ -107,10 +118,21 @@ typedef struct
 #ifdef MULTICHAR_SET
     XFontStruct*    mfont;  /* Multichar font structure */
 #endif
-#ifdef USE_XIM
+//#ifdef USE_XIM
     XFontSet	    fontset;
+//#endif
+#ifdef HAVE_ICONV_H
+    iconv_t	    internal_converter;
+    iconv_t	    external_converter;
+#else
+    mbstate_t*	    internal_converter; // Multi-bite Shift state in C99 standard.
+    mbstate_t*	    external_converter; // Multi-bite Shift state in C99 standard.
 #endif
 #ifdef XFT_SUPPORT
+    XftPattern	    **xftpattern;
+    XftFont	    **xftfont, *xftpfont, *xftPfont;
+    int		    numxftfont;
+#if 0
     XftPattern*	    xftpattern;
     XftFont	    *xftfont, *xftpfont, *xftPfont;
 # ifdef MULTICHAR_SET
@@ -121,8 +143,10 @@ typedef struct
     iconv_t	    xfticonv;
 #  endif
 # endif
+#endif
 # ifndef NO_BOLDFONT
-    XftFont*	    xftbfont;
+    XftFont**	    xftbfont;
+    int		    numxftbfont;
 # endif
     char	    xftfnmono;	/* font is mono? */
     char	    xftmono;	/* font and mfont are mono? */
@@ -314,10 +338,13 @@ typedef enum
 #define Opt2_protectSecondary	    ((1LU<<2) | IS_OPTION2)
 #define Opt2_cmdAllTabs		    ((1LU<<3) | IS_OPTION2)
 #ifdef XFT_SUPPORT
+#if 0
 # ifdef MULTICHAR_SET
 #  define Opt2_xftNomFont	    ((1LU<<4) | IS_OPTION2)
 #  define Opt2_xftSlowOutput	    ((1LU<<5) | IS_OPTION2)
 # endif
+#endif
+# define Opt2_xftSlowOutput	    ((1LU<<5) | IS_OPTION2)
 # define Opt2_xftAntialias	    ((1LU<<6) | IS_OPTION2)
 # define Opt2_xftHinting	    ((1LU<<7) | IS_OPTION2)
 # define Opt2_xftAutoHint	    ((1LU<<8) | IS_OPTION2)
@@ -648,12 +675,14 @@ typedef struct
 #ifdef HAVE_TABBAR
     short		tab_width;	/* tab width */
 #endif
-    char UNTAINTED *	tab_title;  	/* tab title */
+    text_t UNTAINTED *	tab_title;  	/* tab title */
+    unsigned int	tab_title_length; /* Number of character in the tab title */
 
-    char	    *title_format;	/* Format to be used to display the tab
-					   title */
-    char	    *winTitleFormat;	/* Format of the window title (used when
+    text_t	    *title_format;	/* Format to be used to display the tab title */
+    unsigned int    title_format_length;
+    text_t	    *winTitleFormat;	/* Format of the window title (used when
 					   syncing the tab title */
+    unsigned int    winTitleFormat_length;
 
     /* moved from rxvt_t */
     int             cmd_fd; /* pty file descriptor; connected to command */
@@ -761,17 +790,30 @@ typedef struct
     unsigned char   *inbuf_base,		/* pointer to physical buffer */
 		    *inbuf_start,		/* beginning of area to write */
 		    *inbuf_end;		/* end of area to write */
-	 int inbuf_room; /* Remaining room at the end of the buffer */
+    int inbuf_room; /* Remaining room at the end of the buffer */
 
     /*
      * Data read from cmd_fd is buffered in here [Child's output buffer]
      */
-    unsigned char   *outbuf_escstart,	/* Start of an escape sequence */
-		    *outbuf_escfail,	/* Position where processing of an
-					   escape sequence last failed */
-		    *outbuf_start,	/* current char */
-		    *outbuf_end;	/* End of read child's output */
+     /* maybe these lines should just be removed? */
+    unsigned char   //*outbuf_escstart,	/* Start of an escape sequence */
+//		    *outbuf_escfail,	/* Position where processing of an
+//					   escape sequence last failed */
+//		    *outbuf_start,	/* current char */
+//		    *outbuf_end;	/* End of read child's output */
     unsigned char   outbuf_base[BUFSIZ];
+
+    text_t *textbuf_escstart,
+	    *textbuf_escfail,
+	    *textbuf_start,
+	    *textbuf_end;
+    text_t textbuf_base[BUFSIZ];
+
+#ifdef HAVE_ICONV_H
+    iconv_t	    shift_state; // Shift state when using iconv.
+#else
+    mbstate_t* shift_state; // Multi-bite Shift state in C99 standard.
+#endif
 } term_t;
 
 #define TAB_MON_OFF 0            /* tab monitoring off */
