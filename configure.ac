@@ -38,6 +38,7 @@ AM_MAINTAINER_MODE
 dnl Check OS
 AC_CANONICAL_HOST
 local_os_type="unknown"
+LIBS="$LIBS -lfreetype"
 case "$host" in
 *-cygwin*)
     AC_DEFINE(OS_CYGWIN, [], [set OS to cygwin])
@@ -48,6 +49,7 @@ case "$host" in
 	dnl hack for some 64-bit systems
 	AC_DEFINE(_GNU_SOURCE, [], [set GNU source flag for linux])
     local_os_type="linux"
+    LIBS="$LIBS -lfreetype"
     ;;
 *-irix*)
     AC_DEFINE(OS_IRIX, [], [set OS to irix])
@@ -960,7 +962,7 @@ AM_CONDITIONAL(USE_JPEG, test "x$support_jpeg" = "xyes")
 if test "x$support_png" = "xyes"; then
     AC_CHECK_LIB(
         png,
-        png_check_sig,
+        png_sig_cmp,
         [],
         [support_png=no],
         [-lz -lm]

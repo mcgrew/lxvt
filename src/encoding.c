@@ -573,6 +573,7 @@ rxvt_set_default_font_x11 (rxvt_t* r)
     /* Set default fonts */
     def_fontName = (char**) nfont_list[r->encoding_method].font;
 
+#if 0
 #ifdef MULTICHAR_SET
     switch (r->encoding_method)
     {
@@ -622,6 +623,8 @@ rxvt_set_default_font_x11 (rxvt_t* r)
 	}
     }
 #endif
+#endif
+
 
     /* Found no font, fall back to ISO8859-X font */
     if (IS_NULL(def_fontName[0]))   {

@@ -1458,6 +1458,7 @@ rxvt_tabbar_set_title_from_char (rxvt_t* r, short page, const char TAINTED * str
     assert (str);
     assert (page >= 0 && page <= LTAB(r));
     assert (PVTS(r, page)->tab_title);
+    int str_len = STRLEN (str);
 
     n_title = STRNDUP (str, MAX_TAB_TXT);
     /*
@@ -1527,7 +1528,7 @@ rxvt_tabbar_set_title (rxvt_t* r, short page, const text_t TAINTED * str)
 	PVTS(r, page)->tab_title_length = str_len;
 
 	/* Compute the new width of the tab */
-	PVTS(r, page)->tab_width = rxvt_tab_width (r, n_title);
+	PVTS(r, page)->tab_width = rxvt_tab_width (r);
     }
     else
 	rxvt_free (n_title);
@@ -1535,7 +1536,7 @@ rxvt_tabbar_set_title (rxvt_t* r, short page, const text_t TAINTED * str)
     /*
      * If visible tab's title is changed, refresh tab bar
      */
-    if (page >= FVTAB(r) && page <= LVTAB(r))
+    if (page >= 0 && page <= LTAB(r))
     {
 	/* adjust visible tabs */
 	rxvt_tabbar_set_visible_tabs (r, True);

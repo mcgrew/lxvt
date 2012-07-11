@@ -2850,7 +2850,7 @@ rxvt_init_vts( rxvt_t *r, int page )
       * Set the tab title format, and window title format. getProfileOption
       * returns a static string, so duplicate it here
       */
-    const char *stf = getProfileOption (r, profile, Rs_titleFormat);
+    const char *stf = getProfileOption (r, Rs_titleFormat);
     if (IS_NULL (stf))
 	PVTS(r, page)->title_format = NULL;
     else
@@ -2880,7 +2880,7 @@ char* text_output = (char*) PVTS(r, page)->title_format;
 	//PVTS(r, page)->title_format = NOT_NULL(stf) ? STRDUP(stf) : NULL;
      }
  
-    const char *wtf = getProfileOption( r, profile, Rs_winTitleFormat );
+    const char *wtf = getProfileOption( r, Rs_winTitleFormat );
     if (IS_NULL (wtf))
 	PVTS(r, page)->winTitleFormat = NULL;
     else

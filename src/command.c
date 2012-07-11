@@ -1595,9 +1595,10 @@ rxvt_clean_cmd_page (rxvt_t* r)
 static inline int
 rxvt_cmdbuf_has_input( rxvt_t *r, int page )
 {
-    return //PVTS(r, page)->outbuf_escfail ?
-	//PVTS(r, page)->outbuf_escfail < PVTS(r, page)->outbuf_end	    :
-	PVTS(r, page)->outbuf_start < PVTS(r, page)->outbuf_end;
+//    return PVTS(r, page)->outbuf_escfail ?
+//	PVTS(r, page)->outbuf_escfail < PVTS(r, page)->outbuf_end	    :
+//	PVTS(r, page)->outbuf_start < PVTS(r, page)->outbuf_end;
+    return (PVTS(r, page)->outbuf_start < PVTS(r, page)->outbuf_end);
 }
 
 /* Returns true if there is input pending in PVTS(r, page)->textbuf. */
@@ -4902,7 +4903,7 @@ rxvt_set_escfail( rxvt_t *r, int page, int nchars )
 /*{{{ process non-printing single characters */
 /* INTPROTO */
 static void
-+rxvt_process_nonprinting(rxvt_t* r, int page, text_t ch)
+rxvt_process_nonprinting(rxvt_t* r, int page, text_t ch)
 {
     switch (ch)
     {

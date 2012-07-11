@@ -174,24 +174,26 @@ static void rxvt_scr_delete_row          (rxvt_t*, int);
 static void rxvt_scr_add_row             (rxvt_t*, int, unsigned int, unsigned int);
 static void inline rxvt_clear_area       (rxvt_t*, int page, int x, int y, unsigned int w, unsigned int h);
 static void inline rxvt_fill_rectangle   (rxvt_t*, int page, int x, int y, unsigned int w, unsigned int h);
-static void        rxvt_scr_draw_string (rxvt_t* r, int page,
-                     int x, int y, char* str, int len, int drawfunc,
-                     uint16_t fore, uint16_t back,
-                     __attribute__((unused)) rend_t rend, Region refreshRegion);
+static void        rxvt_scr_draw_string  (rxvt_t* r, int page, int x, int y, 
+                                          text_t* str, int len, int cols, 
+                                          int drawfunc, uint16_t fore, 
+                                          uint16_t back,
+	                                        __attribute__((unused)) rend_t rend, 
+                                          Region refreshRegion);
 static void rxvt_scr_adjust_col          (rxvt_t*, int, unsigned int);
 static void rxvt_set_font_style          (rxvt_t*, int);
 static int  rxvt_scr_change_view         (rxvt_t*, int, uint16_t);
-static void rxvt_scr_reverse_selection   (rxvt_t*, int);
-static void rxvt_paste_str                 (rxvt_t*, int, const unsigned char*, unsigned int);
-static int  rxvt_selection_request_other (rxvt_t*, int, Atom, int);
-static void rxvt_selection_start_colrow  (rxvt_t*, int, int, int);
-static void rxvt_selection_delimit_word  (rxvt_t*, int, enum page_dirn, const row_col_t*, row_col_t*);
+void        rxvt_scr_reverse_selection   (rxvt_t*, int);
+void        rxvt_paste_str                 (rxvt_t*, int, const unsigned char*, unsigned int);
+int         rxvt_selection_request_other (rxvt_t*, int, Atom, int);
+void        rxvt_selection_start_colrow  (rxvt_t*, int, int, int);
+void        rxvt_selection_delimit_word  (rxvt_t*, int, enum page_dirn, const row_col_t*, row_col_t*);
 #ifdef MULTICHAR_SET
-static void rxvt_selection_adjust_kanji  (rxvt_t*, int);
+void        rxvt_selection_adjust_kanji  (rxvt_t*, int);
 #endif
-static void rxvt_selection_extend_colrow (rxvt_t*, int, int32_t, int32_t, int, int, int);
+void        rxvt_selection_extend_colrow (rxvt_t*, int, int32_t, int32_t, int, int, int);
 #ifndef NO_FRILLS
-static void rxvt_selection_trim          (rxvt_t*, int);
+void        rxvt_selection_trim          (rxvt_t*, int);
 #endif
 #ifdef TEXT_SHADOW
 # ifdef XFT_SUPPORT
@@ -233,8 +235,10 @@ static void
 rxvt_blank_screen_mem(rxvt_t* r, int page, text_t **tp, rend_t **rp,
 	unsigned int row, rend_t efs)
 {
+    rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "rxvt_blank_screen_mem (r, page: %d, text_pointer, rend_pointer)\n", page));
+    int col;
     int		 width = r->TermWin.ncol;
-    rend_t	 *er;
+    rend_t   *er;
 
     assert ((tp[row] && rp[row]) ||
 	(tp[row] == NULL && rp[row] == NULL));
@@ -1192,6 +1196,7 @@ rxvt_scr_add_lines (rxvt_t* r, int page, text_t* str, int nlines, int len)
     stp = PSCR(r, page).text[row];
     srp = PSCR(r, page).rend[row];
 
+#if 0
 #ifdef MULTICHAR_SET
     if(
 	 PVTS(r, page)->lost_multi && CURCOL > 0 &&
@@ -2778,7 +2783,7 @@ rxvt_fill_rectangle (rxvt_t* r, int page, int x, int y, unsigned int w, unsigned
  * PSCR(r, page).text/PSCR(r, page).rend contain what the screen will change to.
  */
 
-
+#if 0
 #define X11_DRAW_STRING_8	    (1)
 #define X11_DRAW_STRING_16	    (2)
 #define X11_DRAW_IMAGE_STRING_8	    (3)
@@ -2791,6 +2796,12 @@ rxvt_fill_rectangle (rxvt_t* r, int page, int x, int y, unsigned int w, unsigned
 #define XFT_DRAW_IMAGE_STRING_16    (10)
 #define XFT_DRAW_IMAGE_STRING_32    (11)
 #define XFT_DRAW_IMAGE_STRING_UTF8  (12)
+#endif
+#define X11_DRAW_STRING       (1)
+#define X11_DRAW_IMAGE_STRING (3)
+#define XFT_DRAW_STRING       (5)
+#define XFT_DRAW_IMAGE_STRING (11)
+
 
 #ifdef XFT_SUPPORT
 #define XFTDRAW_STRING(xdraw, color, font, x, y, str, len)		    \
@@ -2872,7 +2883,6 @@ rxvt_draw_string_xft (rxvt_t* r, Drawable d, GC gc, Region refreshRegion,
 	    xftDrawACSString (r->Xdisplay, d, gc, win, &(r->TermWin.xftshadow), font, x + sx, y + sy, str, len);
 	else
 	    XftDrawString32 (win, &(r->TermWin.xftshadow), font, x+sx, y+sy, str, len);
-	    font, x+sx, y+sy, str, len);
 	/*
 	 * We need to free clipping area, otherwise text on screen may be
 	 * clipped unexpectedly. Is there a better way to unset it, say,
@@ -2882,7 +2892,11 @@ rxvt_draw_string_xft (rxvt_t* r, Drawable d, GC gc, Region refreshRegion,
     }
 # endif	/* TEXT_SHADOW */
 
-    XFTDRAW_STRING (win, fore, font, x, y, str, len);
+//    XFTDRAW_STRING (win, fore, font, x, y, str, len);
+    if (rend & RS_acsFont)
+      xftDrawACSString (r->Xdisplay, d, gc, win, fore, font, x, y, str, len);
+    else
+      XftDrawString32 (win, fore, font, x, y, (FcChar32*) str, len);
 }
 #undef XFTDRAW_STRING
 #endif	/* XFT_SUPPORT */
@@ -2991,7 +3005,7 @@ rxvt_draw_string_x11 (rxvt_t* r, Window win, GC gc, Region refreshRegion,
 # endif	/* TEXT_SHADOW */
 
     rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "output entire string: %s\n", str));
-    draw_string (r->Xdisplay, win, gc, x, y, str, len);
+//    draw_string (r->Xdisplay, win, gc, x, y, str, len);
 }
 
 
@@ -3031,7 +3045,7 @@ rxvt_scr_draw_string (rxvt_t* r, int page,
      }
 //    if (drawfunc == XFT_DRAW_IMAGE_STRING)
 //	fillback = 1;
-    }
+//    }
 
     if (ISSET_OPTION(r, Opt_xft) && PVTS(r, page)->xftvt)
     {
@@ -3057,6 +3071,8 @@ rxvt_scr_draw_string (rxvt_t* r, int page,
 	 * Xft does not support XDrawImageString, so we need to clear the
 	 * background of text by ourselves.
 	 */
+   if (fillback)
+   {
 //	    if (len == 1)
 //	    { // To deal with cursor upon a single character.
 //		XGlyphInfo extents;
@@ -3091,8 +3107,6 @@ rxvt_scr_draw_string (rxvt_t* r, int page,
 	    // TODO: Nothing to free here?
 	    // TODO: extents.xOff?
 	}
-#  endif
-# endif	/* MULTICHAR_SET */
 
 	/* We use TermWin.xftfont->ascent here */
 	y += r->TermWin.xftfont[fontid]->ascent; // TODO
@@ -3550,6 +3564,7 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 	    *srp = SET_BGCOLOR(*srp, ccol2);
 #endif /* NO_CURSORCOLOR */
 
+#if 0
 #ifdef MULTICHAR_SET
 	    if (IS_MULTI1(*srp))
 	    {
@@ -3570,6 +3585,7 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 		*srp = SET_BGCOLOR(*srp, ccol2);
 # endif
 	    }
+#endif
 #endif
 	}
 
@@ -3846,6 +3862,7 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 			    fprop;
 			    /* rendition value */
 	    rend_t	    rend;
+	    int fontid;
 
 	    /* screen rendition (target rendtion) */
 	    rend = srp[col];
@@ -4434,7 +4451,7 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 
 		rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "PF Drawing '%.60s' (%d)\n", buffer, len));
 		rxvt_scr_draw_string (r, page,
-			xpixel, ypixelc, buffer, wlen, drawfunc,
+			xpixel, ypixelc, buffer, len, cols, drawfunc,
 			fore, back, rend,
 			((refresh_type & CLIPPED_REFRESH) ?
 				r->h->refreshRegion : None ));
@@ -4537,6 +4554,7 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 #ifndef NO_CURSORCOLOR
 	    *srp = (*srp & ~(RS_fgMask | RS_bgMask)) | cc1;
 #endif
+#if 0
 #ifdef MULTICHAR_SET
 	    if (morecur)
 	    {
@@ -4553,8 +4571,13 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 	else if (h->oldcursor.row >= 0)
 	{
 #ifdef XFT_SUPPORT
+	    //XGlyphInfo extents;
+	    //XGlyphInfo extents2;
+	    //int fontid = ((rend & RS_fontID) >> 24);
+#endif
 	    XRectangle xrect;
 	    XFontSet fontset = r->TermWin.fontset;
+
 #ifndef NO_CURSORCOLOR
 	    unsigned long   gcmask; /* Graphics Context mask */
 
@@ -4576,8 +4599,23 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 		Row2Pixel(h->oldcursor.row),
 //		(unsigned int)(Width2Pixel(1 + (morecur?1:0)) - 1),
 		(unsigned int)(Width2Pixel(1)),
+		//extents2.xOff,
+		(unsigned int)(Height2Pixel(1)
+			/* - r->TermWin.lineSpace*/ - 1));
+	}
+	else
+#endif
+	{
+	    XwcTextExtents (fontset, (wchar_t*) stp + h->oldcursor.col, 1, NULL, &xrect);
+
+	    XDrawRectangle(r->Xdisplay, drawBuffer, r->TermWin.gc,
+		Col2Pixel(h->oldcursor.col), // + morecur),
+		Row2Pixel(h->oldcursor.row),
+		//(unsigned int)(Width2Pixel(1 + (morecur?1:0)) - 1),
+		xrect.width,
 		(unsigned int)(Height2Pixel(1)
 		/* - r->TermWin.lineSpace*/ - 1));
+	}
 
 #ifndef NO_CURSORCOLOR
 	    if (gcmask)	    /* restore normal colours */
@@ -4688,7 +4726,7 @@ rxvt_scr_clear(rxvt_t* r, int page)
 
 /* ------------------------------------------------------------------------- */
 /* INTPROTO */
-static void
+void
 rxvt_scr_reverse_selection(rxvt_t* r, int page)
 {
     int		 i, col, row, end_row;
@@ -4779,7 +4817,7 @@ rxvt_selection_check(rxvt_t* r, int page, int check_more)
  * Paste a selection direct to the command fd
  */
 /* INTPROTO */
-static void
+void
 rxvt_paste_str(rxvt_t* r, int page,
 	const unsigned char *data, unsigned int nitems)
 {
@@ -5057,7 +5095,7 @@ rxvt_selection_request(rxvt_t* r, int page, Time tm, int x, int y)
 
 
 /* INTPROTO */
-static int
+int
 rxvt_selection_request_other(rxvt_t* r, int page, Atom target, int selnum)
 {
     Atom	    sel;
@@ -5393,7 +5431,7 @@ rxvt_selection_click(rxvt_t* r, int page, int clicks, int x, int y)
  * Mark a selection at the specified col/row
  */
 /* INTPROTO */
-static void
+void
 rxvt_selection_start_colrow(rxvt_t* r, int page, int col, int row)
 {
     PVTS(r, page)->want_refresh = 1;
@@ -5432,7 +5470,7 @@ rxvt_selection_start_colrow(rxvt_t* r, int page, int col, int row)
 #endif
 
 /* INTPROTO */
-static void
+void
 rxvt_selection_delimit_word(rxvt_t* r, int page, enum page_dirn dirn, const row_col_t *mark, row_col_t *ret)
 {
     int		 col, row, dirnadd, tcol, trow, w1, w2;
@@ -5551,12 +5589,11 @@ rxvt_selection_extend(rxvt_t* r, int page, int x, int y, int flag)
     if (r->selection_style != OLD_SELECT)
     {
 	if (
-#if 0
 	      ((SEL(r).clicks % 3) == 1) && !flag
 	      && (
 		    col == SEL(r).mark.col
 		    && (row == SEL(r).mark.row + VSTART)
-		 )
+		     )
 	   )
 	{
 	    /* select nothing */
@@ -5564,11 +5601,6 @@ rxvt_selection_extend(rxvt_t* r, int page, int x, int y, int flag)
 	    SEL(r).beg.col = SEL(r).end.col = 0;
 	    SEL(r).clicks = 4;
 	    PVTS(r, page)->want_refresh = 1;
-#endif
-#define X11_DRAW_STRING		    (1)
-#define X11_DRAW_IMAGE_STRING	    (3)
-#define XFT_DRAW_STRING		    (5)
-#define XFT_DRAW_IMAGE_STRING    (11)
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "rxvt_selection_extend %d () sel.clicks = 4\n", page));
 	    return;
 	}
@@ -5583,10 +5615,9 @@ rxvt_selection_extend(rxvt_t* r, int page, int x, int y, int flag)
 }
 
 
-#if 0
 #ifdef MULTICHAR_SET
 /* INTPROTO */
-static void
+void
 rxvt_selection_adjust_kanji(rxvt_t* r, int page)
 {
     int		 c1, r1;
@@ -5616,7 +5647,7 @@ rxvt_selection_adjust_kanji(rxvt_t* r, int page)
  * Extend the selection to the specified col/row
  */
 /* INTPROTO */
-static void
+void
 rxvt_selection_extend_colrow(rxvt_t* r, int page, int32_t col, int32_t row, int button3, int buttonpress, int clickchange)
 {
     unsigned int    ncol = r->TermWin.ncol;
@@ -5833,7 +5864,6 @@ rxvt_selection_extend_colrow(rxvt_t* r, int page, int32_t col, int32_t row, int 
 	    else
 		SEL(r).beg.col = SEL(r).mark.col;
 #endif
-#endif
 	}
 	end_col = PSCR(r, page).tlen[SEL(r).end.row +
 		    SVLINES];
@@ -5849,7 +5879,6 @@ rxvt_selection_extend_colrow(rxvt_t* r, int page, int32_t col, int32_t row, int 
 	if (RC_AFTER(SEL(r).end, SEL(r).beg))
 	    SEL(r).end.col--;
 	rxvt_selection_delimit_word(r, page, UP, &(SEL(r).beg),
-#if 0
 	    &(SEL(r).beg));
 	rxvt_selection_delimit_word(r, page, DN, &(SEL(r).end),
 	    &(SEL(r).end));
@@ -5859,7 +5888,6 @@ rxvt_selection_extend_colrow(rxvt_t* r, int page, int32_t col, int32_t row, int 
 #ifndef NO_FRILLS
 	if (ISSET_OPTION(r, Opt_tripleclickwords))
 	{
-#endif
 	    int		 end_row;
 
 	    rxvt_selection_delimit_word(r, page, UP, &(SEL(r).beg),
@@ -5915,7 +5943,7 @@ rxvt_selection_extend_colrow(rxvt_t* r, int page, int32_t col, int32_t row, int 
 
 #ifndef NO_FRILLS
 /* INTPROTO */
-static void
+void
 rxvt_selection_trim(rxvt_t* r, int page)
 {
     int32_t	 end_col, end_row;
@@ -6061,14 +6089,6 @@ rxvt_process_selectionrequest (rxvt_t* r, int page, const XSelectionRequestEvent
 	    selectlen = 0;
 	}
 //#ifdef USE_XIM
-	}
-	else
-	{
-	    cl[0] = dummy;
-	    *dummy = '\0';
-	    selectlen = 0;
-	}
-//#ifdef USE_XIM
 	if (XmbTextListToTextProperty(r->Xdisplay, cl, 1, style, &ct) == Success)	/* if we failed to convert then send it raw */
 	    freect = 1;
 	else
@@ -6088,7 +6108,7 @@ rxvt_process_selectionrequest (rxvt_t* r, int page, const XSelectionRequestEvent
     }
     XSendEvent(r->Xdisplay, rq->requestor, False, 0L, (XEvent *)&ev);
 }
-
+
 /* ------------------------------------------------------------------------- *
  *			      MOUSE ROUTINES				   *
  * ------------------------------------------------------------------------- */
@@ -6101,9 +6121,9 @@ void
 rxvt_pixel_position(rxvt_t* r, int *x, int *y)
 {
     *x = Pixel2Col(*x);
-/* MAX_IT(*x, 0); MIN_IT(*x, (int)r->TermWin.ncol - 1); */
+//    MAX_IT(*x, 0); MIN_IT(*x, (int)r->TermWin.ncol - 1);
     *y = Pixel2Row(*y);
-/* MAX_IT(*y, 0); MIN_IT(*y, (int)r->TermWin.nrow - 1); */
+//    MAX_IT(*y, 0); MIN_IT(*y, (int)r->TermWin.nrow - 1);
 }
-	    int fontid;
-	    //XftFont* font;
+
+/*----------------------- end-of-file (C source) -----------------------*/

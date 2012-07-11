@@ -796,11 +796,11 @@ typedef struct
      * Data read from cmd_fd is buffered in here [Child's output buffer]
      */
      /* maybe these lines should just be removed? */
-    unsigned char   //*outbuf_escstart,	/* Start of an escape sequence */
-//		    *outbuf_escfail,	/* Position where processing of an
-//					   escape sequence last failed */
-//		    *outbuf_start,	/* current char */
-//		    *outbuf_end;	/* End of read child's output */
+    unsigned char   
+//        *outbuf_escstart,	/* Start of an escape sequence */
+//		    *outbuf_escfail,	/* Position where processing of an esc seq failed */
+		    *outbuf_start,	/* current char */
+		    *outbuf_end;	/* End of read child's output */
     unsigned char   outbuf_base[BUFSIZ];
 
     text_t *textbuf_escstart,
