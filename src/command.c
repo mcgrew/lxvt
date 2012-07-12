@@ -1184,6 +1184,7 @@ rxvt_process_keypress (rxvt_t* r, XKeyEvent *ev)
 		    const unsigned char ch = C0_ESC;
 
 		    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Sending meta for keysym %lx\n", keysym));
+//		    rxvt_tt_write(r, ATAB(r), &ch, 1);
 		    memmove(&kbuf[1], kbuf, len);
 		    kbuf[0] = ch;
 		    len ++;
@@ -5675,7 +5676,7 @@ rxvt_process_window_ops(rxvt_t* r, int page, const int *args, unsigned int nargs
  */
 /* INTPROTO */
 static text_t*
-rxvt_get_to_st(rxvt_t* r, int page, unsigned char *ends_how)
+rxvt_get_to_st(rxvt_t* r, int page, text_t *ends_how)
 {
     rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "rxvt_get_to_st ( r, %d, terminator_pointer)\n", page));
     int		    readpage = page;

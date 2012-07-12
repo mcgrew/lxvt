@@ -708,7 +708,7 @@ void
 rxvt_scr_release(rxvt_t* r, int page)
 {
     unsigned int    total_rows;
-    unsigned i;
+    unsigned int i;
 
 
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "rxvt_scr_release %d ()\n", page));
@@ -1257,6 +1257,7 @@ rxvt_scr_add_lines (rxvt_t* r, int page, text_t* str, int nlines, int len)
 		continue;
 
 	    default:
+#if 0
 #ifdef MULTICHAR_SET
 		if( r->encoding_method == ENC_NOENC )
 		{
@@ -1329,7 +1330,8 @@ rxvt_scr_add_lines (rxvt_t* r, int page, text_t* str, int nlines, int len)
 		    }
 		}
 		else
-#endif /*MULTICHAR_SET*/
+#endif
+#endif
 		if (c == 127)
 		    continue;	/* yummmm..... */
 		break;
@@ -2391,7 +2393,7 @@ rxvt_scr_expose(rxvt_t* r, int page,
 
 	{
 		register int	j; // = rc[PART_BEG].col;
-		//register int	k = rc[PART_END].col - rc[PART_BEG].col + 1;
+		register int	k = rc[PART_END].col - rc[PART_BEG].col + 1;
 
 		for (i = rc[PART_BEG].row; i <= rc[PART_END].row; i++)
 		{
@@ -2924,7 +2926,10 @@ rxvt_draw_string_x11 (rxvt_t* r, Window win, GC gc, Region refreshRegion,
 	GContext    gid = XGContextFromGC( gc );
 	XFontStruct *font = XQueryFont( r->Xdisplay, gid);
 
-	if( font == NULL ) break;
+//#ifdef TEXT_SHADOW
+	if( font == NULL )
+	    break;
+//#endif
 	rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "handling text shadow for %s (%d)\n", str, len));
 
 	/*
@@ -3004,8 +3009,12 @@ rxvt_draw_string_x11 (rxvt_t* r, Window win, GC gc, Region refreshRegion,
     }
 # endif	/* TEXT_SHADOW */
 
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "output entire string: %s\n", str));
-//    draw_string (r->Xdisplay, win, gc, x, y, str, len);
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "output entire string: %X\n", *str));
+    //draw_string (r->Xdisplay, win, gc, x, y, str, len);
+    if (drawfunc == XFT_DRAW_IMAGE_STRING || drawfunc == X11_DRAW_IMAGE_STRING)
+	XwcDrawImageString (r->Xdisplay, win, r->TermWin.fontset, gc, x, y, (wchar_t *) str, len);
+    else
+	XwcDrawString (r->Xdisplay, win, r->TermWin.fontset, gc, x, y, (wchar_t *) str, len);
 }
 
 
@@ -3602,6 +3611,7 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 		{
 		    PVTS(r, page)->drawn_rend[ocrow][h->oldcursor.col] ^=
 			(RS_RVid | RS_Uline);
+#if 0
 #ifdef MULTICHAR_SET
 		    if (h->oldcursormulti)
 		    {
@@ -3610,6 +3620,7 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 			    PVTS(r, page)->drawn_rend[ocrow][col] ^=
 				(RS_RVid | RS_Uline);
 		    }
+#endif
 #endif
 		}
 		if (r->TermWin.focus || !showcursor)

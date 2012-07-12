@@ -645,7 +645,8 @@ rxvt_set_default_font_x11 (rxvt_t* r)
     }
 
     /* Overrided by -km option or X resources */
-    for (i = 0; i < MAX_NFONTS; i ++)	{
+    for (i = 0; i < MAX_NFONTS; i ++)	
+    {
 	if (IS_NULL(r->h->rs[Rs_font +i]))
 	    r->h->rs[Rs_font +i] = def_fontName[i];
 //#ifdef MULTICHAR_SET

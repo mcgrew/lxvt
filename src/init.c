@@ -4059,7 +4059,7 @@ rxvt_run_child(rxvt_t* r, int page, const char **argv)
     }
 
     /* set window size: this randomly breaks initial sizing */
-    /* rxvt_tt_winsize( STDIN_FILENO, r->TermWin.ncol, r->TermWin.nrow, 0 ); */
+//    rxvt_tt_winsize( STDIN_FILENO, r->TermWin.ncol, r->TermWin.nrow, 0 );
 
 #ifndef __QNX__
     /* command interpreter path */

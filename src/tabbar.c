@@ -378,11 +378,14 @@ draw_title (rxvt_t* r, int x, int y, int tnum, Region region)
 	    y -= r->TermWin.xftfont[0]->descent; // TODO
     }
     else
+#endif /* XFT_SUPPORT */
+	y -= r->TermWin.font->descent;
 
     /*
      * Get the title into str. Under Xft, we use the format specified by
      * title_format.
      */
+#ifdef XFT_SUPPORT
     if(
 	  NOTSET_OPTION (r, Opt_xft)			||
 	  IS_NULL (r->TermWin.xftpfont)			||
@@ -1527,8 +1530,10 @@ rxvt_tabbar_set_title (rxvt_t* r, short page, const text_t TAINTED * str)
 	PVTS(r, page)->tab_title = n_title;
 	PVTS(r, page)->tab_title_length = str_len;
 
+#ifdef HAVE_TABS
 	/* Compute the new width of the tab */
 	PVTS(r, page)->tab_width = rxvt_tab_width (r);
+#endif
     }
     else
 	rxvt_free (n_title);
