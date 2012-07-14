@@ -30,7 +30,11 @@
 #define __RXVTLIB_H__
 
 #include "rxvt.h"
+#if defined(TTY_RGBCOLOR)
 typedef uint64_t rend_t;
+#else
+typedef uint32_t rend_t;
+#endif
 
 /* 
  * Boolean variables
@@ -77,10 +81,10 @@ typedef struct
 {
     uint16_t	    fwidth,	/* font width  [pixels] */
 		    fheight;	/* font height [pixels] */
-#ifdef XFT_SUPPORT
+//#ifdef XFT_SUPPORT
     uint16_t	    pwidth,	/* propotionally spaced font width / height */
 		    pheight;
-#endif
+//#endif
     uint16_t	    propfont;	/* font proportional flags */
     uint16_t	    ncol;	/* window columns [characters] */
     uint16_t	    nrow;	/* window rows [characters] */

@@ -841,10 +841,8 @@ enum {
 
 #if defined(TTY_RGBCOLOR)
 typedef uint64_t rend_t;
-#elif defined(TTY_256COLOR) || defined(MULTICHAR_SET)
-typedef uint32_t rend_t;
 #else
-typedef uint16_t rend_t;
+typedef uint32_t rend_t;
 #endif
 
 #define RS_None		((rend_t)0)   /* Normal */
