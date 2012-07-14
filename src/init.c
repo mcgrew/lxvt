@@ -2865,7 +2865,7 @@ rxvt_init_vts( rxvt_t *r, int page )
 	size_t byte_left = STRLEN (byte_input);
 
 	PVTS(r, page)->title_format = rxvt_malloc (r->TermWin.maxTabWidth * sizeof (text_t));
-char* text_output = (char*) PVTS(r, page)->title_format; 
+  char* text_output = (char*) PVTS(r, page)->title_format; 
 #ifdef HAVE_ICONV_H
 	size_t text_left = r->TermWin.maxTabWidth * sizeof (text_t);
 	iconv (r->TermWin.internal_converter, NULL, NULL, NULL, NULL);

@@ -687,9 +687,9 @@ rxvt_scr_reset(rxvt_t* r, int page)
 	}
     }
 
-    if (PVTS(r, page)->prev_nrow == nrow && PVTS(r, page)->prev_ncol == ncol)
-	    return;
-
+//    if (PVTS(r, page)->prev_nrow == nrow && PVTS(r, page)->prev_ncol == ncol)
+//	    return;
+//
     PVTS(r, page)->prev_nrow = nrow;
     PVTS(r, page)->prev_ncol = ncol;
 
@@ -1505,6 +1505,9 @@ rxvt_scr_add_lines (rxvt_t* r, int page, text_t* str, int nlines, int len)
 void
 rxvt_scr_backspace(rxvt_t* r, int page)
 {
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "rxvt_scr_backspace (r, %d)\n", page));
+
+    //text_t* stp;
     RESET_CHSTAT(r, page);
     PVTS(r, page)->want_refresh = 1;
     if (CURCOL == 0)
@@ -2870,6 +2873,7 @@ rxvt_draw_string_xft (rxvt_t* r, Drawable d, GC gc, Region refreshRegion,
 	rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "\tHandling text shadow.\n")); // for %s (%d)\n", str, len));
  
 	XftTextExtents32 (r->Xdisplay, font, (FcChar32*) str, len, &extents);
+
 	/*
 	 * We should ignore extents.height. The height of the drawn text might
 	 * be much smaller than the height of the font (which is really what
@@ -3119,7 +3123,7 @@ rxvt_scr_draw_string (rxvt_t* r, int page,
 
 	/* We use TermWin.xftfont->ascent here */
 	y += r->TermWin.xftfont[fontid]->ascent; // TODO
-
+ 
 	/*
 	** If the font is monospace, we print the entire string once,
 	** otherwise, print the characters one by one
@@ -3151,7 +3155,7 @@ rxvt_scr_draw_string (rxvt_t* r, int page,
 	** Non monospace font, but still we can improve the performance
 	** by print it once under certain conditions
 	*/
-# ifdef MULTICHAR_SET
+# if def MULTICHAR_SET
 	else
 	if (
 	      NOTSET_OPTION(r, Opt2_xftSlowOutput)
@@ -3737,7 +3741,6 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 			ypixelc;
 	unsigned long	gcmask;	 /* Graphics Context mask */
 
-
 	stp = PSCR(r, page).text[row + row_offset];
 	srp = PSCR(r, page).rend[row + row_offset];
 	dtp = PVTS(r, page)->drawn_text[row];
@@ -3875,6 +3878,8 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 	    rend_t	    rend;
 	    int fontid;
 
+	    if (stp[col] == 0 )
+		continue;
 	    /* screen rendition (target rendtion) */
 	    rend = srp[col];
 
@@ -4054,9 +4059,19 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 			 * not need to be drawn. When echars get's too high,
 			 * then we should break out.
 			 */
+			/*if (stp[col] == 0)
+			{
+			    dtp[col] = stp[col];
+			    drp[col] = srp[col];
+			    col++;
+			    if (i == 0)
+				cols++;
+			    break;
+			}*/
 			if (rend != srp[col])
 			    /* Different attributes. */
 			    break;
+          
 			cols++;
 			buffer[len++] = stp[col];
 
@@ -4089,7 +4104,8 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 		    len -= i;	/* dump any matching trailing chars */
 
 		    cols -= i;
-		    rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "Drawing %d(%d) chars: %.*s\n", len, echars-i, (len > 55) ? 55 : len, buffer));
+
+		    rxvt_dbgmsg ((DBG_DEBUG, DBG_SCREEN, "\tDrawing %d (%d extra chars) chars.\n", len, echars-i)); 
 		} /* if (!fprop) */
 		else if (col < r->TermWin.ncol - 1 && stp[col + 1] == 0)
 		{
@@ -4240,24 +4256,26 @@ rxvt_scr_refresh(rxvt_t* r, int page, unsigned char refresh_type)
 
 #ifndef NO_BRIGHTCOLOR
 	    /* Use bright colors for bold primary colors */
-	    if( ((rend & RS_Bold) && (NOTSET_OPTION( r, Opt2_boldColors ) || PIXCOLOR(r, fore) == PIXCOLOR(r, back)))
-#ifdef BLINK_BRIGHTCOLOR
-			    || (rend & RS_Blink)
-#endif
-			    )
-	    {
-		if( fore == Color_fg )
-		{
-		    if (
-			  XDEPTH > 2 && ISSET_PIXCOLOR(h, Color_BD)
-			  && r->pixColors[fore] != r->pixColors[Color_BD]
-			  && r->pixColors[back] != r->pixColors[Color_BD]
-		       )
+	    if( (rend & RS_Bold) && NOTSET_OPTION( r, Opt2_boldColors ) )
+//	    if( ((rend & RS_Bold) && (NOTSET_OPTION( r, Opt2_boldColors ) || PIXCOLOR(r, fore) == PIXCOLOR(r, back)))
+//#ifdef BLINK_BRIGHTCOLOR
+//			    || (rend & RS_Blink)
+//#endif
+//			    )
+//	    {
+//		if( fore == Color_fg )
+//		{
+//		    if (
+//			  XDEPTH > 2 && ISSET_PIXCOLOR(h, Color_BD)
+//			  && r->pixColors[fore] != r->pixColors[Color_BD]
+//			  && r->pixColors[back] != r->pixColors[Color_BD]
+//		       )
 		    {
 			fore = Color_BD;
-		    }
-		}
-		else if( fore >= minCOLOR && fore < minBrightCOLOR )
+//		    }
+//		}
+//		else if( fore >= minCOLOR && fore < minBrightCOLOR )
+		if( fore >= minCOLOR && fore < minBrightCOLOR )
 		{
 		    fore += minBrightCOLOR - minCOLOR;
 		    if( NOTSET_OPTION( r, Opt_veryBright ) )
@@ -6007,7 +6025,6 @@ rxvt_selection_rotate(rxvt_t* r, int page, int x, int y)
 	Pixel2Row(y), 1, 0, 1);
 }
 
-
 /* ------------------------------------------------------------------------- */
 /*
  * Respond to a request for our current selection
@@ -6029,8 +6046,6 @@ rxvt_process_selectionrequest (rxvt_t* r, int page, const XSelectionRequestEvent
     char	   *cl[2], dummy[1];
 
     ev.type = SelectionNotify;
-	    /*if (stp[col] == 0)
-		continue;*/
     ev.property = None;
     ev.display = rq->display;
     ev.requestor = rq->requestor;
