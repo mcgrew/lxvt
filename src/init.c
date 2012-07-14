@@ -835,7 +835,7 @@ rxvt_init_vars(rxvt_t *r)
     }
 #endif/*USE_FIFO*/
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     r->tabClicked = -1; /* No tab has been clicked by user */
 #endif
 
@@ -2246,7 +2246,7 @@ rxvt_init_win_size( rxvt_t *r )
     if (ISSET_OPTION(r, Opt_showMenu))
 	r->szHint.base_height += rxvt_menubar_rheight (r);
 #endif
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     if (NOTSET_OPTION(r, Opt2_hideTabbar))
 	r->szHint.base_height += rxvt_tabbar_rheight (r);
 #endif
@@ -2336,7 +2336,7 @@ rxvt_init_win_size( rxvt_t *r )
           0 : r->szHint.base_width - 2*r->TermWin.int_bwidth;
   r->h->window_vt_y = r->szHint.base_height - 2*r->TermWin.int_bwidth;
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     if (ISSET_OPTION(r, Opt2_bottomTabbar) && NOTSET_OPTION(r, Opt2_hideTabbar))
 	r->h->window_vt_y -= rxvt_tabbar_rheight (r);
 #endif
@@ -3094,7 +3094,7 @@ rxvt_create_termwin( rxvt_t *r, int page,
     putenv (r->h->env_tabtitle);
 #endif
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TAB
     PVTS(r, page)->tab_width = rxvt_tab_width (r);
 #endif
 
@@ -3719,13 +3719,10 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
 # endif
 
 #ifdef HAVE_TABS
-#ifdef HAVE_TABBAR
     rxvt_tabbar_create (r);
     if (NOTSET_OPTION(r, Opt2_hideTabbar))
 	rxvt_tabbar_show (r);
-#else
     rxvt_tabbar_init (r);
-#endif
 #endif
 
     XMapWindow (r->Xdisplay, r->TermWin.parent);

@@ -904,7 +904,7 @@ rxvt_scr_change_screen(rxvt_t* r, int page, int scrn)
 # endif
 #endif
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     /* Need to update tabbar buttons */
     if (ISSET_OPTION(r, Opt2_protectSecondary))
 	rxvt_tabbar_draw_buttons (r);
