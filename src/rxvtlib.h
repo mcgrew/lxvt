@@ -513,7 +513,7 @@ typedef struct
 #ifdef HAVE_TABS
 typedef struct
 {
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     char	state;	/* tabbar state */
 #endif
 
@@ -521,7 +521,7 @@ typedef struct
     short	atab;	/* active tab */
     short	ptab;	/* previous active tab */
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     Window	win;
 #ifdef BACKGROUND_IMAGE
     Bool	    hasPixmap;	/* has a background Pixmap */
@@ -649,7 +649,7 @@ typedef struct
     uint16_t	    prev_ncol; /* previous columns */
     uint16_t	    prev_nrow; /* previous rows */
     /* moved from tab_t */
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     short		tab_width;	/* tab width */
 #endif
     char UNTAINTED *	tab_title;  	/* tab title */
@@ -976,7 +976,7 @@ typedef struct rxvt_vars
     term_t          vts;
 #endif
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     short	    tabClicked;		    /* Tab clicked by user. Used for
 					       moving tabs by drag and drop. */
 #endif

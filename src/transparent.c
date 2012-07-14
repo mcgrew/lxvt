@@ -179,11 +179,13 @@ expose_transparent_subwin( rxvt_t *r)
 	rxvt_menubar_expose (r);
     }
 # endif
+#ifdef HAVE_TABS
     if (ISSET_OPTION(r, Opt_transparent_tabbar))
     {
 	rxvt_dbgmsg ((DBG_DEBUG, DBG_TRANSPARENT, "reset background image for tabbar\n"));
 	rxvt_tabbar_expose (r, NULL);
     }
+#endif
 }
 
 
@@ -426,6 +428,7 @@ rxvt_toggle_transparency (rxvt_t* r)
 	}
 # endif	/* HAVE_MENUBAR */
 
+#ifdef HAVE_TABS
 	if (ISSET_OPTION(r, Opt_transparent_tabbar))
 	{
 # ifdef BACKGROUND_IMAGE
@@ -447,6 +450,7 @@ rxvt_toggle_transparency (rxvt_t* r)
 # endif	/* BACKGROUND_IMAGE */
 	    XSetWindowBackground (r->Xdisplay, r->tabBar.win, r->tabBar.ibg);
 	}
+#endif
     }
     else
     {
@@ -471,9 +475,11 @@ rxvt_toggle_transparency (rxvt_t* r)
 	    XSetWindowBackgroundPixmap (r->Xdisplay,
 		r->menuBar.win, ParentRelative);
 # endif
+#ifdef HAVE_TABS
 	if (ISSET_OPTION(r, Opt_transparent_tabbar))
 	    XSetWindowBackgroundPixmap (r->Xdisplay,
 		r->tabBar.win, ParentRelative);
+#endif
 
 	XSelectInput(r->Xdisplay, XROOT, PropertyChangeMask);
 	rxvt_check_our_parents (r);
@@ -487,10 +493,12 @@ rxvt_toggle_transparency (rxvt_t* r)
 # ifdef HAVE_MENUBAR
     rxvt_menubar_expose (r);
 # endif
+#ifdef HAVE_TABS
     rxvt_tabbar_expose (r, NULL);
 
     rxvt_scr_clear (r, ATAB(r));
     rxvt_scr_touch (r, ATAB(r), True);
+#endif
 }
 
 
@@ -866,6 +874,7 @@ xrenderShadeParentPixmap( rxvt_t *r, Pixmap pmap,
 	}
 # endif
 
+#ifdef HAVE_TABS
 	if( rxvt_tabbar_visible( r ) )
 	{
 	    /* Shade tabbar */
@@ -875,12 +884,12 @@ xrenderShadeParentPixmap( rxvt_t *r, Pixmap pmap,
 			0, ry + (ISSET_OPTION(r, Opt2_bottomTabbar)
 					? VT_HEIGHT(r) : 0),
 			rw, rxvt_tabbar_height( r ));
-
 	    /* Reset coordinates to shade main window. */
 	    rh -= rxvt_tabbar_height( r );
 	    if ( NOTSET_OPTION(r, Opt2_bottomTabbar) )
 		ry += rxvt_tabbar_height( r );
 	}
+#endif
 
 # ifdef HAVE_SCROLLBARS
 	if( rxvt_scrollbar_visible( r ) )

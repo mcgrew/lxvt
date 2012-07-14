@@ -95,7 +95,7 @@ rxvt_toggle_subwin( rxvt_t *r, const unsigned char *str)
     if (IS_NULL(str) || (char) 0 == *str ||
 	    STRCHR( str, 't') || STRCHR( str, 'T' ) )
     {
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 	/*
 	 * Backward compatibility -- If str is NULL or empty, then toggle the
 	 * tabbar visibility.
@@ -123,7 +123,7 @@ rxvt_toggle_subwin( rxvt_t *r, const unsigned char *str)
 	return;
     }
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     /*
      * The remainder of this function assumes a non-empty string.
      */
@@ -986,7 +986,7 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 #endif
 
 	case MacroFnMove:
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 	    /* Move active tab to position in astr */
 	    if( alen > 0 && *(astr) )
 	    {

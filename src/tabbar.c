@@ -33,7 +33,7 @@
 #endif
 
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 #ifdef HAVE_LIBXPM
 
 #include "close_term.xpm"
@@ -114,7 +114,7 @@
 *			End internal routine prototypes.		      *
 ******************************************************************************/
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 enum {XPM_TERM,XPM_CLOSE,XPM_LEFT,XPM_RIGHT,NB_XPM};
 
 #ifdef HAVE_LIBXPM
@@ -150,7 +150,6 @@ extern char **cmd_argv;
 
 
 #ifdef HAVE_TABS
-#ifdef HAVE_TABBAR
 
 /* EXTPROTO */
 /*
@@ -916,7 +915,6 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
 	    sx+BTN_WIDTH, topoff, sx+BTN_WIDTH, topoff+BTN_HEIGHT);
     }
 }
-#endif
 
 
 /*
@@ -926,15 +924,12 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
 void
 rxvt_tabbar_init (rxvt_t* r)
 {
-#ifdef HAVE_TABBAR
     r->tabBar.state = 0;    /* not mapped yet */
-#endif
 
     LTAB(r) = -1;   /* the last tab */
     r->tabBar.atab = 0;	/* the active tab */
     r->tabBar.ptab = 0;	    /* previous active tab */
 
-#ifdef HAVE_TABBAR
     /* Make sure that font has been initialized */
 #ifdef XFT_SUPPORT
     if (ISSET_OPTION (r, Opt_xft))
@@ -949,7 +944,6 @@ rxvt_tabbar_init (rxvt_t* r)
     r->tabBar.rsbg =
     r->tabBar.rsifg =
     r->tabBar.rsibg = 0;
-#endif
 }
 #endif
 
@@ -1234,7 +1228,7 @@ rxvt_append_page( rxvt_t* r, const char TAINTED *title, const char *command )
     if (PTAB(r) != ATAB(r))
 	PVTS(r, PTAB(r))->mapped = 0;
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     /* Adjust visible tabs */
     rxvt_tabbar_set_visible_tabs (r, True); /* Send expose events to tabbar */
     refresh_tabbar_tab( r, PTAB(r));	    /* PTAB will need to be drawn as
@@ -1313,7 +1307,7 @@ rxvt_remove_page (rxvt_t* r, short page)
     LTAB(r)--;
     rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "\tThe last tab is %d.", LTAB(r)));
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     if (LTAB(r) > page)
     {
 	refresh_tabbar_tab (r, LTAB (r));
@@ -1325,7 +1319,7 @@ rxvt_remove_page (rxvt_t* r, short page)
     {
 	PVTS(r, i) = PVTS(r, i+1);
 	PVTS(r, i)->vts_idx = i;
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 	refresh_tabbar_tab( r, i);
 #endif
     }
@@ -1383,7 +1377,7 @@ rxvt_remove_page (rxvt_t* r, short page)
     /* Adjust the number of FD's we select() for.  */
     rxvt_adjust_fd_number(r);
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     /* adjust visible tabs */
     rxvt_tabbar_set_visible_tabs (r, True);
     refresh_tabbar_tab( r, ATAB(r));	/* Active tab has changed */
@@ -1446,13 +1440,13 @@ rxvt_tabbar_set_title (rxvt_t* r, short page, const unsigned char TAINTED * str)
 	rxvt_free (PVTS(r, page)->tab_title);
 	PVTS(r, page)->tab_title = n_title;
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 	/* Compute the new width of the tab */
 	PVTS(r, page)->tab_width = rxvt_tab_width (r);
 #endif
     }
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     /* adjust tabs */
 //    rxvt_tabbar_set_visible_tabs (r, True); /* shouldn't affect tab width */
     refresh_tabbar_tab(r, page);
@@ -1492,7 +1486,7 @@ rxvt_activate_page (rxvt_t* r, short index)
     AVTS(r)->mapped = 1;
     AVTS(r)->highlight = 0; /* clear highlight flag */
     
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     refresh_tabbar_tab( r, ATAB(r));
     refresh_tabbar_tab( r, PTAB(r));
 #endif
@@ -1520,7 +1514,7 @@ rxvt_activate_page (rxvt_t* r, short index)
 }
 
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 /*
  * Change the width of the tab bar
  */
