@@ -3722,7 +3722,6 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
     rxvt_tabbar_create (r);
     if (NOTSET_OPTION(r, Opt2_hideTabbar))
 	rxvt_tabbar_show (r);
-    rxvt_tabbar_init (r);
 #endif
 
     XMapWindow (r->Xdisplay, r->TermWin.parent);

@@ -4468,7 +4468,7 @@ rxvt_process_expose (rxvt_t* r, XEvent* ev)
 	if (rxvt_is_tabbar_win (r, win))
 	{
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Expose event on tabbar\n"));
-	} else
+	} 
 # endif
 # ifdef HAVE_SCROLLBARS
 	if (rxvt_is_scrollbar_win (r, win))
