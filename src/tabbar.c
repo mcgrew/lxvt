@@ -100,7 +100,7 @@
 /* width of tabbar that can be used to draw tabs */
 #define TAB_SPACE	(TWIN_WIDTH(r)- \
     (ISSET_OPTION(r, Opt2_hideButtons) ? 0 : 1) * \
-    (4 * (BTN_WIDTH+BTN_SPACE) + TAB_BORDER))
+    (BTN_COUNT * (BTN_WIDTH+BTN_SPACE) + TAB_BORDER))
 
 
 #define CHOOSE_GC_FG(R, PIXCOL)	\
@@ -115,7 +115,7 @@
 ******************************************************************************/
 
 #ifdef HAVE_TABS
-enum {XPM_TERM,XPM_CLOSE,XPM_LEFT,XPM_RIGHT,NB_XPM};
+enum {TERM_BTN,CLOSE_BTN,BTN_COUNT};
 
 #ifdef HAVE_LIBXPM
 static char** xpm_name[] =
@@ -136,12 +136,12 @@ static unsigned char *xbm_name[] =
 };
 #endif
     
-static Pixmap img[NB_XPM];
+static Pixmap img[BTN_COUNT];
 #ifdef HAVE_LIBXPM
-static Pixmap img_e[NB_XPM]; /* enable image */
-static Pixmap img_emask[NB_XPM]; /* shape mask image */
-static Pixmap img_d[NB_XPM]; /* disable image */
-static Pixmap img_dmask[NB_XPM]; /* shape mask image */
+static Pixmap img_e[BTN_COUNT]; /* enable image */
+static Pixmap img_emask[BTN_COUNT]; /* shape mask image */
+static Pixmap img_d[BTN_COUNT]; /* disable image */
+static Pixmap img_dmask[BTN_COUNT]; /* shape mask image */
 #endif
 
 #endif
@@ -848,37 +848,28 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
     topoff = BTN_TOPOFF;
 
     CHOOSE_GC_FG (r, r->tabBar.fg);
-    for (i = NB_XPM; i >= 1; i--)
+    for (i = BTN_COUNT; i >= 1; i--)
     {
 #ifdef HAVE_LIBXPM
-	register int	curimg = NB_XPM - i;
+	register int	curimg = BTN_COUNT - i;
 
 	switch (curimg)
 	{
-	    case XPM_TERM:
-		/*img[XPM_TERM] = (LTAB(r) == MAX_PAGES - 1) ? 
-		    img_d[XPM_TERM] : img_e[XPM_TERM];*/
+	    case TERM_BTN:
 			 /* 08-08-20 Jehan: 
 			  * As there is no more maximum tab, there is no disable image here. */
-			 img[XPM_TERM] = img_e[XPM_TERM];
+			 img[TERM_BTN] = img_e[TERM_BTN];
 		break;
-	    case XPM_CLOSE:
-		img[XPM_CLOSE] = (ISSET_OPTION(r, Opt2_protectSecondary) &&
+	    case CLOSE_BTN:
+		img[CLOSE_BTN] = (ISSET_OPTION(r, Opt2_protectSecondary) &&
 				PRIMARY != AVTS(r)->current_screen) ?
-			img_d[XPM_CLOSE] : img_e[XPM_CLOSE];
-		break;
-	    case XPM_LEFT:
-		img[XPM_LEFT] = img_d[XPM_LEFT];
-		break;
-	    case XPM_RIGHT:
-		img[XPM_RIGHT] = (LTAB(r) == LTAB(r)) ? 
-		    img_d[XPM_RIGHT] : img_e[XPM_RIGHT];
+			img_d[CLOSE_BTN] : img_e[CLOSE_BTN];
 		break;
 	}
 #endif
-	if (IS_PIXMAP(img[NB_XPM-i]))
+	if (IS_PIXMAP(img[BTN_COUNT-i]))
 	{
-	    XCopyArea  (r->Xdisplay, img[NB_XPM-i], r->tabBar.win,
+	    XCopyArea  (r->Xdisplay, img[BTN_COUNT-i], r->tabBar.win,
 		r->tabBar.gc, 0, 0,
 		BTN_WIDTH, BTN_HEIGHT,
 		TWIN_WIDTH(r)-(i*(BTN_WIDTH+BTN_SPACE)), topoff);
@@ -887,7 +878,7 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
 
 
     CHOOSE_GC_FG (r, r->tabBar.frame);
-    for (i = NB_XPM; i >= 1; i--)
+    for (i = BTN_COUNT; i >= 1; i--)
     {
 	/*
 	XDrawRectangle (r->Xdisplay, r->tabBar.win,
@@ -904,7 +895,7 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
 	    sx, topoff, sx, topoff + BTN_HEIGHT);
     }
     CHOOSE_GC_FG (r, r->tabBar.delimit);
-    for (i = NB_XPM; i >= 1; i--)
+    for (i = BTN_COUNT; i >= 1; i--)
     {
 	int	sx = TWIN_WIDTH(r) - (i*(BTN_WIDTH+BTN_SPACE));
 	/* draw bottom line */
@@ -1612,11 +1603,11 @@ rxvt_tabbar_dispatcher (rxvt_t* r, XButtonEvent* ev)
     z = TWIN_WIDTH(r) - x;
     if (
 	    NOTSET_OPTION(r, Opt2_hideButtons)
-	    && z < 4*(BTN_WIDTH+BTN_SPACE)
+	    && z < BTN_COUNT*(BTN_WIDTH+BTN_SPACE)
 	    && (z%(BTN_WIDTH+BTN_SPACE)) > BTN_SPACE
        )
     {
-	but = z/(BTN_WIDTH+BTN_SPACE);
+	but = BTN_COUNT - 1 - z/(BTN_WIDTH+BTN_SPACE);
 
 	/* we should only handle left-mouse-button clicks */
 	if ( ev->button != Button1 )
@@ -1628,17 +1619,7 @@ rxvt_tabbar_dispatcher (rxvt_t* r, XButtonEvent* ev)
 	rxvt_dbgmsg ((DBG_VERBOSE, DBG_TABBAR,"click on button %d\n",but));
 	switch(but)
 	{
-	    case 0 : /* right shift */
-		if (r->tabBar.atab < LTAB(r))
-		    rxvt_activate_page (r, r->tabBar.atab+1);
-		break;
-
-	    case 1 : /* left shift */
-		if (r->tabBar.atab > 0)
-		    rxvt_activate_page (r, r->tabBar.atab-1);
-		break;
-
-	    case 2 : /* delete the active vt if it's in primary screen */
+	    case CLOSE_BTN : /* delete the active vt if it's in primary screen */
 		if(
 		    NOTSET_OPTION(r, Opt2_protectSecondary) ||
 		    (
@@ -1656,7 +1637,7 @@ rxvt_tabbar_dispatcher (rxvt_t* r, XButtonEvent* ev)
 		}
 		break;
 
-	    case 3 : /* create a new vt*/
+	    case TERM_BTN: /* create a new vt*/
 		rxvt_append_page (r, NULL, NULL);
 		break;
 
@@ -2109,7 +2090,7 @@ rxvt_tabbar_create (rxvt_t* r)
 #endif
 
     /* now, create the buttons */
-    for (i = 0; i < NB_XPM; i++)
+    for (i = 0; i < BTN_COUNT; i++)
     {
 #ifdef HAVE_LIBXPM
 	XpmCreatePixmapFromData (r->Xdisplay, r->tabBar.win,
@@ -2158,7 +2139,7 @@ rxvt_tabbar_clean_exit (rxvt_t* r)
 	UNSET_GC(r->tabBar.gc);
     }
 
-    for (i = 0; i < NB_XPM; i ++)
+    for (i = 0; i < BTN_COUNT; i ++)
     {
 #ifdef HAVE_LIBXPM
 	if (IS_PIXMAP(img_e[i]))

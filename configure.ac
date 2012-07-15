@@ -109,11 +109,6 @@ case "$host" in
     AC_DEFINE(OS_DARWIN, [], [set OS to darwin])
     local_os_type="darwin"
     ;;
-*-sco*)
-    AC_DEFINE(OS_SCO, [], [set OS to sco])
-    AC_DEFINE(OS_SVR4, [], [set OS to svr4])
-    local_os_type="sco"
-    AC_MSG_ERROR([Mrxvt does not support f*cking SCO's products!])
 esac
 
 
