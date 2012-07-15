@@ -54,16 +54,10 @@ lxvt_SOURCES +=    command.c		\
 		    xdefaults.c
 
 lxvt_SOURCES +=    close_term.xbm	\
-		    left.xbm		\
-		    right.xbm		\
 		    term.xbm
 
 lxvt_SOURCES +=    close_term.xpm	\
 		    close_term_d.xpm	\
-		    left.xpm		\
-		    left_d.xpm		\
-		    right.xpm		\
-		    right_d.xpm		\
 		    term.xpm		\
 		    term_d.xpm
 
@@ -162,14 +156,8 @@ MRXVT_H =	    ../config.h			\
 		    rxvt.h			\
 		    rxvtlib.h
 
-MRXVT_PIXMAPS =	    left.xbm			\
-		    right.xbm			\
-		    close_term.xbm		\
+MRXVT_PIXMAPS = close_term.xbm		\
 		    term.xbm			\
-		    left.xpm			\
-		    left_d.xpm			\
-		    right.xpm			\
-		    right_d.xpm			\
 		    close_term.xpm		\
 		    close_term_d.xpm		\
 		    term.xpm			\

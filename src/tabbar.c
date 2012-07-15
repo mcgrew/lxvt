@@ -38,19 +38,13 @@
 
 #include "close_term.xpm"
 #include "term.xpm"
-#include "right.xpm"
-#include "left.xpm"
 #include "close_term_d.xpm"
 #include "term_d.xpm"
-#include "right_d.xpm"
-#include "left_d.xpm"
 
 #else
 
 #include "close_term.xbm"
 #include "term.xbm"
-#include "right.xbm"
-#include "left.xbm"
 
 #endif /* HAVE_LIBXPM */
 
@@ -120,19 +114,16 @@ enum {TERM_BTN,CLOSE_BTN,BTN_COUNT};
 #ifdef HAVE_LIBXPM
 static char** xpm_name[] =
 {
-    term_xpm,close_term_xpm,
-    left_xpm,right_xpm
+    term_xpm,close_term_xpm
 };
 static char** xpm_d_name[] =
 {
-    term_d_xpm,close_term_d_xpm,
-    left_d_xpm,right_d_xpm
+    term_d_xpm,close_term_d_xpm
 };
 #else
 static unsigned char *xbm_name[] =
 {
-    term_bits,close_term_bits,
-    left_bits,right_bits
+    term_bits,close_term_bits
 };
 #endif
     
