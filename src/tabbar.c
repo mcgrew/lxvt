@@ -545,7 +545,10 @@ rxvt_draw_tab( rxvt_t* r, int page, Region region )
     if (ISSET_OPTION(r, Opt2_bottomTabbar))
     {
         /* Top tabbar line & left of active tab */
-        SET_POINT( points[0], 0, TAB_TOPOFF);
+        if (is_active)
+        {
+          SET_POINT( points[0], 0, TAB_TOPOFF);
+        }
         SET_POINT( points[1], x - TAB_SPREAD, TAB_TOPOFF);
         SET_POINT( points[2], x, TAB_BOTOFF - TAB_RADIUS);
 
@@ -566,7 +569,10 @@ rxvt_draw_tab( rxvt_t* r, int page, Region region )
         SET_POINT( points[5],
                 x + r->tab_width, TAB_BOTOFF - TAB_RADIUS);
         SET_POINT( points[6], x + r->tab_width + TAB_SPREAD, TAB_TOPOFF);
-        SET_POINT( points[7], TWIN_WIDTH(r), TAB_TOPOFF);
+        if (is_active)
+        {
+          SET_POINT( points[7], TWIN_WIDTH(r), TAB_TOPOFF);
+        }
     }
 
     else    /* if (ISSET_OPTION(r, Opt2_bottomTabbar)) */
@@ -575,7 +581,10 @@ rxvt_draw_tab( rxvt_t* r, int page, Region region )
          * Coordinates for the draw bottom line to the left of active
          * tab, and left verticle line of the active tab.
          */
-        SET_POINT( points[0], 0, TAB_BOTOFF);
+        if (is_active)
+        {
+          SET_POINT( points[0], 0, TAB_BOTOFF);
+        }
         SET_POINT( points[1], x - TAB_SPREAD, TAB_BOTOFF);
         SET_POINT( points[2], x, TAB_TOPOFF + TAB_RADIUS);
 
@@ -599,7 +608,10 @@ rxvt_draw_tab( rxvt_t* r, int page, Region region )
                 TAB_TOPOFF + TAB_RADIUS);
         /* set remaining point to draw at a 22.5 degree angle */
         SET_POINT( points[6], x + r->tab_width + TAB_SPREAD, TAB_BOTOFF);
-        SET_POINT( points[7], TWIN_WIDTH(r), TAB_BOTOFF);
+        if (is_active)
+        {
+          SET_POINT( points[7], TWIN_WIDTH(r), TAB_BOTOFF);
+        }
     }
 
 #ifdef BACKGROUND_IMAGE
@@ -633,17 +645,28 @@ rxvt_draw_tab( rxvt_t* r, int page, Region region )
      */
       CHOOSE_GC_FG( r, r->tabBar.frame);
 
-    /* Tabbar line + left of tab */
-    XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-            points, 3, CoordModeOrigin);
     /* Rounded tab tops :) */
     XDrawArcs( r->Xdisplay, r->tabBar.win, r->tabBar.gc, arcs, 2);
     /* Top line of ATAB */
     XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
             points + 3, 2, CoordModeOrigin);
-    /* Right of ATAB + tab bar line */
-    XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-            points + 5, 3, CoordModeOrigin);
+    if ( is_active )
+    {
+      /* Right of ATAB + tab bar line */
+      XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+              points + 5, 3, CoordModeOrigin);
+      /* Tabbar line + left of tab */
+      XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+              points, 3, CoordModeOrigin);
+    }
+    else {
+      /* Right of ATAB + tab bar line */
+      XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+              points + 5, 2, CoordModeOrigin);
+      /* Tabbar line + left of tab */
+      XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+              points+1, 2, CoordModeOrigin);
+    }
 
     /* choose a color for the title */
     if( page == ATAB(r) )
