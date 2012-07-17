@@ -65,9 +65,9 @@
  * Parameters to draw top tabbar
  */
 /* space between top window border and tab top */
-#define TAB_TOPOFF	((int) 0)
+#define TAB_TOPOFF	((int) 1)
 /* Extra height of the active tab. */
-#define ATAB_EXTRA	((int) (ATAB_EXTRA_PERCENT * r->TermWin.FHEIGHT / 100))
+#define ATAB_EXTRA	((int) 0) 
 /* space between top window border and tab bottom */
 #define TAB_BOTOFF	((int) (r->TermWin.FHEIGHT + 2*TXT_MARGIN) + ATAB_EXTRA)
 
@@ -81,7 +81,9 @@
 #define TXT_YOFF	((int) (r->TermWin.FHEIGHT + TXT_MARGIN + TAB_BORDER))
 
 /* width of No. idx tab */
-#define TAB_WIDTH(idx)	((int) (TAB_BORDER + r->vts[idx]->tab_width))
+#define TAB_WIDTH	((int) (TAB_BORDER + r->tab_width))
+
+#define TAB_PADDING     ((int)TAB_BOTOFF/4)
 
 /* size of button */
 #define BTN_WIDTH	((int) 18)
@@ -156,13 +158,13 @@ void
 rxvt_tabbar_set_visible_tabs (rxvt_t* r, Bool refresh)
 {
 	int i=0;
-	short	tabWidth, oldTabWidth = PVTS(r,0)->tab_width;
+	short	tabWidth, oldTabWidth = r->tab_width;
 
         assert( LTAB(r) >= 0 );
         tabWidth = rxvt_tab_width(r);  
         /* set all tabs to a uniform width, based on the number of tabs */
 	for (i = 0; i <= LTAB(r); i ++) 
-                PVTS(r,i)->tab_width = tabWidth;
+                r->tab_width = tabWidth;
         if( refresh || tabWidth != oldTabWidth )
                 /* Refresh all tabs */
                 XClearArea( r->Xdisplay, r->tabBar.win, 0, 0, TAB_SPACE, 0, True);
@@ -332,7 +334,7 @@ draw_title (rxvt_t* r, int x, int y, int tnum, Region region)
     XRectangle rect;
     rect.x = x;
     rect.y = y - r->TermWin.pheight;
-    rect.width = PVTS(r, tnum)->tab_width - 2*TXT_XOFF;
+    rect.width = r->tab_width - 2*TXT_XOFF;
     rect.height = r->TermWin.pheight;
 
     clipRegion = XCreateRegion();
@@ -494,15 +496,172 @@ refresh_tabbar_tab( rxvt_t *r, int page)
     rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "Refreshing tabbar title of page %d\n", page));
 
     for( i=0, rect.x=TAB_BORDER; i < page; i++)
-	rect.x += TAB_WIDTH(i);
+	rect.x += TAB_WIDTH;
     
     rect.y	= TAB_TOPOFF;
-    rect.width	= TAB_WIDTH( page);
+    rect.width	= TAB_WIDTH;
     rect.height	= 0;
 
     /* Clear the tab completely, and send expose events */
     XClearArea( r->Xdisplay, r->tabBar.win,
 	    rect.x, rect.y, rect.width, rect.height, True);
+}
+
+static inline void
+rxvt_draw_tab( rxvt_t* r, int page, Region region )
+{
+    /*
+     * Draw the tab corresponding to "page".
+     */
+    XArc	 	arcs[2];
+    XPoint	 	points[8];
+    int x = TAB_PADDING + TAB_BORDER + page * TAB_WIDTH;
+    int TAB_SPREAD = TAB_BOTOFF / 4;
+    Bool is_active = (page == ATAB(r));
+    /*
+     * Color the tab as active if the tab is active 
+     * or
+     * activity/inactivity is detected by the MonitorTab macro
+     */
+
+    /* 
+     * disable activity/inactivity notification if current tab is
+     * active tab
+     */
+    if (is_active && 
+        (PVTS(r,page)->monitor_tab == TAB_MON_NOTIFICATION))
+    {
+      rxvt_msg (DBG_INFO, DBG_MACROS,  
+              "Macro MonitorTab: monitored tab %i is now the active tab", page);
+      PVTS(r,page)->monitor_tab = TAB_MON_OFF;
+    }
+    /*
+     * Draw the tab, and bottom line of the tabbar.
+     */
+
+    int clear = 0,	/* use ClearArea or FillRectangle */
+        pt_idx = 0; /* point index */
+
+    if (ISSET_OPTION(r, Opt2_bottomTabbar))
+    {
+        /* Top tabbar line & left of active tab */
+        SET_POINT( points[0], 0, TAB_TOPOFF);
+        SET_POINT( points[1], x - TAB_SPREAD, TAB_TOPOFF);
+        SET_POINT( points[2], x, TAB_BOTOFF - TAB_RADIUS);
+
+        /* Arc coordinates for rounded tab tops :) */
+        SET_ARC( arcs[0], x, TAB_BOTOFF - 2*TAB_RADIUS,
+                2*TAB_RADIUS, 2*TAB_RADIUS, 180*64, 113*64);
+        SET_ARC( arcs[1],
+                x + r->tab_width - 2*TAB_RADIUS,
+                TAB_BOTOFF - 2*TAB_RADIUS,
+                2*TAB_RADIUS, 2*TAB_RADIUS, 270*64, 67*64);
+
+        /* Coordinates for horizontal line below tab. */
+        SET_POINT( points[3], x + TAB_RADIUS, TAB_BOTOFF);
+        SET_POINT( points[4],
+                x + r->tab_width - TAB_RADIUS, TAB_BOTOFF);
+
+        /* Right line of tab and top of tabbar. */
+        SET_POINT( points[5],
+                x + r->tab_width, TAB_BOTOFF - TAB_RADIUS);
+        SET_POINT( points[6], x + r->tab_width + TAB_SPREAD, TAB_TOPOFF);
+        SET_POINT( points[7], TWIN_WIDTH(r), TAB_TOPOFF);
+    }
+
+    else    /* if (ISSET_OPTION(r, Opt2_bottomTabbar)) */
+    {
+        /*
+         * Coordinates for the draw bottom line to the left of active
+         * tab, and left verticle line of the active tab.
+         */
+        SET_POINT( points[0], 0, TAB_BOTOFF);
+        SET_POINT( points[1], x - TAB_SPREAD, TAB_BOTOFF);
+        SET_POINT( points[2], x, TAB_TOPOFF + TAB_RADIUS);
+
+        /* Arc coordinates for rounded tab tops :) */
+        SET_ARC( arcs[0], x, TAB_TOPOFF,
+                2*TAB_RADIUS, 2*TAB_RADIUS, 180*64, -113*64);
+        SET_ARC( arcs[1],
+                x + r->tab_width - 2*TAB_RADIUS, TAB_TOPOFF,
+                2*TAB_RADIUS, 2*TAB_RADIUS, 90*64, -67*64);
+
+        /* Coordinates for horizontal line above tab. */
+        SET_POINT( points[3], x + TAB_RADIUS, TAB_TOPOFF);
+        SET_POINT( points[4],
+                x + r->tab_width - TAB_RADIUS, TAB_TOPOFF);
+
+        /*
+         * Coordinates for vertical line on the right of the active tab, and
+         * bottom line of tab bar after active tab.
+         */
+        SET_POINT( points[5], x + r->tab_width,
+                TAB_TOPOFF + TAB_RADIUS);
+        /* set remaining point to draw at a 22.5 degree angle */
+        SET_POINT( points[6], x + r->tab_width + TAB_SPREAD, TAB_BOTOFF);
+        SET_POINT( points[7], TWIN_WIDTH(r), TAB_BOTOFF);
+    }
+
+#ifdef BACKGROUND_IMAGE
+    if( r->tabBar.hasPixmap  && ISSET_OPTION(r, Opt_tabPixmap))
+        clear = 1;  /* use background image */
+#endif
+#ifdef TRANSPARENT
+    if ( ( r->h->am_transparent || r->h->am_pixmap_trans ) &&
+        ISSET_OPTION(r, Opt_transparent_tabbar))
+        clear = 1;  /* transparent override background image */
+#endif
+
+    if (!clear && is_active)
+    {
+        /*
+         * Fill the tab with the background color.
+         */
+        CHOOSE_GC_FG( r, r->tabBar.bg);
+    }
+    else
+    {
+        CHOOSE_GC_FG( r, r->tabBar.ibg);
+    }
+    XFillArcs( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+            arcs, 2);
+    XFillPolygon( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+            points+1, 6, Convex, CoordModeOrigin);
+
+    /*
+     * Finally, draw the (boundary) of ATAB here.
+     */
+      CHOOSE_GC_FG( r, r->tabBar.frame);
+
+    /* Tabbar line + left of tab */
+    XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+            points, 3, CoordModeOrigin);
+    /* Rounded tab tops :) */
+    XDrawArcs( r->Xdisplay, r->tabBar.win, r->tabBar.gc, arcs, 2);
+    /* Top line of ATAB */
+    XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+            points + 3, 2, CoordModeOrigin);
+    /* Right of ATAB + tab bar line */
+    XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+            points + 5, 3, CoordModeOrigin);
+
+    /* choose a color for the title */
+    if( page == ATAB(r) )
+    {
+      CHOOSE_GC_FG( r, r->tabBar.fg);
+    }
+    else
+    {
+      CHOOSE_GC_FG( r, r->tabBar.ifg);
+      /* Highlight the tab if necessary */
+      if( PVTS(r, page)->highlight )
+          rxvt_tabbar_highlight_tab( r, page, True);
+
+    }
+
+    /* Draw the tab title. */
+    draw_title (r, x + TXT_XOFF, ATAB_EXTRA / 2 + TXT_YOFF,
+            page, region);
 }
 
 /*
@@ -513,7 +672,8 @@ refresh_tabbar_tab( rxvt_t *r, int page)
 static void 
 rxvt_draw_tabs (rxvt_t* r, Region region)
 {
-    int	    page, x;
+    int	    page;
+
 
     if (LTAB(r) < 0 || NOT_WIN(r->tabBar.win) || !r->tabBar.state)
 	/*
@@ -521,241 +681,23 @@ rxvt_draw_tabs (rxvt_t* r, Region region)
 	 */
 	return;
 
-    /* Sanatization */
-    assert( LTAB(r)  >= 0	 );
-
-
     if (IS_REGION(region))
 	XSetRegion( r->Xdisplay, r->tabBar.gc, region);
 
-    for( page=0, x=TAB_BORDER; page <= LTAB(r); page++)
+    /* draw tabs in reverse order so overlaps go to the left tab */
+    for( page=LTAB(r); page >= 0; page-- )
     {
-	/*
-	 * Draw the tab corresponding to "page".
-	 */
-	XArc	 	arcs[2];
-	XPoint	 	points[8];
-
-	/*
-	 * Color the tab as active if the tab is active 
-	 * or
-	 * activity/inactivity is detected by the MonitorTab macro
-	 */
-
-	if( (page == ATAB(r)) || 
- 	    ((NOT_NULL(&PVTS(r, page)->monitor_tab)) && 
-	     (PVTS(r,page)->monitor_tab == TAB_MON_NOTIFICATION)) 
-	  )
-	{
-	    /* 
-	     * disable activity/inactivity notification if current tab is
-	     * active tab
-	     */
-	    if ((page == ATAB(r)) && 
-		(PVTS(r,page)->monitor_tab == TAB_MON_NOTIFICATION))
-	    {
-	      rxvt_msg (DBG_INFO, DBG_MACROS,  
-		      "Macro MonitorTab: monitored tab %i is now the active tab", page);
-	      PVTS(r,page)->monitor_tab = TAB_MON_OFF;
-            }
-	    /*
-	     * Draw the active tab, and bottom line of the tabbar.
-	     */
-
-	    int		    clear = 0;	/* use ClearArea or FillRectangle */
-
-	    if (ISSET_OPTION(r, Opt2_bottomTabbar))
-	    {
-		/* Top tabbar line & left of active tab */
-		SET_POINT( points[0], 0, TAB_TOPOFF);
-		SET_POINT( points[1], x, TAB_TOPOFF);
-		SET_POINT( points[2], x, TAB_BOTOFF - TAB_RADIUS);
-
-		/* Arc coordinates for rounded tab tops :) */
-		SET_ARC( arcs[0], x, TAB_BOTOFF - 2*TAB_RADIUS,
-			2*TAB_RADIUS, 2*TAB_RADIUS, 180*64, 90*64);
-		SET_ARC( arcs[1],
-			x + AVTS(r)->tab_width - 2*TAB_RADIUS,
-			TAB_BOTOFF - 2*TAB_RADIUS,
-			2*TAB_RADIUS, 2*TAB_RADIUS, 270*64, 90*64);
-
-		/* Coordinates for horizontal line below tab. */
-		SET_POINT( points[3], x + TAB_RADIUS, TAB_BOTOFF);
-		SET_POINT( points[4],
-			x + AVTS(r)->tab_width - TAB_RADIUS, TAB_BOTOFF);
-
-		/* Right line of tab and top of tabbar. */
-		SET_POINT( points[5],
-			x + AVTS(r)->tab_width, TAB_BOTOFF - TAB_RADIUS);
-		SET_POINT( points[6], x + AVTS(r)->tab_width, TAB_TOPOFF);
-		SET_POINT( points[7], TWIN_WIDTH(r), TAB_TOPOFF);
-	    }
-
-	    else    /* if (ISSET_OPTION(r, Opt2_bottomTabbar)) */
-	    {
-		/*
-		 * Coordinates for the draw bottom line to the left of active
-		 * tab, and left verticle line of the active tab.
-		 */
-		SET_POINT( points[0], 0, TAB_BOTOFF);
-		SET_POINT( points[1], x, TAB_BOTOFF);
-		SET_POINT( points[2], x, TAB_TOPOFF + TAB_RADIUS);
-
-		/* Arc coordinates for rounded tab tops :) */
-		SET_ARC( arcs[0], x, TAB_TOPOFF,
-			2*TAB_RADIUS, 2*TAB_RADIUS, 180*64, -90*64);
-		SET_ARC( arcs[1],
-			x + AVTS(r)->tab_width - 2*TAB_RADIUS, TAB_TOPOFF,
-			2*TAB_RADIUS, 2*TAB_RADIUS, 90*64, -90*64);
-
-		/* Coordinates for horizontal line above tab. */
-		SET_POINT( points[3], x + TAB_RADIUS, TAB_TOPOFF);
-		SET_POINT( points[4],
-			x + AVTS(r)->tab_width - TAB_RADIUS, TAB_TOPOFF);
-
-		/*
-		 * Coordinates for vertical line on the right of the active tab, and
-		 * bottom line of tab bar after active tab.
-		 */
-		SET_POINT( points[5], x + AVTS(r)->tab_width,
-			TAB_TOPOFF + TAB_RADIUS);
-		SET_POINT( points[6], x + AVTS(r)->tab_width, TAB_BOTOFF);
-		SET_POINT( points[7], TWIN_WIDTH(r), TAB_BOTOFF);
-	    }
-
-#ifdef BACKGROUND_IMAGE
-	    if( r->tabBar.hasPixmap  && ISSET_OPTION(r, Opt_tabPixmap))
-		clear = 1;  /* use background image */
-#endif
-#ifdef TRANSPARENT
-	    if ( ( r->h->am_transparent || r->h->am_pixmap_trans ) &&
-		ISSET_OPTION(r, Opt_transparent_tabbar))
-		clear = 1;  /* transparent override background image */
-#endif
-
-	    if( !clear )
-	    {
-		/*
-		 * Fill the ATAB with the background color.
-		 */
-		CHOOSE_GC_FG( r, r->tabBar.bg);
-
-		XFillArcs( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-			arcs, 2);
-		XFillPolygon( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-			points+1, 6, Convex, CoordModeOrigin);
-
-	    }
-
-
-	    /*
-	     * Finally, draw the (boundary) of ATAB here.
-	     */
-	    CHOOSE_GC_FG( r, r->tabBar.frame);
-
-	    /* Tabbar line + left of ATAB */
-	    XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-		    points, 3, CoordModeOrigin);
-	    /* Rounded tab tops :) */
-	    XDrawArcs( r->Xdisplay, r->tabBar.win, r->tabBar.gc, arcs, 2);
-	    /* Top line of ATAB */
-	    XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-		    points + 3, 2, CoordModeOrigin);
-	    /* Right of ATAB + tab bar line */
-	    XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-		    points + 5, 3, CoordModeOrigin);
-
-	    /* Draw the tab title. */
-	    CHOOSE_GC_FG( r, r->tabBar.fg);
-	    draw_title (r, x + TXT_XOFF, ATAB_EXTRA / 2 + TXT_YOFF,
-		    page, region);
-	}
-
-	else /* if( page == ATAB(r) ) */
-	{
-	    /*
-	     * Draw the inactive tabs.
-	     */
-	    CHOOSE_GC_FG( r, r->tabBar.delimit);
-
-	    if (ISSET_OPTION(r, Opt2_bottomTabbar))
-	    {
-		/* Left vertical line */
-		XDrawLine( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-			x, TAB_TOPOFF + 1, /* Dont' interupt tabbar line */
-			x, TAB_BOTOFF - TAB_RADIUS - ATAB_EXTRA);
-
-		/* Draw rounded tab bottoms :). */
-		SET_ARC( arcs[0], x, TAB_BOTOFF - ATAB_EXTRA - 2*TAB_RADIUS,
-			2*TAB_RADIUS, 2*TAB_RADIUS, 180*64, 90*64);
-		SET_ARC( arcs[1],
-			x + PVTS(r, page)->tab_width - 2*TAB_RADIUS,
-			TAB_BOTOFF - ATAB_EXTRA - 2*TAB_RADIUS,
-			2*TAB_RADIUS, 2*TAB_RADIUS, 270*64, 90*64);
-		XDrawArcs( r->Xdisplay, r->tabBar.win, r->tabBar.gc, arcs, 2);
-
-		/* Horizontal line below tab. */
-		XDrawLine( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-			x + TAB_RADIUS, TAB_BOTOFF - ATAB_EXTRA,
-			x + PVTS(r, page)->tab_width - TAB_RADIUS,
-			TAB_BOTOFF - ATAB_EXTRA);
-
-		/* Right vertical line */
-		XDrawLine( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-			x + PVTS(r, page)->tab_width,
-			TAB_BOTOFF - TAB_RADIUS - ATAB_EXTRA,
-			x + PVTS(r, page)->tab_width, TAB_TOPOFF + 1);
-	    }
-
-	    else /* if (ISSET_OPTION(r, Opt2_bottomTabbar)) */
-	    {
-		/* Left vertical line */
-		XDrawLine( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-			x, TAB_BOTOFF-1, x,
-			TAB_TOPOFF + TAB_RADIUS + ATAB_EXTRA);
-
-		/* Draw rounded tab tops :). */
-		SET_ARC( arcs[0], x, TAB_TOPOFF + ATAB_EXTRA,
-			2*TAB_RADIUS, 2*TAB_RADIUS, 180*64, -90*64);
-		SET_ARC( arcs[1],
-			x + PVTS(r, page)->tab_width - 2*TAB_RADIUS,
-			TAB_TOPOFF + ATAB_EXTRA,
-			2*TAB_RADIUS, 2*TAB_RADIUS, 90*64, -90*64);
-		XDrawArcs( r->Xdisplay, r->tabBar.win, r->tabBar.gc, arcs, 2);
-
-		/* Horizontal line above tab. */
-		XDrawLine( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-			x + TAB_RADIUS, TAB_TOPOFF + ATAB_EXTRA,
-			x + PVTS(r, page)->tab_width - TAB_RADIUS,
-			TAB_TOPOFF + ATAB_EXTRA);
-
-		/* Right vertical line */
-		XDrawLine( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-			x + PVTS(r, page)->tab_width,
-			TAB_TOPOFF + TAB_RADIUS + ATAB_EXTRA,
-			x + PVTS(r, page)->tab_width, TAB_BOTOFF-1);
-	    }
-
-	    /* Choose GC foreground for tab title. */
-	    CHOOSE_GC_FG( r, r->tabBar.ifg);
-	    draw_title (r, x + TXT_XOFF,
-		    ISSET_OPTION(r, Opt2_bottomTabbar) ?
-		     	    TXT_YOFF : ATAB_EXTRA + TXT_YOFF,
-		    page, region);
-
-	    /* Highlight the tab if necessary */
-	    if( PVTS(r, page)->highlight )
-		rxvt_tabbar_highlight_tab( r, page, True);
-	}
-
-
-	x += TAB_WIDTH(page);
+        if ( page != ATAB(r) )
+        {
+          rxvt_draw_tab( r, page, region );
+        }
     }
+    /* draw the active tab last so it overlaps any neighbors */
+    rxvt_draw_tab( r, ATAB(r), region );
 
     if (IS_REGION(region))
 	XSetClipMask( r->Xdisplay, r->tabBar.gc, None);
 }
-
 
 /* EXTPROTO */
 void
@@ -786,7 +728,7 @@ rxvt_tabbar_highlight_tab (rxvt_t* r, short page, Bool force)
     if ( page == ATAB(r))
 	return;
 
-    for (i = 0, x=TAB_BORDER; i < page; x += TAB_WIDTH(i), i++);
+    for (i = 0, x=TAB_BORDER; i < page; x += TAB_WIDTH, i++);
 
     /* set dash-line attributes */
     XGetGCValues( r->Xdisplay, r->tabBar.gc,
@@ -802,7 +744,7 @@ rxvt_tabbar_highlight_tab (rxvt_t* r, short page, Bool force)
     sy = ISSET_OPTION(r, Opt2_bottomTabbar) ?
 		TAB_TOPOFF + 1			:
 		TAB_TOPOFF + ATAB_EXTRA + 1;
-    rw = PVTS(r, page)->tab_width - TXT_XOFF;
+    rw = r->tab_width - TXT_XOFF;
     rh = TAB_BOTOFF - TAB_TOPOFF - ATAB_EXTRA - 3;
 
     XDrawRectangle (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
@@ -1421,16 +1363,10 @@ rxvt_tabbar_set_title (rxvt_t* r, short page, const unsigned char TAINTED * str)
     {
 	rxvt_free (PVTS(r, page)->tab_title);
 	PVTS(r, page)->tab_title = n_title;
-
-#ifdef HAVE_TABS
-	/* Compute the new width of the tab */
-	PVTS(r, page)->tab_width = rxvt_tab_width (r);
-#endif
     }
 
 #ifdef HAVE_TABS
     /* adjust tabs */
-//    rxvt_tabbar_set_visible_tabs (r, True); /* shouldn't affect tab width */
     refresh_tabbar_tab(r, page);
 #endif
 
@@ -1518,9 +1454,8 @@ rxvt_tabbar_resize (rxvt_t* r)
     XMoveResizeWindow  (r->Xdisplay, r->tabBar.win,
 	sx, sy, TWIN_WIDTH(r), rxvt_tabbar_rheight (r));
 
-    /* recompute width of each tab */
-    for (i = 0; i <= LTAB(r); i ++)
-	PVTS(r, i)->tab_width = rxvt_tab_width (r);
+    /* recompute tab width */
+    r->tab_width = rxvt_tab_width (r);
 
     /* adjust visible tabs */
     rxvt_tabbar_set_visible_tabs (r, False);
@@ -1641,7 +1576,7 @@ rxvt_tabbar_dispatcher (rxvt_t* r, XButtonEvent* ev)
 	register int	w = 0;
 	register int	i;
 	for ( i = 0; w < x && i <= LTAB(r); i++)
-	    w += TAB_WIDTH(i);
+	    w += TAB_WIDTH;
 
 	if( w - TAB_BORDER >= x )
 	{
@@ -1705,7 +1640,7 @@ rxvt_tabbar_button_release( rxvt_t *r, XButtonEvent *ev)
 		w < ev->x && droppedTab <= LTAB(r);
 		droppedTab++
 	    )
-	    w += TAB_WIDTH( droppedTab );
+	    w += TAB_WIDTH;
 
 	rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "Dragged tab %d to %d (%d, %d)\n", r->tabClicked, droppedTab - 1, ev->x, ev->y));
 
@@ -1748,9 +1683,9 @@ rxvt_tabbar_expose (rxvt_t* r, XEvent *ev)
 			XRectangle rect;
 			Region region_temp = XCreateRegion ();
 
-			rect.x	= ev->xexpose.x;
+			rect.x	= ev->xexpose.x - TAB_BOTOFF/2;
 			rect.y	= ev->xexpose.y;
-			rect.width	= ev->xexpose.width;
+			rect.width	= ev->xexpose.width + TAB_BOTOFF;
 			rect.height	= ev->xexpose.height;
 
 			/* Not sure this is necessary,
@@ -2181,11 +2116,11 @@ rxvt_tabbar_rheight (rxvt_t* r)
 
 
 /* EXTPROTO */
-unsigned int
+inline unsigned int
 rxvt_tab_width (rxvt_t *r)
 {
-		int twidth = (TAB_SPACE - TAB_BORDER) / (LTAB(r) + 1) - TAB_BORDER;
-		return min(twidth, MAX_TAB_PIXEL_WIDTH);
+		return min ((TAB_SPACE - TAB_PADDING*2 - TAB_BORDER) / 
+                             (LTAB(r) + 1) - TAB_BORDER, MAX_TAB_PIXEL_WIDTH);
 }
 
 
@@ -2331,6 +2266,7 @@ rxvt_tabbar_move_tab (rxvt_t* r, short newPage)
     short   curPage	= ATAB(r);
     short   i;
 
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "Moving tab %d to %d\n", curPage, newPage));
     
     if (
         0 == LTAB(r) ||			/* Only one tab (no move possible) */
@@ -2378,7 +2314,7 @@ rxvt_tabbar_move_tab (rxvt_t* r, short newPage)
     if (PTAB(r) == newPage) PTAB(r) = curPage;
 
     /* refresh tabbar */
-    if ( newPage < LTAB(r))
+    if ( newPage <= LTAB(r))
     {
 	/*
 	 * If the width of newPage is different from that of curPage, then all

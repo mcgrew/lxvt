@@ -3009,8 +3009,8 @@ rxvt_create_termwin( rxvt_t *r, int page,
     putenv (r->h->env_tabtitle);
 #endif
 
-#ifdef HAVE_TAB
-    PVTS(r, page)->tab_width = rxvt_tab_width (r);
+#ifdef HAVE_TABS
+    r->tab_width = rxvt_tab_width (r);
 #endif
 
     /*
