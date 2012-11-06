@@ -751,7 +751,9 @@ rxvt_tabbar_highlight_tab (rxvt_t* r, short page, Bool force)
     if ( page == ATAB(r))
 	return;
 
-    for (i = 0, x=TAB_BORDER; i < page; x += TAB_WIDTH, i++);
+    for (i = 0, x=TAB_PADDING + TAB_BORDER; i < page; x += TAB_WIDTH, i++) {
+      // intentionally empty
+    }
 
     /* set dash-line attributes */
     XGetGCValues( r->Xdisplay, r->tabBar.gc,
@@ -765,10 +767,9 @@ rxvt_tabbar_highlight_tab (rxvt_t* r, short page, Bool force)
     /* Set dimensions of the highlighted tab rectangle */
     sx = x + ( TXT_XOFF / 2 );
     sy = ISSET_OPTION(r, Opt2_bottomTabbar) ?
-		TAB_TOPOFF + 1			:
-		TAB_TOPOFF + ATAB_EXTRA + 1;
+      TAB_TOPOFF + 3 : TAB_TOPOFF + ATAB_EXTRA + 2;
     rw = r->tab_width - TXT_XOFF;
-    rh = TAB_BOTOFF - TAB_TOPOFF - ATAB_EXTRA - 3;
+    rh = TAB_BOTOFF - TAB_TOPOFF - ATAB_EXTRA - 4;
 
     XDrawRectangle (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
 	sx, sy, rw, rh);
