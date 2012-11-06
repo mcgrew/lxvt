@@ -516,7 +516,7 @@ rxvt_draw_tab( rxvt_t* r, int page, Region region )
     XArc	 	arcs[2];
     XPoint	 	points[8];
     int x = TAB_PADDING + TAB_BORDER + page * TAB_WIDTH;
-    int TAB_SPREAD = TAB_BOTOFF / 4;
+    const int TAB_SPREAD = TAB_BOTOFF / 4;
     Bool is_active = (page == ATAB(r));
     /*
      * Color the tab as active if the tab is active 
@@ -552,13 +552,13 @@ rxvt_draw_tab( rxvt_t* r, int page, Region region )
         SET_POINT( points[1], x - TAB_SPREAD, TAB_TOPOFF);
         SET_POINT( points[2], x, TAB_BOTOFF - TAB_RADIUS);
 
-        /* Arc coordinates for rounded tab tops :) */
+        /* Arc coordinates for rounded tab tops */
         SET_ARC( arcs[0], x, TAB_BOTOFF - 2*TAB_RADIUS,
-                2*TAB_RADIUS, 2*TAB_RADIUS, 180*64, 113*64);
+                2*TAB_RADIUS, 2*TAB_RADIUS, 180*64, 90*64);
         SET_ARC( arcs[1],
                 x + r->tab_width - 2*TAB_RADIUS,
                 TAB_BOTOFF - 2*TAB_RADIUS,
-                2*TAB_RADIUS, 2*TAB_RADIUS, 270*64, 67*64);
+                2*TAB_RADIUS, 2*TAB_RADIUS, 270*64, 90*64);
 
         /* Coordinates for horizontal line below tab. */
         SET_POINT( points[3], x + TAB_RADIUS, TAB_BOTOFF);
@@ -590,10 +590,10 @@ rxvt_draw_tab( rxvt_t* r, int page, Region region )
 
         /* Arc coordinates for rounded tab tops :) */
         SET_ARC( arcs[0], x, TAB_TOPOFF,
-                2*TAB_RADIUS, 2*TAB_RADIUS, 180*64, -113*64);
+                2*TAB_RADIUS, 2*TAB_RADIUS, 180*64, -90*64);
         SET_ARC( arcs[1],
                 x + r->tab_width - 2*TAB_RADIUS, TAB_TOPOFF,
-                2*TAB_RADIUS, 2*TAB_RADIUS, 90*64, -67*64);
+                2*TAB_RADIUS, 2*TAB_RADIUS, 90*64, -90*64);
 
         /* Coordinates for horizontal line above tab. */
         SET_POINT( points[3], x + TAB_RADIUS, TAB_TOPOFF);
