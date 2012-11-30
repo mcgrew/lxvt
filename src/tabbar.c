@@ -85,9 +85,11 @@
 
 #define TAB_PADDING     ((int)TAB_BOTOFF/4)
 
+#define PLUS_BTN_TOPOFF ((int) 4)
+
 /* size of button */
-#define BTN_WIDTH	((int) 18)
-#define BTN_HEIGHT	((int) 18)
+#define BTN_WIDTH   ((int) TAB_BOTOFF - PLUS_BTN_TOPOFF )
+#define BTN_HEIGHT  ((int) TAB_BOTOFF - PLUS_BTN_TOPOFF )
 /* space between top window border and button top */
 #define BTN_TOPOFF	(max (0, ((TAB_BOTOFF - BTN_HEIGHT)/2)))
 /* space between buttons */
@@ -95,9 +97,7 @@
 
 /* width of tabbar that can be used to draw tabs */
 #define TAB_SPACE	(TWIN_WIDTH(r)- \
-    (ISSET_OPTION(r, Opt2_hideButtons) ? 0 : 1) * \
-    (BTN_COUNT * (BTN_WIDTH+BTN_SPACE) + TAB_BORDER))
-
+      BTN_WIDTH - TAB_BOTOFF / 4)
 
 #define CHOOSE_GC_FG(R, PIXCOL)	\
     XSetForeground ((R)->Xdisplay, (R)->tabBar.gc, (PIXCOL))
@@ -144,6 +144,26 @@ extern char **cmd_argv;
 
 #ifdef HAVE_TABS
 
+static inline unsigned long 
+rxvt_get_color( rxvt_t *r, const unsigned long color ) {
+  XColor returnvalue;
+  returnvalue.red   = (color >> 32) & 0xffff;
+  returnvalue.green = (color >> 16) & 0xffff;
+  returnvalue.blue  = (color      ) & 0xffff;
+  returnvalue.flags = DoRed | DoGreen | DoBlue;
+  XAllocColor( r->Xdisplay, r->Xcmap, &returnvalue );
+  return returnvalue.pixel;
+}
+
+static inline void 
+rxvt_set_line_width( rxvt_t *r, const int width ) {
+  XSetLineAttributes( r->Xdisplay, r->tabBar.gc, width,
+                      r->tabBar.gc->values.line_style,
+                      r->tabBar.gc->values.cap_style,
+                      r->tabBar.gc->values.join_style );
+                      
+}
+
 /* EXTPROTO */
 /*
  * If refresh is true, then the respective parts of the tabbar are redrawn.
@@ -167,7 +187,7 @@ rxvt_tabbar_set_visible_tabs (rxvt_t* r, Bool refresh)
                 r->tab_width = tabWidth;
         if( refresh || tabWidth != oldTabWidth )
                 /* Refresh all tabs */
-                XClearArea( r->Xdisplay, r->tabBar.win, 0, 0, TAB_SPACE, 0, True);
+                XClearArea( r->Xdisplay, r->tabBar.win, 0, 0, 0, 0, True);
 }
 
 
@@ -493,7 +513,8 @@ refresh_tabbar_tab( rxvt_t *r, int page)
     int		i;
     XRectangle	rect;
 
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "Refreshing tabbar title of page %d\n", page));
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "Refreshing tabbar title of page %d\n",
+                  page));
 
     for( i=0, rect.x=TAB_BORDER; i < page; i++)
 	rect.x += TAB_WIDTH;
@@ -787,81 +808,170 @@ rxvt_tabbar_highlight_tab (rxvt_t* r, short page, Bool force)
 void
 rxvt_tabbar_draw_buttons (rxvt_t* r)
 {
-    register int    i;
-    int		    topoff;
+  register int    i;
+  int        topoff;
+  XArc      arcs[1];
+  XPoint  points[10];
+  int x = TAB_PADDING + TAB_BORDER + (LTAB(r)+1) * TAB_WIDTH;
+  const int TAB_SPREAD = TAB_BOTOFF / 4;
 
+  if (LTAB(r) < 0)
+    return;
+  if (NOT_WIN(r->tabBar.win))
+    return;
+  if (!r->tabBar.state)
+    return;
 
-    if (LTAB(r) < 0)
-	return;
-    if (NOT_WIN(r->tabBar.win))
-	return;
-    if (!r->tabBar.state)
-	return;
+  topoff = BTN_TOPOFF;
 
-    /* whether the buttons are hidden */
-    if (ISSET_OPTION(r, Opt2_hideButtons))
-	return;
+  /* draw new add tab button (firefox style) */
+  CHOOSE_GC_FG (r, r->tabBar.fg);
+  if (ISSET_OPTION(r, Opt2_bottomTabbar))
+  {
+      /* Arc coordinates for rounded tab tops */
+      SET_ARC( arcs[0],
+              x + r->tab_width - 2*TAB_RADIUS,
+              TAB_BOTOFF - 2*TAB_RADIUS,
+              2*TAB_RADIUS, 2*TAB_RADIUS, 270*64, 90*64);
 
-    topoff = BTN_TOPOFF;
+      /* Top tabbar line & left of active tab */
+      SET_POINT( points[0], x - TAB_SPREAD, TAB_TOPOFF);
+      SET_POINT( points[1], x - TAB_SPREAD, TAB_BOTOFF - TAB_RADIUS);
 
-    CHOOSE_GC_FG (r, r->tabBar.fg);
-    for (i = BTN_COUNT; i >= 1; i--)
-    {
-#ifdef HAVE_LIBXPM
-	register int	curimg = BTN_COUNT - i;
+      /* Coordinates for horizontal line below tab. */
+      SET_POINT( points[2], x - TAB_SPREAD, TAB_BOTOFF);
+      SET_POINT( points[3],
+              x + r->tab_width - TAB_RADIUS, TAB_BOTOFF);
 
-	switch (curimg)
-	{
-	    case TERM_BTN:
-			 /* 08-08-20 Jehan: 
-			  * As there is no more maximum tab, there is no disable image here. */
-			 img[TERM_BTN] = img_e[TERM_BTN];
-		break;
-	    case CLOSE_BTN:
-		img[CLOSE_BTN] = (ISSET_OPTION(r, Opt2_protectSecondary) &&
-				PRIMARY != AVTS(r)->current_screen) ?
-			img_d[CLOSE_BTN] : img_e[CLOSE_BTN];
-		break;
-	}
-#endif
-	if (IS_PIXMAP(img[BTN_COUNT-i]))
-	{
-	    XCopyArea  (r->Xdisplay, img[BTN_COUNT-i], r->tabBar.win,
-		r->tabBar.gc, 0, 0,
-		BTN_WIDTH, BTN_HEIGHT,
-		TWIN_WIDTH(r)-(i*(BTN_WIDTH+BTN_SPACE)), topoff);
-	}
-    }
+      /* Right line of tab and top of tabbar. */
+      SET_POINT( points[4],
+              x + r->tab_width, TAB_BOTOFF - TAB_RADIUS);
+      SET_POINT( points[5], x + r->tab_width + TAB_SPREAD, TAB_TOPOFF);
+      SET_POINT( points[6], 0, 0 );
+      SET_POINT( points[7], 0, 0 );
+      SET_POINT( points[8], 0, 0 );
+      SET_POINT( points[9], 0, 0 );
+  }
 
+  else    /* if (ISSET_OPTION(r, Opt2_bottomTabbar)) */
+  {
+      /* Arc coordinates for rounded tab tops */
+      SET_ARC( arcs[0],
+              x + BTN_WIDTH + TAB_PADDING - 2*TAB_RADIUS, PLUS_BTN_TOPOFF,
+              2*TAB_RADIUS, 2*TAB_RADIUS, 90*64, -90*64);
 
-    CHOOSE_GC_FG (r, r->tabBar.frame);
-    for (i = BTN_COUNT; i >= 1; i--)
-    {
-	/*
-	XDrawRectangle (r->Xdisplay, r->tabBar.win,
-	    r->tabBar.gc,
-	    TWIN_WIDTH(r)-(i*(BTN_WIDTH+BTN_SPACE)), topoff,
-	    BTN_WIDTH, BTN_HEIGHT);
-	*/
-	int	sx = TWIN_WIDTH(r) - (i*(BTN_WIDTH+BTN_SPACE));
-	/* draw top line */
-	XDrawLine (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-	    sx, topoff, sx + BTN_WIDTH, topoff);
-	/* draw left line */
-	XDrawLine (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-	    sx, topoff, sx, topoff + BTN_HEIGHT);
-    }
-    CHOOSE_GC_FG (r, r->tabBar.delimit);
-    for (i = BTN_COUNT; i >= 1; i--)
-    {
-	int	sx = TWIN_WIDTH(r) - (i*(BTN_WIDTH+BTN_SPACE));
-	/* draw bottom line */
-	XDrawLine (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-	    sx, topoff+BTN_HEIGHT, sx+BTN_WIDTH, topoff+BTN_HEIGHT);
-	/* draw right line */
-	XDrawLine (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-	    sx+BTN_WIDTH, topoff, sx+BTN_WIDTH, topoff+BTN_HEIGHT);
-    }
+      /*
+       * Coordinates for the draw bottom line to the left of active
+       * tab, and left verticle line of the active tab.
+       */
+      SET_POINT( points[0], x - TAB_SPREAD, TAB_BOTOFF);
+      SET_POINT( points[1], x - TAB_SPREAD, PLUS_BTN_TOPOFF + TAB_RADIUS);
+
+      /* Coordinates for horizontal line above tab. */
+      SET_POINT( points[2], x - TAB_SPREAD, PLUS_BTN_TOPOFF);
+      SET_POINT( points[3],
+              x + BTN_WIDTH - TAB_RADIUS + TAB_PADDING, PLUS_BTN_TOPOFF);
+
+      /*
+       * Coordinates for vertical line on the right of the active tab, and
+       * bottom line of tab bar after active tab.
+       */
+      SET_POINT( points[4], x + BTN_WIDTH + TAB_PADDING,
+              TAB_TOPOFF + 3 + TAB_RADIUS);
+      /* set remaining point to draw at a 22.5 degree angle */
+      SET_POINT( points[5], x + BTN_WIDTH + TAB_PADDING+ TAB_SPREAD, TAB_BOTOFF);
+      /* set points for the '+' sign */
+      SET_POINT( points[6], x + ( BTN_WIDTH + TAB_PADDING ) / 2 , TAB_BOTOFF - BTN_HEIGHT + 2 );
+      SET_POINT( points[7], x + ( BTN_WIDTH + TAB_PADDING ) / 2 , TAB_BOTOFF - 2 );
+      SET_POINT( points[8], x + ( BTN_WIDTH + TAB_PADDING ) / 6 + 1, 
+                   PLUS_BTN_TOPOFF + (TAB_BOTOFF - PLUS_BTN_TOPOFF)/2 );
+      SET_POINT( points[9], x + ( BTN_WIDTH + TAB_PADDING ) * 5 / 6, 
+                 PLUS_BTN_TOPOFF + (TAB_BOTOFF - PLUS_BTN_TOPOFF)/2 );
+  }
+  CHOOSE_GC_FG( r, r->tabBar.bg);
+  XFillArcs( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+          arcs, 1);
+  XFillPolygon( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+          points, 6, Convex, CoordModeOrigin);
+
+  /*
+   * Finally, draw the (boundary) of ATAB here.
+   */
+  CHOOSE_GC_FG( r, r->tabBar.frame);
+
+  /* Rounded tab tops :) */
+  XDrawArcs( r->Xdisplay, r->tabBar.win, r->tabBar.gc, arcs, 1);
+  /* Top line of ATAB */
+  XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+          points + 2, 2, CoordModeOrigin);
+  /* Right of ATAB + tab bar line */
+  XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+          points + 4, 2, CoordModeOrigin);
+
+  /* Draw the '+' sign */
+  CHOOSE_GC_FG( r, rxvt_get_color( r, 0x44444444ffffL ));
+  rxvt_set_line_width( r, 3 );
+  XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+          points + 6, 2, CoordModeOrigin);
+  XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+          points + 8, 2, CoordModeOrigin);
+  rxvt_set_line_width( r, 0 );
+  /* Tabbar line + left of tab */
+//  XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+//          points+1, 2, CoordModeOrigin);
+//    XCopyArea  (r->Xdisplay, img[TERM_BTN], r->tabBar.win,
+//                r->tabBar.gc, 3, 3, BTN_WIDTH-5, BTN_HEIGHT-5,
+//                x+3, topoff+5);
+
+//  for (: = BTN_COUNT; i >= 1; i--)
+//  {
+//#ifdef HAVE_LIBXPM
+//    register int  curimg = BTN_COUNT - i;
+//
+//    switch (curimg)
+//    {
+////      case TERM_BTN:
+////        img[TERM_BTN] = img_e[TERM_BTN];
+////        break;
+//      case CLOSE_BTN:
+//        img[CLOSE_BTN] = (ISSET_OPTION(r, Opt2_protectSecondary) &&
+//          PRIMARY != AVTS(r)->current_screen) ?
+//        img_d[CLOSE_BTN] : img_e[CLOSE_BTN];
+//        break;
+//    }
+//#endif
+//    if (IS_PIXMAP(img[BTN_COUNT-i]))
+//    {
+//      XCopyArea  (r->Xdisplay, img[BTN_COUNT-i], r->tabBar.win,
+//                  r->tabBar.gc, 0, 0,
+//                  BTN_WIDTH, BTN_HEIGHT,
+//                  TWIN_WIDTH(r)-(i*(BTN_WIDTH+BTN_SPACE)), topoff);
+//    }
+//  }
+//
+//
+//  CHOOSE_GC_FG (r, r->tabBar.frame);
+//  for (i = BTN_COUNT; i >= 1; i--)
+//  {
+//    int  sx = TWIN_WIDTH(r) - (i*(BTN_WIDTH+BTN_SPACE));
+//    /* draw top line */
+//    XDrawLine (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+//        sx, topoff, sx + BTN_WIDTH, topoff);
+//    /* draw left line */
+//    XDrawLine (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+//        sx, topoff, sx, topoff + BTN_HEIGHT);
+//  }
+//  CHOOSE_GC_FG (r, r->tabBar.delimit);
+//  for (i = BTN_COUNT; i >= 1; i--)
+//  {
+//    int  sx = TWIN_WIDTH(r) - (i*(BTN_WIDTH+BTN_SPACE));
+//    /* draw bottom line */
+//    XDrawLine (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+//        sx, topoff+BTN_HEIGHT, sx+BTN_WIDTH, topoff+BTN_HEIGHT);
+//    /* draw right line */
+//    XDrawLine (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+//        sx+BTN_WIDTH, topoff, sx+BTN_WIDTH, topoff+BTN_HEIGHT);
+//  }
 }
 
 
@@ -887,7 +997,7 @@ rxvt_tabbar_init (rxvt_t* r)
     assert (NULL != r->TermWin.font);
     assert (r->TermWin.FHEIGHT > 0);
 
-    /* resource string are static, needn't to free */
+    /* resource string are static, needn't free */
     r->tabBar.rsfg =
     r->tabBar.rsbg =
     r->tabBar.rsifg =
@@ -916,7 +1026,8 @@ rxvt_adjust_fd_number( rxvt_t* r )
 
     for( i=0; i <= LTAB(r); i++ )
 	MAX_IT( num_fds, PVTS(r, i)->cmd_fd );
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "LTAB=%d, stderr_fd=%d, num_fds=%d. ", LTAB(r), STDERR_FILENO, num_fds));
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "LTAB=%d, stderr_fd=%d, num_fds=%d. ", 
+                  LTAB(r), STDERR_FILENO, num_fds));
 
     MAX_IT( num_fds, r->Xfd );
 #ifdef USE_FIFO
@@ -949,9 +1060,8 @@ rxvt_append_page( rxvt_t* r, const char TAINTED *title, const char *command )
     int	    num_cmd_args = 0; /* Number of args we got from parsing command */
     char**  argv;
 
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "rxvt_append_page( r, %d, %s, %s )\n", title ? title : "(nil)", command ? command : "(nil)" ));
-
-    //LTAB(r)++;
+//    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "rxvt_append_page( r, %d, %s, %s )\n", 
+//                  title ? title : "(nil)", command ? command : "(nil)" ));
 
     /*
      * Use command specified with -e only if we're opening the first tab, or the
@@ -989,7 +1099,9 @@ rxvt_append_page( rxvt_t* r, const char TAINTED *title, const char *command )
 	else
 	    argv = NULL;
     }
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "\tForking command=%s, argv[0]=%s\n", command ? command : "(nil)", ( argv && argv[0] ) ? argv[0] : "(nil)" ));
+    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "\tForking command=%s, argv[0]=%s\n", 
+                  command ? command : "(nil)", 
+                  ( argv && argv[0] ) ? argv[0] : "(nil)" ));
 
     /*
      * Set the tab title.
@@ -1496,139 +1608,99 @@ rxvt_tabbar_resize (rxvt_t* r)
 void
 rxvt_tabbar_dispatcher (rxvt_t* r, XButtonEvent* ev)
 {
-    register int    x, y, z, but;
+  register int    x, y, z, but;
 
-    x = ev->x;
-    y = ev->y;
-    but = -1;
-    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "click in (%d,%d)\n", x, y));
+  x = ev->x;
+  y = ev->y;
+  but = -1;
+  rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "click in (%d,%d)\n", x, y));
 
-    /* Button4/Button5 of wheel mouse activate the left/right tab as
-       Mozilla firefox */
-    switch ( ev->button )
-    {
+  /* Button4/Button5 of wheel mouse activate the left/right tab as
+     Mozilla firefox */
+  switch ( ev->button )
+  {
 #ifdef HAVE_MENUBAR
-	case Button3:
-	    if( r->h->popupMenu[0] )
-	    {
-		int	x, y;
-		Window	unused_cr;
+    case Button3:
+      if( r->h->popupMenu[0] )
+      {
+        int  x, y;
+        Window  unused_cr;
 
-		r->h->showingMenu |= POPUP_MENU;
+        r->h->showingMenu |= POPUP_MENU;
 
-		XTranslateCoordinates( r->Xdisplay, ev->window,
-			r->TermWin.parent, ev->x, ev->y, &x, &y, &unused_cr);
+        XTranslateCoordinates( r->Xdisplay, ev->window,
+          r->TermWin.parent, ev->x, ev->y, &x, &y, &unused_cr);
 
-		r->h->ActiveMenu = r->h->popupMenu[0];
+        r->h->ActiveMenu = r->h->popupMenu[0];
 
-		r->h->ActiveMenu->x = x;
-		r->h->ActiveMenu->y = y;
+        r->h->ActiveMenu->x = x;
+        r->h->ActiveMenu->y = y;
 
-		XDefineCursor(r->Xdisplay, AVTS(r)->vt, r->h->bar_pointer);
-		rxvt_menu_show(r);
-		return;
-	    }
-	    break;
+        XDefineCursor(r->Xdisplay, AVTS(r)->vt, r->h->bar_pointer);
+        rxvt_menu_show(r);
+        return;
+      }
+      break;
 #endif
-	case Button4: /* activate left tab */
-	    if (0 != ATAB(r))
-		rxvt_activate_page (r, ATAB(r)-1);
-	    else if (0 != LTAB(r))
-		rxvt_activate_page (r, LTAB(r));
-	    return;
+    case Button4: /* activate left tab */
+      if (0 != ATAB(r))
+        rxvt_activate_page (r, ATAB(r)-1);
+      else if (0 != LTAB(r))
+        rxvt_activate_page (r, LTAB(r));
+      return;
 
-	case Button5: /* activate right tab */
-	    if( ATAB(r) != LTAB(r) )
-		rxvt_activate_page( r, ATAB(r) + 1 );
-	    else if( 0 != LTAB(r) )
-		rxvt_activate_page( r, 0 );
-	    return;
+    case Button5: /* activate right tab */
+      if( ATAB(r) != LTAB(r) )
+        rxvt_activate_page( r, ATAB(r) + 1 );
+      else if( 0 != LTAB(r) )
+        rxvt_activate_page( r, 0 );
+      return;
 
-	default:
-	    break;
-    }
+    default:
+      break;
+  }
 
+  if ( x < TWIN_WIDTH(r) && LTAB(r) >= 0)
+  {
+    register int  w = 0;
+    register int  i;
+    for ( i = 0; w < x && i <= LTAB(r); i++)
+      w += TAB_WIDTH;
 
-    /* let's decode where the user click */
-    z = TWIN_WIDTH(r) - x;
-    if (
-	    NOTSET_OPTION(r, Opt2_hideButtons)
-	    && z < BTN_COUNT*(BTN_WIDTH+BTN_SPACE)
-	    && (z%(BTN_WIDTH+BTN_SPACE)) > BTN_SPACE
-       )
+    if( w - TAB_BORDER >= x )
     {
-	but = BTN_COUNT - 1 - z/(BTN_WIDTH+BTN_SPACE);
+      but = i - 1;
 
-	/* we should only handle left-mouse-button clicks */
-	if ( ev->button != Button1 )
-	{
-	    rxvt_dbgmsg ((DBG_VERBOSE, DBG_TABBAR,"skip non-left-mouse-button click\n"));
-	    return;
-	}
+      rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR,"click on tab %d\n", but));
+      switch( ev->button )
+      {
+        case Button1:
+          /* activate the selected tab */
+          rxvt_activate_page (r, but);
+          r->tabClicked = but;
+          break;
 
-	rxvt_dbgmsg ((DBG_VERBOSE, DBG_TABBAR,"click on button %d\n",but));
-	switch(but)
-	{
-	    case CLOSE_BTN : /* delete the active vt if it's in primary screen */
-		if(
-		    NOTSET_OPTION(r, Opt2_protectSecondary) ||
-		    (
-		       ISSET_OPTION(r, Opt2_protectSecondary) &&
-		       PRIMARY == AVTS(r)->current_screen
-		    )
-		  )
-		{
-		    /*
-		     * 2006-09-19 gi1242: If user presses the X button, don't
-		     * hold the tab open, regardless of exit status.
-		     */
-		    AVTS(r)->holdOption &= ~(HOLD_NORMALBIT|HOLD_STATUSBIT);
-		    rxvt_kill_page (r, ATAB(r));
-		}
-		break;
-
-	    case TERM_BTN: /* create a new vt*/
-		rxvt_append_page (r, NULL, NULL);
-		break;
-
-	    default :
-		break;
-	}
+          /* what's the point of this? */
+//        case Button2:
+//          /* change tab title on middle click */
+//          if (NULL != r->selection.text)
+//            rxvt_tabbar_set_title (r, but, r->selection.text);
+//          break;
+      }
     }
-    else if ( x < TAB_SPACE && LTAB(r) >= 0)
+    if ( x > w && x < (w + BTN_WIDTH + TAB_BOTOFF / 4 + TAB_PADDING))
     {
-	register int	w = 0;
-	register int	i;
-	for ( i = 0; w < x && i <= LTAB(r); i++)
-	    w += TAB_WIDTH;
-
-	if( w - TAB_BORDER >= x )
-	{
-	    but = i - 1;
-
-	    rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR,"click on tab %d\n", but));
-	    switch( ev->button )
-	    {
-		case Button1:
-		    /* activate the selected tab */
-		    rxvt_activate_page (r, but);
-		    r->tabClicked = but;
-		    break;
-
-		case Button2:
-		    /* change tab title on middle click */
-		    if (NULL != r->selection.text)
-			rxvt_tabbar_set_title (r, but, r->selection.text);
-		    break;
-	    }
-	}
-	else
-	{
-	    /* change tab title of active tab on middle click */
-	    if ((Button2 == ev->button) && (NULL != r->selection.text))
-		rxvt_tabbar_set_title (r, ATAB(r), r->selection.text);
-	}
+      rxvt_append_page (r, NULL, NULL);
+      rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR,"click on add button"));
     }
+    /* what's the point of this? */
+//    else
+//    {
+//      /* change tab title of active tab on middle click */
+//      if ((Button2 == ev->button) && (NULL != r->selection.text))
+//        rxvt_tabbar_set_title (r, ATAB(r), r->selection.text);
+//    }
+  }
 }
 
 
@@ -1646,24 +1718,18 @@ rxvt_tabbar_button_release( rxvt_t *r, XButtonEvent *ev)
     do	/* while( 0 ) */
     {
 	if (
-		ev->button != Button1		    /* Ignore everything except
-						       left clicks */
+		ev->button != Button1		    /* Ignore everything except left clicks */
 		|| r->tabClicked == -1		    /* If we're not dragging a
-						       tab then nothing to do */
+                                     tab then nothing to do */
 		|| ev->y < 0
-		|| ev->y > rxvt_tabbar_rheight( r ) /* If we drag off the
-						       tabbar. (Coordinates in
-						       ev are relative to the
-						       tabbar window) */
+		|| ev->y > rxvt_tabbar_rheight( r ) /* If we drag off the tabbar. 
+                                           (Coordinates in ev are relative to 
+                                           the tabbar window) */
 	   )
 	    break;
 
 	/* Figure out where the user released the mouse */
-	for (
-		droppedTab = w = 0;
-		w < ev->x && droppedTab <= LTAB(r);
-		droppedTab++
-	    )
+	for ( droppedTab = w = 0; w < ev->x && droppedTab <= LTAB(r); droppedTab++)
 	    w += TAB_WIDTH;
 
 	rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "Dragged tab %d to %d (%d, %d)\n", r->tabClicked, droppedTab - 1, ev->x, ev->y));
@@ -1723,11 +1789,11 @@ rxvt_tabbar_expose (rxvt_t* r, XEvent *ev)
 	}
 	else XClearWindow (r->Xdisplay, r->tabBar.win);
 
-	/* draw the tabs and blank space*/
-	rxvt_draw_tabs(r, region);
-
 	/* draw the buttons */
 	rxvt_tabbar_draw_buttons (r);
+
+	/* draw the tabs and blank space*/
+	rxvt_draw_tabs(r, region);
 
 	if (IS_REGION(region))
 		XDestroyRegion( region );
