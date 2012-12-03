@@ -1729,7 +1729,7 @@ rxvt_fade_color( rxvt_t* r, const XColor *xcol,
 	faded_xcol.green = (xcol->green	/ 100) * r->TermWin.fade;
 	faded_xcol.blue  = (xcol->blue	/ 100) * r->TermWin.fade;
 
-	rxvt_alloc_color( r, &faded_xcol, "Faded" );
+	rxvt_alloc_color( r, &faded_xcol );
 
 	*pix_return = faded_xcol.pixel;
 # ifdef XFT_SUPPORT
@@ -2093,7 +2093,7 @@ rxvt_init_colors( rxvt_t *r )
 	xcol[1].pixel = r->pixColorsFocus[Color_scroll];
 # ifdef PREFER_24BIT
 	xcol[0].red = xcol[0].green = xcol[0].blue = 0xffffu;
-	rxvt_alloc_color( r, &(xcol[0]), "White" );
+	rxvt_alloc_color( r, &(xcol[0]) );
 	XQueryColors(r->Xdisplay, XCMAP, &(xcol[1]), 1);
 # else
 	xcol[0].pixel = WhitePixel(r->Xdisplay, XSCREEN);
@@ -2104,7 +2104,7 @@ rxvt_init_colors( rxvt_t *r )
 	xcol[2].red	= xcol[1].red	/ 2;
 	xcol[2].green	= xcol[1].green / 2;
 	xcol[2].blue	= xcol[1].blue	/ 2;
-	if( !rxvt_alloc_color( r, &(xcol[2]), "Color_bottomShadow" ) )
+	if( !rxvt_alloc_color( r, &(xcol[2]) ) )
 	    rxvt_copy_color( r, Color_bottomShadow, Color_Black );
 
 	else
@@ -2119,7 +2119,7 @@ rxvt_init_colors( rxvt_t *r )
 	xcol[1].green	= min(xcol[0].green, (xcol[1].green * 7) / 5);
 	xcol[1].blue	= min(xcol[0].blue,  (xcol[1].blue  * 7) / 5);
 
-	if( !rxvt_alloc_color(r, &(xcol[1]), "Color_topShadow") )
+	if( !rxvt_alloc_color(r, &(xcol[1])) )
 	    rxvt_copy_color( r, Color_topShadow, Color_White );
 	else
 	    rxvt_set_color( r, Color_topShadow, &xcol[1] );

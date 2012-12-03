@@ -531,6 +531,8 @@ typedef struct
     unsigned long   bg;	    /* background, grey25 */
     unsigned long   ifg;    /* inactive tab foreground, black */
     unsigned long   ibg;    /* inactive tab background, grey */
+    unsigned long   plus_color; /* color for the 'add new tab' button */
+    unsigned long   close_color; /* color for the close buttons */
     char	    rsfg;   /* fg resource has changed */
     char	    rsbg;   /* bg resource has changed */
     char	    rsifg;  /* ifg resource has changed */

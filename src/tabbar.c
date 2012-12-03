@@ -144,26 +144,6 @@ extern char **cmd_argv;
 
 #ifdef HAVE_TABS
 
-static inline unsigned long 
-rxvt_get_color( rxvt_t *r, const unsigned long color ) {
-  XColor returnvalue;
-  returnvalue.red   = (color >> 32) & 0xffff;
-  returnvalue.green = (color >> 16) & 0xffff;
-  returnvalue.blue  = (color      ) & 0xffff;
-  returnvalue.flags = DoRed | DoGreen | DoBlue;
-  XAllocColor( r->Xdisplay, r->Xcmap, &returnvalue );
-  return returnvalue.pixel;
-}
-
-static inline void 
-rxvt_set_line_width( rxvt_t *r, const int width ) {
-  XSetLineAttributes( r->Xdisplay, r->tabBar.gc, width,
-                      r->tabBar.gc->values.line_style,
-                      r->tabBar.gc->values.cap_style,
-                      r->tabBar.gc->values.join_style );
-                      
-}
-
 /* EXTPROTO */
 /*
  * If refresh is true, then the respective parts of the tabbar are redrawn.
@@ -909,7 +889,7 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
           points + 4, 2, CoordModeOrigin);
 
   /* Draw the '+' sign */
-  CHOOSE_GC_FG( r, rxvt_get_color( r, 0x44444444ffffL ));
+  CHOOSE_GC_FG( r, rxvt_alloc_pixel_from_int( r, 0x4444ff ));
   rxvt_set_line_width( r, 3 );
   XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
           points + 6, 2, CoordModeOrigin);
@@ -1843,11 +1823,11 @@ rxvt_tabbar_show (rxvt_t* r)
 void
 rxvt_tabbar_create (rxvt_t* r)
 {
-    XColor	    color, bgcolor;
-    XGCValues	    gcvalue;
+    XColor      color, bgcolor;
+    XGCValues      gcvalue;
     unsigned long   gcmask;
     register int    i;
-    int		    sx, sy;
+    int        sx, sy;
 #ifdef HAVE_LIBXPM
     XpmAttributes   xpm_attr;
     /*
@@ -1865,118 +1845,112 @@ rxvt_tabbar_create (rxvt_t* r)
     /* initialize the colors */
     if (XDEPTH <= 2)
     {
-	r->tabBar.fg = r->pixColorsFocus[Color_fg];
-	r->tabBar.bg = r->pixColorsFocus[Color_bg];
-	r->tabBar.ifg = r->pixColorsFocus[Color_fg];
-	r->tabBar.ibg = r->pixColorsFocus[Color_bg];
-	r->tabBar.frame = r->pixColorsFocus[Color_bg];
-	r->tabBar.delimit = r->pixColorsFocus[Color_fg];
+    r->tabBar.fg = r->pixColorsFocus[Color_fg];
+    r->tabBar.bg = r->pixColorsFocus[Color_bg];
+    r->tabBar.ifg = r->pixColorsFocus[Color_fg];
+    r->tabBar.ibg = r->pixColorsFocus[Color_bg];
+    r->tabBar.frame = r->pixColorsFocus[Color_bg];
+    r->tabBar.delimit = r->pixColorsFocus[Color_fg];
     }
     else 
     {
-	/* create the foreground color */
-	if(
-	     r->h->rs[Rs_tabfg] && 
-	     rxvt_parse_alloc_color (r, &color, r->h->rs[Rs_tabfg])
-	  )
-	{
-	    r->tabBar.fg = color.pixel;
+  /* create the foreground color */
+  if(
+       r->h->rs[Rs_tabfg] && 
+       rxvt_parse_alloc_color (r, &color, r->h->rs[Rs_tabfg])
+    )
+  {
+      r->tabBar.fg = color.pixel;
 #ifdef XFT_SUPPORT
-	    if( ISSET_OPTION( r, Opt_xft ) )
-		rxvt_alloc_xft_color( r, &color, &r->tabBar.xftfg );
+      if( ISSET_OPTION( r, Opt_xft ) )
+    rxvt_alloc_xft_color( r, &color, &r->tabBar.xftfg );
 #endif
-	}
+  }
 
-	else
-	{
-	    r->tabBar.fg = r->pixColorsFocus[Color_Black];
+  else
+  {
+      r->tabBar.fg = r->pixColorsFocus[Color_Black];
 #ifdef XFT_SUPPORT
-	    if( ISSET_OPTION( r, Opt_xft ) )
-		r->tabBar.xftfg = r->xftColorsFocus[Color_Black];
+      if( ISSET_OPTION( r, Opt_xft ) )
+    r->tabBar.xftfg = r->xftColorsFocus[Color_Black];
 #endif
-	}
+  }
 
-	/*
-	 * create the background color
-	 */
-	if(
-	     r->h->rs[Rs_tabbg]	&&
-	     rxvt_parse_alloc_color (r, &color, r->h->rs[Rs_tabbg])
-	  )
-	{
-	    r->tabBar.bg = color.pixel;
-	}
+  /*
+   * create the background color
+   */
+  if(
+       r->h->rs[Rs_tabbg]  &&
+       rxvt_parse_alloc_color (r, &color, r->h->rs[Rs_tabbg])
+    )
+  {
+      r->tabBar.bg = color.pixel;
+  }
 
-	else
-	{
-	    color.red	= 0xd300;
-	    color.green = 0xd300;
-	    color.blue	= 0xdd00;
-	    if( rxvt_alloc_color (r, &color, "Active_Tab") )
-		r->tabBar.bg = color.pixel;
-	    else
-		r->tabBar.bg = VTBG(r);
-	}
+  else
+  {
+      if( rxvt_alloc_color_from_int(r, 0xd3d3dd, &color ))
+    r->tabBar.bg = color.pixel;
+      else
+    r->tabBar.bg = VTBG(r);
+  }
 
-	/* create the tab frame color */
-	r->tabBar.frame = r->pixColorsFocus[Color_fg];
+  /* create the tab frame color */
+  r->tabBar.frame = r->pixColorsFocus[Color_fg];
 
-	/* create the inactive tab foreground color */
-	if(
-	     r->h->rs[Rs_itabfg]
-	     && rxvt_parse_alloc_color (r, &color, r->h->rs[Rs_itabfg])
-	  )
-	{
-	    r->tabBar.ifg = color.pixel;
+  /* create the inactive tab foreground color */
+  if(
+       r->h->rs[Rs_itabfg]
+       && rxvt_parse_alloc_color (r, &color, r->h->rs[Rs_itabfg])
+    )
+  {
+      r->tabBar.ifg = color.pixel;
 #ifdef XFT_SUPPORT
-	    if( ISSET_OPTION( r, Opt_xft ) )
-		rxvt_alloc_xft_color( r, &color, &r->tabBar.xftifg );
+      if( ISSET_OPTION( r, Opt_xft ) )
+    rxvt_alloc_xft_color( r, &color, &r->tabBar.xftifg );
 #endif
-	}
-	else
-	{
-	    r->tabBar.ifg = r->pixColorsFocus[Color_Black];
+  }
+  else
+  {
+      r->tabBar.ifg = r->pixColorsFocus[Color_Black];
 #ifdef XFT_SUPPORT
-	    if( ISSET_OPTION( r, Opt_xft ) )
-		r->tabBar.xftifg = r->xftColorsFocus[Color_Black];
+      if( ISSET_OPTION( r, Opt_xft ) )
+    r->tabBar.xftifg = r->xftColorsFocus[Color_Black];
 #endif
-	}
+  }
 
-	/* create the inactive tab background color */
-	if(
-	     r->h->rs[Rs_itabbg]
-	     && rxvt_parse_alloc_color( r, &color, r->h->rs[Rs_itabbg] )
-	  )
-	    r->tabBar.ibg = color.pixel;
+  /* create the inactive tab background color */
+  if(
+       r->h->rs[Rs_itabbg]
+       && rxvt_parse_alloc_color( r, &color, r->h->rs[Rs_itabbg] )
+    )
+      r->tabBar.ibg = color.pixel;
 
-	else
-	{
-	    color.red	= 0xa100;
-	    color.green = 0xa100;
-	    color.blue	= 0xac00;
-	    if( rxvt_alloc_color( r, &color, "Inactive_Tab_Bg" ) )
-		r->tabBar.ibg = color.pixel;
-	    else
-		r->tabBar.ibg = VTBG(r);
-	}
+  else
+  {
+      if( rxvt_alloc_color_from_int( r, 0xa1a1ac, &color))
+    r->tabBar.ibg = color.pixel;
+      else
+    r->tabBar.ibg = VTBG(r);
+  }
 
-	/* create the delimit color (average of 3*fg & bg) */
-	color.pixel	= r->pixColorsFocus[Color_fg];
-	XQueryColor( r->Xdisplay, XCMAP, &color );
+  /* create the delimit color (average of 3*fg & bg) */
+  color.pixel  = r->pixColorsFocus[Color_fg];
+  XQueryColor( r->Xdisplay, XCMAP, &color );
 
-	bgcolor.pixel	= r->pixColorsFocus[Color_bg];
-	XQueryColor( r->Xdisplay, XCMAP, &bgcolor );
+  bgcolor.pixel  = r->pixColorsFocus[Color_bg];
+  XQueryColor( r->Xdisplay, XCMAP, &bgcolor );
 
-	color.red   = ( bgcolor.red	+ 3 * color.red	    ) / 4;
-	color.green = ( bgcolor.green	+ 3 * color.green   ) / 4;
-	color.blue  = ( bgcolor.blue	+ 3 * color.blue    ) / 4;
+  color.red   = ( bgcolor.red  + 3 * color.red      ) / 4;
+  color.green = ( bgcolor.green  + 3 * color.green   ) / 4;
+  color.blue  = ( bgcolor.blue  + 3 * color.blue    ) / 4;
 
-	if( rxvt_alloc_color( r, &color, "Tab_Delimit" ) )
-	    r->tabBar.delimit = color.pixel;
-	else
-	    r->tabBar.delimit = VTFG(r);
+  if( rxvt_alloc_color( r, &color ))
+      r->tabBar.delimit = color.pixel;
+  else
+      r->tabBar.delimit = VTFG(r);
 
-	rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "Delimit color: %hx, %hx, %hx (#%lx)\n", color.red, color.green, color.blue, r->tabBar.delimit));
+  rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "Delimit color: %hx, %hx, %hx (#%lx)\n", color.red, color.green, color.blue, r->tabBar.delimit));
     }
 
 
@@ -1986,21 +1960,21 @@ rxvt_tabbar_create (rxvt_t* r)
     sy += rxvt_menubar_height (r);
 #endif
     if (ISSET_OPTION(r, Opt2_bottomTabbar))
-	sy += VT_HEIGHT(r);
+  sy += VT_HEIGHT(r);
     /*
      * create the window of the tabbar. Use ifg and ibg for the background of
      * the tabBar so that the active tab stands out better.
      */
     r->tabBar.win = XCreateSimpleWindow( r->Xdisplay, r->TermWin.parent,
-			sx, sy, TWIN_WIDTH(r), rxvt_tabbar_rheight( r ),
-			0, r->tabBar.ifg, r->tabBar.ibg );
+      sx, sy, TWIN_WIDTH(r), rxvt_tabbar_rheight( r ),
+      0, r->tabBar.ifg, r->tabBar.ibg );
     assert(IS_WIN(r->tabBar.win));
 
 #ifdef XFT_SUPPORT
     if (ISSET_OPTION(r, Opt_xft))
     {
-	r->tabBar.xftwin = XftDrawCreate (r->Xdisplay, r->tabBar.win,
-				XVISUAL, XCMAP);
+  r->tabBar.xftwin = XftDrawCreate (r->Xdisplay, r->tabBar.win,
+        XVISUAL, XCMAP);
     }
 #endif
 
@@ -2013,79 +1987,79 @@ rxvt_tabbar_create (rxvt_t* r)
     r->tabBar.hasPixmap = False;    /* initialize it to None */
     if (
 #ifdef TRANSPARENT
-	    /* Transparency overrides background */
-	    !(
-		ISSET_OPTION(r, Opt_transparent)
-		&& ISSET_OPTION(r, Opt_transparent_tabbar)
-	     )
-	    &&
+      /* Transparency overrides background */
+      !(
+    ISSET_OPTION(r, Opt_transparent)
+    && ISSET_OPTION(r, Opt_transparent_tabbar)
+       )
+      &&
 #endif
-	    r->h->rs[Rs_tabbarPixmap]
+      r->h->rs[Rs_tabbarPixmap]
        )
     {
-	long	w = 0, h = 0;
-	Pixmap	pmap;
+  long  w = 0, h = 0;
+  Pixmap  pmap;
 
-	pmap = rxvt_load_pixmap (r, r->h->rs[Rs_tabbarPixmap], &w, &h);
-	if (IS_PIXMAP(pmap))
-	{
-	    XSetWindowBackgroundPixmap (r->Xdisplay, r->tabBar.win, pmap);
-	    XFreePixmap( r->Xdisplay, pmap);
+  pmap = rxvt_load_pixmap (r, r->h->rs[Rs_tabbarPixmap], &w, &h);
+  if (IS_PIXMAP(pmap))
+  {
+      XSetWindowBackgroundPixmap (r->Xdisplay, r->tabBar.win, pmap);
+      XFreePixmap( r->Xdisplay, pmap);
 
-	    r->tabBar.hasPixmap = True;
-	}
-	else r->tabBar.hasPixmap = False;
+      r->tabBar.hasPixmap = True;
+  }
+  else r->tabBar.hasPixmap = False;
     }
 #endif
 
 #ifdef TRANSPARENT
     if (
-	    ISSET_OPTION(r, Opt_transparent)
-	    && ISSET_OPTION(r, Opt_transparent_tabbar)
+      ISSET_OPTION(r, Opt_transparent)
+      && ISSET_OPTION(r, Opt_transparent_tabbar)
        )
-	XSetWindowBackgroundPixmap( r->Xdisplay, r->tabBar.win, ParentRelative);
+  XSetWindowBackgroundPixmap( r->Xdisplay, r->tabBar.win, ParentRelative);
 #endif
 
 
     /* create the GC for the tab window */
-    gcvalue.foreground	= r->tabBar.fg;
-    gcvalue.line_width	= 0;
-    gcvalue.line_style	= LineSolid;
-    gcvalue.cap_style	= CapButt;
-    gcvalue.join_style	= JoinMiter;
-    gcvalue.arc_mode	= ArcChord;	/* For coloring ATAB */
-    gcvalue.fill_style	= FillSolid;	/* Probably default ... */
+    gcvalue.foreground  = r->tabBar.fg;
+    gcvalue.line_width  = 0;
+    gcvalue.line_style  = LineSolid;
+    gcvalue.cap_style  = CapButt;
+    gcvalue.join_style  = JoinMiter;
+    gcvalue.arc_mode  = ArcChord;  /* For coloring ATAB */
+    gcvalue.fill_style  = FillSolid;  /* Probably default ... */
 
     gcmask = GCForeground | GCLineWidth
-		| GCLineStyle | GCCapStyle | GCJoinStyle
-		| GCArcMode | GCFillStyle;
+    | GCLineStyle | GCCapStyle | GCJoinStyle
+    | GCArcMode | GCFillStyle;
 
 #ifdef TRANSPARENT
     /* set background color when there's no transparent */
     if (!(( r->h->am_transparent || r->h->am_pixmap_trans) &&
-	ISSET_OPTION(r, Opt_transparent_tabbar)))
+  ISSET_OPTION(r, Opt_transparent_tabbar)))
 #endif
 #ifdef BACKGROUND_IMAGE
-	/* set background color when there's no bg image */
-	if ( ! r->tabBar.hasPixmap )
+  /* set background color when there's no bg image */
+  if ( ! r->tabBar.hasPixmap )
 #endif
-	{
-	    gcvalue.background = r->tabBar.bg;
-	    gcmask |= GCBackground;
-	}
+  {
+      gcvalue.background = r->tabBar.bg;
+      gcmask |= GCBackground;
+  }
 
     r->tabBar.gc = XCreateGC (r->Xdisplay, r->tabBar.win,
-	gcmask, &gcvalue);
+  gcmask, &gcvalue);
     assert (IS_GC(r->tabBar.gc));
 
 
     XDefineCursor (r->Xdisplay, r->tabBar.win, r->h->bar_pointer);
     XSelectInput (r->Xdisplay, r->tabBar.win,
-	    ExposureMask | ButtonPressMask | ButtonReleaseMask
+      ExposureMask | ButtonPressMask | ButtonReleaseMask
 #ifdef HAVE_MENUBAR
-		| Button3MotionMask
+    | Button3MotionMask
 #endif
-	);
+  );
 
 #ifdef XFT_SUPPORT
     if (NOTSET_OPTION(r, Opt_xft))
@@ -2102,24 +2076,24 @@ rxvt_tabbar_create (rxvt_t* r)
     xpm_attr.depth = XDEPTH;
     xpm_attr.closeness = 65535;
     xpm_attr.valuemask = XpmVisual | XpmColormap | XpmDepth |
-	XpmCloseness | XpmReturnPixels | XpmColorSymbols;
+  XpmCloseness | XpmReturnPixels | XpmColorSymbols;
 #endif
 
     /* now, create the buttons */
     for (i = 0; i < BTN_COUNT; i++)
     {
 #ifdef HAVE_LIBXPM
-	XpmCreatePixmapFromData (r->Xdisplay, r->tabBar.win,
-	    xpm_name[i], &img_e[i], &img_emask[i], &xpm_attr);
-	assert (IS_PIXMAP(img_e[i]));
-	XpmCreatePixmapFromData (r->Xdisplay, r->tabBar.win,
-	    xpm_d_name[i], &img_d[i], &img_dmask[i], &xpm_attr);
-	assert (IS_PIXMAP(img_d[i]));
+  XpmCreatePixmapFromData (r->Xdisplay, r->tabBar.win,
+      xpm_name[i], &img_e[i], &img_emask[i], &xpm_attr);
+  assert (IS_PIXMAP(img_e[i]));
+  XpmCreatePixmapFromData (r->Xdisplay, r->tabBar.win,
+      xpm_d_name[i], &img_d[i], &img_dmask[i], &xpm_attr);
+  assert (IS_PIXMAP(img_d[i]));
 #else
-	img[i] = XCreatePixmapFromBitmapData (r->Xdisplay,
-	    r->tabBar.win, (char *) xbm_name[i], BTN_WIDTH, BTN_HEIGHT,
-	    r->tabBar.fg, r->tabBar.bg, XDEPTH);
-	assert (IS_PIXMAP(img[i]));
+  img[i] = XCreatePixmapFromBitmapData (r->Xdisplay,
+      r->tabBar.win, (char *) xbm_name[i], BTN_WIDTH, BTN_HEIGHT,
+      r->tabBar.fg, r->tabBar.bg, XDEPTH);
+  assert (IS_PIXMAP(img[i]));
 #endif
     }
 

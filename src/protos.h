@@ -154,7 +154,10 @@ void             rxvt_recolour_cursor             __PROTO((rxvt_t *r));
 int              rxvt_alloc_xft_color             __PROTO((rxvt_t *r, const XColor *xcol, XftColor* xftcolor));
 #endif
 int              rxvt_parse_alloc_color           __PROTO((rxvt_t* r, XColor *screen_in_out, const char* colour));
-int              rxvt_alloc_color                 __PROTO((rxvt_t* r, XColor *screen_in_out, const char* colour));
+int              rxvt_alloc_color                 __PROTO((rxvt_t* r, XColor *screen_in_out));
+unsigned long    rxvt_alloc_pixel_from_int        __PROTO(( rxvt_t *r, const uint32_t color ));
+int              rxvt_alloc_color_from_int        __PROTO(( rxvt_t *r, const uint32_t color, XColor *xcolor ));
+void             rxvt_set_line_width              __PROTO(( rxvt_t *r, const int width ));
 void             rxvt_IM_send_spot                __PROTO((rxvt_t *r));
 void             rxvt_IM_set_fontset              __PROTO((rxvt_t* r, int idx));
 void             rxvt_IM_init_callback            __PROTO((Display *unused __attribute__((unused)), XPointer client_data __attribute__((unused)), XPointer call_data __attribute__((unused))));

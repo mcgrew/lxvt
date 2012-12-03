@@ -2422,70 +2422,50 @@ rxvt_parse_alloc_color(rxvt_t* r, XColor *screen_in_out, const char *colour)
     int		    res = 0;
 
     if (!XParseColor(r->Xdisplay, XCMAP, colour, screen_in_out))
-	rxvt_msg (DBG_ERROR, DBG_MAIN, "can't determine colour: %s", colour);
+      rxvt_msg (DBG_ERROR, DBG_MAIN, "can't determine colour: %s", colour);
     else
-	res = rxvt_alloc_color(r, screen_in_out, colour);
+      res = rxvt_alloc_color(r, screen_in_out);
     return res;
 }
 
 
 /* EXTPROTO */
 int
-rxvt_alloc_color( rxvt_t* r, XColor *screen_in_out, const char *colour )
+rxvt_alloc_color( rxvt_t* r, XColor *screen_in_out )
 {
     return XAllocColor( r->Xdisplay, XCMAP, screen_in_out );
+}
 
-#if 0 /* 2006-05-27 gi1242: Really bad code. */
-    int		    res;
+unsigned long 
+rxvt_alloc_pixel_from_int( rxvt_t *r, const uint32_t color ) {
+  XColor xcolor;
+  if (rxvt_alloc_color_from_int(r, color, &xcolor))
+    return xcolor.pixel;
+  else
+    return 0L;
+}
 
-    if( (res = XAllocColor(r->Xdisplay, XCMAP, screen_in_out)) )
-	return res;
+int
+rxvt_alloc_color_from_int( rxvt_t *r, const uint32_t color, XColor *xcolor ) {
+  int status;
+  xcolor->red   = (color >>  8) & 0xff00;
+  xcolor->green = (color      ) & 0xff00;
+  xcolor->blue  = (color <<  8) & 0xff00;
+  xcolor->flags = DoRed | DoGreen | DoBlue;
+	rxvt_msg (DBG_DEBUG, DBG_MAIN, "Allocating color #%x", color);
+  status = (int)XAllocColor( r->Xdisplay, r->Xcmap, xcolor );
+  if (!status)
+    rxvt_msg (DBG_ERROR, DBG_MAIN, "Unable to allocate  color #%x!", color);
+  return status;
+}
 
-    /* try again with closest match */
-    /*
-     * XXX 2006-05-25 gi1242: This is really inefficient. There must be a better
-     * way!
-     */
-    if (XDEPTH >= 4 && XDEPTH <= 8)
-    {
-	int		i, numcol;
-	int		best_pixel = 0;
-	unsigned long   best_diff, diff;
-	XColor		*colors;
-
-#define rSQR(x)	    ((x)*(x))
-
-	best_diff = 0;
-	numcol = 0x01 << XDEPTH;
-	if( (colors = rxvt_malloc(numcol * sizeof(XColor))) )
-	{
-	    for (i = 0; i < numcol; i++)
-	    colors[i].pixel = i;
-
-	    XQueryColors(r->Xdisplay, XCMAP, colors, numcol);
-	    for (i = 0; i < numcol; i++)
-	    {
-		diff = rSQR(screen_in_out->red - colors[i].red)
-		    + rSQR(screen_in_out->green - colors[i].green)
-		    + rSQR(screen_in_out->blue - colors[i].blue);
-		if (i == 0 || diff < best_diff)
-		{
-		    best_pixel = colors[i].pixel;
-		    best_diff = diff;
-		}
-	    }
-	    *screen_in_out = colors[best_pixel];
-	    rxvt_free(colors);
-
-	    res = XAllocColor(r->Xdisplay, XCMAP, screen_in_out);
-	}
-    }
-
-    if (res == 0)
-	rxvt_msg (DBG_ERROR, DBG_MAIN, "can't allocate color: %s", colour);
-
-    return res;
-#endif
+void 
+rxvt_set_line_width( rxvt_t *r, const int width ) {
+  XSetLineAttributes( r->Xdisplay, r->tabBar.gc, width,
+                      r->tabBar.gc->values.line_style,
+                      r->tabBar.gc->values.cap_style,
+                      r->tabBar.gc->values.join_style );
+                      
 }
 
 
