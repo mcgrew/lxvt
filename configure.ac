@@ -29,7 +29,7 @@ dnl terminal version.
 AC_INIT(lxvt, 0.5.5, [tjmcgrew@gmail.com])
 AM_INIT_AUTOMAKE(lxvt, 0.5.5)
 
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_SRCDIR([src/main.c])
 
 
