@@ -792,14 +792,16 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
        * bottom line of tab bar after active tab.
        */
       SET_POINT( points[4], x + BTN_WIDTH + TAB_PADDING,
-              TAB_TOPOFF + 3 + TAB_RADIUS);
+                 PLUS_BTN_TOPOFF + TAB_RADIUS);
       /* set remaining point to draw at a 22.5 degree angle */
       SET_POINT( points[5], x + BTN_WIDTH + TAB_PADDING+ TAB_SPREAD, TAB_BOTOFF);
       /* set points for the '+' sign */
-      SET_POINT( points[6], x + ( BTN_WIDTH + TAB_PADDING ) / 2 , TAB_BOTOFF - BTN_HEIGHT + 2 );
-      SET_POINT( points[7], x + ( BTN_WIDTH + TAB_PADDING ) / 2 , TAB_BOTOFF - 2 );
+      SET_POINT( points[6], x + ( BTN_WIDTH + TAB_PADDING ) / 2 , 
+                 TAB_BOTOFF - BTN_HEIGHT + 2 );
+      SET_POINT( points[7], x + ( BTN_WIDTH + TAB_PADDING ) / 2 , 
+                 TAB_BOTOFF - 2 );
       SET_POINT( points[8], x + ( BTN_WIDTH + TAB_PADDING ) / 6 + 1, 
-                   PLUS_BTN_TOPOFF + (TAB_BOTOFF - PLUS_BTN_TOPOFF)/2 );
+                 PLUS_BTN_TOPOFF + (TAB_BOTOFF - PLUS_BTN_TOPOFF)/2 );
       SET_POINT( points[9], x + ( BTN_WIDTH + TAB_PADDING ) * 5 / 6, 
                  PLUS_BTN_TOPOFF + (TAB_BOTOFF - PLUS_BTN_TOPOFF)/2 );
   }
@@ -810,7 +812,7 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
           points, 6, Convex, CoordModeOrigin);
 
   /*
-   * Finally, draw the (boundary) of ATAB here.
+   * Finally, draw the (boundary) here.
    */
   CHOOSE_GC_FG( r, r->tabBar.frame);
 
