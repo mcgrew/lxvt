@@ -833,62 +833,9 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
   XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
           points + 8, 2, CoordModeOrigin);
   rxvt_set_line_width( r, 0 );
-  /* Tabbar line + left of tab */
-//  XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-//          points+1, 2, CoordModeOrigin);
-//    XCopyArea  (r->Xdisplay, img[TERM_BTN], r->tabBar.win,
-//                r->tabBar.gc, 3, 3, BTN_WIDTH-5, BTN_HEIGHT-5,
-//                x+3, topoff+5);
 
-//  for (: = BTN_COUNT; i >= 1; i--)
-//  {
-//#ifdef HAVE_LIBXPM
-//    register int  curimg = BTN_COUNT - i;
-//
-//    switch (curimg)
-//    {
-////      case TERM_BTN:
-////        img[TERM_BTN] = img_e[TERM_BTN];
-////        break;
-//      case CLOSE_BTN:
-//        img[CLOSE_BTN] = (ISSET_OPTION(r, Opt2_protectSecondary) &&
-//          PRIMARY != AVTS(r)->current_screen) ?
-//        img_d[CLOSE_BTN] : img_e[CLOSE_BTN];
-//        break;
-//    }
-//#endif
-//    if (IS_PIXMAP(img[BTN_COUNT-i]))
-//    {
-//      XCopyArea  (r->Xdisplay, img[BTN_COUNT-i], r->tabBar.win,
-//                  r->tabBar.gc, 0, 0,
-//                  BTN_WIDTH, BTN_HEIGHT,
-//                  TWIN_WIDTH(r)-(i*(BTN_WIDTH+BTN_SPACE)), topoff);
-//    }
-//  }
-//
-//
-//  CHOOSE_GC_FG (r, r->tabBar.frame);
-//  for (i = BTN_COUNT; i >= 1; i--)
-//  {
-//    int  sx = TWIN_WIDTH(r) - (i*(BTN_WIDTH+BTN_SPACE));
-//    /* draw top line */
-//    XDrawLine (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-//        sx, topoff, sx + BTN_WIDTH, topoff);
-//    /* draw left line */
-//    XDrawLine (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-//        sx, topoff, sx, topoff + BTN_HEIGHT);
-//  }
-//  CHOOSE_GC_FG (r, r->tabBar.delimit);
-//  for (i = BTN_COUNT; i >= 1; i--)
-//  {
-//    int  sx = TWIN_WIDTH(r) - (i*(BTN_WIDTH+BTN_SPACE));
-//    /* draw bottom line */
-//    XDrawLine (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-//        sx, topoff+BTN_HEIGHT, sx+BTN_WIDTH, topoff+BTN_HEIGHT);
-//    /* draw right line */
-//    XDrawLine (r->Xdisplay, r->tabBar.win, r->tabBar.gc,
-//        sx+BTN_WIDTH, topoff, sx+BTN_WIDTH, topoff+BTN_HEIGHT);
-//  }
+  // redraw the last tab so we don't overlap it
+  rxvt_draw_tab(r, LTAB(r), NULL);
 }
 
 
