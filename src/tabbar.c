@@ -543,40 +543,6 @@ rxvt_draw_tab( rxvt_t* r, int page, Region region )
     int clear = 0, /* use ClearArea or FillRectangle */
         pt_idx = 0; /* point index */
 
-    if (ISSET_OPTION(r, Opt2_bottomTabbar))
-    {
-        /* Top tabbar line & left of active tab */
-        if (is_active)
-        {
-          SET_POINT( points[0], 0, TAB_TOPOFF);
-        }
-        SET_POINT( points[1], x - TAB_SPREAD, TAB_TOPOFF);
-        SET_POINT( points[2], x, TAB_BOTOFF - TAB_RADIUS);
-
-        /* Arc coordinates for rounded tab tops */
-        SET_ARC( arcs[0], x, TAB_BOTOFF - 2*TAB_RADIUS,
-                2*TAB_RADIUS, 2*TAB_RADIUS, 180*64, 90*64);
-        SET_ARC( arcs[1],
-                x + r->tab_width - 2*TAB_RADIUS,
-                TAB_BOTOFF - 2*TAB_RADIUS,
-                2*TAB_RADIUS, 2*TAB_RADIUS, 270*64, 90*64);
-
-        /* Coordinates for horizontal line below tab. */
-        SET_POINT( points[3], x + TAB_RADIUS, TAB_BOTOFF);
-        SET_POINT( points[4],
-                x + r->tab_width - TAB_RADIUS, TAB_BOTOFF);
-
-        /* Right line of tab and top of tabbar. */
-        SET_POINT( points[5],
-                x + r->tab_width, TAB_BOTOFF - TAB_RADIUS);
-        SET_POINT( points[6], x + r->tab_width + TAB_SPREAD, TAB_TOPOFF);
-        if (is_active)
-        {
-          SET_POINT( points[7], TWIN_WIDTH(r), TAB_TOPOFF);
-        }
-    }
-
-    else    /* if (ISSET_OPTION(r, Opt2_bottomTabbar)) */
     {
         /*
          * Coordinates for the draw bottom line to the left of active
@@ -766,8 +732,7 @@ rxvt_tabbar_highlight_tab (rxvt_t* r, short page, Bool force)
 
     /* Set dimensions of the highlighted tab rectangle */
     sx = x + ( TXT_XOFF / 2 );
-    sy = ISSET_OPTION(r, Opt2_bottomTabbar) ?
-      TAB_TOPOFF + 3 : TAB_TOPOFF + ATAB_EXTRA + 2;
+    sy = TAB_TOPOFF + ATAB_EXTRA + 2;
     rw = r->tab_width - TXT_XOFF;
     rh = TAB_BOTOFF - TAB_TOPOFF - ATAB_EXTRA - 4;
 
@@ -804,34 +769,6 @@ rxvt_tabbar_draw_buttons (rxvt_t* r)
 
   /* draw new add tab button (firefox style) */
   CHOOSE_GC_FG (r, r->tabBar.fg);
-  if (ISSET_OPTION(r, Opt2_bottomTabbar))
-  {
-      /* Arc coordinates for rounded tab tops */
-      SET_ARC( arcs[0],
-              x + r->tab_width - 2*TAB_RADIUS,
-              TAB_BOTOFF - 2*TAB_RADIUS,
-              2*TAB_RADIUS, 2*TAB_RADIUS, 270*64, 90*64);
-
-      /* Top tabbar line & left of active tab */
-      SET_POINT( points[0], x - TAB_SPREAD, TAB_TOPOFF);
-      SET_POINT( points[1], x - TAB_SPREAD, TAB_BOTOFF - TAB_RADIUS);
-
-      /* Coordinates for horizontal line below tab. */
-      SET_POINT( points[2], x - TAB_SPREAD, TAB_BOTOFF);
-      SET_POINT( points[3],
-              x + r->tab_width - TAB_RADIUS, TAB_BOTOFF);
-
-      /* Right line of tab and top of tabbar. */
-      SET_POINT( points[4],
-              x + r->tab_width, TAB_BOTOFF - TAB_RADIUS);
-      SET_POINT( points[5], x + r->tab_width + TAB_SPREAD, TAB_TOPOFF);
-      SET_POINT( points[6], 0, 0 );
-      SET_POINT( points[7], 0, 0 );
-      SET_POINT( points[8], 0, 0 );
-      SET_POINT( points[9], 0, 0 );
-  }
-
-  else    /* if (ISSET_OPTION(r, Opt2_bottomTabbar)) */
   {
       /* Arc coordinates for rounded tab tops */
       SET_ARC( arcs[0],
@@ -1552,8 +1489,6 @@ rxvt_tabbar_resize (rxvt_t* r)
 #ifdef HAVE_MENUBAR
     sy += rxvt_menubar_height (r);
 #endif
-    if (ISSET_OPTION(r, Opt2_bottomTabbar))
-      sy += VT_HEIGHT(r);
     XMoveResizeWindow  (r->Xdisplay, r->tabBar.win,
       sx, sy, TWIN_WIDTH(r), rxvt_tabbar_rheight (r));
 
@@ -1945,8 +1880,6 @@ rxvt_tabbar_create (rxvt_t* r)
 #ifdef HAVE_MENUBAR
     sy += rxvt_menubar_height (r);
 #endif
-    if (ISSET_OPTION(r, Opt2_bottomTabbar))
-  sy += VT_HEIGHT(r);
     /*
      * create the window of the tabbar. Use ifg and ibg for the background of
      * the tabBar so that the active tab stands out better.

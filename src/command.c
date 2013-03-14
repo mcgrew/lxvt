@@ -3545,10 +3545,6 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason )
 	    0 : r->szHint.base_width - 2*r->TermWin.int_bwidth;
 
     r->h->window_vt_y = r->szHint.base_height - 2*r->TermWin.int_bwidth;
-#ifdef HAVE_TABS
-    if (ISSET_OPTION(r, Opt2_bottomTabbar))
-	r->h->window_vt_y -= rxvt_tabbar_height (r);
-#endif
 
     /*
      * Now we can resize the window The resize request might not always succeed.

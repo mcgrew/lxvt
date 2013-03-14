@@ -330,7 +330,6 @@ typedef enum
 #define Opt2_syncTabTitle	    ((1LU<<10) | IS_OPTION2)
 #define Opt2_syncTabIcon	    ((1LU<<11) | IS_OPTION2)
 #define Opt2_hideTabbar		    ((1LU<<12) | IS_OPTION2)
-#define Opt2_bottomTabbar	    ((1LU<<13) | IS_OPTION2)
 #define Opt2_borderLess		    ((1LU<<14) | IS_OPTION2)
 #define Opt2_overrideRedirect	    ((1LU<<15) | IS_OPTION2)
 #define Opt2_broadcast		    ((1LU<<16) | IS_OPTION2)

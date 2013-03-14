@@ -2316,11 +2316,6 @@ rxvt_init_win_size( rxvt_t *r )
   r->h->window_vt_x = (ISSET_OPTION(r, Opt_scrollBar_right)) ?
           0 : r->szHint.base_width - 2*r->TermWin.int_bwidth;
   r->h->window_vt_y = r->szHint.base_height - 2*r->TermWin.int_bwidth;
-
-#ifdef HAVE_TABS
-    if (ISSET_OPTION(r, Opt2_bottomTabbar) && NOTSET_OPTION(r, Opt2_hideTabbar))
-	r->h->window_vt_y -= rxvt_tabbar_rheight (r);
-#endif
 }
 
 

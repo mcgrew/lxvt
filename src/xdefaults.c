@@ -134,8 +134,6 @@ static const struct {
 	    "hiding tabbar on initialization" ),
     BOOL( "autohideTabbar", "aht", Opt2_autohideTabbar,
 	    "auto hide/show the tabbar depending on number of open tabs" ),
-    BOOL( "bottomTabbar", "bt", Opt2_bottomTabbar,
-	    "showing tabbar at bottom" ),
     BOOL( "hideButtons", "hb", Opt2_hideButtons,
 	    "hide buttons on tabbar" ),
 #endif

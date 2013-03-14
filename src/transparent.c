@@ -881,12 +881,10 @@ xrenderShadeParentPixmap( rxvt_t *r, Pixmap pmap,
 	    if (ISSET_OPTION(r, Opt_transparent_tabbar))
 		xrenderShadeIntersect( r, pic, r->tabBar.ibg, r->TermWin.shade,
 			nx, ny, nw, nh,
-			0, ry + (ISSET_OPTION(r, Opt2_bottomTabbar)
-					? VT_HEIGHT(r) : 0),
+			0, ry,
 			rw, rxvt_tabbar_height( r ));
 	    /* Reset coordinates to shade main window. */
 	    rh -= rxvt_tabbar_height( r );
-	    if ( NOTSET_OPTION(r, Opt2_bottomTabbar) )
 		ry += rxvt_tabbar_height( r );
 	}
 #endif
