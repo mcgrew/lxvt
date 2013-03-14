@@ -1575,7 +1575,7 @@ rxvt_init_env(rxvt_t *r)
 #endif		    /* HAVE_UNSETENV */
 
     /*
-    ** allocate environment variable for MRXVT_TABTITLE, we will
+    ** allocate environment variable for LXVT_TABTITLE, we will
     ** use it in rxvt_create_termwin later for each tab terminal
     */
     r->h->env_tabtitle = rxvt_malloc(sizeof(TABTITLEENV) + MAX_TAB_TXT + 1);

@@ -1,4 +1,4 @@
-Here is a list of a important configure options specific to mrxvt. For a
+Here is a list of a important configure options specific to lxvt. For a
 complete list, and for other options (e.g. PREFIX etc) run "configure --help",
 or read the help on the GNU autoconf tools.
 
@@ -13,7 +13,7 @@ or read the help on the GNU autoconf tools.
     looking at the status report it prints after it finishes.
 
 --enable-minimal
-    Disable support for almost everything that is not essential for mrxvt to
+    Disable support for almost everything that is not essential for lxvt to
     compile. You can see a list of features that are enabled / disabled by this
     option by running "configure --enable-minimal" and looking at the status
     report it prints after it finishes.
@@ -87,7 +87,7 @@ or read the help on the GNU autoconf tools.
 --enable-utempter
     use utempter library to log the utmp and wtmp entries instead of our own
     version. Thus, the setuid root or setgid permission can be removed from
-    mrxvt binary.
+    lxvt binary.
 
 --enable-linespace
     add support to provide user specified line spacing between text rows.

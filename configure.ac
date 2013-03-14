@@ -835,7 +835,7 @@ fi
 
 AC_PATH_X
 if test "x$no_x" = "xyes"; then
-    AC_MSG_ERROR([Mrxvt requires the X Window System libraries and headers.])
+    AC_MSG_ERROR([lxvt requires the X Window System libraries and headers.])
 fi
 
 dnl Warn if the detected path differs from the supplied
@@ -864,7 +864,7 @@ AC_CHECK_LIB(
     X11,
     XOpenDisplay,
     [],
-    AC_MSG_ERROR([Mrxvt requires the libX11 libraries.])
+    AC_MSG_ERROR([lxvt requires the libX11 libraries.])
 )
 
 AC_CHECK_HEADERS(X11/XKBlib.h)
@@ -873,7 +873,7 @@ dnl AC_CHECK_LIB(
 dnl     Xext,
 dnl     XextAddDisplay,
 dnl     [],
-dnl     AC_MSG_ERROR([Mrxvt requires the libXext libraries.])
+dnl     AC_MSG_ERROR([lxvt requires the libXext libraries.])
 dnl )
 
 

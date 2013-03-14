@@ -30,7 +30,7 @@ support, etc.
 
 This project was started because of performance issues in libvte.  I searched 
 for an alternative to vte-based terminals which still had tab support, and came
-across mrxvt. It had good performance and functionality, but I wanted to see
+across lxvt. It had good performance and functionality, but I wanted to see
 improvements to certain features. I discovered that the project had been
 abandoned (there were no commits for ~6 years), so I decided to fork the project
 and add the enhancements I desired. 
@@ -113,7 +113,7 @@ To display and input Chinese (Korea/Japanese), you can do the following:
       zh_CN.EUC based on your system). Make sure to unset environment variable
       LC_ALL, otherwise LC_CTYPE is overrided. Notice that this setting is
       global for all the following commands you will type in the same shell
-      session. You can supply the environment variable to mrxvt at runtime
+      session. You can supply the environment variable to lxvt at runtime
       instead of setting it globally here. Keep reading the following for
       details.
 
@@ -133,19 +133,19 @@ To display and input Chinese (Korea/Japanese), you can do the following:
 	$ # for csh/tcsh users
 	$ env LC_ALL=zh_CN LANG=zh_CN scim -d
 
-    . Execute mrxvt. You can supply the environment variable LC_CTYPE and
-      XMODIFIERS to mrxvt at runtime instead of setting them globally as above.
-      All you need to do is to run mrxvt as following:
+    . Execute lxvt. You can supply the environment variable LC_CTYPE and
+      XMODIFIERS to lxvt at runtime instead of setting them globally as above.
+      All you need to do is to run lxvt as following:
 
 	# the following command is for bash/ksh
-	LC_CTYPE=zh_CN XMODIFIERS=@im=SCIM mrxvt &
+	LC_CTYPE=zh_CN XMODIFIERS=@im=SCIM lxvt &
 	# the following command is for csh/tcsh
-	env LC_CTYPE=zh_CN XMODIFIERS=@im=SCIM mrxvt &
+	env LC_CTYPE=zh_CN XMODIFIERS=@im=SCIM lxvt &
 
-    . Focus on the mrxvt window, click Ctrl_Space to invoke SCIM
+    . Focus on the lxvt window, click Ctrl_Space to invoke SCIM
 
     . For Linux and Mac OS X, setting environment variable LC_ALL (for scim) and
-      LC_CTYPE (for mrxvt) to zh_CN or zh_CN.GBK are both good for SCIM/fcitx
+      LC_CTYPE (for lxvt) to zh_CN or zh_CN.GBK are both good for SCIM/fcitx
       input. For FreeBSD, they must be zh_CN.eucCN for fcitx input. For OpenBSD,
       they can be zh_CN.EUC or zh_CN.GBK for fcitx input.
 
@@ -199,7 +199,7 @@ For a complete list of all features, please read README.configure file.
 
 08   PORTABILITY
 
-Here are tested platforms that mrxvt is known to work with:
+Here are tested platforms that lxvt is known to work with:
 
     Slackware Linux 8.1/10.0/10.1/10.2, -current
     Slackintosh 10.1, 10.2 (PPC)
@@ -217,7 +217,7 @@ Here are tested platforms that mrxvt is known to work with:
     Mac OS X 10.3 (Panther), 10.4 (Tiger)
     Cygwin
 
-If you cannot find mrxvt in your favorite system (especially open source systems
+If you cannot find lxvt in your favorite system (especially open source systems
 like Linux and BSD), you may try to contact the system developers and request
 them to add it into the system. :-)
 
@@ -278,11 +278,11 @@ Here are several security issues of mrxvt:
 
 11  COPYRIGHT
 
-Mrxvt is licensed under GNU General Public License (GPL). You are free to copy,
-modify and redistribute the source and binary of mrxvt under GPL. But there is a
+lxvt is licensed under GNU General Public License (GPL). You are free to copy,
+modify and redistribute the source and binary of lxvt under GPL. But there is a
 issue with SCO Corp.:
 
     According to section 4 of the GPL, SCO Corporation of Lindon, Utah (formerly
-    Caldera) has no rights to redistribute any versions of Mrxvt and/or Materm
+    Caldera) has no rights to redistribute any versions of lxvt 
     in any of their products, including (without limitation) OpenLinux,
     Skunkware, OpenServer, and UNIXWare.
