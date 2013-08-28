@@ -56,10 +56,10 @@ lxvt_SOURCES +=    command.c		\
 lxvt_SOURCES +=    close_term.xbm	\
 		    term.xbm
 
-lxvt_SOURCES +=    close_term.xpm	\
-		    close_term_d.xpm	\
-		    term.xpm		\
-		    term_d.xpm
+#lxvt_SOURCES +=    close_term.xpm	\
+#		    close_term_d.xpm	\
+#		    term.xpm		\
+#		    term_d.xpm
 
 #install-exec-hook:
 #   -chown root $(DESTDIR)$(bindir)/lxvt
@@ -156,12 +156,12 @@ LXVT_H =	    ../config.h			\
 		    rxvt.h			\
 		    rxvtlib.h
 
-LXVT_PIXMAPS = close_term.xbm		\
-		    term.xbm			\
-		    close_term.xpm		\
-		    close_term_d.xpm		\
-		    term.xpm			\
-		    term_d.xpm
+#LXVT_PIXMAPS = close_term.xbm		\
+#		    term.xbm			\
+#		    close_term.xpm		\
+#		    close_term_d.xpm		\
+#		    term.xpm			\
+#		    term_d.xpm
 
 
 
@@ -194,7 +194,8 @@ scrollbar-xterm.o:  $(LXVT_H) 				scrollbar-xterm.c
 scrollbar.o:	    $(LXVT_H) 				scrollbar.c
 session.o:	    $(LXVT_H) 				session.c
 strings.o:	    $(LXVT_H) 				strings.c
-tabbar.o:	    $(LXVT_H) $(LXVT_PIXMAPS)		tabbar.c
+#tabbar.o:	    $(LXVT_H) $(LXVT_PIXMAPS)		tabbar.c
+tabbar.o:	    $(LXVT_H)       		tabbar.c
 xdefaults.o:	    $(LXVT_H) 				xdefaults.c
 transparent.o:	    $(LXVT_H) 				transparent.c
 xftacs.o:			xftacs.h		xftacs.c

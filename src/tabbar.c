@@ -36,15 +36,15 @@
 #ifdef HAVE_TABS
 #ifdef HAVE_LIBXPM
 
-#include "close_term.xpm"
-#include "term.xpm"
-#include "close_term_d.xpm"
-#include "term_d.xpm"
+//#include "close_term.xpm"
+//#include "term.xpm"
+//#include "close_term_d.xpm"
+//#include "term_d.xpm"
 
 #else
 
-#include "close_term.xbm"
-#include "term.xbm"
+//#include "close_term.xbm"
+//#include "term.xbm"
 
 #endif /* HAVE_LIBXPM */
 
@@ -99,6 +99,8 @@
 #define TAB_SPACE (TWIN_WIDTH(r)- \
       BTN_WIDTH - TAB_BOTOFF / 4)
 
+#define CLOSE_BTN_SIZE 8
+
 #define CHOOSE_GC_FG(R, PIXCOL) \
     XSetForeground ((R)->Xdisplay, (R)->tabBar.gc, (PIXCOL))
 #endif
@@ -113,21 +115,21 @@
 #ifdef HAVE_TABS
 enum {TERM_BTN,CLOSE_BTN,BTN_COUNT};
 
-#ifdef HAVE_LIBXPM
-static char** xpm_name[] =
-{
-    term_xpm,close_term_xpm
-};
-static char** xpm_d_name[] =
-{
-    term_d_xpm,close_term_d_xpm
-};
-#else
-static unsigned char *xbm_name[] =
-{
-    term_bits,close_term_bits
-};
-#endif
+//#ifdef HAVE_LIBXPM
+//static char** xpm_name[] =
+//{
+//    term_xpm,close_term_xpm
+//};
+//static char** xpm_d_name[] =
+//{
+//    term_d_xpm,close_term_d_xpm
+//};
+//#else
+//static unsigned char *xbm_name[] =
+//{
+//    term_bits,close_term_bits
+//};
+//#endif
     
 static Pixmap img[BTN_COUNT];
 #ifdef HAVE_LIBXPM
@@ -338,6 +340,7 @@ draw_title (rxvt_t* r, int x, int y, int tnum, Region region)
     rect.x = x;
     rect.y = y - r->TermWin.pheight;
     rect.width = r->tab_width - 2*TXT_XOFF;
+    rect.width -= TXT_XOFF + CLOSE_BTN_SIZE; // for the 'x' button
     rect.height = r->TermWin.pheight;
 
     clipRegion = XCreateRegion();
@@ -517,6 +520,7 @@ rxvt_draw_tab( rxvt_t* r, int page, Region region )
     XArc arcs[2];
     XPoint points[8];
     int x = TAB_PADDING + TAB_BORDER + page * TAB_WIDTH;
+    int center_v, center_h;
     const int TAB_SPREAD = TAB_BOTOFF / 4;
     Bool is_active = (page == ATAB(r));
     /*
@@ -648,6 +652,24 @@ rxvt_draw_tab( rxvt_t* r, int page, Region region )
           rxvt_tabbar_highlight_tab( r, page, True);
 
     }
+
+    /* draw the close button */
+    center_h = x + r->tab_width - TXT_XOFF - CLOSE_BTN_SIZE/2;
+    center_v = TAB_TOPOFF + TXT_XOFF + CLOSE_BTN_SIZE/2;
+    SET_POINT(points[0], center_h - CLOSE_BTN_SIZE/2, 
+              center_v + CLOSE_BTN_SIZE/2);
+    SET_POINT(points[1], center_h + CLOSE_BTN_SIZE/2, 
+              center_v - CLOSE_BTN_SIZE/2);
+    SET_POINT(points[2], center_h + CLOSE_BTN_SIZE/2, 
+              center_v + CLOSE_BTN_SIZE/2);
+    SET_POINT(points[3], center_h - CLOSE_BTN_SIZE/2, 
+              center_v - CLOSE_BTN_SIZE/2);
+    rxvt_set_line_width( r, 2 );
+    XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+            points, 2, CoordModeOrigin);
+    XDrawLines( r->Xdisplay, r->tabBar.win, r->tabBar.gc,
+            points+2, 2, CoordModeOrigin);
+    rxvt_set_line_width( r, 0 );
 
     /* Draw the tab title. */
     draw_title (r, x + TXT_XOFF, ATAB_EXTRA / 2 + TXT_YOFF,
@@ -1460,9 +1482,9 @@ rxvt_tabbar_dispatcher (rxvt_t* r, XButtonEvent* ev)
 {
   register int    x, y, z, but;
 
-  x = ev->x;
-  y = ev->y;
-  but = -1;
+  x = ev->x; // mouse click x
+  y = ev->y; // mouse clidk y
+  but = -1; // tab button index
   rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "click in (%d,%d)\n", x, y));
 
   /* Button4/Button5 of wheel mouse activate the left/right tab as
@@ -1512,23 +1534,36 @@ rxvt_tabbar_dispatcher (rxvt_t* r, XButtonEvent* ev)
 
   if ( x < TWIN_WIDTH(r) && LTAB(r) >= 0)
   {
-    register int  w = 0;
+    register int  w = TAB_PADDING;
     register int  i;
     for ( i = 0; w < x && i <= LTAB(r); i++)
       w += TAB_WIDTH;
 
     if( w - TAB_BORDER >= x )
     {
+      if (!i) { /* clicked on the space before the first tab */
+        return;
+      }
       but = i - 1;
 
       rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR,"click on tab %d\n", but));
-      switch( ev->button )
-      {
-        case Button1:
+      if (ev->button == Button1) {
+        if (w - TXT_XOFF >= x && w - TXT_XOFF - CLOSE_BTN_SIZE < x) {
+          /* close button was clicked, close the selected tab */
+          rxvt_remove_page(r, but);
+        } else {
           /* activate the selected tab */
           rxvt_activate_page (r, but);
           r->tabClicked = but;
-          break;
+        }
+      }
+//      switch( ev->button )
+//      {
+//        case Button1:
+//          /* activate the selected tab */
+//          rxvt_activate_page (r, but);
+//          r->tabClicked = but;
+//          break;
 
           /* what's the point of this? */
 //        case Button2:
@@ -1536,10 +1571,11 @@ rxvt_tabbar_dispatcher (rxvt_t* r, XButtonEvent* ev)
 //          if (NULL != r->selection.text)
 //            rxvt_tabbar_set_title (r, but, r->selection.text);
 //          break;
-      }
+//      }
     }
-    if ( x > w && x < (w + BTN_WIDTH + TAB_BOTOFF / 4 + TAB_PADDING))
+    if ( x > w && x < (w + BTN_WIDTH + TAB_BOTOFF / 4))
     {
+      /* '+' button clicked, open a new tab */
       rxvt_append_page (r, NULL, NULL);
       rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR,"click on add button"));
     }
@@ -1698,14 +1734,14 @@ rxvt_tabbar_create (rxvt_t* r)
     unsigned long   gcmask;
     register int    i;
     int        sx, sy;
-#ifdef HAVE_LIBXPM
-    XpmAttributes   xpm_attr;
-    /*
-     * Make sure symbol `background' exists in all .xpm files! This elimate the
-     * background color so that the buttons look transparent.
-     */
-    XpmColorSymbol  xpm_color_sym = {"background", NULL, 0};
-#endif
+//#ifdef HAVE_LIBXPM
+//    XpmAttributes   xpm_attr;
+//    /*
+//     * Make sure symbol `background' exists in all .xpm files! This elimate the
+//     * background color so that the buttons look transparent.
+//     */
+//    XpmColorSymbol  xpm_color_sym = {"background", NULL, 0};
+//#endif
 
 
     rxvt_tabbar_init (r);
@@ -1935,34 +1971,34 @@ rxvt_tabbar_create (rxvt_t* r)
     XSetFont (r->Xdisplay, r->tabBar.gc, r->TermWin.font->fid);
 
 
-#ifdef HAVE_LIBXPM
-    xpm_color_sym.pixel = r->tabBar.bg;
-    xpm_attr.colorsymbols = &xpm_color_sym;
-    xpm_attr.numsymbols = 1;
-    xpm_attr.visual = XVISUAL;
-    xpm_attr.colormap = XCMAP;
-    xpm_attr.depth = XDEPTH;
-    xpm_attr.closeness = 65535;
-    xpm_attr.valuemask = XpmVisual | XpmColormap | XpmDepth |
-  XpmCloseness | XpmReturnPixels | XpmColorSymbols;
-#endif
+//#ifdef HAVE_LIBXPM
+//    xpm_color_sym.pixel = r->tabBar.bg;
+//    xpm_attr.colorsymbols = &xpm_color_sym;
+//    xpm_attr.numsymbols = 1;
+//    xpm_attr.visual = XVISUAL;
+//    xpm_attr.colormap = XCMAP;
+//    xpm_attr.depth = XDEPTH;
+//    xpm_attr.closeness = 65535;
+//    xpm_attr.valuemask = XpmVisual | XpmColormap | XpmDepth |
+//  XpmCloseness | XpmReturnPixels | XpmColorSymbols;
+//#endif
 
     /* now, create the buttons */
     for (i = 0; i < BTN_COUNT; i++)
     {
-#ifdef HAVE_LIBXPM
-  XpmCreatePixmapFromData (r->Xdisplay, r->tabBar.win,
-      xpm_name[i], &img_e[i], &img_emask[i], &xpm_attr);
-  assert (IS_PIXMAP(img_e[i]));
-  XpmCreatePixmapFromData (r->Xdisplay, r->tabBar.win,
-      xpm_d_name[i], &img_d[i], &img_dmask[i], &xpm_attr);
-  assert (IS_PIXMAP(img_d[i]));
-#else
-  img[i] = XCreatePixmapFromBitmapData (r->Xdisplay,
-      r->tabBar.win, (char *) xbm_name[i], BTN_WIDTH, BTN_HEIGHT,
-      r->tabBar.fg, r->tabBar.bg, XDEPTH);
-  assert (IS_PIXMAP(img[i]));
-#endif
+//#ifdef HAVE_LIBXPM
+//  XpmCreatePixmapFromData (r->Xdisplay, r->tabBar.win,
+//      xpm_name[i], &img_e[i], &img_emask[i], &xpm_attr);
+//  assert (IS_PIXMAP(img_e[i]));
+//  XpmCreatePixmapFromData (r->Xdisplay, r->tabBar.win,
+//      xpm_d_name[i], &img_d[i], &img_dmask[i], &xpm_attr);
+//  assert (IS_PIXMAP(img_d[i]));
+//#else
+//  img[i] = XCreatePixmapFromBitmapData (r->Xdisplay,
+//      r->tabBar.win, (char *) xbm_name[i], BTN_WIDTH, BTN_HEIGHT,
+//      r->tabBar.fg, r->tabBar.bg, XDEPTH);
+//  assert (IS_PIXMAP(img[i]));
+//#endif
     }
 
     rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "TXT_XOFF=%d, TXT_YOFF=%d, ATAB_EXTRA=%d, TAB_RADIUS=%d\n", TXT_XOFF, TXT_YOFF, ATAB_EXTRA, TAB_RADIUS));
