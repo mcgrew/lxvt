@@ -4369,10 +4369,6 @@ rxvt_process_x_event(rxvt_t* r, XEvent *ev)
 	    rxvt_process_propertynotify (r, ev);
 	    break;
 
-	case ReparentNotify:
-	    rxvt_process_reparentnotify (r, ev);
-	    break;
-
 	case GraphicsExpose:
 	case Expose:
 	    rxvt_process_expose (r, ev);
@@ -5663,48 +5659,6 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	    rxvt_set_multichar_encoding (r, str);   
 	    break;
 #endif	/* MULTICHAR_SET */
-
-	case lxvt_opacity:
-	    if (IS_ATOM(r->h->xa[XA_NET_WM_WINDOW_OPACITY]))
-	    {
-		int	oldopacity = r->TermWin.opacity;
-		int	tmp;
-
-		if ('-' == *str && (char) 0 == *(str+1))
-		{
-		    /* handle '-' only, remember it's opposite  */
-		    tmp = (r->h->rs[Rs_opacityDegree]) ?
-			    r->TermWin.opacity_degree : 1;
-		}
-		else if ('+' == *str && (char) 0 == *(str+1))
-		{
-		    /* handle '+' only, remember it's opposite  */
-		    tmp = (r->h->rs[Rs_opacityDegree]) ?
-			    -(r->TermWin.opacity_degree) : -1;
-		}
-		else
-		{
-		    /* other cases, remember it's opposite  */
-		    tmp = 100 - atoi (str);
-		    /* only change opacity when it is valid */
-		    if (tmp < 0 || tmp > 100)
-			tmp = oldopacity;
-		}
-		if ('-' == *str || '+' == *str)
-		    /* use input as offset */
-		    r->TermWin.opacity += tmp;
-		else
-		    /* use input as absolute value */
-		    r->TermWin.opacity = tmp;
-		if (r->TermWin.opacity < 0)
-		    r->TermWin.opacity = 0;
-		if (r->TermWin.opacity > 100)
-		    r->TermWin.opacity = 100;
-		/* only change opacity when it has changed */
-		if (r->TermWin.opacity != oldopacity)
-		    rxvt_set_opacity (r);
-	    }
-	    break;
 
 #ifdef HAVE_TABS
 	case lxvt_tabfg:

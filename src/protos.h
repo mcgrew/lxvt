@@ -353,18 +353,6 @@ char*            rxvt_wcstoutf8                   __PROTO((const wchar_t* str));
 #endif	/* HAVE_WCHAR_H */
 /* End prototypes of strings.c */
 
-/* Begin prototypes of transparent.c */
-int		rxvt_set_opacity	     	 __PROTO((rxvt_t*));
-void		rxvt_process_reparentnotify   	 __PROTO((rxvt_t*, XEvent*));
-#ifdef TINTING_SUPPORT
-# if defined(HAVE_LIBXRENDER)
-void		xrenderShadeParentPixmap     	 __PROTO((rxvt_t*, Pixmap, int, int, unsigned, unsigned, Bool));
-# else
-void            rxvt_shade_pixmap                __PROTO((rxvt_t*, Drawable, int, int, unsigned, unsigned));
-# endif
-#endif
-/* End prototypes of transparent.c */
-
 /* Begin prototypes of xdefaults.c */
 int              rxvt_save_options                __PROTO((rxvt_t* r, const char* filename));
 void             rxvt_get_options                 __PROTO((rxvt_t* r, int argc, const char* const *argv));

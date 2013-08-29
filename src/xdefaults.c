@@ -164,13 +164,6 @@ static const struct {
     RSTRG( Rs_refreshLimit, "refreshLimit", "nchars"),
     RSTRG( Rs_skipPages, "skipPages", "%d"),
 
-#ifdef TINTING_SUPPORT
-    STRG(Rs_color + Color_tint, "tintColor", "tint", "color", "tint color"),
-    STRG(Rs_shade, "shading", "shade", "%", "shade background by %x when tinting"),
-    STRG(Rs_shade, "backgroundFade", "bgfade", "%",
-	"fade background image or transparent background by %x (obsolete)"),
-#endif
-
     STRG(Rs_fade, "fading", "fade", "%", "make colors x% darker when losing focus"),
 
 #ifdef HAVE_SCROLLBARS
@@ -537,9 +530,6 @@ static uint32_t	pSetOpts[ MAX_OPTION_ARRAY ] = { 0u, 0u, 0u, 0u };
 
 static const char releasestring[] = "lxvt v" VERSION "\n";
 static const char optionsstring[] = "Options: "
-# if defined(TINTING_SUPPORT)
-    "tint,"
-# endif
 #if defined(TEXT_SHADOW)
     "textshadow,"
 #endif

@@ -49,21 +49,10 @@ lxvt_SOURCES +=    command.c		\
 		    scrollbar.c		\
 		    strings.c		\
 		    tabbar.c		\
-		    transparent.c	\
 		    xdefaults.c
 
 lxvt_SOURCES +=    close_term.xbm	\
 		    term.xbm
-
-#lxvt_SOURCES +=    close_term.xpm	\
-#		    close_term_d.xpm	\
-#		    term.xpm		\
-#		    term_d.xpm
-
-#install-exec-hook:
-#   -chown root $(DESTDIR)$(bindir)/lxvt
-#   -chmod go-r $(DESTDIR)$(bindir)/lxvt
-#   -chmod u+s $(DESTDIR)$(bindir)/lxvt
 
 JPEG_SRC = 
 
@@ -147,15 +136,6 @@ LXVT_H =	    ../config.h			\
 		    rxvt.h			\
 		    rxvtlib.h
 
-#LXVT_PIXMAPS = close_term.xbm		\
-#		    term.xbm			\
-#		    close_term.xpm		\
-#		    close_term_d.xpm		\
-#		    term.xpm			\
-#		    term_d.xpm
-
-
-
 AUTOMAKE_OPTIONS = no-dependencies
 
 # set dependencies
@@ -185,5 +165,4 @@ strings.o:	    $(LXVT_H) 				strings.c
 #tabbar.o:	    $(LXVT_H) $(LXVT_PIXMAPS)		tabbar.c
 tabbar.o:	    $(LXVT_H)       		tabbar.c
 xdefaults.o:	    $(LXVT_H) 				xdefaults.c
-transparent.o:	    $(LXVT_H) 				transparent.c
 xftacs.o:			xftacs.h		xftacs.c

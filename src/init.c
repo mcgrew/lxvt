@@ -570,13 +570,6 @@ static const char *const def_colorName[] = {
     COLOR_SCROLLBAR,
     COLOR_SCROLLTROUGH,
 #endif		    /* KEEP_SCROLLCOLOR */
-#ifdef TINTING_SUPPORT
-# ifdef HAVE_LIBXRENDER
-    "rgb:00/00/00",
-# else
-    "rgb:ff/ff/ff",
-# endif
-#endif
 };
 
 
@@ -1167,22 +1160,6 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
 	register int	tmp = atoi (rs[Rs_opacityDegree]);
 	r->TermWin.opacity_degree = (tmp > 0 && tmp <= 100) ? tmp : 1;
     }
-
-#ifdef TINTING_SUPPORT
-    if (rs[Rs_shade])
-    {
-	register int	shade;
-	shade = atoi( rs[Rs_shade] );
-	if (shade < 0 || shade > 100)
-	    shade = 100;
-	r->TermWin.shade = 100 - shade;
-    }
-    else
-    {
-        /* set a sensible default value */
-        r->TermWin.shade = 25;
-    }
-#endif
 
     rxvt_set_jumpscroll(r);
 
@@ -3344,37 +3321,12 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
 			    : NormalState;
     wm_hint.window_group = r->TermWin.parent;
     /* window icon hint */
-#if 0
-#ifdef HAVE_LIBXPM 
-    if( r->h->rs[Rs_appIcon] )
-    {
-	Pixmap appIcon, appIconMask;
-
-        XpmReadFileToPixmap( r->Xdisplay, r->TermWin.parent,
-		(char*) r->h->rs[Rs_appIcon], &appIcon, &appIconMask, 0);
-
-	if( appIcon != None &&  appIconMask != None ) {
-	    wm_hint.icon_pixmap = appIcon;
-	    wm_hint.icon_mask = appIconMask;
-	    wm_hint.flags |= IconPixmapHint | IconMaskHint;
-	}
-    }
-#endif /* HAVE_LIBXPM */
-#endif
     /* class hints */
     class_hint.res_name = (char*) r->h->rs[Rs_name];
     class_hint.res_class = (char*) APL_CLASS;
     XSetWMProperties (r->Xdisplay, r->TermWin.parent,
 	&win_prop, &icon_prop, (char**)argv, argc,
 	&r->szHint, &wm_hint, &class_hint);
-
-#if 0 /* If the pixmap's are free'ed, then the WM will not display them. */
-    if( wm_hint.flags & IconPixmapHint )
-    {
-	XFreePixmap( r->Xdisplay, wm_hint.icon_pixmap );
-	XFreePixmap( r->Xdisplay, wm_hint.icon_mask );
-    }
-#endif
 
     /* set terminal title */
     rxvt_set_term_title (r, win_prop.value);

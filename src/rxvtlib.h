@@ -137,10 +137,6 @@ typedef struct
     int		    opacity;	/* transluscent window opaque degree */
     int		    opacity_degree; /* opaque change degree */
 
-#ifdef TINTING_SUPPORT
-    int		    shade;  /* tinting shade percentage */
-#endif
-
     int		    fade;   /* off-focus fading percentage */
 
 #ifdef TEXT_SHADOW
@@ -534,8 +530,6 @@ typedef struct
 } tabBar_t;
 #endif
 
-
-/* To suppress compile warning without xpm library */
 
 typedef enum
 {

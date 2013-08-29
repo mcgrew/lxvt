@@ -329,14 +329,6 @@ typedef char*	    XPointer;
 #endif
 
 
-#ifdef HAVE_LIBXPM
-# include <X11/xpm.h>
-#endif
-
-#ifdef HAVE_LIBXRENDER
-# include <X11/extensions/Xrender.h>
-#endif
-
 /* Xft.h seems to conflict with png.h. So we must include it
 ** after pnt.h */
 # ifdef XFT_SUPPORT
@@ -973,7 +965,7 @@ enum {
 /* #define lxvt_newtab	    (63) ** DISABLED create a new tab with title */
 /* #define lxvt_prevtab    (64) ** DISABLED switch to previous tab */
 /* #define lxvt_nexttab    (65) ** DISABLED switch to next tab */
-#define lxvt_tint	    (66) /* change tinting color */
+/* #define lxvt_tint	    (66) ** DISABLED change tinting color */
 #define lxvt_shade	    (67) /* change shade level */
 #define lxvt_encode	    (68) /* change encoding */
 /* #define lxvt_hide	    (69) ** DISABLED hide/show tabbar */
@@ -1058,9 +1050,6 @@ enum colour_list {
     Color_scroll,
     Color_trough,
 #endif
-  #ifdef TINTING_SUPPORT
-    Color_tint,
-  #endif
     NRS_COLORS,		/* */
 #ifdef KEEP_SCROLLCOLOR
     Color_topShadow = NRS_COLORS,
@@ -1161,11 +1150,6 @@ enum {
 
     Rs_skipPages,	/* Number of pages to skip when jump scrolling */
     Rs_refreshLimit,	/* Number of chars to tolerate when refreshing */
-#ifdef TINTING_SUPPORT
-    Rs_shade,	/* shade percentage */
-    Rs_tint,	/* tinting color */
-#endif
-
     Rs_focusDelay,
 
 #ifndef NO_BELL
@@ -1422,8 +1406,6 @@ enum {
 #define scrollbar_position(y)	    ((y) - r->scrollBar.beg)
 #define scrollbar_size()	(r->scrollBar.end - r->scrollBar.beg \
 		     - scrollbar_minheight())
-
-# define XPMClearArea(a, b, c, d, e, f, g)
 
 #ifndef STRICT_FONT_CHECKING
 # define rxvt_get_fontwidest(font)  ((font)->max_bounds.width)

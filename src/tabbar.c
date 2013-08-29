@@ -34,20 +34,6 @@
 
 
 #ifdef HAVE_TABS
-#ifdef HAVE_LIBXPM
-
-//#include "close_term.xpm"
-//#include "term.xpm"
-//#include "close_term_d.xpm"
-//#include "term_d.xpm"
-
-#else
-
-//#include "close_term.xbm"
-//#include "term.xbm"
-
-#endif /* HAVE_LIBXPM */
-
 
 #ifdef XFT_SUPPORT
 # define    FHEIGHT pheight
@@ -112,35 +98,6 @@
 *   End internal routine prototypes.                                       *
 ******************************************************************************/
 
-#ifdef HAVE_TABS
-enum {TERM_BTN,CLOSE_BTN,BTN_COUNT};
-
-//#ifdef HAVE_LIBXPM
-//static char** xpm_name[] =
-//{
-//    term_xpm,close_term_xpm
-//};
-//static char** xpm_d_name[] =
-//{
-//    term_d_xpm,close_term_d_xpm
-//};
-//#else
-//static unsigned char *xbm_name[] =
-//{
-//    term_bits,close_term_bits
-//};
-//#endif
-    
-static Pixmap img[BTN_COUNT];
-#ifdef HAVE_LIBXPM
-static Pixmap img_e[BTN_COUNT]; /* enable image */
-static Pixmap img_emask[BTN_COUNT]; /* shape mask image */
-static Pixmap img_d[BTN_COUNT]; /* disable image */
-static Pixmap img_dmask[BTN_COUNT]; /* shape mask image */
-#endif
-
-#endif
-    
 extern char **cmd_argv;
 
 
@@ -1724,15 +1681,6 @@ rxvt_tabbar_create (rxvt_t* r)
     unsigned long   gcmask;
     register int    i;
     int        sx, sy;
-//#ifdef HAVE_LIBXPM
-//    XpmAttributes   xpm_attr;
-//    /*
-//     * Make sure symbol `background' exists in all .xpm files! This elimate the
-//     * background color so that the buttons look transparent.
-//     */
-//    XpmColorSymbol  xpm_color_sym = {"background", NULL, 0};
-//#endif
-
 
     rxvt_tabbar_init (r);
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_TABBAR,"Creating tabbar\n"));
@@ -1912,36 +1860,6 @@ rxvt_tabbar_create (rxvt_t* r)
     XSetFont (r->Xdisplay, r->tabBar.gc, r->TermWin.font->fid);
 
 
-//#ifdef HAVE_LIBXPM
-//    xpm_color_sym.pixel = r->tabBar.bg;
-//    xpm_attr.colorsymbols = &xpm_color_sym;
-//    xpm_attr.numsymbols = 1;
-//    xpm_attr.visual = XVISUAL;
-//    xpm_attr.colormap = XCMAP;
-//    xpm_attr.depth = XDEPTH;
-//    xpm_attr.closeness = 65535;
-//    xpm_attr.valuemask = XpmVisual | XpmColormap | XpmDepth |
-//  XpmCloseness | XpmReturnPixels | XpmColorSymbols;
-//#endif
-
-    /* now, create the buttons */
-    for (i = 0; i < BTN_COUNT; i++)
-    {
-//#ifdef HAVE_LIBXPM
-//  XpmCreatePixmapFromData (r->Xdisplay, r->tabBar.win,
-//      xpm_name[i], &img_e[i], &img_emask[i], &xpm_attr);
-//  assert (IS_PIXMAP(img_e[i]));
-//  XpmCreatePixmapFromData (r->Xdisplay, r->tabBar.win,
-//      xpm_d_name[i], &img_d[i], &img_dmask[i], &xpm_attr);
-//  assert (IS_PIXMAP(img_d[i]));
-//#else
-//  img[i] = XCreatePixmapFromBitmapData (r->Xdisplay,
-//      r->tabBar.win, (char *) xbm_name[i], BTN_WIDTH, BTN_HEIGHT,
-//      r->tabBar.fg, r->tabBar.bg, XDEPTH);
-//  assert (IS_PIXMAP(img[i]));
-//#endif
-    }
-
     rxvt_dbgmsg ((DBG_DEBUG, DBG_TABBAR, "TXT_XOFF=%d, TXT_YOFF=%d, ATAB_EXTRA=%d, TAB_RADIUS=%d\n", TXT_XOFF, TXT_YOFF, ATAB_EXTRA, TAB_RADIUS));
 }
 
@@ -1974,35 +1892,6 @@ rxvt_tabbar_clean_exit (rxvt_t* r)
       UNSET_GC(r->tabBar.gc);
     }
 
-    for (i = 0; i < BTN_COUNT; i ++)
-    {
-#ifdef HAVE_LIBXPM
-      if (IS_PIXMAP(img_e[i]))
-      {
-          XFreePixmap (r->Xdisplay, img_e[i]);
-          UNSET_PIXMAP(img_e[i]);
-      }
-      if (IS_PIXMAP(img_emask[i]))
-      {
-          XFreePixmap (r->Xdisplay, img_emask[i]);
-          UNSET_PIXMAP(img_emask[i]);
-      }
-      if (IS_PIXMAP(img_d[i]))
-      {
-          XFreePixmap (r->Xdisplay, img_d[i]);
-          UNSET_PIXMAP(img_d[i]);
-      }
-      if (IS_PIXMAP(img_dmask[i]))
-      {
-          XFreePixmap (r->Xdisplay, img_dmask[i]);
-          UNSET_PIXMAP(img_dmask[i]);
-      }
-#else
-      if (IS_PIXMAP(img[i]))
-          XFreePixmap (r->Xdisplay, img[i]);
-#endif
-      UNSET_PIXMAP(img[i]);
-    } /* for */
 }
 
 

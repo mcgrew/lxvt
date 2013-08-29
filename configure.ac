@@ -145,9 +145,6 @@ support_menubar=no
 support_background_image=yes
 support_transparency=yes
 dnl: support_fading=yes
-support_tinting=yes
-support_xrender=yes
-support_xpm=yes
 support_xft=no
 support_xim=no
 support_greek=no
@@ -200,9 +197,6 @@ if test "x$support_everything" = "xyes"; then
     support_background_image=yes
     support_transparency=yes
     dnl: support_fading=yes
-    support_tinting=yes
-    support_xrender=yes
-    support_xpm=yes
     support_xft=yes
     support_xim=yes
     support_greek=yes
@@ -254,9 +248,6 @@ if test "x$support_minimal" = "xyes"; then
     support_background_image=no
     support_transparency=no
     dnl: support_fading=no
-    support_tinting=no
-    support_xrender=no
-    support_xpm=no
     support_xft=no
     support_xim=no
     support_greek=no
@@ -561,49 +552,6 @@ fi
 
 
 AC_ARG_ENABLE(
-    transparency,
-    AC_HELP_STRING([--enable-transparency],[enable transparent background [[yes]]]),
-    [support_transparency=$enableval]
-)
-if test "x$support_transparency" = "xyes"; then
-    AC_DEFINE(TRANSPARENT, [], [set transparent background])
-fi
-
-
-dnl: No longer a compile time option, and OFF_FOCUS_FADING is now always
-dnl: enabled. 2006-09-14 gi1242.
-dnl:
-dnl: AC_ARG_ENABLE(
-dnl:     fading,
-dnl:     AC_HELP_STRING([--enable-fading],[enable colors fading when off focus [yes]]),
-dnl:     [support_fading=$enableval]
-dnl: )
-dnl: if test "x$support_fading" = "xyes"; then
-dnl:     AC_DEFINE(OFF_FOCUS_FADING, [], [set fading support])
-dnl: fi
-
-
-AC_ARG_ENABLE(
-    tinting,
-    AC_HELP_STRING([--enable-tinting],[enable colors tinting [[yes]]]),
-    [support_tinting=$enableval]
-)
-
-AC_ARG_ENABLE(
-    xrender,
-    AC_HELP_STRING([--enable-xrender],[tint using XRender (slower but nicer results) [yes]]),
-    [support_xrender=$enableval]
-)
-
-
-AC_ARG_ENABLE(
-    xpm,
-    AC_HELP_STRING([--enable-xpm],[enable XPM background pixmaps [[yes]]]),
-    [support_xpm=$enableval],
-)
-
-
-AC_ARG_ENABLE(
     xft,
     AC_HELP_STRING([--enable-xft],[enable freetype font support [no]]),
     [support_xft=$enableval]
@@ -896,31 +844,6 @@ if test "x$support_utempter" = "xyes"; then
     AC_DEFINE(UTEMPTER_SUPPORT, [], [set utempter library support])
 fi
 
-
-if test "x$support_xpm" = "xyes"; then
-    AC_CHECK_LIB(
-        Xpm,
-        XpmCreateImageFromXpmImage,
-        [],
-        [support_xpm=no]
-    )
-fi
-
-if test "x$support_background_image" = "xyes"; then
-    AC_DEFINE(BACKGROUND_IMAGE, [], [set background image])
-fi
-if test "x$support_tinting" = "xyes"; then
-    AC_DEFINE(TINTING_SUPPORT, [], [set tinting support])
-fi
-
-
-if test "x$support_xrender" = "xyes" -a "x$support_tinting" = "xyes"; then
-    AC_CHECK_LIB(
-	Xrender,
-	XRenderCreatePicture,
-    )
-    dnl AC_DEFINE(HAVE_XRENDER, [], [XRender tinting support])
-fi
 
 if test "x$support_xft" = "xyes"; then
     dnl Backup variables
@@ -1432,18 +1355,7 @@ echo "Menu bar                    : $support_menubar"
 echo
 echo "Background features:"
 echo "Background image            : $support_background_image"
-echo "XPM background image        : $support_xpm"
 echo "Transparent background      : $support_transparency"
-dnl: echo "Off focus fading            : $support_fading"
-if test "x$support_tinting" = "xno"; then
-    echo "Background tinting          : $support_tinting"
-else
-    if test "x$support_xrender" = "xyes"; then
-	echo "Background tinting          : $support_tinting (XRender)"
-    else
-	echo "Background tinting          : $support_tinting (Fast)"
-    fi
-fi
 echo
 echo "Multi-language and font features:"
 echo "Freetype Font               : $support_xft"
