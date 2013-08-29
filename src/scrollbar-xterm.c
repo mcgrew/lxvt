@@ -63,44 +63,14 @@ rxvt_scrollbar_init_xterm (rxvt_t* r)
 
     gcvalue.fill_style = FillOpaqueStippled;
     gcvalue.foreground = r->scrollBar.xterm_fg;
-#ifdef TRANSPARENT
-    /* set background color when there's no transparent */
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_scrollbar)
-	))
-#endif
-#ifdef BACKGROUND_IMAGE
-    /* set background color when there's no bg image */
-    if (NOT_PIXMAP(r->scrollBar.pixmap))
-#endif
     gcvalue.background = r->scrollBar.xterm_bg;
     gcmask = GCForeground | GCFillStyle | GCStipple;
-#ifdef TRANSPARENT
-    /* set background color when there's no transparent */
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_scrollbar)
-	))
-#endif
-#ifdef BACKGROUND_IMAGE
-    /* set background color when there's no bg image */
-    if (NOT_PIXMAP(r->scrollBar.pixmap))
-#endif
     gcmask  |= GCBackground;
 
     r->scrollBar.gc = XCreateGC (r->Xdisplay, r->scrollBar.win,
 	    gcmask, &gcvalue);
     assert (IS_GC(r->scrollBar.gc));
 
-#ifdef TRANSPARENT
-    /* set background color when there's no transparent */
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_scrollbar)
-	))
-#endif
-#ifdef BACKGROUND_IMAGE
-    /* set background color when there's no bg image */
-    if (NOT_PIXMAP(r->scrollBar.pixmap))
-#endif
 	XSetWindowBackground (r->Xdisplay, r->scrollBar.win,
 	    r->scrollBar.xterm_bg);
 }
@@ -123,17 +93,6 @@ rxvt_scrollbar_show_xterm(rxvt_t *r, int update __attribute__((unused)), int las
 
 
     /* scrollbar slider */
-#ifdef TRANSPARENT
-    if (ISSET_OPTION(r, Opt_transparent) &&
-	ISSET_OPTION(r, Opt_transparent_scrollbar))
-	clear = 1;
-    else
-#endif
-#ifdef BACKGROUND_IMAGE
-    if (IS_PIXMAP(r->scrollBar.pixmap))
-	clear = 1;
-    else
-#endif
 	clear = 0;
 
 

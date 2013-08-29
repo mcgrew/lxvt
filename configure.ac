@@ -148,8 +148,6 @@ dnl: support_fading=yes
 support_tinting=yes
 support_xrender=yes
 support_xpm=yes
-support_jpeg=yes
-support_png=yes
 support_xft=no
 support_xim=no
 support_greek=no
@@ -205,8 +203,6 @@ if test "x$support_everything" = "xyes"; then
     support_tinting=yes
     support_xrender=yes
     support_xpm=yes
-    support_jpeg=yes
-    support_png=yes
     support_xft=yes
     support_xim=yes
     support_greek=yes
@@ -261,8 +257,6 @@ if test "x$support_minimal" = "xyes"; then
     support_tinting=no
     support_xrender=no
     support_xpm=no
-    support_jpeg=no
-    support_png=no
     support_xft=no
     support_xim=no
     support_greek=no
@@ -610,20 +604,6 @@ AC_ARG_ENABLE(
 
 
 AC_ARG_ENABLE(
-    jpeg,
-    AC_HELP_STRING([--enable-jpeg],[enable JPEG background pixmaps [[yes]]]),
-    [support_jpeg=$enableval],
-)
-
-
-AC_ARG_ENABLE(
-    png,
-    AC_HELP_STRING([--enable-png],[enable PNG background pixmaps [[yes]]]),
-    [support_png=$enableval],
-)
-
-
-AC_ARG_ENABLE(
     xft,
     AC_HELP_STRING([--enable-xft],[enable freetype font support [no]]),
     [support_xft=$enableval]
@@ -926,44 +906,6 @@ if test "x$support_xpm" = "xyes"; then
     )
 fi
 
-
-if test "x$support_jpeg" = "xyes"; then
-    AC_CHECK_LIB(
-        jpeg,
-        jpeg_read_header,
-        [],
-        [support_jpeg=no]
-    )
-fi
-if test "x$support_jpeg" = "xyes"; then
-    AC_DEFINE(USE_JPEG, [], [set JPEG background])
-fi
-AM_CONDITIONAL(USE_JPEG, test "x$support_jpeg" = "xyes")
-
-
-if test "x$support_png" = "xyes"; then
-    AC_CHECK_LIB(
-        png,
-        png_check_sig,
-        [],
-        [support_png=no],
-        [-lz -lm]
-    )
-fi
-if test "x$support_png" = "xyes"; then
-    AC_DEFINE(USE_PNG, [], [set PNG background])
-    LIBS="$LIBS -lz -lm"
-fi
-AM_CONDITIONAL(USE_PNG, test "x$support_png" = "xyes")
-
-
-if test "x$support_xpm" != "xyes" -a "x$support_jpeg" != "xyes" -a "x$support_png" != "xyes"; then
-    support_background_image=no
-    if test "x$support_transparency" = "xno"; then
-	dnl Need either background or transparency for tinting.
-	support_tinting=no
-    fi
-fi
 if test "x$support_background_image" = "xyes"; then
     AC_DEFINE(BACKGROUND_IMAGE, [], [set background image])
 fi
@@ -1491,8 +1433,6 @@ echo
 echo "Background features:"
 echo "Background image            : $support_background_image"
 echo "XPM background image        : $support_xpm"
-echo "JPEG background image       : $support_jpeg"
-echo "PNG background image        : $support_png"
 echo "Transparent background      : $support_transparency"
 dnl: echo "Off focus fading            : $support_fading"
 if test "x$support_tinting" = "xno"; then

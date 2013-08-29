@@ -608,10 +608,6 @@ const char *const xa_names[NUM_XA] = {
 #ifdef USE_XIM
     "WM_LOCALE_NAME",
 #endif
-#ifdef TRANSPARENT
-    "_XROOTPMAP_ID",
-    "_XSETROOT_ID",
-#endif
 #ifdef OFFIX_DND
     "DndProtocol",
     "DndSelection",
@@ -711,14 +707,6 @@ rxvt_init_vars(rxvt_t *r)
 # endif
     /* SET_NULL(h->inbuf_start); */
     SET_NULL(h->buffer);
-
-# ifdef TRANSPARENT
-    h->am_pixmap_trans = 0;
-    h->am_transparent  = 0;
-    UNSET_PIXMAP(h->rootPixmap);
-    h->bgRefreshInterval = DEFAULT_BG_REFRESH_INTERVAL;
-    h->lastCNotify.tv_sec = 0;	    /* No BG update pending */
-# endif
 
     /* Initialize timeouts to 0 */
     for( i=NUM_TIMEOUTS; i--;)
@@ -1173,16 +1161,6 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
 	register int	tmp = atoi( rs[Rs_opacity] );
 	r->TermWin.opacity = (tmp >= 0 && tmp <= 100) ? 100 - tmp : 0;
 
-#ifdef TRANSPARENT
-	if (
-	      IS_ATOM(r->h->xa[XA_NET_WM_WINDOW_OPACITY]) &&
-	      ISSET_OPTION(r, Opt_transparent)
-	   )
-	{
-	    /* Override pseudo-transparent */
-	    UNSET_OPTION(r, Opt_transparent);
-	}
-#endif
     }
     if (rs[Rs_opacityDegree])	
     {
@@ -1207,16 +1185,6 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
 #endif
 
     rxvt_set_jumpscroll(r);
-
-#ifdef TRANSPARENT
-    if (rs[Rs_bgRefreshInterval])
-    {
-	register unsigned long interval = atol( rs[Rs_bgRefreshInterval] );
-
-	if( interval > 1000 ) interval = 1000;
-	r->h->bgRefreshInterval = interval * 1000L; /* convert to micro-sec */
-    }
-#endif
 
     if (rs[Rs_fade])
     {
@@ -2194,10 +2162,6 @@ rxvt_init_win_size( rxvt_t *r )
     r->szHint.x = 0;
     r->szHint.y = 0;
 
-#ifdef TRANSPARENT
-    refreshRootBGVars( r );
-#endif
-
     /* Get geometry in x, y, w, h */
     if (r->h->rs[Rs_geometry])
 	flags = XParseGeometry(r->h->rs[Rs_geometry], &x, &y, &w, &h);
@@ -2690,12 +2654,6 @@ rxvt_set_vt_colors( rxvt_t *r, int page )
 	XSetBackground( r->Xdisplay, r->TermWin.gc, r->pixColors[Color_bg] );
 
 	if( IS_WIN( PVTS(r, page)->vt ) )
-# ifdef TRANSPARENT
-	    if (NOTSET_OPTION(r, Opt_transparent))
-# endif	/* TRANSPARENT */
-#ifdef BACKGROUND_IMAGE
-		if (NOT_PIXMAP(PVTS(r, page)->pixmap))
-#endif	/* BACKGROUND_IMAGE */
 		    XSetWindowBackground(r->Xdisplay, PVTS(r, page)->vt,
 			r->pixColors[Color_bg]);
     }
@@ -2835,11 +2793,6 @@ rxvt_init_vts( rxvt_t *r, int page )
 	PVTS(r, page)->winTitleFormat = NOT_NULL(wtf) ? STRDUP(wtf) : NULL;
     }
 
-#ifdef BACKGROUND_IMAGE
-    UNSET_PIXMAP(PVTS(r, page)->pixmap);
-    UNSET_PIXMAP(PVTS(r, page)->bg.pixmap);
-    PVTS(r, page)->bg.x = PVTS(r, page)->bg.y = 50;
-#endif
     PVTS(r, page)->cmd_pid = -1;
     PVTS(r, page)->cmd_fd = PVTS(r, page)->tty_fd = -1;
 #ifdef UTMP_SUPPORT
@@ -2959,19 +2912,6 @@ rxvt_destroy_termwin( rxvt_t *r, int page )
     XDestroyWindow (r->Xdisplay, PVTS(r, page)->vt);
     UNSET_WIN(PVTS(r, page)->vt);
 
-#ifdef BACKGROUND_IMAGE
-    if (IS_PIXMAP(PVTS(r, page)->pixmap))
-    {
-	XFreePixmap (r->Xdisplay, PVTS(r, page)->pixmap);
-	UNSET_PIXMAP(PVTS(r, page)->pixmap);
-    }
-    if (IS_PIXMAP(PVTS(r, page)->bg.pixmap))
-    {
-	XFreePixmap (r->Xdisplay, PVTS(r, page)->bg.pixmap);
-	UNSET_PIXMAP(PVTS(r, page)->bg.pixmap);
-    }
-#endif
-
 #ifdef HAVE_TABS
     rxvt_free (PVTS(r, page));
 #endif
@@ -3048,40 +2988,9 @@ rxvt_create_termwin( rxvt_t *r, int page,
 	vt_emask |= (Button1MotionMask | Button3MotionMask);
     XSelectInput(r->Xdisplay, PVTS(r, page)->vt, vt_emask);
 
-#ifdef TRANSPARENT
-    /* Set transparent background */
-    if (ISSET_OPTION(r, Opt_transparent))
-    {
-	XSetWindowBackgroundPixmap (r->Xdisplay, PVTS(r, page)->vt,
-		ParentRelative);
-    }
-#endif
-
     /*
      * Load the background image for terminal window when not transparent
      */
-#ifdef BACKGROUND_IMAGE
-# ifdef TRANSPARENT
-    if( NOTSET_OPTION(r,  Opt_transparent) )
-# endif
-    {
-	const char *pf = getProfileOption( r, Rs_backgroundPixmap );
-	if (NOT_NULL(pf))
-	{
-	    /* Load pixmap for each individual tab */
-	    const char *p = pf;
-
-	    if (NOT_NULL(p = STRCHR(p, ';')))
-	    {
-		p++;
-		rxvt_scale_pixmap(r, page, p);
-	    }
-	    rxvt_load_bg_pixmap(r, page, pf);
-	    /* rxvt_scr_touch(r, page, True); */
-	}
-    } /* if( NOTSET_OPTION(r,  Opt_transparent) ) */
-#endif
-
     XMapWindow (r->Xdisplay, PVTS(r, page)->vt);
     return 1;
 }
@@ -3236,9 +3145,6 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
     unsigned long	    gcmask;
 #ifndef NO_FRILLS
     CARD32		    pid = (CARD32) getpid ();
-#endif
-#ifdef TRANSPARENT
-    register int	    i;
 #endif
 #ifdef POINTER_BLANK
     static const XColor	    blackcolour = { 0, 0, 0, 0, 0, 0 };
@@ -3438,7 +3344,8 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
 			    : NormalState;
     wm_hint.window_group = r->TermWin.parent;
     /* window icon hint */
-#ifdef HAVE_LIBXPM
+#if 0
+#ifdef HAVE_LIBXPM 
     if( r->h->rs[Rs_appIcon] )
     {
 	Pixmap appIcon, appIconMask;
@@ -3453,6 +3360,7 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
 	}
     }
 #endif /* HAVE_LIBXPM */
+#endif
     /* class hints */
     class_hint.res_name = (char*) r->h->rs[Rs_name];
     class_hint.res_class = (char*) APL_CLASS;
@@ -3523,26 +3431,6 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
 		STRLEN(r->TermWin.sm_client_id));
     }
 # endif	/* HAVE_X11_SM_SMLIB_H */
-
-
-#ifdef TRANSPARENT
-    r->TermWin.parenttree[0] = r->TermWin.parent;
-    for (i = 1; i < PARENT_NUMBER; i ++)
-	UNSET_WIN(r->TermWin.parenttree[i]);
-
-    /*
-     * XXX 2006-01-02 gi1242: This is inefficient. If window is pseudo
-     * transparent, then the background pixmap will be reset later to something
-     * else.
-     */
-#if 0
-    if (ISSET_OPTION(r, Opt_transparent))
-    {
-	XSetWindowBackgroundPixmap (r->Xdisplay, r->TermWin.parent,
-	    ParentRelative);
-    }
-#endif
-#endif	/* TRANSPARENT */
 
 
     XSelectInput(r->Xdisplay, r->TermWin.parent,

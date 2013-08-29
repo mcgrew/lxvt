@@ -1187,11 +1187,7 @@ rxvt_dispatch_action( rxvt_t *r, action_t *action, XEvent *ev)
 	    break;
 
 	case MacroFnToggleTransp:
-#ifdef TRANSPARENT
-	    rxvt_toggle_transparency(r);
-#else
 	    retval = -1;
-#endif
 	    break;
 
 	case MacroFnToggleBcst:

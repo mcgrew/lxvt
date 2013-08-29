@@ -66,16 +66,6 @@ rxvt_scrollbar_init_plain (rxvt_t* r)
     gcmask = GCForeground;
     gcvalue.foreground = r->scrollBar.plain_fg;
 
-#ifdef TRANSPARENT
-    /* set background color when there's no transparent */
-    if (!(ISSET_OPTION(r, Opt_transparent) &&
-	  ISSET_OPTION(r, Opt_transparent_scrollbar)
-	))
-#endif
-#ifdef BACKGROUND_IMAGE
-    /* set background color when there's no bg image */
-    if (NOT_PIXMAP(r->scrollBar.pixmap))
-#endif
     {
 	gcmask  |= GCBackground;
 	gcvalue.background = r->scrollBar.plain_bg;
@@ -106,17 +96,6 @@ rxvt_scrollbar_show_plain(rxvt_t *r, int update __attribute__((unused)), int las
 
 
     /* scrollbar slider */
-#ifdef TRANSPARENT
-    if (ISSET_OPTION(r, Opt_transparent) &&
-	ISSET_OPTION(r, Opt_transparent_scrollbar))
-	clear = 1;
-    else
-#endif
-#ifdef BACKGROUND_IMAGE
-    if (IS_PIXMAP(r->scrollBar.pixmap))
-	clear = 1;
-    else
-#endif
 	clear = 0;
 
     scroller_len -= 1;

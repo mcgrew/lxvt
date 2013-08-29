@@ -137,10 +137,6 @@ typedef struct
     int		    opacity;	/* transluscent window opaque degree */
     int		    opacity_degree; /* opaque change degree */
 
-#ifdef TRANSPARENT
-    Window	    parenttree[PARENT_NUMBER];
-#endif
-
 #ifdef TINTING_SUPPORT
     int		    shade;  /* tinting shade percentage */
 #endif
@@ -427,9 +423,6 @@ typedef struct
     short           state;
     Window          win;
     GC		    gc;
-# ifdef BACKGROUND_IMAGE
-    Pixmap	    pixmap;
-# endif
     unsigned long   fg;
     unsigned long   bg;
     unsigned long   topshadow;
@@ -458,9 +451,6 @@ typedef struct
     int             (*update)(struct rxvt_vars *, int, int, int, int);
 
     GC		    gc;
-# ifdef BACKGROUND_IMAGE
-    Pixmap	    pixmap;
-# endif
 # ifdef RXVT_SCROLLBAR
     unsigned long   rxvt_fg;
     unsigned long   rxvt_bg;
@@ -522,9 +512,6 @@ typedef struct
 
 #ifdef HAVE_TABS
     Window	win;
-#ifdef BACKGROUND_IMAGE
-    Bool	    hasPixmap;	/* has a background Pixmap */
-#endif
     GC		gc;	/* tab background/foreground, grey25/black */
     unsigned long   fg;	    /* foreground, black */
     unsigned long   bg;	    /* background, grey25 */
@@ -548,37 +535,7 @@ typedef struct
 #endif
 
 
-#ifdef BACKGROUND_IMAGE
-typedef struct
-{
-    short           w, h, x, y;
-    Pixmap          pixmap; 
-} bgPixmap_t;
-#endif
-
-
 /* To suppress compile warning without xpm library */
-#ifdef BACKGROUND_IMAGE
-# ifndef HAVE_LIBXPM
-#  define XpmCloseness	    (0)
-#  define XpmColormap	    (0)
-#  define XpmVisual	    (0)
-#  define XpmDepth	    (0)
-#  define XpmSize	    (0)
-#  define XpmReturnPixels   (0)
-typedef struct
-{
-    unsigned long   valuemask;
-    Visual*	    visual;
-    Colormap	    colormap;
-    unsigned int    depth;
-    unsigned int    width;
-    unsigned int    height;
-    unsigned int    closeness;
-} XpmAttributes;
-# endif	/* HAVE_LIBXPM */
-#endif	/* BACKGROUND_IMAGE */
-
 
 typedef enum
 {
@@ -616,11 +573,6 @@ typedef struct
     Window          vt; /* terminal window */
 #ifdef XFT_SUPPORT
     XftDraw*	    xftvt;
-#endif
-#ifdef BACKGROUND_IMAGE
-    Pixmap	    pixmap;	/* background image, NOT used by */
-    bgPixmap_t	    bg;		/* transparent window!!! */
-    XpmAttributes   xpm_attr;	/* original attr of image */
 #endif
 
     /* Apparently, people like fg/bg colors for individual terminal */

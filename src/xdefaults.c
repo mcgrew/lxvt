@@ -91,10 +91,6 @@ static const struct {
     const char*	    desc;	/* description */
 } optList[] = {
     /* Options for each profile */
-#ifdef BACKGROUND_IMAGE
-    STRG(Rs_backgroundPixmap, "Pixmap", "pixmap", "file[;geom]",
-	    "background image for a tab"),
-#endif
     STRG(Rs_tabtitle, "tabTitle", "tt", "string", "title name for tab"),
     STRG(Rs_saveLines, "saveLines", "sl", "number",
 	    "number of scrolled lines to save for tab"),
@@ -174,9 +170,6 @@ static const struct {
     STRG(Rs_shade, "backgroundFade", "bgfade", "%",
 	"fade background image or transparent background by %x (obsolete)"),
 #endif
-#ifdef TRANSPARENT
-    RSTRG(Rs_bgRefreshInterval, "bgRefreshInterval", "ms"),
-#endif
 
     STRG(Rs_fade, "fading", "fade", "%", "make colors x% darker when losing focus"),
 
@@ -191,10 +184,6 @@ static const struct {
 	"scrollbar style = plain|xterm|rxvt|next|sgi"),
     STRG(Rs_scrollBar_align, "scrollbarAlign", "sa", "mode", 
 	"scrollbar alignment = top|bottom"),
-# ifdef BACKGROUND_IMAGE
-    STRG(Rs_scrollbarPixmap, "scrollbarPixmap", "sbpixmap",
-	"file[;geom]", "scrollbar background image"),
-# endif
 #endif
     BOOL( "scrollTtyOutputInhibit", "si", Opt_scrollTtyOutputInhibit,
 	    "scroll-on-tty-output inhibit" ),
@@ -205,29 +194,6 @@ static const struct {
 	"transluscent window (true transparent) opaque degree"),
     STRG(Rs_opacityDegree, "opacityDegree", "od", "%",
 	"transluscent window opaque degree interval"),
-
-#ifdef TRANSPARENT
-    BOOL( "transparent", "tr", Opt_transparent, "transparent" ),
-    BOOL( "transparentForce", "trf", Opt_forceTransparent,
-	    "forcefully transparent" ),
-# ifdef HAVE_SCROLLBARS
-    BOOL( "transparentScrollbar", "trs", Opt_transparent_scrollbar,
-	    "transparent scrollbar" ),
-# endif
-# ifdef HAVE_MENUBAR
-    BOOL( "transparentMenubar", "trm", Opt_transparent_menubar,
-	    "transparent menubar" ),
-# endif
-    BOOL( "transparentTabbar", "trt", Opt_transparent_tabbar,
-	    "transparent tabbar" ),
-#endif	/* TRANSPARENT */
-
-#ifdef BACKGROUND_IMAGE
-    STRG(Rs_tabbarPixmap, "tabbarPixmap", "tbpixmap", "file[;geom]", "tabbar background image"),
-    BOOL( "tabUsePixmap", "tupixmap", Opt_tabPixmap,
-	    "use tabbar background image for tabs" ),
-    STRG(Rs_appIcon, "appIcon", "ic", "file[;geom]", "application icon file"),
-#endif	/* BACKGROUND_IMAGE */
 
     BOOL( "utmpInhibit", "ut", Opt_utmpInhibit,
 	    "utmp inhibit - do not log to utmp" ),
@@ -317,17 +283,13 @@ static const struct {
     STRG(Rs_color + Color_pointer, "pointerColor", "pr", "color", "pointer color"),
     STRG(Rs_color + Color_border, "borderColor", "bd", "color", "border color"),
 
-#if defined (BACKGROUND_IMAGE) || defined(HAVE_MENUBAR)
+#if defined(HAVE_MENUBAR)
     RSTRG(Rs_path, "path", "search path"),
-#endif		    /* defined (BACKGROUND_IMAGE) || (HAVE_MENUBAR) */
+#endif		    /* (HAVE_MENUBAR) */
 #ifdef HAVE_MENUBAR
     STRG(Rs_menu, "menu", "menu",
 	"filename[;tag]", "menubar definition file"),
     BOOL( "showMenu", "showmenu", Opt_showMenu, "show menubar" ),
-# ifdef BACKGROUND_IMAGE
-    STRG(Rs_menubarPixmap, "menubarPixmap", "mbpixmap",
-	"file[;geom]", "menubar background image"),
-# endif
 #endif
 
 #ifndef NO_BOLDFONT
@@ -575,26 +537,9 @@ static uint32_t	pSetOpts[ MAX_OPTION_ARRAY ] = { 0u, 0u, 0u, 0u };
 
 static const char releasestring[] = "lxvt v" VERSION "\n";
 static const char optionsstring[] = "Options: "
-#if defined(BACKGROUND_IMAGE)
-# ifdef HAVE_LIBXPM
-    "XPM,"
-# endif
-# ifdef USE_JPEG
-    "Jpeg,"
-# endif
-# ifdef USE_JPEG
-    "PNG,"
-# endif
-#endif
-#if defined(TRANSPARENT)
-    "transparent,"
-#endif
-    "fade,"
-#if defined(BACKGROUND_IMAGE) || defined(TRANSPARENT)
 # if defined(TINTING_SUPPORT)
     "tint,"
 # endif
-#endif
 #if defined(TEXT_SHADOW)
     "textshadow,"
 #endif

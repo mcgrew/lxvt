@@ -333,19 +333,6 @@ typedef char*	    XPointer;
 # include <X11/xpm.h>
 #endif
 
-#if defined(BACKGROUND_IMAGE) || defined(TRANSPARENT)
-# ifdef USE_JPEG
-#  include <jpeglib.h>
-# endif
-# ifdef USE_PNG
-#  ifdef OS_OPENBSD
-#   include <libpng/png.h>
-#  else
-#   include <png.h>
-#  endif    /* OS_OPENBSD */
-# endif	/* USE_PNG */
-#endif
-
 #ifdef HAVE_LIBXRENDER
 # include <X11/extensions/Xrender.h>
 #endif
@@ -635,11 +622,7 @@ struct mouse_event {
 
 /* COLORTERM, TERM environment variables */
 #define COLORTERMENV	"rxvt"
-#ifdef BACKGROUND_IMAGE
-# define COLORTERMENVFULL COLORTERMENV "-xpm"
-#else
 # define COLORTERMENVFULL COLORTERMENV
-#endif
 #ifndef TERMENV
 # define TERMENV	"xterm"
 #endif
@@ -1075,11 +1058,9 @@ enum colour_list {
     Color_scroll,
     Color_trough,
 #endif
-#if defined(BACKGROUND_IMAGE) || defined(TRANSPARENT)
-# ifdef TINTING_SUPPORT
+  #ifdef TINTING_SUPPORT
     Color_tint,
-# endif
-#endif	/* BACKGROUND_IMAGE || TRANSPARENT */
+  #endif
     NRS_COLORS,		/* */
 #ifdef KEEP_SCROLLCOLOR
     Color_topShadow = NRS_COLORS,
@@ -1132,20 +1113,10 @@ enum {
     Rs_title,
     Rs_maxTabWidth,
     Rs_minVisibleTabs,
-#if defined (BACKGROUND_IMAGE) || defined(HAVE_MENUBAR)
-    Rs_path,
-#endif
-
-#ifdef BACKGROUND_IMAGE
-    Rs_tabbarPixmap,	/* tabbar background pixmap */
-    Rs_appIcon,		/* use pixmap as application icon */
-#endif
 
 #ifdef HAVE_MENUBAR
+    Rs_path,
     Rs_menu,
-# ifdef BACKGROUND_IMAGE
-    Rs_menubarPixmap,
-# endif
 #endif
 
 #ifndef NO_BOLDFONT
@@ -1173,9 +1144,6 @@ enum {
 #endif
 #ifdef HAVE_SCROLLBARS
     Rs_scrollBar_align,
-# ifdef BACKGROUND_IMAGE
-    Rs_scrollbarPixmap,
-# endif
 #endif	/* HAVE_SCROLLBARS */
     Rs_scrollBar_style,
 
@@ -1196,9 +1164,6 @@ enum {
 #ifdef TINTING_SUPPORT
     Rs_shade,	/* shade percentage */
     Rs_tint,	/* tinting color */
-#endif
-#ifdef TRANSPARENT
-    Rs_bgRefreshInterval,
 #endif
 
     Rs_focusDelay,
@@ -1247,9 +1212,6 @@ enum {
     /*
      * Options for multiple profiles.
      */
-#ifdef BACKGROUND_IMAGE
-    Rs_backgroundPixmap,/* terminal background pixmap for each tab */
-#endif
     Rs_tabtitle,
     Rs_command,
     Rs_saveLines,
@@ -1298,10 +1260,6 @@ enum {
 #endif
 #ifdef USE_XIM
     XA_WM_LOCALE_NAME,
-#endif
-#ifdef TRANSPARENT
-    XA_XROOTPMAPID,
-    XA_XSETROOTID,
 #endif
 #ifdef OFFIX_DND	/* OffiX Dnd (drag 'n' drop) support */
     XA_DNDPROTOCOL,
@@ -1465,13 +1423,7 @@ enum {
 #define scrollbar_size()	(r->scrollBar.end - r->scrollBar.beg \
 		     - scrollbar_minheight())
 
-
-
-#ifdef BACKGROUND_IMAGE
-# define XPMClearArea(a, b, c, d, e, f, g)  XClearArea((a), (b), (c), (d), (e), (f), (g))
-#else
 # define XPMClearArea(a, b, c, d, e, f, g)
-#endif
 
 #ifndef STRICT_FONT_CHECKING
 # define rxvt_get_fontwidest(font)  ((font)->max_bounds.width)
@@ -1506,11 +1458,6 @@ struct rxvt_hidden {
 		    BOOLVAR( want_resize, 2),		/* perform resize even
 							   if window size has
 							   not changed */
-#if defined(BACKGROUND_IMAGE) || defined(TRANSPARENT)
-		    BOOLVAR( am_transparent, 1),	/* is transparent */
-		    BOOLVAR( am_pixmap_trans, 1),	/* transparency without
-							   known root pixmap */
-# endif
 #ifdef CURSOR_BLINK
 		    BOOLVAR( hidden_cursor, 1),
 #endif
@@ -1519,11 +1466,6 @@ struct rxvt_hidden {
 		    BOOLVAR( num_scr_allow, 1),
 		    BOOLVAR( bypass_keystate, 1);
 
-#ifdef TRANSPARENT
-    unsigned char   BOOLVAR( want_full_refresh, 1);	/* awaiting full screen
-							   refresh, including
-							   borders. */
-#endif
 
     Region	    refreshRegion;			/* Region for
 							   CLIPPED_REFRESH */
@@ -1656,11 +1598,6 @@ struct rxvt_hidden {
 #ifdef POINTER_BLANK
     struct timeval  lastmotion;
 #endif
-#ifdef TRANSPARENT
-    unsigned long   bgRefreshInterval;
-    struct timeval  lastCNotify;			/* Time of the last
-							   CNotify event */
-#endif
     struct timeval  timeout[NUM_TIMEOUTS];
 
     /*
@@ -1691,18 +1628,6 @@ struct rxvt_hidden {
     unsigned char   kbuf[KBUFSZ];
 #endif
 
-#ifdef TRANSPARENT
-    Pixmap	rootPixmap;				/* Pixmap ID of the root
-							   pixmap */
-    unsigned	rpWidth,				/* Dimensions of the
-							   root pixmap */
-		rpHeight;
-    XRectangle	prevPos;				/* Previous onscreen
-							   position */
-    Bool	bgGrabbed;				/* whether the bg was
-							   succesfully grabbed
-							   at prevPos */
-#endif
 };
 
 #ifndef __attribute__

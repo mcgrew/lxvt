@@ -585,16 +585,6 @@ rxvt_draw_tab( rxvt_t* r, int page, Region region )
         }
     }
 
-#ifdef BACKGROUND_IMAGE
-    if( r->tabBar.hasPixmap  && ISSET_OPTION(r, Opt_tabPixmap))
-        clear = 1;  /* use background image */
-#endif
-#ifdef TRANSPARENT
-    if ( ( r->h->am_transparent || r->h->am_pixmap_trans ) &&
-        ISSET_OPTION(r, Opt_transparent_tabbar))
-        clear = 1;  /* transparent override background image */
-#endif
-
     if (!clear && is_active)
     {
         /*
@@ -1887,44 +1877,6 @@ rxvt_tabbar_create (rxvt_t* r)
 #endif
 
 
-#ifdef BACKGROUND_IMAGE
-    r->tabBar.hasPixmap = False;    /* initialize it to None */
-    if (
-#ifdef TRANSPARENT
-      /* Transparency overrides background */
-      !(
-    ISSET_OPTION(r, Opt_transparent)
-    && ISSET_OPTION(r, Opt_transparent_tabbar)
-       )
-      &&
-#endif
-      r->h->rs[Rs_tabbarPixmap]
-       )
-    {
-  long  w = 0, h = 0;
-  Pixmap  pmap;
-
-  pmap = rxvt_load_pixmap (r, r->h->rs[Rs_tabbarPixmap], &w, &h);
-  if (IS_PIXMAP(pmap))
-  {
-      XSetWindowBackgroundPixmap (r->Xdisplay, r->tabBar.win, pmap);
-      XFreePixmap( r->Xdisplay, pmap);
-
-      r->tabBar.hasPixmap = True;
-  }
-  else r->tabBar.hasPixmap = False;
-    }
-#endif
-
-#ifdef TRANSPARENT
-    if (
-      ISSET_OPTION(r, Opt_transparent)
-      && ISSET_OPTION(r, Opt_transparent_tabbar)
-       )
-  XSetWindowBackgroundPixmap( r->Xdisplay, r->tabBar.win, ParentRelative);
-#endif
-
-
     /* create the GC for the tab window */
     gcvalue.foreground  = r->tabBar.fg;
     gcvalue.line_width  = 0;
@@ -1938,19 +1890,8 @@ rxvt_tabbar_create (rxvt_t* r)
     | GCLineStyle | GCCapStyle | GCJoinStyle
     | GCArcMode | GCFillStyle;
 
-#ifdef TRANSPARENT
-    /* set background color when there's no transparent */
-    if (!(( r->h->am_transparent || r->h->am_pixmap_trans) &&
-  ISSET_OPTION(r, Opt_transparent_tabbar)))
-#endif
-#ifdef BACKGROUND_IMAGE
-  /* set background color when there's no bg image */
-  if ( ! r->tabBar.hasPixmap )
-#endif
-  {
-      gcvalue.background = r->tabBar.bg;
-      gcmask |= GCBackground;
-  }
+    gcvalue.background = r->tabBar.bg;
+    gcmask |= GCBackground;
 
     r->tabBar.gc = XCreateGC (r->Xdisplay, r->tabBar.win,
   gcmask, &gcvalue);
@@ -2184,30 +2125,7 @@ rxvt_tabbar_change_color (rxvt_t* r, int item, const char* str)
     {
       if (lxvt_itabbg == item)
       {
-#if defined(TRANSPARENT) || defined(BACKGROUND_IMAGE)
-          if (
-# ifdef TRANSPARENT
-            ((r->h->am_transparent || r->h->am_pixmap_trans) &&
-              ISSET_OPTION (r, Opt_transparent_tabbar))
-# endif
-# if defined(TRANSPARENT) && defined(BACKGROUND_IMAGE)
-            ||
-# endif
-# ifdef BACKGROUND_IMAGE
-            ( r->tabBar.hasPixmap )
-# endif
-             )
-          {
-# ifdef HAVE_LIBXRENDER
-        /* Background image needs to be regrabed */
-            rxvt_refresh_bg_image(r, ATAB(r), False);
-# endif
-          }
-          else
-#endif
-          {
-            XSetWindowBackground (r->Xdisplay, r->tabBar.win, r->tabBar.ibg);
-          }
+        XSetWindowBackground (r->Xdisplay, r->tabBar.win, r->tabBar.ibg);
       }
 
       /*

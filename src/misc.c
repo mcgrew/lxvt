@@ -379,7 +379,7 @@ rxvt_splitcommastring(const char *cs)
  * file searching
  */
 
-#if defined (BACKGROUND_IMAGE) || defined (HAVE_MENUBAR)
+#if defined (HAVE_MENUBAR)
 /*
  * search for FILE in the current working directory, and within the
  * colon-delimited PATHLIST, adding the file extension EXT if required.
@@ -513,7 +513,7 @@ rxvt_File_find(const char *file, const char *ext, const char *path)
     rxvt_dbgmsg ((DBG_DEBUG, DBG_MISC, "Got file %s\n", f ? f : "(nil)"));
     return f;
 }
-#endif		    /* defined (BACKGROUND_IMAGE) || (HAVE_MENUBAR) */
+#endif		    /* (HAVE_MENUBAR) */
 
 
 /*----------------------------------------------------------------------*

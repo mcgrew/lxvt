@@ -356,14 +356,6 @@ char*            rxvt_wcstoutf8                   __PROTO((const wchar_t* str));
 /* Begin prototypes of transparent.c */
 int		rxvt_set_opacity	     	 __PROTO((rxvt_t*));
 void		rxvt_process_reparentnotify   	 __PROTO((rxvt_t*, XEvent*));
-#ifdef TRANSPARENT
-void		rxvt_toggle_transparency	 __PROTO((rxvt_t*));
-void		refreshRootBGVars		 __PROTO((rxvt_t*));
-int             rxvt_check_our_parents           __PROTO((rxvt_t*));
-#endif
-#if defined(TRANSPARENT) || defined(BACKGROUND_IMAGE)
-void		rxvt_refresh_bg_image		 __PROTO((rxvt_t*, int, Bool));
-#endif
 #ifdef TINTING_SUPPORT
 # if defined(HAVE_LIBXRENDER)
 void		xrenderShadeParentPixmap     	 __PROTO((rxvt_t*, Pixmap, int, int, unsigned, unsigned, Bool));
@@ -378,30 +370,6 @@ int              rxvt_save_options                __PROTO((rxvt_t* r, const char
 void             rxvt_get_options                 __PROTO((rxvt_t* r, int argc, const char* const *argv));
 void             rxvt_extract_resources           __PROTO((rxvt_t* r, Display *display __attribute__((unused)), const char* name));
 /* End prototypes of xdefaults.c */
-
-
-#if defined(BACKGROUND_IMAGE) || defined(TRANSPARENT)
-/* Begin prototypes of pixmap.c */
-int              rxvt_scale_pixmap                __PROTO((rxvt_t* r, int page, const char* geom));
-void             rxvt_resize_pixmap               __PROTO((rxvt_t* r, int page));
-Pixmap           rxvt_load_bg_pixmap              __PROTO((rxvt_t* r, int page, const char* file));
-Pixmap           rxvt_load_pixmap                 __PROTO((rxvt_t* r, const char* file, long* pw, long* ph));
-/* End prototypes of pixmap.c */
-
-
-/* Begin prototypes of jpg.c */
-#ifdef USE_JPEG
-long             JpegReadFileToPixmap             __PROTO((Display* display, Window window, GC gc, char* filename, Pixmap* pixmap, long* w, long* h));
-#endif
-/* End prototypes of jpg.c */
-
-
-/* Begin prototypes of png.c */
-#ifdef USE_PNG
-long             PngReadFileToPixmap             __PROTO((Display* display, Window window, GC gc, char* filename, Pixmap* pixmap, long* w, long* h));
-#endif
-/* End prototypes of png.c */
-#endif /* BACKGROUND_IMAGE || TRANSPARENT */
 
 
 /* Begin prototypes of tabbar.c */

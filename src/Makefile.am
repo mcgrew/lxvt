@@ -42,7 +42,6 @@ lxvt_SOURCES +=    command.c		\
 		    menubar.c		\
 		    misc.c		\
 		    netdisp.c		\
-		    pixmap.c		\
 		    ptytty.c		\
 		    rxvt.c		\
 		    rxvtmem.c		\
@@ -66,17 +65,9 @@ lxvt_SOURCES +=    close_term.xbm	\
 #   -chmod go-r $(DESTDIR)$(bindir)/lxvt
 #   -chmod u+s $(DESTDIR)$(bindir)/lxvt
 
-if USE_JPEG
-JPEG_SRC = mjpg.c
-else
 JPEG_SRC = 
-endif
 
-if USE_PNG
-PNG_SRC = mpng.c
-else
 PNG_SRC = 
-endif
 
 if PLAIN_SCROLLBAR
 SCROLLBAR_PLAIN_SRC = scrollbar-plain.c
@@ -178,10 +169,7 @@ logging.o:	    $(LXVT_H)				logging.c
 main.o:		    $(LXVT_H) $(XFTACS_H)		main.c
 menubar.o:	    $(LXVT_H) 				menubar.c
 misc.o:		    $(LXVT_H) 				misc.c
-mjpg.o:		    $(LXVT_H) 				mjpg.c
-mpng.o:		    $(LXVT_H) 				mpng.c
 netdisp.o:	    $(LXVT_H) 				netdisp.c
-pixmap.o:	    $(LXVT_H) 				pixmap.c
 ptytty.o:	    $(LXVT_H) 				ptytty.c
 rxvt.o:		    $(LXVT_H) 				rxvt.c
 rxvtmem.o:	    $(LXVT_H) 				rxvtmem.h rxvtmem.c
