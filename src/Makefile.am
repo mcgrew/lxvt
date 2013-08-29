@@ -54,10 +54,6 @@ lxvt_SOURCES +=    command.c		\
 lxvt_SOURCES +=    close_term.xbm	\
 		    term.xbm
 
-JPEG_SRC = 
-
-PNG_SRC = 
-
 if PLAIN_SCROLLBAR
 SCROLLBAR_PLAIN_SRC = scrollbar-plain.c
 else
@@ -94,12 +90,6 @@ else
 UTMP_SRC =
 endif
 
-if GREEK
-GREEK_SRC = grkelot.c grkelot.h
-else
-GREEK_SRC = 
-endif
-
 if SESSION_SUPPORT
 SESSION_SRC = session.c
 else
@@ -121,9 +111,6 @@ lxvt_SOURCES +=    $(SCROLLBAR_PLAIN_SRC)	\
 		    $(SCROLLBAR_RXVT_SRC)	\
 		    $(SCROLLBAR_SGI_SRC)	\
 		    $(UTMP_SRC)			\
-		    $(GREEK_SRC)		\
-		    $(JPEG_SRC)			\
-		    $(PNG_SRC)			\
 		    $(SESSION_SRC)		\
 		    $(XFTACS_SRC)
 
@@ -142,7 +129,6 @@ AUTOMAKE_OPTIONS = no-dependencies
 $(bin_PROGRAMS) : 
 command.o:	    $(LXVT_H)				command.c
 encoding.o:	    $(LXVT_H) encoding.h		encoding.c
-grkelot.o:	    $(LXVT_H) grkelot.h		grkelot.c
 macros.o:	    $(LXVT_H)				macros.c
 init.o:		    $(LXVT_H) $(XFTACS_H) init.h	init.c
 logging.o:	    $(LXVT_H)				logging.c
