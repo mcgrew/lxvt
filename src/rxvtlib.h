@@ -30,7 +30,11 @@
 #define __RXVTLIB_H__
 
 #include "rxvt.h"
+#if defined(TTY_RGBCOLOR)
 typedef uint64_t rend_t;
+#else
+typedef uint32_t rend_t;
+#endif
 
 /* 
  * Boolean variables
@@ -77,10 +81,10 @@ typedef struct
 {
     uint16_t	    fwidth,	/* font width  [pixels] */
 		    fheight;	/* font height [pixels] */
-#ifdef XFT_SUPPORT
+//#ifdef XFT_SUPPORT
     uint16_t	    pwidth,	/* propotionally spaced font width / height */
 		    pheight;
-#endif
+//#endif
     uint16_t	    propfont;	/* font proportional flags */
     uint16_t	    ncol;	/* window columns [characters] */
     uint16_t	    nrow;	/* window rows [characters] */
@@ -89,8 +93,8 @@ typedef struct
     uint16_t	    ext_bwidth; /* external border width */
 
     uint16_t	    maxTabWidth,    /* max width of tab title to display */
-		    minVisibleTabs; /* Minimum number of tabs to try and keep
-				       visible */
+                  minVisibleTabs; /* Minimum number of tabs to try and keep
+                                     visible */
 #ifndef NO_LINESPACE
     uint16_t	    lineSpace;	/* space between rows */
 #endif
@@ -326,7 +330,6 @@ typedef enum
 #define Opt2_syncTabTitle	    ((1LU<<10) | IS_OPTION2)
 #define Opt2_syncTabIcon	    ((1LU<<11) | IS_OPTION2)
 #define Opt2_hideTabbar		    ((1LU<<12) | IS_OPTION2)
-#define Opt2_bottomTabbar	    ((1LU<<13) | IS_OPTION2)
 #define Opt2_borderLess		    ((1LU<<14) | IS_OPTION2)
 #define Opt2_overrideRedirect	    ((1LU<<15) | IS_OPTION2)
 #define Opt2_broadcast		    ((1LU<<16) | IS_OPTION2)
@@ -509,17 +512,15 @@ typedef struct
 #ifdef HAVE_TABS
 typedef struct
 {
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     char	state;	/* tabbar state */
 #endif
 
     short	ltab;	/* last tab */
     short	atab;	/* active tab */
     short	ptab;	/* previous active tab */
-    short	fvtab;	/* first visible tab */
-    short	lvtab;	/* last visible tab */
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     Window	win;
 #ifdef BACKGROUND_IMAGE
     Bool	    hasPixmap;	/* has a background Pixmap */
@@ -529,6 +530,8 @@ typedef struct
     unsigned long   bg;	    /* background, grey25 */
     unsigned long   ifg;    /* inactive tab foreground, black */
     unsigned long   ibg;    /* inactive tab background, grey */
+    unsigned long   plus_color; /* color for the 'add new tab' button */
+    unsigned long   close_color; /* color for the close buttons */
     char	    rsfg;   /* fg resource has changed */
     char	    rsbg;   /* bg resource has changed */
     char	    rsifg;  /* ifg resource has changed */
@@ -647,9 +650,6 @@ typedef struct
     uint16_t	    prev_ncol; /* previous columns */
     uint16_t	    prev_nrow; /* previous rows */
     /* moved from tab_t */
-#ifdef HAVE_TABBAR
-    short		tab_width;	/* tab width */
-#endif
     char UNTAINTED *	tab_title;  	/* tab title */
 
     char	    *title_format;	/* Format to be used to display the tab
@@ -962,11 +962,6 @@ typedef struct rxvt_vars
 
     /*
      * term_t structures and pointers.
-     *
-     * 2006-08-18 gi1242 TODO: This should be an array that grows dynamically in
-     * size. Plus we should only reserve enough memory for a our currently
-     * displayed term structures.
-	  * 2008-08-08 Jehan: done!
      */
 #ifdef HAVE_TABS
     term_t**	    vts;
@@ -974,7 +969,7 @@ typedef struct rxvt_vars
     term_t          vts;
 #endif
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     short	    tabClicked;		    /* Tab clicked by user. Used for
 					       moving tabs by drag and drop. */
 #endif
@@ -1016,6 +1011,9 @@ typedef struct rxvt_vars
 
     char**	    global_argv;
     int		    global_argc;
+#ifdef HAVE_TABS
+    short		tab_width;	/* tab width */
+#endif
 
 } rxvt_t;
 
@@ -1070,21 +1068,15 @@ typedef enum
 /* MACROS for tab/page number */
 #define ATAB(R)	    ((R)->tabBar.atab)
 #define LTAB(R)	    ((R)->tabBar.ltab)
-#define FVTAB(R)    ((R)->tabBar.fvtab)
-#define LVTAB(R)    ((R)->tabBar.lvtab)
 #define PTAB(R)	    ((R)->tabBar.ptab)
 #else
 #define ATAB(R)	    0
 #define LTAB(R)	    0
-#define FVTAB(R)    0
-#define LVTAB(R)    0
 #define PTAB(R)	    0
 #endif
 
 #define APAGE(R)    ATAB(R)
 #define LPAGE(R)    LTAB(R)
-#define FVPAGE(R)   FVTAB(R)
-#define LVPAGE(R)   LVTAB(R)
 #define PPAGE(R)    PTAB(R)
 
 /* MACROS for vts structure */

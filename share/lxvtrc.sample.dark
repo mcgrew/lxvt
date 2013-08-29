@@ -75,7 +75,6 @@ lxvt.colorUL:       #00af00
 # Display the X selection as highlighted instead of using reverse video.
 mrxtv.highlightColor:         #aaaaaa
 
-lxvt.bottomTabbar:     False
 lxvt.autohideTabbar:   True
 lxvt.minVisibleTabs:   8
 lxvt.hideButtons:      True
@@ -189,7 +188,7 @@ lxvt.macro.Ctrl+Shift+p:		GotoTab 0
 
 # ---------------------------------------------------------------------------- #
 #
-#			       MRXVT STYLE MACROS
+#			       LXVT STYLE MACROS
 #
 # ---------------------------------------------------------------------------- #
 

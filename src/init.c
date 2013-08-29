@@ -818,7 +818,7 @@ rxvt_init_vars(rxvt_t *r)
     }
 #endif/*USE_FIFO*/
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     r->tabClicked = -1; /* No tab has been clicked by user */
 #endif
 
@@ -1199,6 +1199,11 @@ rxvt_init_resources(rxvt_t* r, int argc, const char *const *argv)
 	    shade = 100;
 	r->TermWin.shade = 100 - shade;
     }
+    else
+    {
+        /* set a sensible default value */
+        r->TermWin.shade = 25;
+    }
 #endif
 
     rxvt_set_jumpscroll(r);
@@ -1570,7 +1575,7 @@ rxvt_init_env(rxvt_t *r)
 #endif		    /* HAVE_UNSETENV */
 
     /*
-    ** allocate environment variable for MRXVT_TABTITLE, we will
+    ** allocate environment variable for LXVT_TABTITLE, we will
     ** use it in rxvt_create_termwin later for each tab terminal
     */
     r->h->env_tabtitle = rxvt_malloc(sizeof(TABTITLEENV) + MAX_TAB_TXT + 1);
@@ -1724,7 +1729,7 @@ rxvt_fade_color( rxvt_t* r, const XColor *xcol,
 	faded_xcol.green = (xcol->green	/ 100) * r->TermWin.fade;
 	faded_xcol.blue  = (xcol->blue	/ 100) * r->TermWin.fade;
 
-	rxvt_alloc_color( r, &faded_xcol, "Faded" );
+	rxvt_alloc_color( r, &faded_xcol );
 
 	*pix_return = faded_xcol.pixel;
 # ifdef XFT_SUPPORT
@@ -2088,7 +2093,7 @@ rxvt_init_colors( rxvt_t *r )
 	xcol[1].pixel = r->pixColorsFocus[Color_scroll];
 # ifdef PREFER_24BIT
 	xcol[0].red = xcol[0].green = xcol[0].blue = 0xffffu;
-	rxvt_alloc_color( r, &(xcol[0]), "White" );
+	rxvt_alloc_color( r, &(xcol[0]) );
 	XQueryColors(r->Xdisplay, XCMAP, &(xcol[1]), 1);
 # else
 	xcol[0].pixel = WhitePixel(r->Xdisplay, XSCREEN);
@@ -2099,7 +2104,7 @@ rxvt_init_colors( rxvt_t *r )
 	xcol[2].red	= xcol[1].red	/ 2;
 	xcol[2].green	= xcol[1].green / 2;
 	xcol[2].blue	= xcol[1].blue	/ 2;
-	if( !rxvt_alloc_color( r, &(xcol[2]), "Color_bottomShadow" ) )
+	if( !rxvt_alloc_color( r, &(xcol[2]) ) )
 	    rxvt_copy_color( r, Color_bottomShadow, Color_Black );
 
 	else
@@ -2114,7 +2119,7 @@ rxvt_init_colors( rxvt_t *r )
 	xcol[1].green	= min(xcol[0].green, (xcol[1].green * 7) / 5);
 	xcol[1].blue	= min(xcol[0].blue,  (xcol[1].blue  * 7) / 5);
 
-	if( !rxvt_alloc_color(r, &(xcol[1]), "Color_topShadow") )
+	if( !rxvt_alloc_color(r, &(xcol[1])) )
 	    rxvt_copy_color( r, Color_topShadow, Color_White );
 	else
 	    rxvt_set_color( r, Color_topShadow, &xcol[1] );
@@ -2222,7 +2227,7 @@ rxvt_init_win_size( rxvt_t *r )
     if (ISSET_OPTION(r, Opt_showMenu))
 	r->szHint.base_height += rxvt_menubar_rheight (r);
 #endif
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     if (NOTSET_OPTION(r, Opt2_hideTabbar))
 	r->szHint.base_height += rxvt_tabbar_rheight (r);
 #endif
@@ -2311,11 +2316,6 @@ rxvt_init_win_size( rxvt_t *r )
   r->h->window_vt_x = (ISSET_OPTION(r, Opt_scrollBar_right)) ?
           0 : r->szHint.base_width - 2*r->TermWin.int_bwidth;
   r->h->window_vt_y = r->szHint.base_height - 2*r->TermWin.int_bwidth;
-
-#ifdef HAVE_TABBAR
-    if (ISSET_OPTION(r, Opt2_bottomTabbar) && NOTSET_OPTION(r, Opt2_hideTabbar))
-	r->h->window_vt_y -= rxvt_tabbar_rheight (r);
-#endif
 }
 
 
@@ -2358,7 +2358,7 @@ rxvt_get_ourmods( rxvt_t *r )
 	    if (kc[k] == 0)
 		break;
 
-	    switch (XKeycodeToKeysym(r->Xdisplay, kc[k], 0))
+	    switch (XkbKeycodeToKeysym(r->Xdisplay, kc[k], 0, 0))
 	    {
 		case XK_Num_Lock:
 		    r->h->ModNumLockMask = modmasks[i - 1];
@@ -3004,8 +3004,8 @@ rxvt_create_termwin( rxvt_t *r, int page,
     putenv (r->h->env_tabtitle);
 #endif
 
-#ifdef HAVE_TABBAR
-    PVTS(r, page)->tab_width = rxvt_tab_width (r, PVTS(r, page)->tab_title);
+#ifdef HAVE_TABS
+    r->tab_width = rxvt_tab_width (r);
 #endif
 
     /*
@@ -3629,13 +3629,9 @@ rxvt_create_show_windows( rxvt_t *r, int argc, const char *const *argv )
 # endif
 
 #ifdef HAVE_TABS
-#ifdef HAVE_TABBAR
     rxvt_tabbar_create (r);
     if (NOTSET_OPTION(r, Opt2_hideTabbar))
 	rxvt_tabbar_show (r);
-#else
-    rxvt_tabbar_init (r);
-#endif
 #endif
 
     XMapWindow (r->Xdisplay, r->TermWin.parent);

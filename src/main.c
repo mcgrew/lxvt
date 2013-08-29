@@ -134,8 +134,6 @@ rxvt_pre_show_init( rxvt_t *r )
 rxvt_t *
 rxvt_init (int argc, const char *const *argv)
 {
-	register int    i;
-	register int    itnum; /* initial terminal number */
 	rxvt_t*	    r;
 
 	rxvt_dbgmsg ((DBG_DEBUG, DBG_MAIN, "rxvt_init (%d, %s)\n", argc, argv));
@@ -331,7 +329,7 @@ rxvt_free_hidden( rxvt_t* r )
 void
 rxvt_exit_request( rxvt_t *r )
 {
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     /* Avoid exiting if there are multiple tabs with hidden tabbar */
     if( LTAB(r) > 0 &&  !rxvt_tabbar_visible( r ) )
     {
@@ -351,7 +349,7 @@ rxvt_exit_request( rxvt_t *r )
 	    if( PVTS(r, i)->current_screen == SECONDARY )
 	    {
 		dontExit = 1;
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 		if( i != ATAB(r) )
 		    rxvt_tabbar_highlight_tab( r, i, False);
 #endif
@@ -465,7 +463,7 @@ rxvt_clean_exit (rxvt_t* r)
     rxvt_menubar_clean_exit (r);
 # endif
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     rxvt_tabbar_clean_exit (r);
 #endif
 
@@ -2212,7 +2210,6 @@ void
 rxvt_set_window_color(rxvt_t* r, int page, int idx, const char *color)
 {
     XColor	    xcol;
-    int		    color_set;
     register int    i;
 
 
@@ -2226,8 +2223,6 @@ rxvt_set_window_color(rxvt_t* r, int page, int idx, const char *color)
      * changed.
      */
     rxvt_set_fgbg_colors( r, page );
-
-    color_set = ISSET_PIXCOLOR(r->h, idx);
 
     /* handle color aliases */
     if( isdigit((int) *color) )
@@ -2381,62 +2376,6 @@ rxvt_recolour_cursor(rxvt_t *r)
 
 /*----------------------------------------------------------------------*/
 /*
- * find if fg/bg matches any of the normal (low-intensity) colors
- */
-/* INTPROTO */
-/* TODO: check if this function is still used somewhere. */
-static void
-rxvt_set_colorfgbg(rxvt_t *r)
-{
-    unsigned int    i;
-    const char	 *xpmb = "\0";
-    char	    fstr[sizeof("default") + 1], bstr[sizeof("default") + 1];
-
-    r->h->env_colorfgbg = rxvt_malloc(sizeof("COLORFGBG=default;default;bg")
-			+ 1);
-    STRCPY(fstr, "default");
-    STRCPY(bstr, "default");
-    for (i = Color_Black; i <= Color_White; i++)
-	if (r->pixColorsFocus[Color_fg] == r->pixColorsFocus[i])
-	{
-	    sprintf(fstr, "%d", (i - Color_Black));
-	    break;
-	}
-    for (i = Color_Black; i <= Color_White; i++)
-	if (r->pixColorsFocus[Color_bg] == r->pixColorsFocus[i])
-	{
-	    sprintf(bstr, "%d", (i - Color_Black));
-#ifdef BACKGROUND_IMAGE
-	    xpmb = "default;";
-#endif
-	    break;
-	}
-    sprintf(r->h->env_colorfgbg, "COLORFGBG=%s;%s%s", fstr, xpmb, bstr);
-    putenv(r->h->env_colorfgbg);
-
-#ifndef NO_BRIGHTCOLOR
-    r->h->colorfgbg = DEFAULT_RSTYLE;
-    for (i = minCOLOR; i <= maxCOLOR; i++)
-    {
-	if (
-		r->pixColorsFocus[Color_fg] == r->pixColorsFocus[i]
-# if !(defined(NO_BRIGHTCOLOR) && defined(NO_BOLD_UNDERLINE_REVERSE))
-		&& r->pixColorsFocus[Color_fg] == r->pixColorsFocus[Color_BD]
-# endif
-		/* if we wanted boldFont to have precedence */
-# if 0	/* was ifndef NO_BOLDFONT */
-		&& IS_NULL(r->TermWin.bfont)
-# endif	
-	   )
-	    r->h->colorfgbg = SET_FGCOLOR(r->h->colorfgbg, i);
-	if (r->pixColorsFocus[Color_bg] == r->pixColorsFocus[i])
-	    r->h->colorfgbg = SET_BGCOLOR(r->h->colorfgbg, i);
-    }
-#endif	/* NO_BRIGHTCOLOR */
-}
-
-/*----------------------------------------------------------------------*/
-/*
  * Colour determination for low colour displays, routine from
  *   Hans de Goede <hans@highrise.nl>
  */
@@ -2483,70 +2422,50 @@ rxvt_parse_alloc_color(rxvt_t* r, XColor *screen_in_out, const char *colour)
     int		    res = 0;
 
     if (!XParseColor(r->Xdisplay, XCMAP, colour, screen_in_out))
-	rxvt_msg (DBG_ERROR, DBG_MAIN, "can't determine colour: %s", colour);
+      rxvt_msg (DBG_ERROR, DBG_MAIN, "can't determine colour: %s", colour);
     else
-	res = rxvt_alloc_color(r, screen_in_out, colour);
+      res = rxvt_alloc_color(r, screen_in_out);
     return res;
 }
 
 
 /* EXTPROTO */
 int
-rxvt_alloc_color( rxvt_t* r, XColor *screen_in_out, const char *colour )
+rxvt_alloc_color( rxvt_t* r, XColor *screen_in_out )
 {
     return XAllocColor( r->Xdisplay, XCMAP, screen_in_out );
+}
 
-#if 0 /* 2006-05-27 gi1242: Really bad code. */
-    int		    res;
+unsigned long 
+rxvt_alloc_pixel_from_int( rxvt_t *r, const uint32_t color ) {
+  XColor xcolor;
+  if (rxvt_alloc_color_from_int(r, color, &xcolor))
+    return xcolor.pixel;
+  else
+    return 0L;
+}
 
-    if( (res = XAllocColor(r->Xdisplay, XCMAP, screen_in_out)) )
-	return res;
+int
+rxvt_alloc_color_from_int( rxvt_t *r, const uint32_t color, XColor *xcolor ) {
+  int status;
+  xcolor->red   = (color >>  8) & 0xff00;
+  xcolor->green = (color      ) & 0xff00;
+  xcolor->blue  = (color <<  8) & 0xff00;
+  xcolor->flags = DoRed | DoGreen | DoBlue;
+	rxvt_msg (DBG_DEBUG, DBG_MAIN, "Allocating color #%x", color);
+  status = (int)XAllocColor( r->Xdisplay, r->Xcmap, xcolor );
+  if (!status)
+    rxvt_msg (DBG_ERROR, DBG_MAIN, "Unable to allocate  color #%x!", color);
+  return status;
+}
 
-    /* try again with closest match */
-    /*
-     * XXX 2006-05-25 gi1242: This is really inefficient. There must be a better
-     * way!
-     */
-    if (XDEPTH >= 4 && XDEPTH <= 8)
-    {
-	int		i, numcol;
-	int		best_pixel = 0;
-	unsigned long   best_diff, diff;
-	XColor		*colors;
-
-#define rSQR(x)	    ((x)*(x))
-
-	best_diff = 0;
-	numcol = 0x01 << XDEPTH;
-	if( (colors = rxvt_malloc(numcol * sizeof(XColor))) )
-	{
-	    for (i = 0; i < numcol; i++)
-	    colors[i].pixel = i;
-
-	    XQueryColors(r->Xdisplay, XCMAP, colors, numcol);
-	    for (i = 0; i < numcol; i++)
-	    {
-		diff = rSQR(screen_in_out->red - colors[i].red)
-		    + rSQR(screen_in_out->green - colors[i].green)
-		    + rSQR(screen_in_out->blue - colors[i].blue);
-		if (i == 0 || diff < best_diff)
-		{
-		    best_pixel = colors[i].pixel;
-		    best_diff = diff;
-		}
-	    }
-	    *screen_in_out = colors[best_pixel];
-	    rxvt_free(colors);
-
-	    res = XAllocColor(r->Xdisplay, XCMAP, screen_in_out);
-	}
-    }
-
-    if (res == 0)
-	rxvt_msg (DBG_ERROR, DBG_MAIN, "can't allocate color: %s", colour);
-
-    return res;
-#endif
+void 
+rxvt_set_line_width( rxvt_t *r, const int width ) {
+  XSetLineAttributes( r->Xdisplay, r->tabBar.gc, width,
+                      r->tabBar.gc->values.line_style,
+                      r->tabBar.gc->values.cap_style,
+                      r->tabBar.gc->values.join_style );
+                      
 }
 
 

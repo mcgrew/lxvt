@@ -222,6 +222,7 @@ typedef struct {
 
 
 # include <X11/Xlib.h>
+# include <X11/XKBlib.h>
 # include <X11/X.h>
 # include <X11/Xutil.h>
 # include <X11/Xlibint.h>
@@ -643,7 +644,7 @@ struct mouse_event {
 # define TERMENV	"xterm"
 #endif
 
-#define TABTITLEENV	"MRXVT_TABTITLE="
+#define TABTITLEENV	"LXVT_TABTITLE="
 
 
 #if defined (NO_MOUSE_REPORT) && !defined (NO_MOUSE_REPORT_SCROLLBAR)
@@ -840,10 +841,8 @@ enum {
 
 #if defined(TTY_RGBCOLOR)
 typedef uint64_t rend_t;
-#elif defined(TTY_256COLOR) || defined(MULTICHAR_SET)
-typedef uint32_t rend_t;
 #else
-typedef uint16_t rend_t;
+typedef uint32_t rend_t;
 #endif
 
 #define RS_None		((rend_t)0)   /* Normal */
@@ -983,34 +982,34 @@ enum {
  * lxvt extensions of XTerm OSCs: ESC ] Ps;Pt (ST|BEL)
  * Example: echo "\e]61;newtitle\a"
  */
-#define MRxvt_term	    (60) /* Change window title */
-#define MRxvt_tab	    (61) /* change tab title */
-#define MRxvt_tabterm	    (62) /* change tab and terminal title */
-#define MRxvt_wformat	    (63) /* Change window title format */
-#define MRxvt_tformat	    (64) /* Change tab title format */
-/* #define MRxvt_newtab	    (63) ** DISABLED create a new tab with title */
-/* #define MRxvt_prevtab    (64) ** DISABLED switch to previous tab */
-/* #define MRxvt_nexttab    (65) ** DISABLED switch to next tab */
-#define MRxvt_tint	    (66) /* change tinting color */
-#define MRxvt_shade	    (67) /* change shade level */
-#define MRxvt_encode	    (68) /* change encoding */
-/* #define MRxvt_hide	    (69) ** DISABLED hide/show tabbar */
-#define MRxvt_opacity	    (70) /* set opacity level */
-/* #define MRxvt_tabbtn	    (71) ** DISABLED hide/show tabbar buttons */
-#define MRxvt_tabfg	    (72) /* change active tab fg */
-#define MRxvt_tabbg	    (73) /* change tabbar/active tab bg */
-#define MRxvt_itabfg	    (74) /* change inactive tab fg */
-#define MRxvt_itabbg	    (75) /* change inactive tab bg */
-/* #define MRxvt_trans	    (76) ** DISABLED toggle transparency */
-/* #define MRxvt_moveleft   (77) ** DISABLED move active tab to left */
-/* #define MRxvt_moveright  (78) ** DISABLED move active tab to right */
-/* #define MRxvt_verybold   (79) ** DISABLED toggle bold font for color text */
-/* #define MRxvt_hotkeys    (80) ** DISABLED toggle hotkeys */
-/* #define MRxvt_saveconfig (81) ** DISABLED save configuration */
-#define MRxvt_bgfade	    (82) /* set bgfade degree (Obsolete) */
-#define MRxvt_termenv	    (83) /* set TERMENV type */
-/* #define MRxvt_closewin   (84) ** DISABLED Close all tabs and exit */
-/* #define MRxvt_switchtab  (85) ** DISABLED Switch to tab N */
+#define lxvt_term	    (60) /* Change window title */
+#define lxvt_tab	    (61) /* change tab title */
+#define lxvt_tabterm	    (62) /* change tab and terminal title */
+#define lxvt_wformat	    (63) /* Change window title format */
+#define lxvt_tformat	    (64) /* Change tab title format */
+/* #define lxvt_newtab	    (63) ** DISABLED create a new tab with title */
+/* #define lxvt_prevtab    (64) ** DISABLED switch to previous tab */
+/* #define lxvt_nexttab    (65) ** DISABLED switch to next tab */
+#define lxvt_tint	    (66) /* change tinting color */
+#define lxvt_shade	    (67) /* change shade level */
+#define lxvt_encode	    (68) /* change encoding */
+/* #define lxvt_hide	    (69) ** DISABLED hide/show tabbar */
+#define lxvt_opacity	    (70) /* set opacity level */
+/* #define lxvt_tabbtn	    (71) ** DISABLED hide/show tabbar buttons */
+#define lxvt_tabfg	    (72) /* change active tab fg */
+#define lxvt_tabbg	    (73) /* change tabbar/active tab bg */
+#define lxvt_itabfg	    (74) /* change inactive tab fg */
+#define lxvt_itabbg	    (75) /* change inactive tab bg */
+/* #define lxvt_trans	    (76) ** DISABLED toggle transparency */
+/* #define lxvt_moveleft   (77) ** DISABLED move active tab to left */
+/* #define lxvt_moveright  (78) ** DISABLED move active tab to right */
+/* #define lxvt_verybold   (79) ** DISABLED toggle bold font for color text */
+/* #define lxvt_hotkeys    (80) ** DISABLED toggle hotkeys */
+/* #define lxvt_saveconfig (81) ** DISABLED save configuration */
+#define lxvt_bgfade	    (82) /* set bgfade degree (Obsolete) */
+#define lxvt_termenv	    (83) /* set TERMENV type */
+/* #define lxvt_closewin   (84) ** DISABLED Close all tabs and exit */
+/* #define lxvt_switchtab  (85) ** DISABLED Switch to tab N */
 
 
 
@@ -1668,15 +1667,10 @@ struct rxvt_hidden {
      * These three don't need to be kept but do so to placate some memory
      * checkers
      */
-    char*	    env_windowid;			/* environmental
-							   variable WINDOWID */
-    char*	    env_display;			/* environmental
-							   variable DISPLAY */
-    char*	    env_term;				/* environmental
-							   variable TERM */
-    char*	    env_tabtitle;			/* environmental
-							   variable
-							   MRXVT_TABTITLE*/
+    char*	    env_windowid;			/* environmental variable WINDOWID */
+    char*	    env_display;			/* environmental variable DISPLAY */
+    char*	    env_term;				/* environmental variable TERM */
+    char*	    env_tabtitle;			/* environmental variable LXVT_TABTITLE*/
     char*	    env_colorfgbg;
     char*	    buffer;
     char*	    locale;

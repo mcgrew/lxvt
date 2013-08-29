@@ -54,18 +54,12 @@ lxvt_SOURCES +=    command.c		\
 		    xdefaults.c
 
 lxvt_SOURCES +=    close_term.xbm	\
-		    left.xbm		\
-		    right.xbm		\
 		    term.xbm
 
-lxvt_SOURCES +=    close_term.xpm	\
-		    close_term_d.xpm	\
-		    left.xpm		\
-		    left_d.xpm		\
-		    right.xpm		\
-		    right_d.xpm		\
-		    term.xpm		\
-		    term_d.xpm
+#lxvt_SOURCES +=    close_term.xpm	\
+#		    close_term_d.xpm	\
+#		    term.xpm		\
+#		    term_d.xpm
 
 #install-exec-hook:
 #   -chown root $(DESTDIR)$(bindir)/lxvt
@@ -153,7 +147,7 @@ lxvt_SOURCES +=    $(SCROLLBAR_PLAIN_SRC)	\
 		    $(SESSION_SRC)		\
 		    $(XFTACS_SRC)
 
-MRXVT_H =	    ../config.h			\
+LXVT_H =	    ../config.h			\
 		    command.h			\
 		    debug.h			\
 		    feature.h			\
@@ -162,18 +156,12 @@ MRXVT_H =	    ../config.h			\
 		    rxvt.h			\
 		    rxvtlib.h
 
-MRXVT_PIXMAPS =	    left.xbm			\
-		    right.xbm			\
-		    close_term.xbm		\
-		    term.xbm			\
-		    left.xpm			\
-		    left_d.xpm			\
-		    right.xpm			\
-		    right_d.xpm			\
-		    close_term.xpm		\
-		    close_term_d.xpm		\
-		    term.xpm			\
-		    term_d.xpm
+#LXVT_PIXMAPS = close_term.xbm		\
+#		    term.xbm			\
+#		    close_term.xpm		\
+#		    close_term_d.xpm		\
+#		    term.xpm			\
+#		    term_d.xpm
 
 
 
@@ -181,32 +169,33 @@ AUTOMAKE_OPTIONS = no-dependencies
 
 # set dependencies
 $(bin_PROGRAMS) : 
-command.o:	    $(MRXVT_H)				command.c
-encoding.o:	    $(MRXVT_H) encoding.h		encoding.c
-grkelot.o:	    $(MRXVT_H) grkelot.h		grkelot.c
-macros.o:	    $(MRXVT_H)				macros.c
-init.o:		    $(MRXVT_H) $(XFTACS_H) init.h	init.c
-logging.o:	    $(MRXVT_H)				logging.c
-main.o:		    $(MRXVT_H) $(XFTACS_H)		main.c
-menubar.o:	    $(MRXVT_H) 				menubar.c
-misc.o:		    $(MRXVT_H) 				misc.c
-mjpg.o:		    $(MRXVT_H) 				mjpg.c
-mpng.o:		    $(MRXVT_H) 				mpng.c
-netdisp.o:	    $(MRXVT_H) 				netdisp.c
-pixmap.o:	    $(MRXVT_H) 				pixmap.c
-ptytty.o:	    $(MRXVT_H) 				ptytty.c
-rxvt.o:		    $(MRXVT_H) 				rxvt.c
-rxvtmem.o:	    $(MRXVT_H) 				rxvtmem.h rxvtmem.c
-screen.o:	    $(MRXVT_H) $(XFTACS_H)		screen.c
-scrollbar-next.o:   $(MRXVT_H) 				scrollbar-next.c
-scrollbar-plain.o:  $(MRXVT_H) 				scrollbar-plain.c
-scrollbar-rxvt.o:   $(MRXVT_H) 				scrollbar-rxvt.c
-scrollbar-sgi.o:    $(MRXVT_H) 				scrollbar-sgi.c
-scrollbar-xterm.o:  $(MRXVT_H) 				scrollbar-xterm.c
-scrollbar.o:	    $(MRXVT_H) 				scrollbar.c
-session.o:	    $(MRXVT_H) 				session.c
-strings.o:	    $(MRXVT_H) 				strings.c
-tabbar.o:	    $(MRXVT_H) $(MRXVT_PIXMAPS)		tabbar.c
-xdefaults.o:	    $(MRXVT_H) 				xdefaults.c
-transparent.o:	    $(MRXVT_H) 				transparent.c
+command.o:	    $(LXVT_H)				command.c
+encoding.o:	    $(LXVT_H) encoding.h		encoding.c
+grkelot.o:	    $(LXVT_H) grkelot.h		grkelot.c
+macros.o:	    $(LXVT_H)				macros.c
+init.o:		    $(LXVT_H) $(XFTACS_H) init.h	init.c
+logging.o:	    $(LXVT_H)				logging.c
+main.o:		    $(LXVT_H) $(XFTACS_H)		main.c
+menubar.o:	    $(LXVT_H) 				menubar.c
+misc.o:		    $(LXVT_H) 				misc.c
+mjpg.o:		    $(LXVT_H) 				mjpg.c
+mpng.o:		    $(LXVT_H) 				mpng.c
+netdisp.o:	    $(LXVT_H) 				netdisp.c
+pixmap.o:	    $(LXVT_H) 				pixmap.c
+ptytty.o:	    $(LXVT_H) 				ptytty.c
+rxvt.o:		    $(LXVT_H) 				rxvt.c
+rxvtmem.o:	    $(LXVT_H) 				rxvtmem.h rxvtmem.c
+screen.o:	    $(LXVT_H) $(XFTACS_H)		screen.c
+scrollbar-next.o:   $(LXVT_H) 				scrollbar-next.c
+scrollbar-plain.o:  $(LXVT_H) 				scrollbar-plain.c
+scrollbar-rxvt.o:   $(LXVT_H) 				scrollbar-rxvt.c
+scrollbar-sgi.o:    $(LXVT_H) 				scrollbar-sgi.c
+scrollbar-xterm.o:  $(LXVT_H) 				scrollbar-xterm.c
+scrollbar.o:	    $(LXVT_H) 				scrollbar.c
+session.o:	    $(LXVT_H) 				session.c
+strings.o:	    $(LXVT_H) 				strings.c
+#tabbar.o:	    $(LXVT_H) $(LXVT_PIXMAPS)		tabbar.c
+tabbar.o:	    $(LXVT_H)       		tabbar.c
+xdefaults.o:	    $(LXVT_H) 				xdefaults.c
+transparent.o:	    $(LXVT_H) 				transparent.c
 xftacs.o:			xftacs.h		xftacs.c

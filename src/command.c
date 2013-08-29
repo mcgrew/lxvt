@@ -1908,7 +1908,7 @@ rxvt_monitor_tab(rxvt_t* r,int i)
     /* ding - ring the system bell */
     rxvt_scr_bell(r,i);
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     /* highlight the tabbar */
     rxvt_tabbar_highlight_tab (r, i, False);
 #endif
@@ -1923,7 +1923,7 @@ rxvt_monitor_tab(rxvt_t* r,int i)
 	PVTS(r, i)->monitor_tab = TAB_MON_OFF;
     }
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 #ifdef BACKGROUND_IMAGE
     if( r->tabBar.hasPixmap  && ISSET_OPTION(r, Opt_tabPixmap))
     {
@@ -1990,7 +1990,7 @@ rxvt_process_children_cmdfd( rxvt_t* r, fd_set* p_readfds )
 	    *PVTS(r, i)->outbuf_end = (char) 0;
 #endif
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 	/* highlight inactive tab if there is some input */
 	if(
 	     NOTSET_OPTION(r, Opt2_hlTabOnBell)	    &&
@@ -2771,7 +2771,7 @@ rxvt_process_keyrelease(rxvt_t* r, XKeyEvent *ev)
     {
 	KeySym	      ks;
 
-	ks = XKeycodeToKeysym(r->Xdisplay, ev->keycode, 0);
+	ks = XkbKeycodeToKeysym(r->Xdisplay, ev->keycode, 0, 0);
 	if (ks == XK_Control_L || ks == XK_Control_R)
 	    r->h->mouse_slip_wheel_speed = 0;
     }
@@ -3087,7 +3087,7 @@ rxvt_process_buttonpress(rxvt_t* r, int page, XButtonEvent *ev)
     }
 
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     /*
      * Tabbar window processing of button press
      */
@@ -3173,7 +3173,7 @@ rxvt_process_buttonrelease(rxvt_t* r, int page, XButtonEvent *ev)
 {
     int		 reportmode = 0;
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     if ( r->tabClicked != -1 )
     {
 	if ( rxvt_is_tabbar_win( r, ev->window ) )
@@ -3462,7 +3462,7 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason )
 	    break;
 #endif	/* HAVE_MENUBAR */
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 	case HIDE_TABBAR:
 	    r->szHint.base_height -= rxvt_tabbar_rheight (r);
 	    r->szHint.min_height  -= rxvt_tabbar_rheight (r);
@@ -3500,7 +3500,7 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason )
 	    if( rxvt_menubar_visible(r) )
 		r->szHint.base_height += rxvt_menubar_height (r);
 #endif
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 	    if( rxvt_tabbar_visible( r ) )
 		r->szHint.base_height += rxvt_tabbar_height (r);
 #endif
@@ -3545,10 +3545,6 @@ rxvt_resize_on_subwin (rxvt_t* r, resize_reason_t reason )
 	    0 : r->szHint.base_width - 2*r->TermWin.int_bwidth;
 
     r->h->window_vt_y = r->szHint.base_height - 2*r->TermWin.int_bwidth;
-#ifdef HAVE_TABBAR
-    if (ISSET_OPTION(r, Opt2_bottomTabbar))
-	r->h->window_vt_y -= rxvt_tabbar_height (r);
-#endif
 
     /*
      * Now we can resize the window The resize request might not always succeed.
@@ -3724,7 +3720,7 @@ rxvt_resize_sub_windows (rxvt_t* r)
 #ifdef HAVE_MENUBAR
     rxvt_menubar_resize(r);
 #endif
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     rxvt_tabbar_resize (r);
 #endif
 
@@ -4176,27 +4172,27 @@ rxvt_process_expose (rxvt_t* r, XEvent* ev)
 
 #ifdef DEBUG
 	/* Debug message */
-# ifdef HAVE_TABBAR
+# ifdef HAVE_TABS
 	if (rxvt_is_tabbar_win (r, win))
 	{
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Expose event on tabbar\n"));
-	}
+	} 
 # endif
 # ifdef HAVE_SCROLLBARS
-	else if (rxvt_is_scrollbar_win (r, win))
+	if (rxvt_is_scrollbar_win (r, win))
 	{
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Expose event on scrollbar\n"));
 	}
 # endif
 # ifdef HAVE_MENUBAR
-	else if (rxvt_is_menubar_win (r, win))
+	if (rxvt_is_menubar_win (r, win))
 	{
 	    rxvt_dbgmsg ((DBG_DEBUG, DBG_COMMAND,  "Expose event on menubar\n"));
 	}
 # endif
 #endif	/* DEBUG */
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 	if (rxvt_is_tabbar_win(r, win) && rxvt_tabbar_visible (r))
 	{
 	    rxvt_tabbar_expose(r, ev);
@@ -4631,7 +4627,7 @@ rxvt_process_nonprinting(rxvt_t* r, int page, unsigned char ch)
 
 	case C0_BEL:	/* bell */
 	    rxvt_scr_bell(r, page);
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 	    if (page != ATAB(r))
 		rxvt_tabbar_highlight_tab(r, page, False);
 #endif
@@ -5822,7 +5818,7 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	    break;
 #endif
 
-	case MRxvt_tabterm:	/* Set window and tab title */
+	case lxvt_tabterm:	/* Set window and tab title */
 	    rxvt_tabbar_set_title (r, page, (const unsigned char TAINTED*) str);
 	    if( ISSET_OPTION(r, Opt2_syncTabTitle))
 		/*
@@ -5832,16 +5828,16 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 		break;
 	    /* else FALL THROUGH */
 
-	case MRxvt_term:	/* Set window title */
+	case lxvt_term:	/* Set window title */
 	    rxvt_set_term_title(r, (const unsigned char*) str);
 	    break;
 
 
-	case MRxvt_tab:
+	case lxvt_tab:
 	    rxvt_tabbar_set_title (r, page, (const unsigned char TAINTED*) str);
 	    break;
 
-	case MRxvt_tformat:
+	case lxvt_tformat:
 	{
 	    int len = STRLEN(str);
 
@@ -5856,7 +5852,7 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	    else
 		STRCPY( PVTS(r, page)->title_format, str );
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
 	    /* Redraw the tab title. */
 	    refresh_tabbar_tab( r, page );
 #endif
@@ -5864,7 +5860,7 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	    break;
 	}
 
-	case MRxvt_wformat:
+	case lxvt_wformat:
 	{
 	    int len = STRLEN(str);
 	    
@@ -5885,137 +5881,14 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	    break;
 	}
 
-
-	/*
-	 * 2006-02-20 gi1242: These escape sequences are disabled for a possible
-	 * security flaw. A malicious user might be able to send a few escape
-	 * sequences through a text file, giving him more control than he should
-	 * have over the tabs.
-	 *
-	 * On that note, even the escape sequences for hiding or showing the
-	 * tabbar / scroll bar / menubar have been disabled. These aren't really
-	 * a security risk, however the user can access these functions through
-	 * either keyboard macros, or the popup menu, so these are really just
-	 * code bloat :).
-	 *
-	 * Only the local user should be able to create / close / move tabs.
-	 *
-	 * NOTE: The disabled code uses the old hotkey code (from lxvt-0.4.2).
-	 * To enable the escape sequences below, you have to uncomment the code
-	 * below AND port it to use the macro feature from 0.5.0 upward.
-	 */
-#if 0 /* {{{ DISABLED FOR SECURITY REASONS */
-	case MRxvt_hide:
-#ifdef HAVE_SCROLLBARS
-	    if ('s' == *str || 'S' == *str) 	    /* show/hide scrollbar */
-	    {
-		rxvt_hotkey_hide_scrollbar (r, 0);
-	    }
-	    else 
-#endif	/* HAVE_SCROLLBARS */
-#ifdef HAVE_MENUBAR
-	    if ('m' == *str || 'M' == *str)	    /* show/hide menubar */
-	    {
-		rxvt_hotkey_hide_menubar (r, 0);
-	    }
-	    else
-#endif	/* HAVE_MENUBAR */
-	    {
-		rxvt_hotkey_hide_tabbar (r, 0);
-	    }
-	    break;
-
-	case MRxvt_tabbtn:
-	    rxvt_hotkey_hide_button (r, 0);
-	    break;
-
-	case MRxvt_saveconfig:
-	    rxvt_hotkey_save_config (r, 0);
-	    break;
-
-	case MRxvt_newtab:
-	    rxvt_append_page (r, 0, str, NULL);
-	    break;
-	case MRxvt_prevtab:
-	    if (0 != page)
-		rxvt_activate_page (r, page-1);
-	    else if (0 != LTAB(r))
-		rxvt_activate_page (r, LTAB(r));
-	    break;
-	case MRxvt_nexttab:
-	    if (page != LTAB(r))
-		rxvt_activate_page (r, page+1);
-	    else if (0 != LTAB(r))
-		rxvt_activate_page (r, 0);
-	    break;
-
-	case MRxvt_moveleft:
-	    rxvt_tabbar_move_tab (r, 0);
-	    break;
-	case MRxvt_moveright:
-	    rxvt_tabbar_move_tab (r, 1);
-	    break;
-
-	case MRxvt_closewin:
-	    if( *str )
-	    {
-		int tabno = atoi(str) - 1;
-
-		if( tabno == -1 )
-		{
-		    rxvt_hotkey_kill_tab(r, NULL);
-		}
-		else if( tabno >=0 && tabno <=LTAB(r)
-		    && ( NOTSET_OPTION(r, Opt2_protectSecondary) ||
-			 PVTS(r, tabno)->current_screen == PRIMARY))
-		{
-		    rxvt_kill_page (r, tabno);
-		}
-		break;
-	    }
-
-	    rxvt_hotkey_close_window (r, NULL);
-	    break;
-
-	case MRxvt_switchtab:
-	    {
-		int tabno = atoi(str) - 1;
-		if( tabno == -1)
-		    rxvt_activate_page( r, PTAB(r));
-		else if( tabno >= 0 && tabno <= LTAB(r))
-		    rxvt_activate_page( r, tabno);
-
-		break;
-	    }
-#endif /* }}} */
-
-	/*
-	 * 2006-03-13 gi1242: The following are not security risks, but are
-	 * unnecessary. Only an interactive user needs such control, and he can
-	 * have it using macros / menus.
-	 */
-#if 0 /* {{{ DISABLED because macros are more useful */
-	case MRxvt_verybold:
-	    /* rxvt_hotkey_verybold (r, 0); */
-	    rxvt_toggle_verybold(r);
-	    break;
-
-#ifdef TRANSPARENT
-	case MRxvt_trans:
-	    rxvt_toggle_transparency (r);
-	    break;
-#endif	/* TRANSPARENT */
-
-#endif /* }}} */
-
 #ifdef MULTICHAR_SET
-	case MRxvt_encode:
+	case lxvt_encode:
 	    /* We only change encoding method, but not font ;-) */
 	    rxvt_set_multichar_encoding (r, str);   
 	    break;
 #endif	/* MULTICHAR_SET */
 
-	case MRxvt_opacity:
+	case lxvt_opacity:
 	    if (IS_ATOM(r->h->xa[XA_NET_WM_WINDOW_OPACITY]))
 	    {
 		int	oldopacity = r->TermWin.opacity;
@@ -6057,25 +5930,25 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 	    }
 	    break;
 
-#ifdef HAVE_TABBAR
-	case MRxvt_tabfg:
-	case MRxvt_tabbg:
-	case MRxvt_itabfg:
-	case MRxvt_itabbg:
+#ifdef HAVE_TABS
+	case lxvt_tabfg:
+	case lxvt_tabbg:
+	case lxvt_itabfg:
+	case lxvt_itabbg:
 	    rxvt_tabbar_change_color (r, op, str);
 	    break;
 #endif
 
 #if defined(TRANSPARENT) || defined(BACKGROUND_IMAGE)
 # ifdef TINTING_SUPPORT
-	case MRxvt_tint:
+	case lxvt_tint:
 	    if (ISSET_PIXCOLOR (r->h, Color_tint) &&
 		r->h->rs[Rs_shade])
 		rxvt_set_window_color(r, page, Color_tint, str);
 	    break;
 
-	case MRxvt_bgfade:  /* Make bgfade behave like shade */
-	case MRxvt_shade:
+	case lxvt_bgfade:  /* Make bgfade behave like shade */
+	case lxvt_shade:
 	    if (!ISSET_PIXCOLOR (r->h, Color_tint) ||
 		!r->h->rs[Rs_shade])
 		break;
@@ -6105,7 +5978,7 @@ rxvt_xterm_seq(rxvt_t* r, int page, int op, const char *str, unsigned char resp 
 # endif	/* TINTING_SUPPORT */
 #endif	/* TRANSPARENT || BACKGROUND_IMAGE */
 
-	case MRxvt_termenv:
+	case lxvt_termenv:
 	    PVTS(r, page)->termenv = rxvt_get_termenv ((const char*) str);
 	    break;
 

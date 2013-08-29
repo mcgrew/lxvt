@@ -301,7 +301,7 @@ rxvt_scrollbar_init_sgi (rxvt_t* r)
     xcol.red = 0xde00;
     xcol.green = 0xde00;
     xcol.blue = 0xde00;
-    if (!rxvt_alloc_color (r, &xcol, "light gray")) {
+    if (!rxvt_alloc_color (r, &xcol)) {
 #ifndef NO_BRIGHTCOLOR
 	r->scrollBar.sgi_fg = r->pixColorsFocus [Color_AntiqueWhite];
 #else
@@ -314,7 +314,7 @@ rxvt_scrollbar_init_sgi (rxvt_t* r)
     xcol.red = 0xaa00;
     xcol.green = 0xaa00;
     xcol.blue = 0xaa00;
-    if (!rxvt_alloc_color (r, &xcol, "light medium gray")) {
+    if (!rxvt_alloc_color (r, &xcol)) {
 #ifndef NO_BRIGHTCOLOR
 	r->scrollBar.sgi_lmedium = r->pixColorsFocus [Color_AntiqueWhite];
 #else
@@ -327,7 +327,7 @@ rxvt_scrollbar_init_sgi (rxvt_t* r)
     xcol.red = 0xbd00;
     xcol.green = 0xbd00;
     xcol.blue = 0xbd00;
-    if (!rxvt_alloc_color (r, &xcol, "medium gray")) {
+    if (!rxvt_alloc_color (r, &xcol)) {
 #ifndef NO_BRIGHTCOLOR
 	r->scrollBar.sgi_bg = r->pixColorsFocus [Color_Black];
 #else
@@ -340,7 +340,7 @@ rxvt_scrollbar_init_sgi (rxvt_t* r)
     xcol.red = 0x8e00;
     xcol.green = 0x8e00;
     xcol.blue = 0x8e00;
-    if (!rxvt_alloc_color (r, &xcol, "dark gray")) {
+    if (!rxvt_alloc_color (r, &xcol)) {
 #ifndef NO_BRIGHTCOLOR
 	r->scrollBar.sgi_dark = r->pixColorsFocus [Color_Grey25];
 #else
@@ -352,7 +352,7 @@ rxvt_scrollbar_init_sgi (rxvt_t* r)
     xcol.red = 0x5e00;
     xcol.green = 0x5e00;
     xcol.blue = 0x5e00;
-    if (!rxvt_alloc_color (r, &xcol, "very dark gray")) {
+    if (!rxvt_alloc_color (r, &xcol)) {
 #ifndef NO_BRIGHTCOLOR
 	r->scrollBar.sgi_vdark = r->pixColorsFocus [Color_Grey25];
 #else

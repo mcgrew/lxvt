@@ -280,12 +280,11 @@ rxvt_init_screen (rxvt_t* r)
 static void
 rxvt_scr_alloc (rxvt_t* r, int page)
 {
-    unsigned int    ncol, nrow, total_rows;
+    unsigned int    nrow, total_rows;
     unsigned int    p, q;
 
 
     rxvt_dbgmsg ((DBG_VERBOSE, DBG_SCREEN, "rxvt_scr_alloc %d ()\n", page));
-    ncol = r->TermWin.ncol;
     nrow = r->TermWin.nrow;
     total_rows = nrow + SVLINES;
 
@@ -871,7 +870,7 @@ rxvt_scr_change_screen(rxvt_t* r, int page, int scrn)
 # endif
 #endif
 
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     /* Need to update tabbar buttons */
     if (ISSET_OPTION(r, Opt2_protectSecondary))
 	rxvt_tabbar_draw_buttons (r);

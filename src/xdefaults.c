@@ -118,7 +118,7 @@ static const struct {
 	    "format of window title (when syncing to tab title)"),
 
     /* Global options */
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     STRG(Rs_maxTabWidth, "maxTabWidth", "mtw", "number", "maximum (char) title width of all tabs"),
     STRG(Rs_minVisibleTabs, "minVisibleTabs", "mvt", "number",
 	    "minimum # of tabs to keep visible (requires xftpfn)"),
@@ -129,13 +129,11 @@ static const struct {
 #endif
     BOOL( "syncTabTitle", "stt", Opt2_syncTabTitle,
 	    "synchronizing terminal title with tab title" ),
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     BOOL( "hideTabbar", "ht", Opt2_hideTabbar,
 	    "hiding tabbar on initialization" ),
     BOOL( "autohideTabbar", "aht", Opt2_autohideTabbar,
 	    "auto hide/show the tabbar depending on number of open tabs" ),
-    BOOL( "bottomTabbar", "bt", Opt2_bottomTabbar,
-	    "showing tabbar at bottom" ),
     BOOL( "hideButtons", "hb", Opt2_hideButtons,
 	    "hide buttons on tabbar" ),
 #endif
@@ -274,7 +272,7 @@ static const struct {
 	"shadow mode = "
 	"top|bottom|left|right|topleft|topright|botleft|botright"),
 #endif
-#ifdef HAVE_TABBAR
+#ifdef HAVE_TABS
     STRG(Rs_tabfg, "tabForeground", "tabfg", "color", "tabbar active tab foreground color"),
     STRG(Rs_tabbg, "tabBackground", "tabbg", "color", "tabbar and active tab background color"),
     STRG(Rs_itabfg, "itabForeground", "itabfg", "color", "tabbar inactive tab foreground color"),

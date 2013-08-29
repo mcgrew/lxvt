@@ -111,9 +111,9 @@ lxvt --transparent --shading 85 ++transparentTabbar
 .Ve
 which is the same as putting the lines
 .Vb
-Mrxvt.transparent:		True
-Mrxvt.shading:			85
-Mrxvt.transparentTabbar:	False
+lxvt.transparent:		True
+lxvt.shading:			85
+lxvt.transparentTabbar:	False
 .Ve
 in your
 .Pa ~/.lxvtrc .
@@ -600,14 +600,6 @@ to be ignored. However a command specified via the
 .Cm NewTab
 macro is honored.
 .Op Cm cmdAllTabs
-.
-.BO bt
-Show tabbar at bottom.
-.Op Cm bottomTabbar
-.
-.BO ce
-If a tab title is too long to fit in the space provided, then truncate the end (default). If this option is unset, then truncate the start. This only has effect when Xft is not used.
-.Op Cm chopEnd
 .
 .It Fl e Op Ar arguments ...
 Specifies the program (and its command line arguments) to be run in the
@@ -1248,7 +1240,7 @@ option (by default
 When
 .Nm
 starts up, it ONLY reads options with ClassName
-.Sq Em Mrxvt ,
+.Sq Em lxvt ,
 .Sq Em XTerm ,
 or the class specified via the
 .Fl name
@@ -1275,25 +1267,25 @@ option at startup. You can consult the
 .Pa doc/lxvtrc.sample
 in the directory for more details.
 .Vb
-Mrxvt.profile0.tabTitle:        term1
-Mrxvt.profile1.tabTitle:        term2
-Mrxvt.profile2.tabTitle:        term3
-Mrxvt.profile0.saveLines:       600
-Mrxvt.profile1.saveLines:       600
-Mrxvt.profile2.saveLines:       600
-# Mrxvt.profile0.Pixmap:        /home/images/vt0bg.xpm
-# Mrxvt.profile1.Pixmap:        /home/images/vt1bg.xpm
-# Mrxvt.profile2.Pixmap:        /home/images/vt2bg.xpm
-Mrxvt.scrollbarStyle:           next
-Mrxvt.initTermNumber:           3
-Mrxvt.transparent:              True
-Mrxvt.transparentScrollbar:     True
-Mrxvt.transparentTabbar:        False
-Mrxvt.transparentMenubar:       False
-Mrxvt.tintColor:                #ffffff
-Mrxvt.shading:                  85
-Mrxvt.foreground:               white
-Mrxvt.background:               black
+lxvt.profile0.tabTitle:        term1
+lxvt.profile1.tabTitle:        term2
+lxvt.profile2.tabTitle:        term3
+lxvt.profile0.saveLines:       600
+lxvt.profile1.saveLines:       600
+lxvt.profile2.saveLines:       600
+# lxvt.profile0.Pixmap:        /home/images/vt0bg.xpm
+# lxvt.profile1.Pixmap:        /home/images/vt1bg.xpm
+# lxvt.profile2.Pixmap:        /home/images/vt2bg.xpm
+lxvt.scrollbarStyle:           next
+lxvt.initTermNumber:           3
+lxvt.transparent:              True
+lxvt.transparentScrollbar:     True
+lxvt.transparentTabbar:        False
+lxvt.transparentMenubar:       False
+lxvt.tintColor:                #ffffff
+lxvt.shading:                  85
+lxvt.foreground:               white
+lxvt.background:               black
 .Ve
 .Ed
 .\"}}}
@@ -1415,7 +1407,7 @@ activate previous active tab
 .El
 .Pp
 .
-.Em Mrxvt default shortcuts:
+.Em lxvt default shortcuts:
 .
 .Bl -tag -width 18n -compact -offset 4n
 .It Ctrl+Shift+1
@@ -1516,7 +1508,7 @@ functionality (described below) as of version 0.5.0.
 .Pp
 You can define your own keyboard shortcuts in your configuration file by using the following syntax:
 .Vb
-Mrxvt.macro.[modifiers+]keyname:         action
+lxvt.macro.[modifiers+]keyname:         action
 .Ve
 Here
 .Sq modifiers
@@ -1544,8 +1536,8 @@ tells
 .Nm
 to add the macro action to any previous action associated to that particular key. For instance
 .Vb
-Mrxvt.macro.Primary+Shift+Return:	Esc \eec
-Mrxvt.macro.Primary+Add+Shift+Return:	Str ^M
+lxvt.macro.Primary+Shift+Return:	Esc \eec
+xvt.macro.Primary+Add+Shift+Return:	Str ^M
 .Ve
 will define the macro
 .Sq Shift+Return
@@ -1572,7 +1564,7 @@ In case you want to unbind a default keyboard macro, just bind the appropriate k
 .Sq Ic Dummy .
 For example
 .Vb
-Mrxvt.macro.Ctrl+Shift+t:	Dummy
+lxvt.macro.Ctrl+Shift+t:	Dummy
 .Ve
 will disable the default keyboard shortcut
 .Sq Ctrl+Shift+t .
@@ -1991,7 +1983,7 @@ Path to look for menu / background files (see
 option).
 .It Ev TERM
 Set to the terminal name in the window you have created.
-.It Ev MRXVT_TABTITLE
+.It Ev LXVT_TABTITLE
 Set to the initial tab title of each terminal. Notice that its value will not be altered if the user uses a shortcut or escape sequence to change the tab title. The user must modify it manually after doing that.
 .It Ev WINDOWID
 Set to the X window id number of the lxvt window.

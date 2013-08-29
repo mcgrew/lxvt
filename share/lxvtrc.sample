@@ -34,8 +34,6 @@
 # -----------------------------	TAB-BAR OPTIONS ------------------------------ #
 #
 
-lxvt.bottomTabbar:		True
-
 # Only show the tab bar if there is more than one tab.
 lxvt.autohideTabbar:		True
 
@@ -305,8 +303,6 @@ lxvt.macro.Primary+Add+Shift+Return:	Str ^M
 #
 # ------------------------------- FULL SCREEN -------------------------------- #
 #
-FullScreen.bottomTabbar:	False
-
 # Set a large font ;)
 FullScreen.xftSize:		17
 FullScreen.xftPSize:		12

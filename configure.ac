@@ -29,7 +29,7 @@ dnl terminal version.
 AC_INIT(lxvt, 0.5.5, [tjmcgrew@gmail.com])
 AM_INIT_AUTOMAKE(lxvt, 0.5.5)
 
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_SRCDIR([src/main.c])
 
 
@@ -109,11 +109,6 @@ case "$host" in
     AC_DEFINE(OS_DARWIN, [], [set OS to darwin])
     local_os_type="darwin"
     ;;
-*-sco*)
-    AC_DEFINE(OS_SCO, [], [set OS to sco])
-    AC_DEFINE(OS_SVR4, [], [set OS to svr4])
-    local_os_type="sco"
-    AC_MSG_ERROR([Mrxvt does not support f*cking SCO's products!])
 esac
 
 
@@ -147,7 +142,6 @@ support_pointer_blank=yes
 support_text_shadow=no
 support_smart_resize=no
 support_menubar=no
-support_tabbar=yes
 support_background_image=yes
 support_transparency=yes
 dnl: support_fading=yes
@@ -205,7 +199,6 @@ if test "x$support_everything" = "xyes"; then
     support_text_shadow=yes
     support_smart_resize=yes
     support_menubar=yes
-    support_tabbar=yes
     support_background_image=yes
     support_transparency=yes
     dnl: support_fading=yes
@@ -262,7 +255,6 @@ if test "x$support_minimal" = "xyes"; then
     support_text_shadow=no
     support_smart_resize=no
     support_menubar=no
-    support_tabbar=no
     support_background_image=no
     support_transparency=no
     dnl: support_fading=no
@@ -575,16 +567,6 @@ fi
 
 
 AC_ARG_ENABLE(
-    tabbar,
-    AC_HELP_STRING([--enable-tabbar],[enable displaying tab bar [[yes]]]),
-    [support_tabbar=$enableval]
-)
-if test "x$support_tabs x$support_tabbar" = "xyes xyes"; then
-    AC_DEFINE(HAVE_TABBAR, [], [allow showing tabbar])
-fi
-
-
-AC_ARG_ENABLE(
     transparency,
     AC_HELP_STRING([--enable-transparency],[enable transparent background [[yes]]]),
     [support_transparency=$enableval]
@@ -853,7 +835,7 @@ fi
 
 AC_PATH_X
 if test "x$no_x" = "xyes"; then
-    AC_MSG_ERROR([Mrxvt requires the X Window System libraries and headers.])
+    AC_MSG_ERROR([lxvt requires the X Window System libraries and headers.])
 fi
 
 dnl Warn if the detected path differs from the supplied
@@ -882,7 +864,7 @@ AC_CHECK_LIB(
     X11,
     XOpenDisplay,
     [],
-    AC_MSG_ERROR([Mrxvt requires the libX11 libraries.])
+    AC_MSG_ERROR([lxvt requires the libX11 libraries.])
 )
 
 AC_CHECK_HEADERS(X11/XKBlib.h)
@@ -891,7 +873,7 @@ dnl AC_CHECK_LIB(
 dnl     Xext,
 dnl     XextAddDisplay,
 dnl     [],
-dnl     AC_MSG_ERROR([Mrxvt requires the libXext libraries.])
+dnl     AC_MSG_ERROR([lxvt requires the libXext libraries.])
 dnl )
 
 
@@ -1505,9 +1487,6 @@ echo "Blank pointer               : $support_pointer_blank"
 echo "Color text shadow           : $support_text_shadow"
 echo "Smart resize                : $support_smart_resize"
 echo "Menu bar                    : $support_menubar"
-if test "x$support_tabs" = "xyes"; then
-echo "Tab bar                     : $support_tabbar"
-fi
 echo
 echo "Background features:"
 echo "Background image            : $support_background_image"

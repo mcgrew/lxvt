@@ -483,10 +483,10 @@
 
 /* Maximal length and display length of tab title */
 #define MAX_TAB_TXT		    (507)
-#define MAX_DISPLAY_TAB_TXT	    (40)
-#define MAX_TAB_PIXEL_WIDTH	    (200)
+#define MAX_DISPLAY_TAB_TXT	    (63)
+#define MAX_TAB_PIXEL_WIDTH	    (250)
 
-#define DEFAULT_DISPLAY_TAB_TXT	    (27)
+#define DEFAULT_DISPLAY_TAB_TXT	    (63)
 #define DEFAULT_MIN_VISIBLE_TABS    (6)
 
 /* Minimum Xft font size (pixel) */

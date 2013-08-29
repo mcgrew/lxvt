@@ -1,10 +1,10 @@
 Begin3
 Title:		lxvt
-Version:	@MRXVT_VERSION@
-Entered-date:	@MRXVT_LSMDATE@
+Version:	@LXVT_VERSION@
+Entered-date:	@LXVT_LSMDATE@
 
-Description:	@MRXVT_WEBPAGE@
-		Mrxvt is a terminal emulator for X Window System. It provides
+Description:	@LXVT_WEBPAGE@
+		lxvt is a terminal emulator for X Window System. It provides
 		DEC VT102 compatible terminals for programs that cannot use
 		the window system directly. The primary features of lxvt
 		include (but not limit to) multi-tab and runtime changeable
@@ -46,10 +46,10 @@ Author:		* John Bovey [Univ. Kent at Canterbury] was the creator of
 		* Gautam Iyer improved the transparency, Xft and menu support, and
 		  reduced Xresource / memory usage.
 
-Maintained-by:	@MRXVT_MAINT@ @MRXVT_MAINTEMAIL@ Project Coordinator
+Maintained-by:	@LXVT_MAINT@ @LXVT_MAINTEMAIL@ Project Coordinator
 
-Original-site:	@MRXVT_FTPSITENAME@ @MRXVT_FTPSITEDIR@
-		440k	lxvt-@MRXVT_VERSION@.tar.gz
+Original-site:	@LXVT_FTPSITENAME@ @LXVT_FTPSITEDIR@
+		440k	lxvt-@LXVT_VERSION@.tar.gz
 
 Platforms:	requires X11 installed
 

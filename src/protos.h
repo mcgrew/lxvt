@@ -93,6 +93,7 @@ void		 rxvt_set_color                   __PROTO((rxvt_t*, int, const XColor*));
 void             rxvt_init_env                    __PROTO((rxvt_t *r));
 void             rxvt_init_xlocale                __PROTO((rxvt_t *r));
 void             rxvt_init_command                __PROTO((rxvt_t* r));
+void             rxvt_init_fifo                   __PROTO(( rxvt_t *r ));
 CARD32           rxvt_get_desktop                 __PROTO((rxvt_t* r));
 void             rxvt_create_show_windows         __PROTO((rxvt_t* r, int argc, const char* const *argv));
 void             rxvt_destroy_termwin             __PROTO((rxvt_t* r, int page));
@@ -153,7 +154,10 @@ void             rxvt_recolour_cursor             __PROTO((rxvt_t *r));
 int              rxvt_alloc_xft_color             __PROTO((rxvt_t *r, const XColor *xcol, XftColor* xftcolor));
 #endif
 int              rxvt_parse_alloc_color           __PROTO((rxvt_t* r, XColor *screen_in_out, const char* colour));
-int              rxvt_alloc_color                 __PROTO((rxvt_t* r, XColor *screen_in_out, const char* colour));
+int              rxvt_alloc_color                 __PROTO((rxvt_t* r, XColor *screen_in_out));
+unsigned long    rxvt_alloc_pixel_from_int        __PROTO(( rxvt_t *r, const uint32_t color ));
+int              rxvt_alloc_color_from_int        __PROTO(( rxvt_t *r, const uint32_t color, XColor *xcolor ));
+void             rxvt_set_line_width              __PROTO(( rxvt_t *r, const int width ));
 void             rxvt_IM_send_spot                __PROTO((rxvt_t *r));
 void             rxvt_IM_set_fontset              __PROTO((rxvt_t* r, int idx));
 void             rxvt_IM_init_callback            __PROTO((Display *unused __attribute__((unused)), XPointer client_data __attribute__((unused)), XPointer call_data __attribute__((unused))));
@@ -190,6 +194,9 @@ char*            rxvt_str_trim                    __PROTO((char* str));
 int              rxvt_str_escaped                 __PROTO((char* str));
 int		 rxvt_percent_interpolate         __PROTO((rxvt_t*, int, const char *, int, char *, int));
 char**           rxvt_splitcommastring            __PROTO((const char* cs));
+void             rxvt_draw_shadow                 __PROTO((Display*, Window, GC , unsigned long topShadow, unsigned long botShadow, int x, int y, int w, int h));
+char*            rxvt_File_find                   __PROTO((const char *file, const char *ext, const char *path));
+void             rxvt_draw_triangle               __PROTO(( Display*, Window, GC, unsigned long topShadow, unsigned long botShadow, int x, int y, int w, int type));
 /* End prototypes of misc.c */
 
 
@@ -404,7 +411,6 @@ void             rxvt_remove_page               __PROTO((rxvt_t*, short));
 void             rxvt_activate_page             __PROTO((rxvt_t*, short));
 #ifdef HAVE_TABS
 void             rxvt_tabbar_init               __PROTO((rxvt_t*));
-#ifdef HAVE_TABBAR
 void		 rxvt_tabbar_set_visible_tabs   __PROTO((rxvt_t*, Bool));
 void		 refresh_tabbar_tab		__PROTO((rxvt_t*, int));
 void             rxvt_tabbar_resize             __PROTO((rxvt_t*));
@@ -418,14 +424,13 @@ void             rxvt_tabbar_create             __PROTO((rxvt_t*));
 void             rxvt_tabbar_clean_exit         __PROTO((rxvt_t*));
 unsigned short   rxvt_tabbar_height             __PROTO((rxvt_t*));
 unsigned short   rxvt_tabbar_rheight            __PROTO((rxvt_t*));
-unsigned int     rxvt_tab_width                 __PROTO((rxvt_t*, const char*));
+inline unsigned int rxvt_tab_width                 __PROTO((rxvt_t*));
 int              rxvt_is_tabbar_win             __PROTO((rxvt_t*, Window));
 void             rxvt_tabbar_draw_buttons       __PROTO((rxvt_t*));
 void		 rxvt_adjust_fd_number	        __PROTO((rxvt_t* r));
 void             rxvt_tabbar_change_color       __PROTO((rxvt_t*, int, const char*));
 void             rxvt_tabbar_highlight_tab      __PROTO((rxvt_t*, short, Bool));
 void             rxvt_tabbar_move_tab           __PROTO((rxvt_t*, short));
-#endif
 #endif
 void             rxvt_tabbar_set_title          __PROTO((rxvt_t*, short, const unsigned char TAINTED *));
 void		 sync_tab_title		        __PROTO((rxvt_t*, int));
